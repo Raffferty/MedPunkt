@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">MedPunkt</string>
+    <string name="action_home">home</string>
+    <string name="action_delete">delete</string>
+    <string name="greeting">\t\tПриложение MedPunkt поможет Вам запомнить когда и чем Вы болели и как лечились.
+                            \n\n\t\tДля этого необходимо перейти на следующую вкладку и добавить пользователя
+                            и далее, в соответствующих вкладках, добавить чем болели и как лечились.
+                            \n\n\t\t С уважением,
+                            \n\t\t MedPunkt</string>
+    <string name="title_activity_users">Пользователи</string>
+    <string name="title_activity_user">Добавить Пользователя</string>
+    <string name="name">Укажите имя:</string>
+    <string name="user_name">Имя:</string>
+    <string name="date_of_birth">Дата рождения:</string>
+    <string name="user_save">Сохранить</string>
+    <string name="user_edit">Редактировать</string>
+    <string name="when_and_what">Добавьте чем болели +</string>
+    <string name="when_and_how">Добавить лечение +</string>
+    <string name="add_user">Добавить пользователя +</string>
+    <string name="choose_date">выберите дату из календаря</string>
+    <string name="no_photo">Установите Фото</string>
+    <string name="when_and_what_diseases">КОГДА И ЧЕМ БОЛЕЛ</string>
+    <string name="when_and_how_treated">КОГДА И КАК ЛЕЧИЛСЯ</string>
+    <string name="diseas">Укажите название болезни:</string>
+    <string name="diseas_name">Название болезни:</string>
+    <string name="diseas_date">Дата, когда болел:</string>
+    <string name="treatment_date">Дата, начала лечения:</string>
+    <string name="treatment">ОПИСАНИЕ ЛЕЧЕНИЯ:</string>
+    <string name="treat">лечение</string>
+    <string name="treatment_photos">СВЯЗАННЫЕ С ЛЕЧЕНИЕМ ФОТО</string>
+    <string name="txt_treatment_photo_add">Добавить фотоснимок +</string>
+    <string name="edit_treatment_hint">Укажите любую информацию о лечении</string>
+    <string name="title_treatment_photo">фотоснимок</string>
+    <string name="photo_description">Описание снимка:</string>
+    <string name="photo_date">Дата снимка:</string>
+    <string name="empty_users_text">Список пользователей пуст,\nдобавьте пользователя,\nпожалуйста</string>
+    <string name="empty_diseases_text">Список болезней пуст,\nдобавьте болезнь,\nпожалуйста</string>
+    <string name="empty_treatment_text">Список лечения пуст,\nдобавьте лечение,\nпожалуйста</string>
+    <string name="empty_photo_text">Список фотоснимков пуст,\nдобавьте фотоснимок,\nпожалуйста</string>
+
+</resources>
