@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_add_box_green_48dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_add_circle_green_48dp"
         android:theme="@style/AppTheme">
         <activity
             android:name=".HomeActivity"
@@ -23,14 +23,17 @@
         <activity
             android:name=".UsersActivity"
             android:label="@string/title_activity_users"
-            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
         </activity>
+        <activity android:name=".UserActivity"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait">
+        </activity>
+
+
+
         <activity
-            android:name=".UserActivity"
+            android:name=".old_UserActivity"
             android:label="@string/title_activity_user"
             android:parentActivityName=".UsersActivity"
             android:screenOrientation="portrait">
@@ -41,11 +44,11 @@
         <activity
             android:name=".WhenAndWhatDieseasActivity"
             android:label="@string/when_and_what_diseases"
-            android:parentActivityName=".UserActivity"
+            android:parentActivityName=".old_UserActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UserActivity" />
+                android:value=".old_UserActivity" />
         </activity>
         <activity
             android:name=".WhenAndWhatTreatmentActivity"
@@ -56,7 +59,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".WhenAndWhatDieseasActivity" />
         </activity>
-        <activity android:name=".TreatmentPhotoActivity"
+        <activity
+            android:name=".TreatmentPhotoActivity"
             android:label="@string/title_treatment_photo"
             android:parentActivityName=".WhenAndWhatTreatmentActivity"
             android:screenOrientation="portrait">
@@ -64,6 +68,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".WhenAndWhatTreatmentActivity" />
         </activity>
+
+
     </application>
 
 </manifest>

@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class WhenAndWhatDieseasActivity extends AppCompatActivity implements View.OnClickListener  {
 
@@ -102,7 +101,7 @@ public class WhenAndWhatDieseasActivity extends AppCompatActivity implements Vie
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_delete_or_home) {
+        /*if (id == R.id.action_delete_or_home) {
 
             if (item.getTitle().equals(getResources().getString(R.string.action_delete))){
                 Toast.makeText(this,"Пользователь будет удален",Toast.LENGTH_LONG).show();
@@ -112,7 +111,7 @@ public class WhenAndWhatDieseasActivity extends AppCompatActivity implements Vie
             }
 
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

@@ -3,21 +3,21 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
-/**
- * Created by raf on 17.02.2018.
- */
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
@@ -31,10 +31,10 @@ public class DatePickerFragment extends DialogFragment
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int day) {
+    public void onDateSet(@NonNull DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
-        TextView txtDate = (TextView)getActivity().findViewById(R.id.txt_date);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        EditText txtDate = getActivity().findViewById(R.id.editText_date);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         GregorianCalendar date = new GregorianCalendar(year,month,day);
         txtDate.setText(simpleDateFormat.format(date.getTime()));
     }

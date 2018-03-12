@@ -103,6 +103,7 @@
                 android:id="@+id/edit_treatment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:inputType="textMultiLine"
                 android:background="#ffffcc"
                 android:gravity="top"
                 android:hint="@string/edit_treatment_hint"

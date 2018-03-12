@@ -1,29 +1,22 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class UserActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static boolean editUser = true;
-    private static String editNameText, txtUserDateText;
-
-    Menu menu;
-    EditText editName;
-    ImageView imagePhoto;
-    TextView txt_when_and_what_diseasees_add, textUserSaveOrEdit, txt_birthdate, txt_name;
-    ImageButton imageButtonCalendarBirthdate;
-    FloatingActionButton fabAddDieseases, fabUserSaveOrEdit;
+public class UserActivity extends AppCompatActivity {
+    private boolean editUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,45 +24,62 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_user);
 
         Intent intent = getIntent();
-        editUser = intent.getBooleanExtra("editUser", true);
+        editUser = intent.getBooleanExtra("editUser", false);
 
-        editName = findViewById(R.id.edit_name);
-        imagePhoto = findViewById(R.id.imagePhoto);
-        txt_when_and_what_diseasees_add = findViewById(R.id.txt_when_and_what_diseases_add);
-        txt_birthdate = findViewById(R.id.txt_date);
-        txt_name = findViewById(R.id.txt_name);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        imageButtonCalendarBirthdate = (ImageButton) findViewById(R.id.imageButtonCalendarBirthdate);
-        imageButtonCalendarBirthdate.setOnClickListener(this);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_24dp);
 
-        fabAddDieseases = (FloatingActionButton) findViewById(R.id.fabAddDiseases);
-        fabAddDieseases.setOnClickListener(this);
+        final myEditText editTextName = (myEditText) findViewById(R.id.editText_name);
+        final EditText editTextDate = findViewById(R.id.editText_date);
 
-        textUserSaveOrEdit = (TextView) findViewById(R.id.textUserSaveOrEdit);
-        fabUserSaveOrEdit = (FloatingActionButton) findViewById(R.id.fabUserSaveOrEdit);
-        fabUserSaveOrEdit.setOnClickListener(this);
+        editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
 
-        if (editUser) {
-            fabUserSaveOrEdit.setImageResource(R.drawable.ic_action_edit);
-            textUserSaveOrEdit.setText(R.string.user_edit);
-            txt_name.setText(R.string.user_name);
+                    //при переходе фокуса на editTextDate открывается клавиатура
+                    View view = UserActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
 
-            fabAddDieseases.setVisibility(View.VISIBLE);
-            txt_when_and_what_diseasees_add.setVisibility(View.VISIBLE);
+                    editTextDate.setCursorVisible(false);
+                    editTextName.setCursorVisible(false);
 
-            //TODO имя брать из интента
-            setTitle(editNameText);
-            txt_birthdate.setText(txtUserDateText);
-            editName.setText(editNameText);
+                    DatePickerFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
 
-            editOrNot(!editUser);
-        }
+                    editTextDate.clearFocus();
+                }
+            }
+        });
+
+        // кастомный класс myEditText реализовываем в себе performClick()
+        // поэтому нет предупреждения от компилятора, что нет реализации performClick()
+        editTextName.setOnTouchListener(new myEditText(UserActivity.this){
+            public boolean onTouch(View v, MotionEvent event) {
+                editTextName.setCursorVisible(true);
+                editTextName.setFocusableInTouchMode(true);
+
+                //при касании к editTextName открывается клавиатура
+                View view = UserActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(view, 0);
+                    }
+                return true;
+            }
+        });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.menu_user, menu);
         return true;
     }
 
@@ -77,15 +87,13 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if (!editUser){
-            MenuItem menuItem = menu.getItem(0);
-            menuItem.setIcon(R.drawable.users50x50);
-            menuItem.setTitle(R.string.action_home);
-        }
-        else {
-            MenuItem menuItem = menu.getItem(0);
-            menuItem.setIcon(R.drawable.recyclebin);
-            menuItem.setTitle(R.string.action_delete);
+        if (editUser) {
+            MenuItem menuItemSave = menu.getItem(0);
+            menuItemSave.setVisible(false);
+
+        } else {
+            MenuItem menuItemEdit = menu.getItem(1);
+            menuItemEdit.setVisible(false);
         }
 
         return true;
@@ -94,86 +102,22 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.action_delete_or_home) {
-
-            if (item.getTitle().equals(getResources().getString(R.string.action_delete))){
-                Toast.makeText(this,"Пользователь будет удален",Toast.LENGTH_LONG).show();
-            }
-            else {
-                Toast.makeText(this,"Вы перейдете на начальный экран",Toast.LENGTH_LONG).show();
-            }
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fabUserSaveOrEdit:
-                if (!editUser) {
-                    editNameText = String.valueOf(editName.getText());
-                    setTitle(editNameText);
-
-                    txtUserDateText = String.valueOf(txt_birthdate.getText());
-                    txt_name.setText(R.string.user_name);
-
-                    fabUserSaveOrEdit.setImageResource(R.drawable.ic_action_edit);
-                    textUserSaveOrEdit.setText(R.string.user_edit);
-
-                    fabAddDieseases.setVisibility(View.VISIBLE);
-                    txt_when_and_what_diseasees_add.setVisibility(View.VISIBLE);
-
-                    MenuItem menuItem = menu.getItem(0);
-                    menuItem.setIcon(R.drawable.recyclebin);
-                    menuItem.setTitle(R.string.action_delete);
-
-                    editOrNot(editUser);
-
-                    editUser = true;
-
-                } else {
-                    fabUserSaveOrEdit.setImageResource(R.drawable.ic_action_accept);
-                    textUserSaveOrEdit.setText(R.string.user_save);
-                    txt_name.setText(R.string.name);
-
-                    fabAddDieseases.setVisibility(View.INVISIBLE);
-                    txt_when_and_what_diseasees_add.setVisibility(View.INVISIBLE);
-
-                    MenuItem menuItem = menu.getItem(0);
-                    menuItem.setIcon(R.drawable.users50x50);
-                    menuItem.setTitle(R.string.action_home);
-
-                    editOrNot(editUser);
-
-                    editUser = false;
-                }
-
-                return;
-
-            case R.id.fabAddDiseases:
-                Intent intent = new Intent(UserActivity.this, WhenAndWhatDieseasActivity.class);
-                intent.putExtra("editDieseas",false);
-                intent.putExtra("userName",editNameText);
+        switch (id) {
+            case android.R.id.home:
+                Intent intent = new Intent(UserActivity.this, UsersActivity.class);
                 startActivity(intent);
-                return;
+                return true;
+            case R.id.action_save_user:
+                Toast.makeText(this,"Save",Toast.LENGTH_LONG).show();
 
-            case R.id.imageButtonCalendarBirthdate:
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "datePicker");
-                return;
+                return true;
+            case R.id.action_edit_user:
+                Toast.makeText(this,"Edit",Toast.LENGTH_LONG).show();
+
+                return true;
+
             default:
-
-                return;
+                return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void editOrNot(boolean edit) {
-        editName.setEnabled(edit);
-        imagePhoto.setClickable(edit);
-        imageButtonCalendarBirthdate.setClickable(edit);
     }
 }
