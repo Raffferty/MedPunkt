@@ -4,8 +4,8 @@
     tools:context="com.gmail.krbashianrafael.medpunkt.UsersActivity">
     <item
         android:id="@+id/action_add_user"
-        android:icon="@drawable/ic_add_box_blue_24dp"
+        android:icon="@drawable/ic_add_blue_24dp"
         android:orderInCategory="100"
         android:title="@string/add_user"
-        app:showAsAction="always|withText" />
+        app:showAsAction="never" />
 </menu>

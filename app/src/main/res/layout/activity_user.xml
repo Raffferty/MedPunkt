@@ -33,7 +33,7 @@
         app:layout_constraintVertical_bias="0.20" />
 
     <ImageView
-        android:id="@+id/imageViewAdd"
+        android:id="@+id/imageViewAddPhoto"
         android:layout_width="48dp"
         android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="@+id/image_photo"
@@ -63,12 +63,13 @@
         android:backgroundTint="@color/colorTint"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapWords"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_name" />
+        app:layout_constraintTop_toBottomOf="@+id/text_name"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/text_date"
@@ -94,6 +95,7 @@
         android:textColor="@color/colorEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_date" />
+        app:layout_constraintTop_toBottomOf="@+id/text_date"
+        tools:ignore="UnusedAttribute" />
 
 </android.support.constraint.ConstraintLayout>

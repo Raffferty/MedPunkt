@@ -11,6 +11,8 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import static com.gmail.krbashianrafael.medpunkt.HomeActivity.PREFS_NAME;
 
@@ -26,12 +28,23 @@ public class UsersActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_24dp);
         }
+
+        ImageView imageViewAddUsers = findViewById(R.id.imageViewAddUsers);
+        imageViewAddUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                startActivity(userIntent);
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //getMenuInflater().inflate(R.menu.menu_users, menu);
-        menu.add(0, R.id.action_add_user, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_box_blue_24dp), getResources().getString(R.string.add_user)));
+
+        //добавляем в меню надпись с иконкой удалить
+        menu.add(0, R.id.action_add_user, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_blue_24dp), getResources().getString(R.string.add_user)));
         return true;
     }
 

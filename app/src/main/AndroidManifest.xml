@@ -25,11 +25,15 @@
             android:label="@string/title_activity_users"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".UserActivity"
+        <activity android:name=".DiseasesActivity"
+            android:label="@string/title_activity_diseases"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".UserActivity"
             android:label="@string/title_activity_user"
             android:screenOrientation="portrait">
         </activity>
-
 
 
         <activity
@@ -68,7 +72,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".WhenAndWhatTreatmentActivity" />
         </activity>
-
 
     </application>
 

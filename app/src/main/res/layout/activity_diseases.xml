@@ -1,35 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/usersLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gmail.krbashianrafael.medpunkt.UsersActivity">
+    tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
 
     <TextView
-        android:id="@+id/txt_empty_users"
+        android:id="@+id/txt_diseases"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center_horizontal"
+        android:text="@string/txt_what_diseases"
+        android:textAppearance="@style/Widget.AppCompat.Toolbar"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txt_empty_diseases"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="@string/empty_users_text"
+        android:text="@string/empty_diseases_text"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@android:color/darker_gray" />
 
     <ImageView
-        android:id="@+id/imageViewAddUsers"
+        android:id="@+id/imageViewAddDiseas"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_below="@id/txt_empty_users"
+        android:layout_below="@id/txt_empty_diseases"
         android:layout_centerInParent="true"
         android:contentDescription="@string/image_add_description"
         android:src="@drawable/ic_add_circle_gray_64dp" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/usersRecyclerView"
+        android:id="@+id/diseasesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/txt_diseases"
         android:layout_margin="8dp" />
+
 </RelativeLayout>
