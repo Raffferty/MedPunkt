@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
+    <item
+        android:id="@+id/action_edit_profile"
+        android:icon="@drawable/ic_mode_edit_blue_24dp"
+        android:orderInCategory="100"
+        android:title="@string/edit_profile"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_diseas"
+        android:icon="@drawable/ic_add_blue_24dp"
+        android:orderInCategory="100"
+        android:title="@string/add_diseas"
+        app:showAsAction="never" />
+
+</menu>

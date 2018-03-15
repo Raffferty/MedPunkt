@@ -3,7 +3,8 @@
     <color name="colorPrimary">#1976d2</color>
     <color name="colorPrimaryDark">#004ba0</color>
     <color name="colorAccent">#63a3ff</color>
-    <color name="colorTint">#ff4081</color>
-    <color name="colorEditText">#3006df</color>
+    <color name="colorAccentSecondary">#ff4081</color>
+    <color name="colorEditText">#000000</color>
+    <color name="colorDivider">#76ff03</color>
 
 </resources>

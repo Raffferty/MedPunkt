@@ -3,14 +3,18 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-
+import android.widget.TextView;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -31,6 +35,14 @@ public class HomeActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        TextView greetingTextView = findViewById(R.id.txt_greeting);
+
+        String greetingText = getText(R.string.greeting).toString();
+        Spannable spannable = new SpannableString(greetingText);
+        spannable.setSpan(new ForegroundColorSpan(Color.RED), 11, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        greetingTextView.setText(spannable, TextView.BufferType.SPANNABLE);
 
         final CheckBox checkBox = findViewById(R.id.checkbox_show_greeting);
 

@@ -14,10 +14,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="?attr/colorAccent" />
+        app:srcCompat="@color/colorAccent" />
 
     <TextView
         android:id="@+id/text_set_photo"
@@ -54,18 +56,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_photo" />
 
-    <com.gmail.krbashianrafael.medpunkt.myEditText
+
+    <EditText
         android:id="@+id/editText_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:backgroundTint="@color/colorTint"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:inputType="textPersonName|textCapWords"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textColor="@color/colorEditText"
+        android:textColor="@color/colorAccentSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_name"
@@ -89,13 +91,17 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:backgroundTint="@color/colorTint"
         android:inputType="date"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textColor="@color/colorEditText"
+        android:textColor="@color/colorAccentSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_date"
         tools:ignore="UnusedAttribute" />
+
+    <EditText
+        android:id="@+id/focus_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
 </android.support.constraint.ConstraintLayout>

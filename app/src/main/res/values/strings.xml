@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">MedPunkt</string>
-    <string name="greeting">\t\tПриложение MedPunkt поможет Вам запомнить когда и чем Вы болели и как лечились.
-                            \n\n\t\tДля этого необходимо перейти на следующую вкладку и добавить пользователя, чем болел и как лечился.
-                            \n\n\t\t С уважением,
-                            \n\t\t MedPunkt</string>
+    <string name="greeting">Приложение MedPunkt поможет Вам запомнить когда и чем Вы болели и как лечились.
+                            \n\n\Добро пожаловть!</string>
     <string name="action_enter">enter</string>
     <string name="show_greeting">Больше не показывать</string>
     <string name="title_activity_users">Пользователи</string>
@@ -20,6 +18,13 @@
     <string name="txt_no_title">No Title</string>
     <string name="empty_diseases_text">Список заболеваний пуст.\nДобавьте чем болели,\nпожалуйста</string>
     <string name="txt_what_diseases">Чем болел</string>
+    <string name="edit_profile">Профиль</string>
+    <string name="add_diseas">Добавить чем болел</string>
+    <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
+    <string name="unsaved_changes_dialog_msg">Сохранить изменения?</string>
+    <!-- Dialog button text for the option to discard a user's changes [CHAR LIMIT=20] -->
+    <string name="discard">Выйти без сохранения</string>
+
 
     <string name="no_photo">Установить Фото</string>
     <string name="action_home">home</string>
@@ -47,6 +52,7 @@
     <string name="empty_treatment_text">Список лечения пуст,\nдобавьте лечение,\nпожалуйста</string>
     <string name="empty_photo_text">Список фотоснимков пуст,\nдобавьте фотоснимок,\nпожалуйста</string>
     <string name="image_add_description">нажатие открывает окно добавления</string>
+
 
 
 </resources>
