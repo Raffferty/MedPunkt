@@ -24,6 +24,11 @@
     <string name="unsaved_changes_dialog_msg">Сохранить изменения?</string>
     <!-- Dialog button text for the option to discard a user's changes [CHAR LIMIT=20] -->
     <string name="discard">Выйти без сохранения</string>
+    <string name="permission_to_photoes_is_available">Доступ к фотографиям разершен</string>
+    <string name="why_need_permission_to_srorage">Необходим доступ к фотографиям для загрузки снимков, связанных с лечением.</string>
+    <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
+    <string name="permission_was_granted">Доступ к фотографиям получен.</string>
+    <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
 
 
     <string name="no_photo">Установить Фото</string>

@@ -18,6 +18,12 @@ import static com.gmail.krbashianrafael.medpunkt.HomeActivity.PREFS_NAME;
 
 public class UsersActivity extends AppCompatActivity {
 
+    //private static final int PERMISSION_READ_EXTERNAL_STORAGE = 0;
+
+    // для привязки snackbar
+    //private View mLayout;
+    //private static boolean showSnackBar = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +43,43 @@ public class UsersActivity extends AppCompatActivity {
                 startActivity(userIntent);
             }
         });
+
+        // привязка для snackbar
+        //mLayout = findViewById(R.id.usersLayout);
+
+        // получаем runtimePermission к READ_EXTERNAL_STORAGE через специальный класс PhotoRequesPermissionHandler
+        // для SDK меньше, чем Marshmallow достаточно прописать только в Манифесте
+
+        /*showSnackBar = PhotoRequesPermissionHandler.getRuntimePhotoPermissionToStorage(this,
+                mLayout,PERMISSION_READ_EXTERNAL_STORAGE,
+                showSnackBar);*/
     }
+
+    /*@Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start camera preview Activity.
+                Snackbar.make(mLayout, R.string.permission_was_granted,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+
+                //TODO после получения разрешения грузим фотки в UsersActyvity
+                //getLoaderManager().initLoader(PET_LOADER,null, this);
+
+            } else {
+                // Permission request was denied.
+                Snackbar.make(mLayout, R.string.permission_was_denied,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+            }
+        }
+
+    }*/
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
