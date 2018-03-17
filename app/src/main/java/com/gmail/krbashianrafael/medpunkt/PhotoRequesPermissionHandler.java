@@ -16,63 +16,25 @@ public class PhotoRequesPermissionHandler {
 
     private static int mPERMISSION_READ_EXTERNAL_STORAGE = 0;
 
+    private static View mLayout;
     private static Activity mactivity;
     private static boolean mShowSnackBar;
-    private static View mLayout;
+
 
     public static boolean getRuntimePhotoPermissionToStorage(Activity activity, View layout, int PERMISSION_READ_EXTERNAL_STORAGE, boolean showSnackBar){
 
         mShowSnackBar = showSnackBar;
-        mLayout = layout;
         mactivity = activity;
         mPERMISSION_READ_EXTERNAL_STORAGE = PERMISSION_READ_EXTERNAL_STORAGE;
+        mLayout = layout;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            getRuntimePermissionToStorage();
-        }
-        else {
-            if (ActivityCompat.checkSelfPermission(mactivity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
 
-                if (mShowSnackBar){
-                    // Permission is already available, start camera preview
-                    Snackbar.make(mLayout,
-                            R.string.permission_to_photoes_is_available,
-                            Snackbar.LENGTH_SHORT).show();
+        mShowSnackBar = false;
+        requestStoragePermission();
 
-                    // чтоб больше не показывать это сообщение
-                    mShowSnackBar = false;
-                }
-
-            } else {
-                // Permission is missing and must be requested.
-                mShowSnackBar = false;
-                requestStoragePermission();
-            }
-        }
         return mShowSnackBar;
     }
 
-    private static void getRuntimePermissionToStorage(){
-        if (ActivityCompat.checkSelfPermission(mactivity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            if (mShowSnackBar){
-                // Permission is already available
-                Snackbar.make(mLayout,
-                        R.string.permission_to_photoes_is_available,
-                        Snackbar.LENGTH_SHORT).show();
-
-                // чтоб больше не показывать это сообщение
-                // при возввращении в то Активити откуда запрашивалось сообщение
-                mShowSnackBar = false;
-            }
-        }
-        else {
-            // Permission is missing and must be requested.
-            mShowSnackBar = false;
-            requestStoragePermission();
-        }
-    }
 
     private static void requestStoragePermission() {
         // Permission has not been granted and must be requested.

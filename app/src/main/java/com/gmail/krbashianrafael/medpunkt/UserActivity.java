@@ -85,22 +85,10 @@ public class UserActivity extends AppCompatActivity {
         imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO загрузить фото
-                //Toast.makeText(UserActivity.this, "Load Photo", Toast.LENGTH_LONG).show();
-
 
                 showSnackBar = PhotoRequesPermissionHandler.getRuntimePhotoPermissionToStorage(UserActivity.this,
                         mLayout,PERMISSION_READ_EXTERNAL_STORAGE,
                         showSnackBar);
-
-                if (!showSnackBar){
-                    userHasChanged = true;
-
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);}
-
             }
         });
 
@@ -178,7 +166,6 @@ public class UserActivity extends AppCompatActivity {
 
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                //galleryIntent.setType("image/*");
 
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
 
@@ -201,13 +188,8 @@ public class UserActivity extends AppCompatActivity {
             Uri selectedImage = data.getData();
 
             Picasso.with(this).load(selectedImage).
-                    placeholder(R.mipmap.ic_launcher).
-
                     // если возникнет ошибка - будет красный квадрат
                             error(R.color.colorAccentSecondary).
-
-                    resize(200, 200).
-                    centerCrop().
                     into(imagePhoto);
 
             if (selectedImage != null) {
