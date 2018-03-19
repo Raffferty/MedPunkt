@@ -27,7 +27,6 @@
     <string name="permission_to_photoes_is_available">Доступ к фотографиям разершен</string>
     <string name="why_need_permission_to_srorage">Необходим доступ к фотографиям.</string>
     <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
-    <string name="permission_was_granted">Доступ к фотографиям получен.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
 
 

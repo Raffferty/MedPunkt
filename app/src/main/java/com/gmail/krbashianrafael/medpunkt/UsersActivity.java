@@ -2,6 +2,8 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -13,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+
+import java.io.File;
 
 import static com.gmail.krbashianrafael.medpunkt.HomeActivity.PREFS_NAME;
 
@@ -39,46 +43,29 @@ public class UsersActivity extends AppCompatActivity {
         imageViewAddUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
-                startActivity(userIntent);
+                /*Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                startActivity(userIntent);*/
+
+                File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
+
+                if(imgFile.exists()){
+
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+                    ImageView myImage = (ImageView) findViewById(R.id.image_test_photo);
+
+                    myImage.setImageBitmap(myBitmap);
+
+                }
+
+
             }
         });
 
-        // привязка для snackbar
-        //mLayout = findViewById(R.id.usersLayout);
 
-        // получаем runtimePermission к READ_EXTERNAL_STORAGE через специальный класс PhotoRequesPermissionHandler
-        // для SDK меньше, чем Marshmallow достаточно прописать только в Манифесте
-
-        /*showSnackBar = PhotoRequesPermissionHandler.getRuntimePhotoPermissionToStorage(this,
-                mLayout,PERMISSION_READ_EXTERNAL_STORAGE,
-                showSnackBar);*/
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start camera preview Activity.
-                Snackbar.make(mLayout, R.string.permission_was_granted,
-                        Snackbar.LENGTH_LONG)
-                        .show();
 
-                //TODO после получения разрешения грузим фотки в UsersActyvity
-                //getLoaderManager().initLoader(PET_LOADER,null, this);
-
-            } else {
-                // Permission request was denied.
-                Snackbar.make(mLayout, R.string.permission_was_denied,
-                        Snackbar.LENGTH_LONG)
-                        .show();
-            }
-        }
-
-    }*/
 
 
     @Override

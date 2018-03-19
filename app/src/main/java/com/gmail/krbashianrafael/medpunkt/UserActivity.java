@@ -1,14 +1,18 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +32,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 public class UserActivity extends AppCompatActivity {
     //
@@ -45,14 +53,12 @@ public class UserActivity extends AppCompatActivity {
 
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
-
     // путь к фото
     private String userPhotoUri = "android.resource://com.gmail.krbashianrafael.medpunkt/" + R.color.colorAccent;
 
     // для привязки snackbar
     private View mLayout;
-    private static boolean showSnackBar = true;
-    private static final int PERMISSION_READ_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @SuppressLint("ClickableViewAccessibility")
@@ -85,10 +91,15 @@ public class UserActivity extends AppCompatActivity {
         imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                showSnackBar = PhotoRequesPermissionHandler.getRuntimePhotoPermissionToStorage(UserActivity.this,
-                        mLayout,PERMISSION_READ_EXTERNAL_STORAGE,
-                        showSnackBar);
+                if (ActivityCompat.checkSelfPermission(UserActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestStoragePermission();
+                } else {
+                    userHasChanged = true;
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+                }
             }
         });
 
@@ -149,55 +160,123 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-     @Override
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Snackbar.make(mLayout, R.string.why_need_permission_to_srorage,
+                    Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    ActivityCompat.requestPermissions(UserActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSION_WRITE_EXTERNAL_STORAGE);
+                }
+            }).show();
+
+        } else {
+            Snackbar.make(mLayout,
+                    R.string.permission_not_available,
+                    Snackbar.LENGTH_LONG).show();
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE) {
-            // Request for camera permission.
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start camera preview Activity.
-                Snackbar.make(mLayout, R.string.permission_was_granted,
-                        Snackbar.LENGTH_LONG)
-                        .show();
-
-                //TODO после получения разрешения грузим фотки в UserActyvity
                 userHasChanged = true;
-
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-
-
             } else {
-                // Permission request was denied.
                 Snackbar.make(mLayout, R.string.permission_was_denied,
                         Snackbar.LENGTH_LONG)
                         .show();
             }
         }
-
     }
 
+    // здесь грузим фотку в imagePhoto
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
+            final Uri selectedImage = data.getData();
 
             Picasso.with(this).load(selectedImage).
-                    // если возникнет ошибка - будет красный квадрат
-                            error(R.color.colorAccentSecondary).
+                    placeholder(R.color.colorAccent).
+                    error(R.color.colorAccentSecondary).
+                    resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
+                    centerInside().
                     into(imagePhoto);
 
             if (selectedImage != null) {
                 userPhotoUri = selectedImage.toString();
 
-                Log.d("userPhotoUri",userPhotoUri);
+                Log.d("saveUserPhoto", "userPhotoUri = " + userPhotoUri);
             }
+
+
+            Thread t = new Thread(new Runnable() {
+                Bitmap bitmap = null;
+
+                @Override
+                public void run() {
+                    try {
+                        bitmap = Picasso.with(UserActivity.this).
+                                load(selectedImage).
+                                resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
+                                centerInside().
+                                get();
+                        if (bitmap != null) {
+                            saveUserPhoto(bitmap);
+                        } else {
+                            Log.d("saveUserPhoto", " bitmap null");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+
+
         }
+    }
+
+    private File saveUserPhoto(Bitmap bitmap) {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/Medpunkt/users_photos");
+        myDir.mkdirs();
+        String fname = "Image-" + 1 + ".jpg";
+        File file = new File(myDir, fname);
+        Log.d("saveUserPhoto", "file = " + file);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (file.exists()) {
+            Log.d("saveUserPhoto", "file exists");
+        }
+
+        return file;
     }
 
     @Override
