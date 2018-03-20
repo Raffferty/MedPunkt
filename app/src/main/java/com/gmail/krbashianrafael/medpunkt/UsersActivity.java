@@ -46,23 +46,19 @@ public class UsersActivity extends AppCompatActivity {
                 /*Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 startActivity(userIntent);*/
 
-                File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
+                //для экстернал
+                //File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
+
+                // для интернал
+                File imgFile = new File("/data/user/0/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg");
 
                 if(imgFile.exists()){
-
                     Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
-                    ImageView myImage = (ImageView) findViewById(R.id.image_test_photo);
-
+                    ImageView myImage = findViewById(R.id.image_test_photo);
                     myImage.setImageBitmap(myBitmap);
-
                 }
-
-
             }
         });
-
-
     }
 
 

@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -54,7 +53,7 @@ public class UserActivity extends AppCompatActivity {
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
     // путь к фото
-    private String userPhotoUri = "android.resource://com.gmail.krbashianrafael.medpunkt/" + R.color.colorAccent;
+    private String userPhotoUri = "";
 
     // для привязки snackbar
     private View mLayout;
@@ -116,6 +115,7 @@ public class UserActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
 
+                    // скручиваем клавиатуру
                     View view = UserActivity.this.getCurrentFocus();
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -124,8 +124,10 @@ public class UserActivity extends AppCompatActivity {
                         }
                     }
 
+                    // передаем фокус, чтоб поля имени и ДР не были в фокусе
                     focusHolder.requestFocus();
 
+                    // выбираем дату ДР
                     DatePickerFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 }
@@ -160,6 +162,7 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    // запрос разрешения на запись и чтение фалов
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -217,13 +220,7 @@ public class UserActivity extends AppCompatActivity {
                     centerInside().
                     into(imagePhoto);
 
-            if (selectedImage != null) {
-                userPhotoUri = selectedImage.toString();
-
-                Log.d("saveUserPhoto", "userPhotoUri = " + userPhotoUri);
-            }
-
-
+            // в отдельном потоке пишем файл фотки в интернал сторидж
             Thread t = new Thread(new Runnable() {
                 Bitmap bitmap = null;
 
@@ -248,35 +245,78 @@ public class UserActivity extends AppCompatActivity {
 
             t.start();
 
-
         }
     }
 
-    private File saveUserPhoto(Bitmap bitmap) {
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/Medpunkt/users_photos");
+    private void saveUserPhoto(Bitmap bitmap) {
+        // для экстернал
+        // String root = Environment.getExternalStorageDirectory().toString();
+        // File myDir = new File(root + "/Medpunkt/users_photos");
+
+        // для интернал
+        String root = getFilesDir().toString();
+        File myDir = new File(root + "/users_photos");
+
         myDir.mkdirs();
+
         String fname = "Image-" + 1 + ".jpg";
         File file = new File(myDir, fname);
-        Log.d("saveUserPhoto", "file = " + file);
+
+        Log.d("saveUserPhoto", " file = " + file);
+
+        // заменяем файл удалением
         if (file.exists()) {
             file.delete();
         }
 
+        FileOutputStream outputStream;
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
+            outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (file.exists()) {
-            Log.d("saveUserPhoto", "file exists");
+            userPhotoUri = file.toString();
+            Log.d("saveUserPhoto", "userPhotoUri = " + userPhotoUri);
+        }
+        else {
+            Toast.makeText(this, R.string.cant_load_photo, Toast.LENGTH_LONG);
         }
 
-        return file;
+        //Log.d("saveUserPhoto", "myDir.toString"+myDir.toString());
+
+
+        // удаление файла и папки
+        /*if (file.exists()) {
+            Log.d("saveUserPhoto", " file exists");
+            file.delete();
+            Log.d("saveUserPhoto", "file Deleted");
+            if (file.exists()) {
+                Log.d("saveUserPhoto", "file exists");
+            } else {
+                Log.d("saveUserPhoto", "file NOT exists");
+            }
+        } else {
+            Log.d("saveUserPhoto", " file NOT exists");
+        }
+
+
+        if (myDir.exists()) {
+            Log.d("saveUserPhoto", "myDir exists");
+            myDir.delete();
+            Log.d("saveUserPhoto", "myDir Deleted");
+            if (myDir.exists()) {
+                Log.d("saveUserPhoto", "myDir exists");
+            } else {
+                Log.d("saveUserPhoto", "myDir NOT exists");
+            }
+        } else {
+            Log.d("saveUserPhoto", "myDir NOT exists");
+        }*/
     }
 
     @Override
@@ -426,6 +466,9 @@ public class UserActivity extends AppCompatActivity {
         //TODO реализовать сохранение пользователя в базу
         textForTitle = editTextName != null ? editTextName.getText().toString() : getResources().getString(R.string.txt_no_title);
         textForBirthDate = editTextDate != null ? editTextDate.getText().toString() : getResources().getString(R.string.txt_no_title);
+
+        //TODO сохранение пути к фото в базу
+        //userPhotoUri
 
         Toast.makeText(this, "User Saved", Toast.LENGTH_LONG).show();
     }
