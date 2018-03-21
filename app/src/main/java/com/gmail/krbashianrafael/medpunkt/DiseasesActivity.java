@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,9 @@ public class DiseasesActivity extends AppCompatActivity {
 
     private String textForDiseasesActivityTitle = null;
     private String birthDate = null;
+    private String userPhotoUri = "No_Photo";
+    // id пользователя
+    private int _id = 0;
 
 
     @Override
@@ -27,16 +31,21 @@ public class DiseasesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         textForDiseasesActivityTitle = intent.getStringExtra("Title");
         birthDate = intent.getStringExtra("birthDate");
+        if (intent.hasExtra("userPhotoUri")) {
+            userPhotoUri = intent.getStringExtra("userPhotoUri");
+        }
+        if (intent.hasExtra("_id")) {
+            _id = intent.getIntExtra("_id", 0);
+        }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_24dp);
 
-            if (textForDiseasesActivityTitle!=null){
+            if (textForDiseasesActivityTitle != null) {
                 actionBar.setTitle(textForDiseasesActivityTitle);
-            }
-            else {
+            } else {
                 actionBar.setTitle(R.string.txt_no_title);
             }
         }
@@ -82,9 +91,15 @@ public class DiseasesActivity extends AppCompatActivity {
 
             case R.id.action_edit_profile:
                 Intent userIntent = new Intent(DiseasesActivity.this, UserActivity.class);
-                userIntent.putExtra("editUser",true);
-                userIntent.putExtra("Title",textForDiseasesActivityTitle);
-                userIntent.putExtra("birthDate",birthDate);
+                userIntent.putExtra("_id", _id);
+                userIntent.putExtra("editUser", true);
+                userIntent.putExtra("Title", textForDiseasesActivityTitle);
+                userIntent.putExtra("birthDate", birthDate);
+                userIntent.putExtra("userPhotoUri", userPhotoUri);
+
+                Log.d("saveUserPhoto", " from DiseasesActivity userPhotoUri = " + userPhotoUri);
+                Log.d("saveUserPhoto", " from DiseasesActivity _id = " + _id);
+
                 startActivity(userIntent);
 
             default:

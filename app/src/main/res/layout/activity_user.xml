@@ -21,28 +21,38 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/colorAccent" />
 
-    <TextView
-        android:id="@+id/text_set_photo"
+    <LinearLayout
+        android:id="@+id/no_user_photo"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_photo"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/image_photo"
         app:layout_constraintEnd_toEndOf="@+id/image_photo"
         app:layout_constraintStart_toStartOf="@+id/image_photo"
-        app:layout_constraintTop_toTopOf="@+id/image_photo"
-        app:layout_constraintVertical_bias="0.20" />
+        app:layout_constraintTop_toTopOf="@+id/image_photo">
 
-    <ImageView
-        android:id="@+id/imageViewAddPhoto"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        app:layout_constraintBottom_toBottomOf="@+id/image_photo"
-        app:layout_constraintEnd_toEndOf="@+id/image_photo"
-        app:layout_constraintStart_toStartOf="@+id/image_photo"
-        app:layout_constraintTop_toTopOf="@+id/image_photo"
-        app:srcCompat="@drawable/ic_add_circle_outline_white_48dp" />
+        <TextView
+            android:id="@+id/text_set_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_photo"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/white">
+
+        </TextView>
+
+        <ImageView
+            android:id="@+id/imageViewAddPhoto"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/ic_add_circle_outline_white_48dp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/text_name"
@@ -54,7 +64,7 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_photo" />
+        app:layout_constraintTop_toBottomOf="@+id/text_delete_photo" />
 
 
     <EditText
@@ -103,5 +113,16 @@
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
         android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/text_delete_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/delete_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_photo" />
 
 </android.support.constraint.ConstraintLayout>
