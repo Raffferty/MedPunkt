@@ -2,8 +2,6 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -15,8 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-
-import java.io.File;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import static com.gmail.krbashianrafael.medpunkt.HomeActivity.PREFS_NAME;
 
@@ -39,30 +37,49 @@ public class UsersActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_24dp);
         }
 
-        ImageView imageViewAddUsers = findViewById(R.id.imageViewAddUsers);
-        imageViewAddUsers.setOnClickListener(new View.OnClickListener() {
+        // сейчас это невидимо
+        TextView addUsers = findViewById(R.id.txt_empty_users);
+        addUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
-                startActivity(userIntent);*/
-
-                //для экстернал
-                //File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
-
-                // для интернал
-                File imgFile = new File("/data/user/0/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg");
-
-                if(imgFile.exists()){
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    ImageView myImage = findViewById(R.id.image_test_photo);
-                    myImage.setImageBitmap(myBitmap);
-                }
+                Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                startActivity(userIntent);
             }
         });
+
+        // Фиктивниый юзер
+        LinearLayout linearLayoutReciclerViewItem = findViewById(R.id.recicler_view_item);
+        linearLayoutReciclerViewItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
+                userIntent.putExtra("_id", 1);
+                userIntent.putExtra("editUser", true);
+                userIntent.putExtra("Title", "Вася");
+                userIntent.putExtra("birthDate", "11.03.1968");
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+
+                startActivity(userIntent);
+            }
+        });
+
+        ImageView userItemEdit = findViewById(R.id.user_item_edit);
+        userItemEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                userIntent.putExtra("_id", 1);
+                userIntent.putExtra("editUser", true);
+                userIntent.putExtra("Title", "Вася");
+                userIntent.putExtra("birthDate", "11.03.1968");
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+
+                startActivity(userIntent);
+            }
+        });
+
+
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

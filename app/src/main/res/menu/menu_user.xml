@@ -4,13 +4,13 @@
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
     <item
         android:id="@+id/action_save_user"
-        android:icon="@drawable/ic_action_accept"
+        android:icon="@drawable/ic_done_white_24dp"
         android:orderInCategory="100"
         android:title="@string/save"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_edit_user"
-        android:icon="@drawable/ic_action_edit"
+        android:icon="@drawable/ic_border_color_white_24dp"
         android:orderInCategory="100"
         android:title="@string/edit"
         app:showAsAction="ifRoom" />

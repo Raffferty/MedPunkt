@@ -66,7 +66,7 @@ public class DiseasesActivity extends AppCompatActivity {
         //getMenuInflater().inflate(R.menu.menu_users, menu);
 
         //добавляем в меню надпись с иконкой удалить
-        menu.add(0, R.id.action_edit_profile, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_mode_edit_blue_24dp), getResources().getString(R.string.edit_profile)));
+        menu.add(0, R.id.action_edit_profile, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_border_color_blue_24dp), getResources().getString(R.string.edit_profile)));
         menu.add(0, R.id.action_add_diseas, 2, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_blue_24dp), getResources().getString(R.string.add_diseas)));
         return true;
     }

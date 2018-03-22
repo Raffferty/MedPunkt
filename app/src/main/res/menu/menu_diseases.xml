@@ -4,7 +4,7 @@
     tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
     <item
         android:id="@+id/action_edit_profile"
-        android:icon="@drawable/ic_mode_edit_blue_24dp"
+        android:icon="@drawable/ic_border_color_blue_24dp"
         android:orderInCategory="100"
         android:title="@string/edit_profile"
         app:showAsAction="never" />

@@ -510,6 +510,7 @@ public class UserActivity extends AppCompatActivity {
         // для экстернал
         // String root = Environment.getExternalStorageDirectory().toString();
         // File myDir = new File(root + "/Medpunkt/users_photos");
+        // при этом получится File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
 
         // для интернал
         String root = getFilesDir().toString();

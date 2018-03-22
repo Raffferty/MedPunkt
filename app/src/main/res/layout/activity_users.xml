@@ -7,45 +7,113 @@
     android:layout_height="match_parent"
     tools:context="com.gmail.krbashianrafael.medpunkt.UsersActivity">
 
-    <LinearLayout
-        android:id="@+id/txt_empty_users"
+    <FrameLayout
+        android:id="@+id/divider_frame_green"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorDivider" />
+
+    <FrameLayout
+        android:id="@+id/divider_frame_blue"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/divider_frame_green"
+        android:background="@color/colorPrimaryDark" />
+
+    <!-- начало Фиктивный юзер -->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/recicler_view_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        tools:showIn="@layout/activity_users">
+
+        <LinearLayout
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/user_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_camera_alt_white_24dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:text="Вася"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/txt_user_birth_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:text="11.03.1968"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/user_item_edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_border_color_blue_24dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:text="@string/empty_users_text"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="@android:color/darker_gray" />
-
-        <ImageView
-            android:id="@+id/imageViewAddUsers"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/image_add_description"
-            android:src="@drawable/ic_add_circle_gray_64dp" />
-
-        <ImageView
-            android:id="@+id/image_test_photo"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@color/colorAccent"/>
+            android:id="@+id/_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
     </LinearLayout>
+
+    <!-- конец Фиктивный юзер -->
+
+
+    <FrameLayout
+        android:id="@+id/divider_frame_blue2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/recicler_view_item"
+        android:background="@color/colorPrimaryDark" />
+
+
+    <TextView
+        android:id="@+id/txt_empty_users"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="16dp"
+        android:drawableBottom="@drawable/ic_add_circle_gray_64dp"
+        android:gravity="center"
+        android:text="@string/empty_users_text"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/usersRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/divider_frame_blue2"
         android:layout_margin="8dp" />
 </RelativeLayout>
