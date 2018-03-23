@@ -29,7 +29,7 @@
     <string name="why_need_permission_to_srorage">Необходим доступ к фотографиям.</string>
     <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
-    <string name="cant_load_photo">Фотографию не удалось загрузить</string>
+    <string name="cant_save_photo">Фотографию не удалось сохранитжь</string>
 
 
     <string name="no_photo">Установить Фото</string>

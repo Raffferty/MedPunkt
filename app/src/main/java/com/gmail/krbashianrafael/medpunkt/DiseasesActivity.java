@@ -16,7 +16,7 @@ import android.widget.ImageView;
 
 public class DiseasesActivity extends AppCompatActivity {
 
-    private String textForDiseasesActivityTitle = null;
+    private String textUserName = null;
     private String birthDate = null;
     private String userPhotoUri = "No_Photo";
     // id пользователя
@@ -29,7 +29,7 @@ public class DiseasesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diseases);
 
         Intent intent = getIntent();
-        textForDiseasesActivityTitle = intent.getStringExtra("Title");
+        textUserName = intent.getStringExtra("UserName");
         birthDate = intent.getStringExtra("birthDate");
         if (intent.hasExtra("userPhotoUri")) {
             userPhotoUri = intent.getStringExtra("userPhotoUri");
@@ -43,8 +43,8 @@ public class DiseasesActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_24dp);
 
-            if (textForDiseasesActivityTitle != null) {
-                actionBar.setTitle(textForDiseasesActivityTitle);
+            if (textUserName != null) {
+                actionBar.setTitle(textUserName);
             } else {
                 actionBar.setTitle(R.string.txt_no_title);
             }
@@ -93,7 +93,8 @@ public class DiseasesActivity extends AppCompatActivity {
                 Intent userIntent = new Intent(DiseasesActivity.this, UserActivity.class);
                 userIntent.putExtra("_id", _id);
                 userIntent.putExtra("editUser", true);
-                userIntent.putExtra("Title", textForDiseasesActivityTitle);
+                userIntent.putExtra("goBackArraw", true);
+                userIntent.putExtra("UserName", textUserName);
                 userIntent.putExtra("birthDate", birthDate);
                 userIntent.putExtra("userPhotoUri", userPhotoUri);
 

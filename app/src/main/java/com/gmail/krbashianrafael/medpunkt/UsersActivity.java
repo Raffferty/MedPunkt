@@ -12,7 +12,7 @@ import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,8 +54,7 @@ public class UsersActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
                 userIntent.putExtra("_id", 1);
-                userIntent.putExtra("editUser", true);
-                userIntent.putExtra("Title", "Вася");
+                userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
                 userIntent.putExtra("userPhotoUri", "No_Photo");
 
@@ -63,14 +62,15 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
 
-        ImageView userItemEdit = findViewById(R.id.user_item_edit);
+        // кнопка редактирования юзера
+        FrameLayout userItemEdit = findViewById(R.id.user_item_edit);
         userItemEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 userIntent.putExtra("_id", 1);
                 userIntent.putExtra("editUser", true);
-                userIntent.putExtra("Title", "Вася");
+                userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
                 userIntent.putExtra("userPhotoUri", "No_Photo");
 
@@ -117,6 +117,8 @@ public class UsersActivity extends AppCompatActivity {
 
             case R.id.action_add_user:
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("newUser", true);
                 startActivity(userIntent);
 
                 return true;
