@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -84,7 +85,7 @@ public class UserActivity extends AppCompatActivity {
     private int _id = 0;
 
     // View mLayout для привязки snackbar
-    private View mLayout;
+    private FrameLayout mLayout;
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
@@ -128,12 +129,23 @@ public class UserActivity extends AppCompatActivity {
 
         // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
+        mLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Если окно открылось в состоянии editUser,
+                // то mLayout будет перекрывать все окно. Иначе mLayout mLayout.setVisibility(View.GONE);
+                Toast.makeText(UserActivity.this,
+                        ToastTextWithIcon(getResources().getDrawable(R.drawable.ic_border_color_white_24dp), getResources().getString(R.string.сlick_edit)),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         linearLayoutNoUserPhoto = findViewById(R.id.no_user_photo);
         imagePhoto = findViewById(R.id.image_photo);
 
-        // если есть файл фото для загрузки, то грузим
+
         if (!userPhotoUri.equals("No_Photo")) {
+            // если есть файл фото для загрузки, то грузим
             linearLayoutNoUserPhoto.setVisibility(View.GONE);
             File imgFile = new File(userPhotoUri);
             if (imgFile.exists()) {
@@ -229,6 +241,7 @@ public class UserActivity extends AppCompatActivity {
             editTextDate.setEnabled(false);
             imagePhoto.setClickable(false);
             textDeleteUserPhoto.setVisibility(View.GONE);
+            mLayout.setVisibility(View.VISIBLE);
         } else if (!editUser && userPhotoUri.equals("No_Photo")) {
             textDeleteUserPhoto.setVisibility(View.GONE);
         }
@@ -312,12 +325,21 @@ public class UserActivity extends AppCompatActivity {
         return true;
     }
 
-    // для SpannableString
+    // SpannableString с картикной для элеменов меню
     private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
         ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return sb;
+    }
+
+    private CharSequence ToastTextWithIcon(Drawable r, String title) {
+        r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
+        SpannableString sb = new SpannableString(title + "    ");
+        ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
+        sb.setSpan(imageSpan, title.length() + 2, title.length() + 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
     }
@@ -394,31 +416,38 @@ public class UserActivity extends AppCompatActivity {
                 }
 
             case R.id.action_save_user:
-
                 if (goBackArraw) {
                     if (!userHasChanged) {
-                        goToDiseasesActivity();
+                        showNoDataChangeddDialog();
                         return true;
                     }
 
+                    saveUser();
 
                 } else {
                     if (!userHasChanged) {
-                        goToUsersActivity();
-                        return true;
+                        if (newUser) {
+                            // если пытаются сохранить нового пользователя и ничего не вводят
+                            // говорим пользователю, что "Данные для сохранения не введены"
+                            // спрашиваем "выйти без сохранения или остаться?
+                            showNoDataEnteredDialog();
+                            return true;
+                        } else {
+                            showNoDataChangeddDialog();
+                            return true;
+                        }
                     }
 
+                    saveUser();
                 }
-
-                saveUser();
 
                 return true;
 
             case R.id.action_edit_user:
-                Toast.makeText(this, "Edit", Toast.LENGTH_LONG).show();
                 editTextName.setEnabled(true);
                 editTextDate.setEnabled(true);
                 imagePhoto.setClickable(true);
+                mLayout.setVisibility(View.GONE);
                 editUser = false;
 
                 if (!userPhotoUri.equals("No_Photo")) {
@@ -456,6 +485,64 @@ public class UserActivity extends AppCompatActivity {
 
         showUnsavedChangesDialog(discardButtonClickListener);
 
+    }
+
+    private void showNoDataEnteredDialog() {
+        // если пытаются сохранить нового пользователя и ничего не вводят
+        // говорим пользователю, что "Данные для сохранения не введены"
+        // спрашиваем "выйти без сохранения или остаться?
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.no_data_entered);
+
+        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                goToUsersActivity();
+            }
+        });
+
+        builder.setNegativeButton(R.string.stay, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void showNoDataChangeddDialog() {
+        // если пытаются сохранить нового пользователя и ничего не вводят
+        // говорим пользователю, что "Данные для сохранения не введены"
+        // спрашиваем "выйти без сохранения или остаться?
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.no_data_Changed);
+
+        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (goBackArraw) {
+                    goToDiseasesActivity();
+                } else {
+                    goToUsersActivity();
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.stay, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     // Диалог "сохранить или выйти без сохранения"

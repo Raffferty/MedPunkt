@@ -30,6 +30,12 @@
     <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
     <string name="cant_save_photo">Фотографию не удалось сохранитжь</string>
+    <string name="сlick_edit">Нажмите редактировать</string>
+    <string name="no_data_entered">Данные для сохранения не введены</string>
+    <string name="no_data_Changed">Данные для сохранения не менялись</string>
+    <string name="stay">Остаться</string>
+    <string name="pathToPhoto">/data/user/0/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg</string>
+
 
 
     <string name="no_photo">Установить Фото</string>
@@ -58,7 +64,6 @@
     <string name="empty_treatment_text">Список лечения пуст,\nдобавьте лечение,\nпожалуйста</string>
     <string name="empty_photo_text">Список фотоснимков пуст,\nдобавьте фотоснимок,\nпожалуйста</string>
     <string name="image_add_description">нажатие открывает окно добавления</string>
-
 
 
 </resources>

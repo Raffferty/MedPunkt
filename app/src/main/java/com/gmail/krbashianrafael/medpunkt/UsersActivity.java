@@ -2,6 +2,8 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -13,8 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.File;
 
 import static com.gmail.krbashianrafael.medpunkt.HomeActivity.PREFS_NAME;
 
@@ -47,8 +52,18 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
 
-        // Фиктивниый юзер
+        // начало ------ Фиктивниый юзер с фото
         LinearLayout linearLayoutReciclerViewItem = findViewById(R.id.recicler_view_item);
+        ImageView userImage = findViewById(R.id.user_image);
+        final String pathToPhoto = getString(R.string.pathToPhoto);
+        File imgFile = new File(pathToPhoto);
+        if (imgFile.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            userImage.setImageBitmap(myBitmap);
+        }
+
+        // конец ------ Фиктивниый юзер с фото
+
         linearLayoutReciclerViewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +71,7 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("_id", 1);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("userPhotoUri", pathToPhoto);
 
                 startActivity(userIntent);
             }
@@ -72,7 +87,7 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("editUser", true);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("userPhotoUri", pathToPhoto);
 
                 startActivity(userIntent);
             }
