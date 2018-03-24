@@ -609,12 +609,18 @@ public class UserActivity extends AppCompatActivity {
                         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
                         if (newUser) {
                             saveUserToDataBase();
+
+                            Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
+
                             goToDiseasesActivity();
                         }
                         // если НЕ новый пользователь, то обновляем в базу и
                         // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
                         else {
                             updateUserToDataBase();
+
+                            Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+
 
                             if (goBackArraw) {
                                 goToDiseasesActivity();
@@ -637,6 +643,9 @@ public class UserActivity extends AppCompatActivity {
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
             if (newUser) {
                 saveUserToDataBase();
+
+                Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
+
                 goToDiseasesActivity();
             }
             // если НЕ новый пользователь, то обновляем в базу и
@@ -644,14 +653,14 @@ public class UserActivity extends AppCompatActivity {
             else {
                 updateUserToDataBase();
 
+                Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+
                 if (goBackArraw) {
                     goToDiseasesActivity();
                 } else {
                     goToUsersActivity();
                 }
             }
-
-            Toast.makeText(this, "User Saved", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -705,6 +714,15 @@ public class UserActivity extends AppCompatActivity {
 
         if (newUser) {
             saveUserToDataBase();
+
+            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
+                }
+            });
+
             goToDiseasesActivity();
         }
         // если НЕ новый пользователь, то обновляем в базу и
@@ -712,21 +730,20 @@ public class UserActivity extends AppCompatActivity {
         else {
             updateUserToDataBase();
 
+            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+                }
+            });
+
             if (goBackArraw) {
                 goToDiseasesActivity();
             } else {
                 goToUsersActivity();
             }
         }
-
-        // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(UserActivity.this, "User Saved", Toast.LENGTH_LONG).show();
-            }
-        });
-
 
         // удаление файла и папки
         /*if (file.exists()) {
