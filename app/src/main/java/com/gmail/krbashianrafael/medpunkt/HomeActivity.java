@@ -26,8 +26,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Intent intent = getIntent();
+        boolean fromUsers = intent.getBooleanExtra("fromUsers", false);
 
-        ActionBar actionBar =  getSupportActionBar();
+
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.hospital);
@@ -49,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     // если отмечено БОЛЬШЕ НЕ ПОКАЗЫВАТЬ, то окно приветсвия будет пропускаться
                     prefsEditor.putBoolean("showGreeting", false);
 
@@ -63,16 +66,18 @@ public class HomeActivity extends AppCompatActivity {
 
                     //если пользователей будет больше, чем 1, то откроется окно ПОЛЬЗОВАТЕЛИ
                     prefsEditor.apply();
-                }
-                else {
+                } else {
                     prefsEditor.putBoolean("showGreeting", true);
                     prefsEditor.apply();
-                }            }
+                }
+            }
         });
 
-        if (!prefs.getBoolean("showGreeting",true)){
-            Intent intent = new Intent(HomeActivity.this, UsersActivity.class);
-            startActivity(intent);
+        if (!prefs.getBoolean("showGreeting", true) && !fromUsers) {
+            Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
+            startActivity(intentToUsers);
+        }else if (!prefs.getBoolean("showGreeting", true) && fromUsers){
+            checkBox.setChecked(true);
         }
     }
 

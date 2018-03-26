@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,7 +51,7 @@ public class UserActivity extends AppCompatActivity {
     private Uri currentUserUri;
 
     // возможность изменфть пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean newUser, editUser, goBackArraw, userHasChanged = false;
+    private boolean newUser, goBack, editUser, userHasChanged = false;
 
     /*// имя и дата рождени пришедшие из DiseasesActivity
     private String textForUserActivityTitle, textForUserActivitybirthDate;
@@ -85,7 +84,7 @@ public class UserActivity extends AppCompatActivity {
     private int _id = 0;
 
     // View mLayout для привязки snackbar
-    private FrameLayout mLayout;
+    private View mLayout;
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
@@ -108,6 +107,7 @@ public class UserActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+
         // получаем переданный в интенте Uri,
         // есл intent.getData(); вернул null, значит это новый пользователь
         // в дальнейшем значение currentUserUri заменит значение newUser
@@ -115,7 +115,7 @@ public class UserActivity extends AppCompatActivity {
         newUser = intent.getBooleanExtra("newUser", false);
 
         editUser = intent.getBooleanExtra("editUser", false);
-        goBackArraw = intent.getBooleanExtra("goBackArraw", false);
+        //goBackArraw = intent.getBooleanExtra("goBackArraw", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
         _id = intent.getIntExtra("_id", 0);
@@ -127,9 +127,12 @@ public class UserActivity extends AppCompatActivity {
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+
+
+
         // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
-        mLayout.setOnClickListener(new View.OnClickListener() {
+        /*mLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Если окно открылось в состоянии editUser,
@@ -138,11 +141,10 @@ public class UserActivity extends AppCompatActivity {
                         ToastTextWithIcon(getResources().getDrawable(R.drawable.ic_border_color_white_24dp), getResources().getString(R.string.сlick_edit)),
                         Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         linearLayoutNoUserPhoto = findViewById(R.id.no_user_photo);
         imagePhoto = findViewById(R.id.image_photo);
-
 
         if (!userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
@@ -176,7 +178,7 @@ public class UserActivity extends AppCompatActivity {
         textDeleteUserPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePhoto.setImageResource(R.color.colorAccent);
+                imagePhoto.setImageResource(R.color.colorPrimaryLight);
                 userPhotoUri = "No_Photo";
                 linearLayoutNoUserPhoto.setVisibility(View.VISIBLE);
                 textDeleteUserPhoto.setVisibility(View.GONE);
@@ -217,11 +219,7 @@ public class UserActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            if (goBackArraw) {
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-            } else {
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_24dp);
-            }
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
@@ -301,7 +299,7 @@ public class UserActivity extends AppCompatActivity {
 
             if (selectedImage != null) {
                 Picasso.with(this).load(selectedImage).
-                        placeholder(R.color.colorAccent).
+                        placeholder(R.color.colorPrimaryLight).
                         error(R.color.colorAccentSecondary).
                         resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
                         centerInside().
@@ -313,10 +311,19 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user, menu);
+
+        /*MenuItem itemSave = menu.getItem(0);
+        SpannableString saveTitle = new SpannableString(getResources().getString(R.string.save));
+        saveTitle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccentSecondary)), 0, saveTitle.length(), 0);
+        itemSave.setTitle(saveTitle);
+
+        MenuItem itemEdit = menu.getItem(1);
+        SpannableString editTitle = new SpannableString(getResources().getString(R.string.edit));
+        editTitle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccentSecondary)), 0, editTitle.length(), 0);
+        itemEdit.setTitle(editTitle);*/
 
         menu.removeItem(R.id.action_delete_user);
         // добавление в меню текста с картинкой
@@ -335,14 +342,14 @@ public class UserActivity extends AppCompatActivity {
         return sb;
     }
 
-    private CharSequence ToastTextWithIcon(Drawable r, String title) {
+    /*private CharSequence ToastTextWithIcon(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString(title + "    ");
         ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, title.length() + 2, title.length() + 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
-    }
+    }*/
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -366,32 +373,6 @@ public class UserActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                // Если стрелка обратно, то идем в DiseasesActivity
-                if (goBackArraw) {
-                    // Если не было изменений
-                    if (!userHasChanged) {
-                        goToDiseasesActivity();
-                        return true;
-                    }
-
-                    // Если были изменения
-                    Toast.makeText(this, "User Has Changed", Toast.LENGTH_LONG).show();
-
-                    // если выходим без сохранения изменений
-                    DialogInterface.OnClickListener discardButtonClickListener =
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    goToDiseasesActivity();
-                                }
-                            };
-
-                    // если выходим с сохранением изменений
-                    showUnsavedChangesDialog(discardButtonClickListener);
-                    return true;
-                }
-                // если вместо стрелки обратно показывает "группа пользователей", то идем в UsersActivity
-                else {
                     // Если не было изменений
                     if (!userHasChanged) {
                         goToUsersActivity();
@@ -413,33 +394,22 @@ public class UserActivity extends AppCompatActivity {
                     // если выходим с сохранением изменений
                     showUnsavedChangesDialog(discardButtonClickListener);
                     return true;
-                }
 
             case R.id.action_save_user:
-                if (goBackArraw) {
                     if (!userHasChanged) {
-                        showNoDataChangeddDialog();
+                        //goToUsersActivity();
+                        //showNoDataChangeddDialog();
+                        editUser = true;
+                        editTextName.setEnabled(false);
+                        editTextDate.setEnabled(false);
+                        imagePhoto.setClickable(false);
+                        textDeleteUserPhoto.setVisibility(View.GONE);
+                        invalidateOptionsMenu();
+
                         return true;
                     }
 
                     saveUser();
-
-                } else {
-                    if (!userHasChanged) {
-                        if (newUser) {
-                            // если пытаются сохранить нового пользователя и ничего не вводят
-                            // говорим пользователю, что "Данные для сохранения не введены"
-                            // спрашиваем "выйти без сохранения или остаться?
-                            showNoDataEnteredDialog();
-                            return true;
-                        } else {
-                            showNoDataChangeddDialog();
-                            return true;
-                        }
-                    }
-
-                    saveUser();
-                }
 
                 return true;
 
@@ -447,7 +417,6 @@ public class UserActivity extends AppCompatActivity {
                 editTextName.setEnabled(true);
                 editTextDate.setEnabled(true);
                 imagePhoto.setClickable(true);
-                mLayout.setVisibility(View.GONE);
                 editUser = false;
 
                 if (!userPhotoUri.equals("No_Photo")) {
@@ -487,7 +456,7 @@ public class UserActivity extends AppCompatActivity {
 
     }
 
-    private void showNoDataEnteredDialog() {
+    /*private void showNoDataEnteredDialog() {
         // если пытаются сохранить нового пользователя и ничего не вводят
         // говорим пользователю, что "Данные для сохранения не введены"
         // спрашиваем "выйти без сохранения или остаться?
@@ -512,9 +481,9 @@ public class UserActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
+    }*/
 
-    private void showNoDataChangeddDialog() {
+    /*private void showNoDataChangeddDialog() {
         // если пытаются сохранить нового пользователя и ничего не вводят
         // говорим пользователю, что "Данные для сохранения не введены"
         // спрашиваем "выйти без сохранения или остаться?
@@ -543,7 +512,7 @@ public class UserActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
+    }*/
 
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
@@ -551,10 +520,10 @@ public class UserActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
-        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
-        builder.setNegativeButton(R.string.save, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
+                goBack = true;
                 saveUser();
 
                 if (dialog != null) {
@@ -562,6 +531,8 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
         });
+
+        builder.setPositiveButton(R.string.no, discardButtonClickListener);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -609,24 +580,34 @@ public class UserActivity extends AppCompatActivity {
                         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
                         if (newUser) {
                             saveUserToDataBase();
-
-                            Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
-
+                            Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
                             goToDiseasesActivity();
                         }
                         // если НЕ новый пользователь, то обновляем в базу и
                         // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
                         else {
                             updateUserToDataBase();
+                            Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
 
-                            Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+                            if (goBack){
+                                goToUsersActivity();
+                            }
+                            else {
+                                editUser = true;
+                                userHasChanged = false;
+                                editTextName.setEnabled(false);
+                                editTextDate.setEnabled(false);
+                                imagePhoto.setClickable(false);
+                                textDeleteUserPhoto.setVisibility(View.GONE);
+                                invalidateOptionsMenu();
+                            }
 
 
-                            if (goBackArraw) {
+                            /*if (goBackArraw) {
                                 goToDiseasesActivity();
                             } else {
                                 goToUsersActivity();
-                            }
+                            }*/
                         }
 
                     }
@@ -643,23 +624,33 @@ public class UserActivity extends AppCompatActivity {
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
             if (newUser) {
                 saveUserToDataBase();
-
-                Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
-
+                Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
                 goToDiseasesActivity();
             }
             // если НЕ новый пользователь, то обновляем в базу и
             // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
             else {
                 updateUserToDataBase();
+                Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
 
-                Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+                if (goBack){
+                    goToUsersActivity();
+                }
+                else {
+                    editUser = true;
+                    userHasChanged = false;
+                    editTextName.setEnabled(false);
+                    editTextDate.setEnabled(false);
+                    imagePhoto.setClickable(false);
+                    textDeleteUserPhoto.setVisibility(View.GONE);
+                    invalidateOptionsMenu();
+                }
 
-                if (goBackArraw) {
+                /* if (goBackArraw) {
                     goToDiseasesActivity();
                 } else {
                     goToUsersActivity();
-                }
+                }*/
             }
         }
     }
@@ -709,7 +700,7 @@ public class UserActivity extends AppCompatActivity {
             Log.d("saveUserPhoto", "userPhotoUri = " + userPhotoUri);
         } else {
             userPhotoUri = "No_Photo";
-            Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
         }
 
         if (newUser) {
@@ -719,7 +710,7 @@ public class UserActivity extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(UserActivity.this,"User Saved To DataBase", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -734,15 +725,36 @@ public class UserActivity extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(UserActivity.this,"User Updated To DataBase", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
                 }
             });
 
-            if (goBackArraw) {
+            if (goBack){
+                goToUsersActivity();
+            }
+            else {
+                editUser = true;
+                userHasChanged = false;
+                invalidateOptionsMenu();
+
+                // только основной тред может прикасаться к созданным им View
+                // поэтому обарачиваем в runOnUiThread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        editTextName.setEnabled(false);
+                        editTextDate.setEnabled(false);
+                        imagePhoto.setClickable(false);
+                        textDeleteUserPhoto.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+           /* if (goBackArraw) {
                 goToDiseasesActivity();
             } else {
                 goToUsersActivity();
-            }
+            }*/
         }
 
         // удаление файла и папки

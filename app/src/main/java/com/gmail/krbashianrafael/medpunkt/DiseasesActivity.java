@@ -1,15 +1,10 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,35 +45,47 @@ public class DiseasesActivity extends AppCompatActivity {
             }
         }
 
+        // это сейчас не видимо
+        // сделать видимым, когда будет хоть одно заболевание
+        FloatingActionButton fabAddDisease = findViewById(R.id.fabAddDisease);
+        fabAddDisease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO открывать окно добавить заболевание
+
+            }
+        });
+
+        // это сейчас видимо
+        // сделать не видимым, когда будет хоть одно заболевание
         ImageView imageViewAddDiseas = findViewById(R.id.imageViewAddDiseas);
         imageViewAddDiseas.setOnClickListener(new View.OnClickListener() {
             //TODO открывать окно добавить заболевание
             @Override
             public void onClick(View v) {
-                Intent userIntent = new Intent(DiseasesActivity.this, UserActivity.class);
-                startActivity(userIntent);
+
             }
         });
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //getMenuInflater().inflate(R.menu.menu_users, menu);
 
         //добавляем в меню надпись с иконкой удалить
-        menu.add(0, R.id.action_edit_profile, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_border_color_blue_24dp), getResources().getString(R.string.edit_profile)));
-        menu.add(0, R.id.action_add_diseas, 2, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_blue_24dp), getResources().getString(R.string.add_diseas)));
+        //menu.add(0, R.id.action_edit_profile, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_border_color_blue_24dp), getResources().getString(R.string.edit_profile)));
+        //menu.add(0, R.id.action_add_diseas, 2, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_blue_24dp), getResources().getString(R.string.add_diseas)));
         return true;
-    }
+    }*/
 
-    private CharSequence menuIconWithText(Drawable r, String title) {
+    /*private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
         ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -89,7 +96,7 @@ public class DiseasesActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            case R.id.action_edit_profile:
+            /*case R.id.action_edit_profile:
                 Intent userIntent = new Intent(DiseasesActivity.this, UserActivity.class);
                 userIntent.putExtra("_id", _id);
                 userIntent.putExtra("editUser", true);
@@ -101,7 +108,10 @@ public class DiseasesActivity extends AppCompatActivity {
                 Log.d("saveUserPhoto", " from DiseasesActivity userPhotoUri = " + userPhotoUri);
                 Log.d("saveUserPhoto", " from DiseasesActivity _id = " + _id);
 
-                startActivity(userIntent);
+                startActivity(userIntent);*/
+
+            /*case R.id.action_add_diseas:
+                return true;*/
 
             default:
                 return super.onOptionsItemSelected(item);

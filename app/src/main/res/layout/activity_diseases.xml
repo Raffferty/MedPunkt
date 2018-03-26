@@ -47,7 +47,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:contentDescription="@string/image_add_description"
-            android:src="@drawable/ic_add_circle_gray_64dp" />
+            android:src="@drawable/ic_add_circle_orange_64dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -56,5 +56,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_diseases"
         android:layout_margin="8dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddDisease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_white_36dp"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
 
 </RelativeLayout>
