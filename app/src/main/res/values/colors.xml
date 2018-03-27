@@ -3,10 +3,12 @@
     <color name="colorPrimary">#1976d2</color>
     <color name="colorPrimaryDark">#004ba0</color>
     <color name="colorPrimaryLight">#63a3ff</color>
-    <color name="colorAccent">#ff6f00</color>
+    <color name="colorAccent">#1976d2</color>
+    <color name="colorFab">#ff6f00</color>
     <color name="colorAccentSecondary">#ff4081</color>
     <color name="colorAccentThird">#ffff00</color>
-    <color name="colorEditText">#000000</color>
     <color name="colorDivider">#76ff03</color>
+    <color name="colorEditText">#212121</color>
+    <color name="colorEditTextError">#fff9c4</color>
 
 </resources>

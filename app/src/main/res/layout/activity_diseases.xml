@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
 
     <FrameLayout
@@ -63,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorFab"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_36dp"
         android:visibility="invisible"
