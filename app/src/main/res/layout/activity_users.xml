@@ -37,6 +37,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
+            android:contentDescription="@string/user_photo_placeholder"
             android:src="@drawable/ic_camera_alt_gray_24dp" />
 
         <LinearLayout
@@ -83,6 +84,7 @@
                 android:layout_gravity="center"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="12dp"
+                android:contentDescription="@string/usr_edit_img"
                 android:src="@drawable/ic_border_color_blue_24dp" />
 
         </FrameLayout>
@@ -103,7 +105,6 @@
         android:layout_height="2dp"
         android:layout_below="@+id/recicler_view_item"
         android:background="@color/colorPrimary" />
-
 
     <TextView
         android:id="@+id/txt_empty_users"

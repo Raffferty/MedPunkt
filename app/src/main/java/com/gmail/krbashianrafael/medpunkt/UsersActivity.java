@@ -62,14 +62,20 @@ public class UsersActivity extends AppCompatActivity {
         // начало ------ Фиктивниый юзер с фото
         LinearLayout linearLayoutReciclerViewItem = findViewById(R.id.recicler_view_item);
         ImageView userImage = findViewById(R.id.user_image);
-        final String pathToPhoto = getString(R.string.pathToPhoto);
+        String pathToPhoto = getString(R.string.pathToPhoto);
         File imgFile = new File(pathToPhoto);
         if (imgFile.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             userImage.setImageBitmap(myBitmap);
         }
+        else {
+            pathToPhoto = "No_Photo";
+        }
 
         // конец ------ Фиктивниый юзер с фото
+
+        // это для анонимных классов ниже
+        final String finalPathToPhoto = pathToPhoto;
 
         // нажатие на юзера
         linearLayoutReciclerViewItem.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +85,7 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("_id", 1);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", pathToPhoto);
+                userIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
                 startActivity(userIntent);
             }
@@ -87,6 +93,7 @@ public class UsersActivity extends AppCompatActivity {
 
         // кнопка редактирования юзера
         FrameLayout userItemEdit = findViewById(R.id.user_item_edit);
+
         userItemEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +102,7 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("editUser", true);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", pathToPhoto);
+                userIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
                 startActivity(userIntent);
             }

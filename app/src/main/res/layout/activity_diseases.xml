@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
 
     <FrameLayout
@@ -11,45 +11,34 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/colorDivider">
+
     </FrameLayout>
 
     <TextView
         android:id="@+id/txt_diseases"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/divider_frame"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
         android:text="@string/txt_what_diseases"
-        android:layout_below="@+id/divider_frame"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
-    <LinearLayout
+
+    <TextView
         android:id="@+id/txt_empty_diseases"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="16dp"
+        android:drawableBottom="@drawable/ic_add_circle_orange_64dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:text="@string/empty_diseases_text"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/darker_gray" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:text="@string/empty_diseases_text"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="@android:color/darker_gray" />
-
-        <ImageView
-            android:id="@+id/imageViewAddDiseas"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/image_add_description"
-            android:src="@drawable/ic_add_circle_orange_64dp" />
-    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/diseasesRecyclerView"
@@ -64,10 +53,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        app:backgroundTint="@color/colorFab"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_36dp"
         android:visibility="invisible"
-        tools:visibility="visible"/>
+        app:backgroundTint="@color/colorFab"
+        tools:visibility="visible" />
 
 </RelativeLayout>

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
-    <ImageView
+     <ImageView
         android:id="@+id/image_photo"
         android:layout_width="0dp"
         android:layout_height="200dp"
@@ -16,12 +16,13 @@
         android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
+        android:contentDescription="@string/user_photo_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/colorPrimaryLight" />
 
-    <LinearLayout
+    <TextView
         android:id="@+id/no_user_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,30 +30,16 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:drawableBottom="@drawable/ic_add_circle_outline_white_48dp"
+        android:text="@string/set_photo"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/image_photo"
         app:layout_constraintEnd_toEndOf="@+id/image_photo"
         app:layout_constraintStart_toStartOf="@+id/image_photo"
         app:layout_constraintTop_toTopOf="@+id/image_photo">
 
-        <TextView
-            android:id="@+id/text_set_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/set_photo"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="@android:color/white">
-
-        </TextView>
-
-        <ImageView
-            android:id="@+id/imageViewAddPhoto"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:srcCompat="@drawable/ic_add_circle_outline_white_48dp" />
-
-    </LinearLayout>
+    </TextView>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_name"
@@ -90,8 +77,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:hint="@string/date_of_birth"
-        app:hintTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:errorEnabled="true"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_name">
@@ -102,9 +89,9 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:textSize="20sp"
             android:inputType="date"
             android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -113,7 +100,10 @@
     <EditText
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:hint="@string/focusholder"
+        android:inputType="none"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/text_delete_photo"

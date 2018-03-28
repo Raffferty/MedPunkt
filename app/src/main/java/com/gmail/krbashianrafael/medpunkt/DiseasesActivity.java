@@ -7,7 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 public class DiseasesActivity extends AppCompatActivity {
 
@@ -58,8 +58,8 @@ public class DiseasesActivity extends AppCompatActivity {
 
         // это сейчас видимо
         // сделать не видимым, когда будет хоть одно заболевание
-        ImageView imageViewAddDiseas = findViewById(R.id.imageViewAddDiseas);
-        imageViewAddDiseas.setOnClickListener(new View.OnClickListener() {
+        TextView textViewAddDiseas = findViewById(R.id.txt_empty_diseases);
+        textViewAddDiseas.setOnClickListener(new View.OnClickListener() {
             //TODO открывать окно добавить заболевание
             @Override
             public void onClick(View v) {

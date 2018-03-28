@@ -25,6 +25,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +52,7 @@ public class UserActivity extends AppCompatActivity {
     private Uri currentUserUri;
 
     // возможность изменфть пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean newUser, goBack, editUser, userHasChangedPhoto = false;
+    private boolean newUser, goBack, editUser, userHasChangedPhoto;
 
     private ActionBar actionBar;
 
@@ -71,7 +71,7 @@ public class UserActivity extends AppCompatActivity {
     private ImageView imagePhoto;
 
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
-    private LinearLayout linearLayoutNoUserPhoto;
+    private TextView textViewNoUserPhoto;
 
     // TextView удаления фото, при нажатии удаляется фото
     private TextView textDeleteUserPhoto;
@@ -145,17 +145,21 @@ public class UserActivity extends AppCompatActivity {
             }
         });*/
 
-        linearLayoutNoUserPhoto = findViewById(R.id.no_user_photo);
+        textViewNoUserPhoto = findViewById(R.id.no_user_photo);
+
         imagePhoto = findViewById(R.id.image_photo);
 
         if (!userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
-            linearLayoutNoUserPhoto.setVisibility(View.GONE);
+            textViewNoUserPhoto.setVisibility(View.GONE);
             File imgFile = new File(userPhotoUri);
             if (imgFile.exists()) {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 imagePhoto.setImageBitmap(myBitmap);
             }
+        }
+        else {
+            textViewNoUserPhoto.setVisibility(View.VISIBLE);
         }
 
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
@@ -180,8 +184,9 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imagePhoto.setImageResource(R.color.colorAccent);
-                userPhotoUri = "No_Photo";
-                linearLayoutNoUserPhoto.setVisibility(View.VISIBLE);
+                userPhotoUri = "Set_No_Photo";
+                selectedImage = null;
+                textViewNoUserPhoto.setVisibility(View.VISIBLE);
                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
                 userHasChangedPhoto = true;
             }
@@ -327,7 +332,7 @@ public class UserActivity extends AppCompatActivity {
 
                 userHasChangedPhoto = true;
                 textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                linearLayoutNoUserPhoto.setVisibility(View.GONE);
+                textViewNoUserPhoto.setVisibility(View.GONE);
             }
         }
     }
@@ -395,7 +400,7 @@ public class UserActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 // Если не было изменений
-                if (!userHasChanged()) {
+                if (userHasChanged()) {
                     goToUsersActivity();
                     return true;
                 }
@@ -418,7 +423,7 @@ public class UserActivity extends AppCompatActivity {
 
             case R.id.action_save_user:
 
-                if (!userHasChanged() && !newUser) {
+                if (userHasChanged() && !newUser) {
                     //goToUsersActivity();
                     //showNoDataChangeddDialog();
 
@@ -488,7 +493,7 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!userHasChanged()) {
+        if (userHasChanged()) {
             super.onBackPressed();
             return;
         }
@@ -629,6 +634,7 @@ public class UserActivity extends AppCompatActivity {
             return;
         }
 
+        // проверка окончена, начинаем сохранение
 
         focusHolder.requestFocus();
 
@@ -714,6 +720,19 @@ public class UserActivity extends AppCompatActivity {
             t.start();
 
         } else {
+            // если фото было удалено, то удалить файл фото (если он есть)
+            if (userPhotoUri.equals("Set_No_Photo")){
+                //TODO здесь нужно будет формировать путь к фото по id
+                String pathToPhoto = getString(R.string.pathToPhoto);
+                File imgFile = new File(pathToPhoto);
+               if (imgFile.exists()) {
+                    if (!imgFile.delete()){
+                        Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
             if (newUser) {
                 saveUserToDataBase();
@@ -762,7 +781,9 @@ public class UserActivity extends AppCompatActivity {
         String root = getFilesDir().toString();
         File myDir = new File(root + "/users_photos");
 
-        myDir.mkdirs();
+        if (!myDir.mkdirs()){
+            Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
+        }
 
         /*long currentTime = Calendar.getInstance().getTimeInMillis();
 
@@ -778,7 +799,9 @@ public class UserActivity extends AppCompatActivity {
 
         // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()){
+                Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+            }
         }
 
         FileOutputStream outputStream;
@@ -905,13 +928,10 @@ public class UserActivity extends AppCompatActivity {
 
     // проверка на изменения пользователя
     private boolean userHasChanged() {
-        if (userHasChangedPhoto ||
-                !editTextName.getText().toString().equals(textUserName) ||
-                !editTextDate.getText().toString().equals(textUserBirthDate)) {
-            return true;
-        }
+        return !userHasChangedPhoto &&
+                editTextName.getText().toString().equals(textUserName) &&
+                editTextDate.getText().toString().equals(textUserBirthDate);
 
-        return false;
     }
 
     private void goToDiseasesActivity() {
