@@ -24,7 +24,7 @@
     <!-- начало Фиктивный юзер -->
 
     <LinearLayout
-        android:id="@+id/recicler_view_item"
+        android:id="@+id/recycler_view_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -103,7 +103,7 @@
         android:id="@+id/divider_frame_blue2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@+id/recicler_view_item"
+        android:layout_below="@+id/recycler_view_item"
         android:background="@color/colorPrimary" />
 
     <TextView

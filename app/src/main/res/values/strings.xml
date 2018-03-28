@@ -19,15 +19,13 @@
     <string name="txt_no_title">No Title</string>
     <string name="empty_diseases_text">Список заболеваний пуст.\nДобавьте чем болели,\nпожалуйста</string>
     <string name="txt_what_diseases">Чем болел</string>
-    <string name="edit_profile">Профиль</string>
-    <string name="add_diseas">Добавить чем болел</string>
     <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
     <string name="unsaved_changes_dialog_msg">Сохранить изменения?</string>
     <!-- Dialog button text for the option to discard a user's changes [CHAR LIMIT=20] -->
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="permission_to_photoes_is_available">Доступ к фотографиям разершен</string>
-    <string name="why_need_permission_to_srorage">Необходим доступ к фотографиям.</string>
+    <string name="permission_to_photos_is_available">Доступ к фотографиям разершен</string>
+    <string name="why_need_permission_to_storage">Необходим доступ к фотографиям.</string>
     <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
     <string name="cant_save_photo">Фотографию не удалось сохранитжь</string>
@@ -38,36 +36,5 @@
     <string name="user_photo_placeholder">user_photo_placeholder</string>
     <string name="usr_edit_img">usr_edit_img</string>
     <string name="file_not_deleted">Файл фото не удалился</string>
-
-
-
-    <string name="no_photo">Установить Фото</string>
-    <string name="action_home">home</string>
-    <string name="action_delete">delete</string>
-    <string name="name">Укажите имя:</string>
-    <string name="user_save">Сохранить</string>
-    <string name="user_edit">Редактировать</string>
-    <string name="when_and_what">Добавьте чем болели +</string>
-    <string name="when_and_how">Добавить лечение +</string>
-    <string name="choose_date">выберите дату из календаря</string>
-    <string name="when_and_what_diseases">КОГДА И ЧЕМ БОЛЕЛ</string>
-    <string name="when_and_how_treated">КОГДА И КАК ЛЕЧИЛСЯ</string>
-    <string name="diseas">Укажите название болезни:</string>
-    <string name="diseas_name">Название болезни:</string>
-    <string name="diseas_date">Дата, когда болел:</string>
-    <string name="treatment_date">Дата, начала лечения:</string>
-    <string name="treatment">ОПИСАНИЕ ЛЕЧЕНИЯ:</string>
-    <string name="treat">лечение</string>
-    <string name="treatment_photos">СВЯЗАННЫЕ С ЛЕЧЕНИЕМ ФОТО</string>
-    <string name="txt_treatment_photo_add">Добавить фотоснимок +</string>
-    <string name="edit_treatment_hint">Укажите любую информацию о лечении</string>
-    <string name="title_treatment_photo">фотоснимок</string>
-    <string name="photo_description">Описание снимка:</string>
-    <string name="photo_date">Дата снимка:</string>
-    <string name="empty_treatment_text">Список лечения пуст,\nдобавьте лечение,\nпожалуйста</string>
-    <string name="empty_photo_text">Список фотоснимков пуст,\nдобавьте фотоснимок,\nпожалуйста</string>
-    <string name="image_add_description">нажатие открывает окно добавления</string>
-
-
 
 </resources>

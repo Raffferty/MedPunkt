@@ -23,55 +23,15 @@
         <activity
             android:name=".UsersActivity"
             android:label="@string/title_activity_users"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".DiseasesActivity"
-            android:label="@string/title_activity_diseases"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user"
-            android:screenOrientation="portrait">
-        </activity>
-
-
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".old_UserActivity"
-            android:label="@string/title_activity_user"
-            android:parentActivityName=".UsersActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UsersActivity" />
-        </activity>
-        <activity
-            android:name=".WhenAndWhatDieseasActivity"
-            android:label="@string/when_and_what_diseases"
-            android:parentActivityName=".old_UserActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".old_UserActivity" />
-        </activity>
-        <activity
-            android:name=".WhenAndWhatTreatmentActivity"
-            android:label="@string/when_and_how_treated"
-            android:parentActivityName=".WhenAndWhatDieseasActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".WhenAndWhatDieseasActivity" />
-        </activity>
-        <activity
-            android:name=".TreatmentPhotoActivity"
-            android:label="@string/title_treatment_photo"
-            android:parentActivityName=".WhenAndWhatTreatmentActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".WhenAndWhatTreatmentActivity" />
-        </activity>
+            android:name=".DiseasesActivity"
+            android:label="@string/title_activity_diseases"
+            android:screenOrientation="portrait"></activity>
 
     </application>
 

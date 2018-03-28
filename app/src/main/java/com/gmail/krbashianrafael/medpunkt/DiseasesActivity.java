@@ -68,25 +68,6 @@ public class DiseasesActivity extends AppCompatActivity {
         });
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_users, menu);
-
-        //добавляем в меню надпись с иконкой удалить
-        //menu.add(0, R.id.action_edit_profile, 1, menuIconWithText(getResources().getDrawable(R.drawable.ic_border_color_blue_24dp), getResources().getString(R.string.edit_profile)));
-        //menu.add(0, R.id.action_add_diseas, 2, menuIconWithText(getResources().getDrawable(R.drawable.ic_add_blue_24dp), getResources().getString(R.string.add_diseas)));
-        return true;
-    }*/
-
-    /*private CharSequence menuIconWithText(Drawable r, String title) {
-        r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
-        SpannableString sb = new SpannableString("    " + title);
-        ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
-        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return sb;
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -95,23 +76,6 @@ public class DiseasesActivity extends AppCompatActivity {
                 Intent intent = new Intent(DiseasesActivity.this, UsersActivity.class);
                 startActivity(intent);
                 return true;
-
-            /*case R.id.action_edit_profile:
-                Intent userIntent = new Intent(DiseasesActivity.this, UserActivity.class);
-                userIntent.putExtra("_id", _id);
-                userIntent.putExtra("editUser", true);
-                userIntent.putExtra("goBackArraw", true);
-                userIntent.putExtra("UserName", textUserName);
-                userIntent.putExtra("birthDate", birthDate);
-                userIntent.putExtra("userPhotoUri", userPhotoUri);
-
-                Log.d("saveUserPhoto", " from DiseasesActivity userPhotoUri = " + userPhotoUri);
-                Log.d("saveUserPhoto", " from DiseasesActivity _id = " + _id);
-
-                startActivity(userIntent);*/
-
-            /*case R.id.action_add_diseas:
-                return true;*/
 
             default:
                 return super.onOptionsItemSelected(item);

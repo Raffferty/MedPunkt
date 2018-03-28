@@ -45,9 +45,9 @@ import java.io.IOException;
 
 public class UserActivity extends AppCompatActivity {
     /**
-     * Content URI for the existing pet (null if it's a new pet)
-     * если в onCreate НЕ пришел Uri, то mCurrentPetUri будет null и откроется окно для добавления новго животного
-     * иначе, откроется окно с данными нажатого животного для редактирования или удаления
+     * Content URI for the existing user (null if it's a new user)
+     * если в onCreate НЕ пришел Uri, то mCurrentPetUri будет null и откроется окно для добавления новго юзера
+     * иначе, откроется окно с данными существующего юзера для редактирования или удаления
      */
     private Uri currentUserUri;
 
@@ -83,7 +83,7 @@ public class UserActivity extends AppCompatActivity {
     private Uri selectedImage;
 
     // путь к сохраненному фото
-    private String userPhotoUri = "No_Photo";
+    private String userPhotoUri, userSetNoPhotoUri = "";
 
     // id пользователя
     private int _id = 0;
@@ -93,16 +93,6 @@ public class UserActivity extends AppCompatActivity {
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-
-    // OnTouchListener для проверки изменений пользователя
-    /*private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
-        @SuppressLint("ClickableViewAccessibility")
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            userHasChanged = true;
-            return false;
-        }
-    };*/
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -125,25 +115,12 @@ public class UserActivity extends AppCompatActivity {
         _id = intent.getIntExtra("_id", 0);
         userPhotoUri = intent.getStringExtra("userPhotoUri");
 
-        //*********
-        //Log.d("saveUserPhoto", "intent userPhotoUri = " + userPhotoUri);
-
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 
         // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
-        /*mLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Если окно открылось в состоянии editUser,
-                // то mLayout будет перекрывать все окно. Иначе mLayout mLayout.setVisibility(View.GONE);
-                Toast.makeText(UserActivity.this,
-                        ToastTextWithIcon(getResources().getDrawable(R.drawable.ic_border_color_white_24dp), getResources().getString(R.string.сlick_edit)),
-                        Toast.LENGTH_LONG).show();
-            }
-        });*/
 
         textViewNoUserPhoto = findViewById(R.id.no_user_photo);
 
@@ -157,8 +134,7 @@ public class UserActivity extends AppCompatActivity {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 imagePhoto.setImageBitmap(myBitmap);
             }
-        }
-        else {
+        } else {
             textViewNoUserPhoto.setVisibility(View.VISIBLE);
         }
 
@@ -168,7 +144,8 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(UserActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    requestStoragePermission();
+                    // Запрашиваем разрешение на чтение и запись фото
+                    MyReadWritePermissionHandler.getReadWritePermission(UserActivity.this, mLayout, PERMISSION_WRITE_EXTERNAL_STORAGE);
                 } else {
                     Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -183,35 +160,30 @@ public class UserActivity extends AppCompatActivity {
         textDeleteUserPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePhoto.setImageResource(R.color.colorAccent);
-                userPhotoUri = "Set_No_Photo";
+                imagePhoto.setImageResource(R.color.colorPrimaryLight);
                 selectedImage = null;
                 textViewNoUserPhoto.setVisibility(View.VISIBLE);
                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-                userHasChangedPhoto = true;
+
+                // если до удаления фото не было, то изменений нет
+                if (userPhotoUri.equals("No_Photo")) {
+                    userHasChangedPhoto = false;
+                } else {
+                    userHasChangedPhoto = true;
+                    userSetNoPhotoUri = "Set_No_Photo";
+                }
             }
         });
 
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
         editTextName = findViewById(R.id.editText_name);
-        //editTextName.setOnTouchListener(mTouchListener);
-
 
         focusHolder = findViewById(R.id.focus_holder);
 
         focusHolder.requestFocus();
 
-        /*if (!newUser) {
-            focusHolder.requestFocus();
-        } else {
-            // если новый пользователь, то выделяем поле ввода и показываем клавиатуру
-            editTextName.requestFocus();
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }*/
-
         textInputLayoutDate = findViewById(R.id.text_input_layout_date);
         editTextDate = findViewById(R.id.editText_date);
-        //editTextDate.setOnTouchListener(mTouchListener);
 
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -270,32 +242,6 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    // запрос разрешения на запись и чтение из и запись в экстернал
-    private void requestStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Snackbar.make(mLayout, R.string.why_need_permission_to_srorage,
-                    Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    ActivityCompat.requestPermissions(UserActivity.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            PERMISSION_WRITE_EXTERNAL_STORAGE);
-                }
-            }).show();
-
-        } else {
-            Snackbar.make(mLayout,
-                    R.string.permission_not_available,
-                    Snackbar.LENGTH_LONG).show();
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -323,7 +269,7 @@ public class UserActivity extends AppCompatActivity {
             selectedImage = data.getData();
 
             if (selectedImage != null) {
-                Picasso.with(this).load(selectedImage).
+                Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
                         resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
@@ -341,16 +287,6 @@ public class UserActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user, menu);
 
-        /*MenuItem itemSave = menu.getItem(0);
-        SpannableString saveTitle = new SpannableString(getResources().getString(R.string.save));
-        saveTitle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccentSecondary)), 0, saveTitle.length(), 0);
-        itemSave.setTitle(saveTitle);
-
-        MenuItem itemEdit = menu.getItem(1);
-        SpannableString editTitle = new SpannableString(getResources().getString(R.string.edit));
-        editTitle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccentSecondary)), 0, editTitle.length(), 0);
-        itemEdit.setTitle(editTitle);*/
-
         menu.removeItem(R.id.action_delete_user);
         // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete_user, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp), getResources().getString(R.string.delete_user)));
@@ -367,15 +303,6 @@ public class UserActivity extends AppCompatActivity {
 
         return sb;
     }
-
-    /*private CharSequence ToastTextWithIcon(Drawable r, String title) {
-        r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
-        SpannableString sb = new SpannableString(title + "    ");
-        ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
-        sb.setSpan(imageSpan, title.length() + 2, title.length() + 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return sb;
-    }*/
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -400,14 +327,12 @@ public class UserActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 // Если не было изменений
-                if (userHasChanged()) {
+                if (userHasNotChanged()) {
                     goToUsersActivity();
                     return true;
                 }
 
                 // Если были изменения
-                //Toast.makeText(this, "User Has Changed", Toast.LENGTH_LONG).show();
-
                 // если выходим без сохранения изменений
                 DialogInterface.OnClickListener discardButtonClickListener =
                         new DialogInterface.OnClickListener() {
@@ -423,10 +348,7 @@ public class UserActivity extends AppCompatActivity {
 
             case R.id.action_save_user:
 
-                if (userHasChanged() && !newUser) {
-                    //goToUsersActivity();
-                    //showNoDataChangeddDialog();
-
+                if (userHasNotChanged() && !newUser) {
                     // скручиваем клавиатуру
                     View viewToHide = this.getCurrentFocus();
                     if (viewToHide != null) {
@@ -444,6 +366,7 @@ public class UserActivity extends AppCompatActivity {
                     editTextDate.setEnabled(false);
                     imagePhoto.setClickable(false);
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
                     invalidateOptionsMenu();
 
                     return true;
@@ -473,10 +396,11 @@ public class UserActivity extends AppCompatActivity {
 
                 editUser = false;
 
-                if (!userPhotoUri.equals("No_Photo")) {
-                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                } else {
+                if (userPhotoUri.equals("No_Photo")) {
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                } else {
+                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
                 }
 
                 invalidateOptionsMenu();
@@ -493,7 +417,7 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (userHasChanged()) {
+        if (userHasNotChanged()) {
             super.onBackPressed();
             return;
         }
@@ -507,66 +431,7 @@ public class UserActivity extends AppCompatActivity {
                 };
 
         showUnsavedChangesDialog(discardButtonClickListener);
-
     }
-
-    /*private void showNoDataEnteredDialog() {
-        // если пытаются сохранить нового пользователя и ничего не вводят
-        // говорим пользователю, что "Данные для сохранения не введены"
-        // спрашиваем "выйти без сохранения или остаться?
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.no_data_entered);
-
-        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                goToUsersActivity();
-            }
-        });
-
-        builder.setNegativeButton(R.string.stay, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }*/
-
-    /*private void showNoDataChangeddDialog() {
-        // если пытаются сохранить нового пользователя и ничего не вводят
-        // говорим пользователю, что "Данные для сохранения не введены"
-        // спрашиваем "выйти без сохранения или остаться?
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.no_data_Changed);
-
-        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (goBackArraw) {
-                    goToDiseasesActivity();
-                } else {
-                    goToUsersActivity();
-                }
-            }
-        });
-
-        builder.setNegativeButton(R.string.stay, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }*/
 
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
@@ -576,7 +441,6 @@ public class UserActivity extends AppCompatActivity {
 
         builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
                 goBack = true;
                 saveUser();
 
@@ -654,13 +518,12 @@ public class UserActivity extends AppCompatActivity {
 
         // в отдельном потоке пишем файл фотки в интернал сторидж
         Thread t = new Thread(new Runnable() {
-
             Bitmap bitmap = null;
 
             @Override
             public void run() {
                 try {
-                    bitmap = Picasso.with(UserActivity.this).
+                    bitmap = Picasso.get().
                             load(selectedImage).
                             resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
                             centerInside().
@@ -668,8 +531,6 @@ public class UserActivity extends AppCompatActivity {
                     if (bitmap != null) {
                         saveUserPhoto(bitmap);
                     } else {
-                        //*********
-                        //Log.d("saveUserPhoto", " bitmap null");
 
                         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
                         if (newUser) {
@@ -698,17 +559,10 @@ public class UserActivity extends AppCompatActivity {
                                 editTextDate.setEnabled(false);
                                 imagePhoto.setClickable(false);
                                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
                                 invalidateOptionsMenu();
                             }
-
-
-                            /*if (goBackArraw) {
-                                goToDiseasesActivity();
-                            } else {
-                                goToUsersActivity();
-                            }*/
                         }
-
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -721,16 +575,17 @@ public class UserActivity extends AppCompatActivity {
 
         } else {
             // если фото было удалено, то удалить файл фото (если он есть)
-            if (userPhotoUri.equals("Set_No_Photo")){
+            if (userSetNoPhotoUri.equals("Set_No_Photo")) {
                 //TODO здесь нужно будет формировать путь к фото по id
                 String pathToPhoto = getString(R.string.pathToPhoto);
                 File imgFile = new File(pathToPhoto);
-               if (imgFile.exists()) {
-                    if (!imgFile.delete()){
+                if (imgFile.exists()) {
+                    if (!imgFile.delete()) {
                         Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
                     }
-
                 }
+
+                userPhotoUri = "No_Photo";
             }
 
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
@@ -761,12 +616,6 @@ public class UserActivity extends AppCompatActivity {
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
                     invalidateOptionsMenu();
                 }
-
-                /* if (goBackArraw) {
-                    goToDiseasesActivity();
-                } else {
-                    goToUsersActivity();
-                }*/
             }
         }
     }
@@ -781,25 +630,16 @@ public class UserActivity extends AppCompatActivity {
         String root = getFilesDir().toString();
         File myDir = new File(root + "/users_photos");
 
-        if (!myDir.mkdirs()){
+        if (!myDir.mkdirs()) {
             Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
         }
-
-        /*long currentTime = Calendar.getInstance().getTimeInMillis();
-
-        //*********
-        Log.d("saveUserPhoto", "currentTime = " + currentTime);*/
-
 
         String fname = "Image-" + _id + ".jpg";
         File file = new File(myDir, fname);
 
-        //*********
-        //Log.d("saveUserPhoto", " file = " + file);
-
         // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
         if (file.exists()) {
-            if (!file.delete()){
+            if (!file.delete()) {
                 Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
             }
         }
@@ -816,8 +656,6 @@ public class UserActivity extends AppCompatActivity {
 
         if (file.exists()) {
             userPhotoUri = file.toString();
-            //*********
-            //Log.d("saveUserPhoto", "userPhotoUri = " + userPhotoUri);
         } else {
             userPhotoUri = "No_Photo";
             Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
@@ -872,41 +710,7 @@ public class UserActivity extends AppCompatActivity {
                     }
                 });
             }
-
-           /* if (goBackArraw) {
-                goToDiseasesActivity();
-            } else {
-                goToUsersActivity();
-            }*/
         }
-
-        // удаление файла и папки
-        /*if (file.exists()) {
-            Log.d("saveUserPhoto", " file exists");
-            file.delete();
-            Log.d("saveUserPhoto", "file Deleted");
-            if (file.exists()) {
-                Log.d("saveUserPhoto", "file exists");
-            } else {
-                Log.d("saveUserPhoto", "file NOT exists");
-            }
-        } else {
-            Log.d("saveUserPhoto", " file NOT exists");
-        }
-
-
-        if (myDir.exists()) {
-            Log.d("saveUserPhoto", "myDir exists");
-            myDir.delete();
-            Log.d("saveUserPhoto", "myDir Deleted");
-            if (myDir.exists()) {
-                Log.d("saveUserPhoto", "myDir exists");
-            } else {
-                Log.d("saveUserPhoto", "myDir NOT exists");
-            }
-        } else {
-            Log.d("saveUserPhoto", "myDir NOT exists");
-        }*/
     }
 
     private void saveUserToDataBase() {
@@ -927,7 +731,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     // проверка на изменения пользователя
-    private boolean userHasChanged() {
+    private boolean userHasNotChanged() {
         return !userHasChangedPhoto &&
                 editTextName.getText().toString().equals(textUserName) &&
                 editTextDate.getText().toString().equals(textUserBirthDate);

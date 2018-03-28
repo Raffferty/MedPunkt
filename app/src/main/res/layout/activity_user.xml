@@ -102,8 +102,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:hint="@string/focusholder"
-        android:inputType="none"
-        android:visibility="invisible" />
+        android:inputType="none" />
 
     <TextView
         android:id="@+id/text_delete_photo"
