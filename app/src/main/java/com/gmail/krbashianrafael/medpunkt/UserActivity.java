@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -70,6 +72,8 @@ public class UserActivity extends AppCompatActivity {
     // фото пользоватлея
     private ImageView imagePhoto;
 
+    private float rotate = 0;
+
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
 
@@ -93,6 +97,8 @@ public class UserActivity extends AppCompatActivity {
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+
+    Context userActivityContext;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -138,10 +144,19 @@ public class UserActivity extends AppCompatActivity {
             textViewNoUserPhoto.setVisibility(View.VISIBLE);
         }
 
-        // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
         imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // скручиваем клавиатуру
+                View view = UserActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+
+                // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
                 if (ActivityCompat.checkSelfPermission(UserActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     // Запрашиваем разрешение на чтение и запись фото
@@ -240,6 +255,8 @@ public class UserActivity extends AppCompatActivity {
         } else if (!editUser && userPhotoUri.equals("No_Photo")) {
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
         }
+
+        //userActivityContext = getContext
     }
 
     @Override
@@ -269,10 +286,15 @@ public class UserActivity extends AppCompatActivity {
             selectedImage = data.getData();
 
             if (selectedImage != null) {
+
+                // получаем угол поворота фотки
+                rotate = getRotationtation(this, selectedImage);
+
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
                         resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
+                        rotate(rotate).
                         centerInside().
                         into(imagePhoto);
 
@@ -281,6 +303,23 @@ public class UserActivity extends AppCompatActivity {
                 textViewNoUserPhoto.setVisibility(View.GONE);
             }
         }
+    }
+
+    // метод для получения оринетации (угол поворота) фотографии
+    private int getRotationtation(Context context, Uri photoUri) {
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            cursor.close();
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        int orientation = cursor.getInt(0);
+        cursor.close();
+        cursor = null;
+        return orientation;
     }
 
     @Override
@@ -523,10 +562,11 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    bitmap = Picasso.get().
-                            load(selectedImage).
+                    // получаем bitmap
+                    bitmap = Picasso.get().load(selectedImage).
                             resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
                             centerInside().
+                            rotate(rotate).
                             get();
                     if (bitmap != null) {
                         saveUserPhoto(bitmap);
@@ -542,7 +582,6 @@ public class UserActivity extends AppCompatActivity {
                             } else {
                                 goToDiseasesActivity();
                             }
-
                         }
                         // если НЕ новый пользователь, то обновляем в базу и
                         // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
@@ -636,6 +675,10 @@ public class UserActivity extends AppCompatActivity {
 
         String fname = "Image-" + _id + ".jpg";
         File file = new File(myDir, fname);
+
+        Log.d("file", "file = " + file);
+        // при этом путь к файлу
+        // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg
 
         // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
         if (file.exists()) {
