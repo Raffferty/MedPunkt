@@ -7,7 +7,6 @@
     <string name="title_activity_users">Пользователи</string>
     <string name="empty_users_text">Список пользователей пуст.\nДобавьте пользователя,\nпожалуйста</string>
     <string name="title_activity_user">Добавить Пользователя</string>
-    <string name="add_user">Добавить пользователя</string>
     <string name="set_photo">Установить Фото</string>
     <string name="user_name">Имя</string>
     <string name="date_of_birth">Дата рождения</string>
@@ -24,7 +23,6 @@
     <!-- Dialog button text for the option to discard a user's changes [CHAR LIMIT=20] -->
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="permission_to_photos_is_available">Доступ к фотографиям разершен</string>
     <string name="why_need_permission_to_storage">Необходим доступ к фотографиям.</string>
     <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>

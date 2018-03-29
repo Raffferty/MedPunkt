@@ -11,12 +11,6 @@ import android.widget.TextView;
 
 public class DiseasesActivity extends AppCompatActivity {
 
-    private String textUserName = null;
-    private String birthDate = null;
-    private String userPhotoUri = "No_Photo";
-    // id пользователя
-    private int _id = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,19 +18,19 @@ public class DiseasesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diseases);
 
         Intent intent = getIntent();
-        textUserName = intent.getStringExtra("UserName");
-        birthDate = intent.getStringExtra("birthDate");
+        String textUserName = intent.getStringExtra("UserName");
+        String birthDate = intent.getStringExtra("birthDate");
         if (intent.hasExtra("userPhotoUri")) {
-            userPhotoUri = intent.getStringExtra("userPhotoUri");
+            String userPhotoUri = intent.getStringExtra("userPhotoUri");
         }
         if (intent.hasExtra("_id")) {
-            _id = intent.getIntExtra("_id", 0);
+            int _id = intent.getIntExtra("_id", 0);
         }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_24dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_36dp);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
@@ -58,8 +52,8 @@ public class DiseasesActivity extends AppCompatActivity {
 
         // это сейчас видимо
         // сделать не видимым, когда будет хоть одно заболевание
-        TextView textViewAddDiseas = findViewById(R.id.txt_empty_diseases);
-        textViewAddDiseas.setOnClickListener(new View.OnClickListener() {
+        TextView textViewAddDisease = findViewById(R.id.txt_empty_diseases);
+        textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             //TODO открывать окно добавить заболевание
             @Override
             public void onClick(View v) {

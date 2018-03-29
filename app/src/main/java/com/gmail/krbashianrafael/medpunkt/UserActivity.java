@@ -46,20 +46,11 @@ import java.io.IOException;
 
 
 public class UserActivity extends AppCompatActivity {
-    /**
-     * Content URI for the existing user (null if it's a new user)
-     * если в onCreate НЕ пришел Uri, то mCurrentPetUri будет null и откроется окно для добавления новго юзера
-     * иначе, откроется окно с данными существующего юзера для редактирования или удаления
-     */
-    private Uri currentUserUri;
 
     // возможность изменфть пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean newUser, goBack, editUser, userHasChangedPhoto;
 
     private ActionBar actionBar;
-
-    // имя и дата рождени пришедшие из DiseasesActivity
-    //private String textForUserActivityTitle, textForUserActivitybirthDate;
 
     // имя и дата рождени полей UserActivity
     private String textUserName, textUserBirthDate;
@@ -98,8 +89,6 @@ public class UserActivity extends AppCompatActivity {
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
-    Context userActivityContext;
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,11 +100,15 @@ public class UserActivity extends AppCompatActivity {
         // получаем переданный в интенте Uri,
         // есл intent.getData(); вернул null, значит это новый пользователь
         // в дальнейшем значение currentUserUri заменит значение newUser
-        currentUserUri = intent.getData();
+        /*
+      Content URI for the existing user (null if it's a new user)
+      если в onCreate НЕ пришел Uri, то mCurrentPetUri будет null и откроется окно для добавления новго юзера
+      иначе, откроется окно с данными существующего юзера для редактирования или удаления
+     */
+        Uri currentUserUri = intent.getData();
         newUser = intent.getBooleanExtra("newUser", false);
 
         editUser = intent.getBooleanExtra("editUser", false);
-        //goBackArraw = intent.getBooleanExtra("goBackArraw", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
         _id = intent.getIntExtra("_id", 0);
@@ -227,7 +220,7 @@ public class UserActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_36dp);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
@@ -288,7 +281,7 @@ public class UserActivity extends AppCompatActivity {
             if (selectedImage != null) {
 
                 // получаем угол поворота фотки
-                rotate = getRotationtation(this, selectedImage);
+                rotate = getRotation(this, selectedImage);
 
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
@@ -306,11 +299,11 @@ public class UserActivity extends AppCompatActivity {
     }
 
     // метод для получения оринетации (угол поворота) фотографии
-    private int getRotationtation(Context context, Uri photoUri) {
+    private int getRotation(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
-        if (cursor.getCount() != 1) {
+        if (cursor != null && cursor.getCount() != 1) {
             cursor.close();
             return -1;
         }
@@ -584,7 +577,6 @@ public class UserActivity extends AppCompatActivity {
                             }
                         }
                         // если НЕ новый пользователь, то обновляем в базу и
-                        // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
                         else {
                             updateUserToDataBase();
                             Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
@@ -639,7 +631,6 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
             // если НЕ новый пользователь, то обновляем в базу и
-            // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
             else {
                 updateUserToDataBase();
                 Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
@@ -673,8 +664,8 @@ public class UserActivity extends AppCompatActivity {
             Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
         }
 
-        String fname = "Image-" + _id + ".jpg";
-        File file = new File(myDir, fname);
+        String fileName = "Image-" + _id + ".jpg";
+        File file = new File(myDir, fileName);
 
         Log.d("file", "file = " + file);
         // при этом путь к файлу
@@ -722,7 +713,6 @@ public class UserActivity extends AppCompatActivity {
             }
         }
         // если НЕ новый пользователь, то обновляем в базу и
-        // если goBackArraw идем в DiseasesActivity, иначе - в UsersActivity
         else {
             updateUserToDataBase();
 

@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="16dp"
-        android:drawableBottom="@drawable/ic_add_circle_orange_64dp"
+        android:drawableBottom="@drawable/ic_add_circle_orange_80dp"
         android:gravity="center"
         android:text="@string/empty_diseases_text"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
@@ -41,7 +41,6 @@
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/diseasesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_diseases"
@@ -54,7 +53,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add_white_36dp"
+        android:src="@drawable/ic_add_white_64dp"
         android:visibility="invisible"
         app:backgroundTint="@color/colorFab"
         tools:visibility="visible" />

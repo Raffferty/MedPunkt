@@ -6,6 +6,6 @@
         android:id="@+id/action_enter"
         android:orderInCategory="100"
         android:title="@string/action_enter"
-        android:icon="@drawable/ic_input_white_48dp"
+        android:icon="@drawable/ic_input_white_64dp"
         app:showAsAction="always" />
 </menu>

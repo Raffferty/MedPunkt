@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class DatePickerFragment extends DialogFragment
@@ -25,12 +26,12 @@ public class DatePickerFragment extends DialogFragment
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(Objects.requireNonNull(getActivity()), this, year, month, day);
     }
 
     @Override
     public void onDateSet(@NonNull DatePicker view, int year, int month, int day) {
-        EditText txtDate = getActivity().findViewById(R.id.editText_date);
+        EditText txtDate = Objects.requireNonNull(getActivity()).findViewById(R.id.editText_date);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         GregorianCalendar date = new GregorianCalendar(year,month,day);
         txtDate.setText(simpleDateFormat.format(date.getTime()));

@@ -54,7 +54,7 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         // начало ------ Фиктивниый юзер с фото
-        LinearLayout linearLayoutReciclerViewItem = findViewById(R.id.recycler_view_item);
+        LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
         ImageView userImage = findViewById(R.id.user_image);
         String pathToPhoto = getString(R.string.pathToPhoto);
         File imgFile = new File(pathToPhoto);
@@ -72,7 +72,7 @@ public class UsersActivity extends AppCompatActivity {
         final String finalPathToPhoto = pathToPhoto;
 
         // нажатие на юзера
-        linearLayoutReciclerViewItem.setOnClickListener(new View.OnClickListener() {
+        linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, DiseasesActivity.class);

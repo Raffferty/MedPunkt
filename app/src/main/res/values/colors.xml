@@ -8,7 +8,5 @@
     <color name="colorAccentSecondary">#ff4081</color>
     <color name="colorAccentThird">#ffff00</color>
     <color name="colorDivider">#76ff03</color>
-    <color name="colorEditText">#212121</color>
-    <color name="colorEditTextError">#fff9c4</color>
 
 </resources>

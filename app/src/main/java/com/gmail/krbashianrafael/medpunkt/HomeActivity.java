@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
 
-    public static final String PREFS_NAME = "PREFS";
+    private static final String PREFS_NAME = "PREFS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.hospital);
+            actionBar.setHomeAsUpIndicator(R.drawable.med_round_40dp);
         }
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
