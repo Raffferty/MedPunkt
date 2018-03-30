@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
-     <ImageView
+    <ImageView
         android:id="@+id/image_photo"
         android:layout_width="0dp"
         android:layout_height="200dp"
@@ -15,8 +15,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:clickable="true"
-        android:focusable="true"
         android:contentDescription="@string/user_photo_placeholder"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -49,8 +49,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:hint="@string/user_name"
+        android:textColorHint="@color/colorPrimaryDark"
         app:errorEnabled="true"
-        app:hintTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:hintTextAppearance="@style/Lable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_photo">
@@ -62,7 +63,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textPersonName|textCapWords"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -77,8 +78,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:hint="@string/date_of_birth"
+        android:textColorHint="@color/colorPrimaryDark"
         app:errorEnabled="true"
-        app:hintTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:hintTextAppearance="@style/Lable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_name">
@@ -90,7 +92,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="date"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -112,6 +114,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/delete_photo"
         android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_photo" />
 

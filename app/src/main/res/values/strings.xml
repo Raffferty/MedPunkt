@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MedPunkt</string>
+    <string name="title_activity_home">\tMedPunkt</string>
     <string name="greeting">Приложение MedPunkt поможет Вам запомнить когда и чем Вы болели и как лечились.
                             \n\n\Добро пожаловть!</string>
     <string name="action_enter">enter</string>
@@ -28,8 +29,8 @@
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
     <string name="cant_save_photo">Фотографию не удалось сохранитжь</string>
     <string name="pathToPhoto">/data/user/0/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg</string>
-    <string name="error_name">Укажите имя, пожалуйста</string>
-    <string name="error_date">Укажите дату рождения, пожалуйста</string>
+    <string name="error_name">Укажите имя</string>
+    <string name="error_date">Укажите дату рождения</string>
     <string name="focusholder">focusHolder</string>
     <string name="user_photo_placeholder">user_photo_placeholder</string>
     <string name="usr_edit_img">usr_edit_img</string>

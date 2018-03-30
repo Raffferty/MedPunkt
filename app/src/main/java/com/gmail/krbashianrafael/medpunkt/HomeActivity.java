@@ -4,6 +4,7 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +33,17 @@ public class HomeActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.med_round_40dp);
+            // иконка видна, но не нажимается
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setTitle(R.string.title_activity_home);
+
+            // для версий начиная с Nougat	7.1	API level 25 исползуются круглые икнонки
+            if (Build.VERSION.SDK_INT >= 25){
+                actionBar.setIcon(R.drawable.med_round_40dp);
+            }
+            else {
+                actionBar.setIcon(R.drawable.med_rect_40dp);
+            }
         }
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);

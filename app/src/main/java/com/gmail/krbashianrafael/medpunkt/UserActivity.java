@@ -183,16 +183,25 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        focusHolder = findViewById(R.id.focus_holder);
+        focusHolder.requestFocus();
+
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
         editTextName = findViewById(R.id.editText_name);
+        editTextName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    textInputLayoutName.setError(null);
+                }
 
-        focusHolder = findViewById(R.id.focus_holder);
+            }
+        });
 
-        focusHolder.requestFocus();
+
 
         textInputLayoutDate = findViewById(R.id.text_input_layout_date);
         editTextDate = findViewById(R.id.editText_date);
-
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -206,6 +215,8 @@ public class UserActivity extends AppCompatActivity {
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                     }
+
+                    textInputLayoutDate.setError(null);
 
                     // передаем фокус, чтоб поля имени и ДР не были в фокусе
                     focusHolder.requestFocus();
@@ -364,6 +375,9 @@ public class UserActivity extends AppCompatActivity {
                     return true;
                 }
 
+                textInputLayoutName.setError(null);
+                textInputLayoutDate.setError(null);
+
                 // Если были изменения
                 // если выходим без сохранения изменений
                 DialogInterface.OnClickListener discardButtonClickListener =
@@ -454,6 +468,9 @@ public class UserActivity extends AppCompatActivity {
             return;
         }
 
+        textInputLayoutName.setError(null);
+        textInputLayoutDate.setError(null);
+
         DialogInterface.OnClickListener discardButtonClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -488,7 +505,7 @@ public class UserActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void saveUser() {
+    private void saveUser()  {
 
         String nameToCheck = editTextName.getText().toString().trim();
         String birthDateToCheck = editTextDate.getText().toString();
@@ -497,7 +514,7 @@ public class UserActivity extends AppCompatActivity {
         boolean wrongField = false;
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutName.setError(getString(R.string.error_name));
-            editTextName.requestFocus();
+            focusHolder.requestFocus();
             wrongField = true;
         } else {
             textInputLayoutName.setError(null);
@@ -505,11 +522,7 @@ public class UserActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(birthDateToCheck)) {
             textInputLayoutDate.setError(getString(R.string.error_date));
-            if (wrongField) {
-                editTextName.requestFocus();
-            } else {
-                focusHolder.requestFocus();
-            }
+            focusHolder.requestFocus();
             wrongField = true;
         } else {
             textInputLayoutDate.setError(null);
