@@ -14,6 +14,54 @@
 
     </FrameLayout>
 
+    <!-- начало Фиктивная болезнь -->
+
+    <LinearLayout
+        android:id="@+id/recycler_diseases_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_below="@+id/txt_diseases">
+
+            <TextView
+                android:id="@+id/recycler_diseases_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="01.02.2018"
+                android:drawableBottom="@drawable/ic_local_hotel_blue_24dp"
+
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@color/colorPrimaryDark"/>
+
+            <TextView
+                android:id="@+id/recycler_diseases_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="Грипп"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/disease_item_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- конец Фиктивная болезнь -->
+
+    <!-- этот фрейм убрать -->
+    <FrameLayout
+        android:id="@+id/divider_frame_blue2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/recycler_diseases_item"
+        android:background="#c7c7c7" />
+
     <TextView
         android:id="@+id/txt_diseases"
         android:layout_width="match_parent"
@@ -26,7 +74,6 @@
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
-
     <TextView
         android:id="@+id/txt_empty_diseases"
         android:layout_width="wrap_content"
@@ -37,13 +84,14 @@
         android:gravity="center"
         android:text="@string/empty_diseases_text"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/darker_gray" />
-
+        android:textColor="@android:color/darker_gray"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txt_diseases"
+        android:layout_below="@id/divider_frame_blue2"
         android:layout_margin="8dp" />
 
     <android.support.design.widget.FloatingActionButton
@@ -54,8 +102,6 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_64dp"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorFab"
-        tools:visibility="visible" />
+        app:backgroundTint="@color/colorFab"/>
 
 </RelativeLayout>

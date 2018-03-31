@@ -7,10 +7,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DiseasesActivity extends AppCompatActivity {
 
+    private static String textUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +20,9 @@ public class DiseasesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diseases);
 
         Intent intent = getIntent();
-        String textUserName = intent.getStringExtra("UserName");
+        if (intent.hasExtra("UserName")){
+            textUserName = intent.getStringExtra("UserName");
+        }
         String birthDate = intent.getStringExtra("birthDate");
         if (intent.hasExtra("userPhotoUri")) {
             String userPhotoUri = intent.getStringExtra("userPhotoUri");
@@ -39,6 +43,16 @@ public class DiseasesActivity extends AppCompatActivity {
             }
         }
 
+        //final TextView recyclerDiseasesItemDate = findViewById(R.id.recycler_diseases_item_date);
+        LinearLayout recyclerDiseasesItem = findViewById(R.id.recycler_diseases_item);
+        recyclerDiseasesItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                startActivity(treatmentIntent);
+            }
+        });
+
         // это сейчас не видимо
         // сделать видимым, когда будет хоть одно заболевание
         FloatingActionButton fabAddDisease = findViewById(R.id.fabAddDisease);
@@ -46,7 +60,8 @@ public class DiseasesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO открывать окно добавить заболевание
-
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                startActivity(treatmentIntent);
             }
         });
 
@@ -57,7 +72,8 @@ public class DiseasesActivity extends AppCompatActivity {
             //TODO открывать окно добавить заболевание
             @Override
             public void onClick(View v) {
-
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                startActivity(treatmentIntent);
             }
         });
     }

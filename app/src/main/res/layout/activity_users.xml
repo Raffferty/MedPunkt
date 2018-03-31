@@ -63,43 +63,37 @@
         </LinearLayout>
 
         <FrameLayout
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="6dp"
-            android:background="@color/colorAccent"></FrameLayout>
-
-        <FrameLayout
             android:id="@+id/user_item_edit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="8dp"
                 android:contentDescription="@string/usr_edit_img"
-                android:src="@drawable/ic_border_color_blue_24dp" />
+                android:src="@drawable/ic_info_outline_blue_48dp" />
 
         </FrameLayout>
 
         <TextView
+            android:id="@+id/user_item_id"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
     <!-- конец Фиктивный юзер -->
 
-
+    <!-- этот фрейм убрать -->
     <FrameLayout
         android:id="@+id/divider_frame_blue2"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_below="@+id/recycler_view_item"
-        android:background="@color/colorPrimary" />
+        android:background="#c7c7c7" />
 
     <TextView
         android:id="@+id/txt_empty_users"

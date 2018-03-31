@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -199,7 +200,6 @@ public class UserActivity extends AppCompatActivity {
         });
 
 
-
         textInputLayoutDate = findViewById(R.id.text_input_layout_date);
         editTextDate = findViewById(R.id.editText_date);
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -314,12 +314,15 @@ public class UserActivity extends AppCompatActivity {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
-        if (cursor != null && cursor.getCount() != 1) {
-            cursor.close();
-            return -1;
+        if (cursor != null) {
+            if (cursor.getCount() != 1) {
+                cursor.close();
+                return -1;
+            }
+
+            cursor.moveToFirst();
         }
 
-        cursor.moveToFirst();
         int orientation = cursor.getInt(0);
         cursor.close();
         cursor = null;
@@ -505,7 +508,11 @@ public class UserActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void saveUser()  {
+    private void saveUser() {
+
+        // устанавливаем анимацию на случай Error
+        ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
+        scaleAnimation.setDuration(200);
 
         String nameToCheck = editTextName.getText().toString().trim();
         String birthDateToCheck = editTextDate.getText().toString();
@@ -515,6 +522,7 @@ public class UserActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutName.setError(getString(R.string.error_name));
             focusHolder.requestFocus();
+            editTextName.startAnimation(scaleAnimation);
             wrongField = true;
         } else {
             textInputLayoutName.setError(null);
@@ -523,6 +531,7 @@ public class UserActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(birthDateToCheck)) {
             textInputLayoutDate.setError(getString(R.string.error_date));
             focusHolder.requestFocus();
+            editTextDate.startAnimation(scaleAnimation);
             wrongField = true;
         } else {
             textInputLayoutDate.setError(null);

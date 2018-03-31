@@ -35,5 +35,6 @@
     <string name="user_photo_placeholder">user_photo_placeholder</string>
     <string name="usr_edit_img">usr_edit_img</string>
     <string name="file_not_deleted">Файл фото не удалился</string>
+    <string name="title_activity_treatment">Добавить чем болел</string>
 
 </resources>
