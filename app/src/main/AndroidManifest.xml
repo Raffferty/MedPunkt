@@ -33,9 +33,21 @@
             android:name=".DiseasesActivity"
             android:label="@string/title_activity_diseases"
             android:screenOrientation="portrait" />
-        <activity android:name=".TreatmentActivity"
+        <activity
+            android:name=".TreatmentActivity"
             android:label="@string/title_activity_treatment"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".TreatmentPhotoActivity"
+            android:label="Treatment Photo">
+
+            <intent-filter android:label="@string/filter_title_view_treatmentphotoactivity">
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="com.gmail.krbashianrafael.medpunkt"
+                    android:host="treatment" />
+
+            </intent-filter>
         </activity>
     </application>
 
