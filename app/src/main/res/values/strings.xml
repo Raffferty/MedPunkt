@@ -37,5 +37,8 @@
     <string name="file_not_deleted">Файл фото не удалился</string>
     <string name="title_activity_treatment">Добавить чем болел</string>
     <string name="filter_title_view_treatmentphotoactivity">filter_title_view_treatmentphotoactivity</string>
+    <string name="disease_name">Название заболевания</string>
+    <string name="disease_date">Дата лечения</string>
+    <string name="txt_title_treatmen">Лечение</string>
 
 </resources>
