@@ -2,10 +2,15 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.text.util.Linkify;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -105,15 +110,28 @@ public class TreatmentActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_treatment, menu);
+
+        menu.removeItem(R.id.action_delete_treatment);
+        // добавление в меню текста с картинкой
+        menu.add(0, R.id.action_delete_treatment, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp), getResources().getString(R.string.delete_user)));
+
+        return true;
+    }
+
     // SpannableString с картикной для элеменов меню
-   /* private CharSequence menuIconWithText(Drawable r, String title) {
+   private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
         ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
-    }*/
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

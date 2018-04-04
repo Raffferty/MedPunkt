@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -32,8 +33,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -260,7 +264,64 @@ public class UserActivity extends AppCompatActivity {
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
         }
 
-        //userActivityContext = getContext
+        /*ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
+        scaleAnimation.setDuration(200);*/
+
+        /*final TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,0f,100f);
+        translateAnimation.setDuration(500);*/
+
+        Button button = findViewById(R.id.button);
+        final FloatingActionButton fab = findViewById(R.id.fabEditUser);
+
+        final Animation fabHide = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
+        fabHide.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fab.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        final Animation fabShow = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        fabShow.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                fab.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fab.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                fab.setVisibility(View.VISIBLE);
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fab.startAnimation(fabHide);
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fab.startAnimation(fabShow);
+            }
+        });
+
+        fab.startAnimation(fabShow);
     }
 
     @Override
