@@ -76,7 +76,7 @@ public class UsersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
-                userIntent.putExtra("_id", 1);
+                userIntent.putExtra("_idUser", 1);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");
                 userIntent.putExtra("userPhotoUri", finalPathToPhoto);
@@ -92,7 +92,7 @@ public class UsersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
-                userIntent.putExtra("_id", 1);
+                userIntent.putExtra("_idUser", 1);
                 userIntent.putExtra("editUser", true);
                 userIntent.putExtra("UserName", "Вася");
                 userIntent.putExtra("birthDate", "11.03.1968");

@@ -1,15 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.io.File;
 
 public class TreatmentPhotoActivity extends AppCompatActivity {
 
@@ -18,7 +10,7 @@ public class TreatmentPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_treatment_photo);
 
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         Uri data = intent.getData();
 
         TextView TextView = findViewById(R.id.m_textView);
@@ -38,7 +30,7 @@ public class TreatmentPhotoActivity extends AppCompatActivity {
         if (imgFile.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imageView.setImageBitmap(myBitmap);
-        }
+        }*/
 
     }
 }

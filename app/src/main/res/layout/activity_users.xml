@@ -11,7 +11,7 @@
         android:id="@+id/divider_frame_green"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorDivider" />
+        android:background="@color/colorAccentThird" />
 
     <FrameLayout
         android:layout_width="match_parent"

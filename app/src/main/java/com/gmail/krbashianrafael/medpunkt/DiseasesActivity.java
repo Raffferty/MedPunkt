@@ -12,7 +12,10 @@ import android.widget.TextView;
 
 public class DiseasesActivity extends AppCompatActivity {
 
+    private int _idUser = 0;
+
     private static String textUserName;
+    private String userPhotoUri, birthDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,21 +23,26 @@ public class DiseasesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diseases);
 
         Intent intent = getIntent();
+
         if (intent.hasExtra("UserName")){
             textUserName = intent.getStringExtra("UserName");
         }
-        String birthDate = intent.getStringExtra("birthDate");
+
+        birthDate = intent.getStringExtra("birthDate");
+
         if (intent.hasExtra("userPhotoUri")) {
-            String userPhotoUri = intent.getStringExtra("userPhotoUri");
+            userPhotoUri = intent.getStringExtra("userPhotoUri");
         }
-        if (intent.hasExtra("_id")) {
-            int _id = intent.getIntExtra("_id", 0);
+
+        if (intent.hasExtra("_idUser")) {
+            _idUser = intent.getIntExtra("_idUser", 0);
         }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_36dp);
+            actionBar.setElevation(0);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
@@ -43,12 +51,16 @@ public class DiseasesActivity extends AppCompatActivity {
             }
         }
 
-        //final TextView recyclerDiseasesItemDate = findViewById(R.id.recycler_diseases_item_date);
+        // фиктивное заболевание
         LinearLayout recyclerDiseasesItem = findViewById(R.id.recycler_diseases_item);
         recyclerDiseasesItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                treatmentIntent.putExtra("_idDisease", 1);
+                treatmentIntent.putExtra("editDisease", true);
+                treatmentIntent.putExtra("diseaseName", "Грипп");
+
                 startActivity(treatmentIntent);
             }
         });
@@ -59,8 +71,8 @@ public class DiseasesActivity extends AppCompatActivity {
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO открывать окно добавить заболевание
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                treatmentIntent.putExtra("newDisease", true);
                 startActivity(treatmentIntent);
             }
         });
@@ -73,6 +85,7 @@ public class DiseasesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                treatmentIntent.putExtra("newDisease", true);
                 startActivity(treatmentIntent);
             }
         });

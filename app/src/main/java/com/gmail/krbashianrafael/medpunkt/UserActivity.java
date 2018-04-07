@@ -37,7 +37,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,7 +57,8 @@ public class UserActivity extends AppCompatActivity {
     private ActionBar actionBar;
 
     // имя и дата рождени полей UserActivity
-    private String textUserName, textUserBirthDate;
+    private String textUserName = "";
+    private String textUserBirthDate = "";
 
     // поля имени, ДР и focusHolder
     private TextInputLayout textInputLayoutName, textInputLayoutDate;
@@ -68,6 +68,7 @@ public class UserActivity extends AppCompatActivity {
     // фото пользоватлея
     private ImageView imagePhoto;
 
+    // угол поворота фотографии
     private float rotate = 0;
 
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
@@ -86,10 +87,25 @@ public class UserActivity extends AppCompatActivity {
     private String userPhotoUri, userSetNoPhotoUri = "";
 
     // id пользователя
-    private int _id = 0;
+    private int _idUser = 0;
 
     // View mLayout для привязки snackbar
     private View mLayout;
+
+    // fab
+    private FloatingActionButton fab;
+
+    // Animation fabHideAnimation
+    private Animation fabHideAnimation;
+
+    // Animation fabShowAnimation
+    private Animation fabShowAnimation;
+
+    // элемент меню "сохранить"
+    TextView menuItemSaveView;
+
+    // Animation saveShowAnimation
+    private Animation saveShowAnimation;
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
@@ -111,17 +127,15 @@ public class UserActivity extends AppCompatActivity {
       иначе, откроется окно с данными существующего юзера для редактирования или удаления
      */
         Uri currentUserUri = intent.getData();
+        _idUser = intent.getIntExtra("_idUser", 0);
         newUser = intent.getBooleanExtra("newUser", false);
-
         editUser = intent.getBooleanExtra("editUser", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
-        _id = intent.getIntExtra("_id", 0);
         userPhotoUri = intent.getStringExtra("userPhotoUri");
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
 
         // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
@@ -189,7 +203,6 @@ public class UserActivity extends AppCompatActivity {
         });
 
         focusHolder = findViewById(R.id.focus_holder);
-        focusHolder.requestFocus();
 
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
         editTextName = findViewById(R.id.editText_name);
@@ -203,14 +216,12 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-
         textInputLayoutDate = findViewById(R.id.text_input_layout_date);
         editTextDate = findViewById(R.id.editText_date);
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-
                     // скручиваем клавиатуру
                     View view = UserActivity.this.getCurrentFocus();
                     if (view != null) {
@@ -240,41 +251,20 @@ public class UserActivity extends AppCompatActivity {
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
                 editTextName.setText(textUserName);
-            } else {
-                textUserName = "";
             }
         }
 
         if (textUserBirthDate != null) {
             editTextDate.setText(textUserBirthDate);
-        } else {
-            textUserBirthDate = "";
         }
 
-        // если окно отрылось как просмотр профиля,
-        // то редактирование запрещено
-        // если редактировать можно, но нет фото, то и удалять не нужно
-        if (editUser) {
-            editTextName.setEnabled(false);
-            editTextDate.setEnabled(false);
-            imagePhoto.setClickable(false);
-            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-            mLayout.setVisibility(View.VISIBLE);
-        } else if (!editUser && userPhotoUri.equals("No_Photo")) {
-            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-        }
+        // анимация для элемента меню "сохранить"
+        saveShowAnimation = AnimationUtils.loadAnimation(this, R.anim.save_show);
 
-        /*ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
-        scaleAnimation.setDuration(200);*/
+        fab = findViewById(R.id.fabEditUser);
 
-        /*final TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,0f,100f);
-        translateAnimation.setDuration(500);*/
-
-        Button button = findViewById(R.id.button);
-        final FloatingActionButton fab = findViewById(R.id.fabEditUser);
-
-        final Animation fabHide = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
-        fabHide.setAnimationListener(new Animation.AnimationListener() {
+        fabHideAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
+        fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
             }
@@ -289,8 +279,8 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        final Animation fabShow = AnimationUtils.loadAnimation(this, R.anim.fab_show);
-        fabShow.setAnimationListener(new Animation.AnimationListener() {
+        fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 fab.setVisibility(View.VISIBLE);
@@ -310,18 +300,40 @@ public class UserActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fab.startAnimation(fabHide);
+                fab.startAnimation(fabHideAnimation);
+
+                editTextName.setEnabled(true);
+                editTextName.requestFocus();
+
+                // устанавливаем курсор в конец строки (cursor)
+                editTextName.setSelection(editTextName.getText().length());
+                editTextDate.setEnabled(true);
+                imagePhoto.setClickable(true);
+
+                editUser = false;
+
+                if (userPhotoUri.equals("No_Photo")) {
+                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+                } else {
+                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
+                }
+
+                invalidateOptionsMenu();
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fab.startAnimation(fabShow);
-            }
-        });
-
-        fab.startAnimation(fabShow);
+        // если окно отрылось как просмотр профиля,
+        // то редактирование запрещено
+        // если редактировать можно, но нет фото, то и удалять не нужно
+        if (editUser) {
+            editTextName.setEnabled(false);
+            editTextDate.setEnabled(false);
+            imagePhoto.setClickable(false);
+            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+            fab.startAnimation(fabShowAnimation);
+        } else if (userPhotoUri.equals("No_Photo")) {
+            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -335,8 +347,7 @@ public class UserActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             } else {
                 Snackbar.make(mLayout, R.string.permission_was_denied,
-                        Snackbar.LENGTH_LONG)
-                        .show();
+                        Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -347,11 +358,9 @@ public class UserActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-
             selectedImage = data.getData();
 
             if (selectedImage != null) {
-
                 // получаем угол поворота фотки
                 rotate = getRotation(this, selectedImage);
 
@@ -371,6 +380,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     // метод для получения оринетации (угол поворота) фотографии
+    // т.к. Picasso все фото вставляет боком, то нужно поворачивать на нужный угол
     private int getRotation(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
@@ -415,14 +425,65 @@ public class UserActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        // если в состоянии editUser (тоесть есть кнопка fab со значком редактирования)
+        // то в меню элемент "сохранить" делаем не видимым
+        // видимым остается "удалить"
         if (editUser) {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
-            MenuItem menuItemEdit = menu.getItem(2);
+
+            // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
-            menuItemEdit.setVisible(false);
             menuItemDelete.setVisible(false);
+
+            // и создаем ActionView на основе элемента меню "сохранить" для применени анимации save_show
+            // т.к. в menu_user элемент "сохранить" имеет атрибут
+            // app:actionViewClass="android.widget.TextView"
+            // то menuItemSave.getActionView() возвращает TextView
+            // с которым и проделываем дальнейшие трансформации:
+            // устанавливаем текст, размер шрифта, цвет шрифта, анимацию и слушатель нажатия
+            // текст берем из R.string.save, где присутствует юникодовский пробел \u2000
+            // иначе после слова "сохранить" обычные пробелы автоматически убираются
+            // и слово вплотную прилегает к краю экрана
+            MenuItem menuItemSave = menu.getItem(1);
+            menuItemSaveView = (TextView) menuItemSave.getActionView();
+            menuItemSaveView.setText(R.string.save);
+            menuItemSaveView.setTextSize(18f);
+            menuItemSaveView.setTextColor(getResources().getColor(R.color.colorAccentThird));
+
+            menuItemSaveView.startAnimation(saveShowAnimation);
+
+            menuItemSaveView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (userHasNotChanged() && !newUser) {
+                        // скручиваем клавиатуру
+                        View viewToHide = getCurrentFocus();
+                        if (viewToHide != null) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.hideSoftInputFromWindow(viewToHide
+                                        .getWindowToken(), 0);
+                            }
+                        }
+
+                        focusHolder.requestFocus();
+
+                        editUser = true;
+                        editTextName.setEnabled(false);
+                        editTextDate.setEnabled(false);
+                        imagePhoto.setClickable(false);
+                        textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                        invalidateOptionsMenu();
+                        fab.startAnimation(fabShowAnimation);
+
+                    } else {
+                        saveUser();
+                    }
+                }
+            });
         }
 
         return true;
@@ -454,66 +515,6 @@ public class UserActivity extends AppCompatActivity {
 
                 // если выходим с сохранением изменений
                 showUnsavedChangesDialog(discardButtonClickListener);
-                return true;
-
-            case R.id.action_save_user:
-
-                if (userHasNotChanged() && !newUser) {
-                    // скручиваем клавиатуру
-                    View viewToHide = this.getCurrentFocus();
-                    if (viewToHide != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(viewToHide
-                                    .getWindowToken(), 0);
-                        }
-                    }
-
-                    focusHolder.requestFocus();
-
-                    editUser = true;
-                    editTextName.setEnabled(false);
-                    editTextDate.setEnabled(false);
-                    imagePhoto.setClickable(false);
-                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                    invalidateOptionsMenu();
-
-                    return true;
-                }
-
-                saveUser();
-
-                return true;
-
-            case R.id.action_edit_user:
-                editTextName.setEnabled(true);
-                editTextName.requestFocus();
-                // устанавливаем курсор в конец строки (cursor)
-                editTextName.setSelection(editTextName.getText().length());
-
-                // показываем клавиатуру
-                View viewToShow = this.getCurrentFocus();
-                if (viewToShow != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.showSoftInput(viewToShow, 0);
-                    }
-                }
-
-                editTextDate.setEnabled(true);
-                imagePhoto.setClickable(true);
-
-                editUser = false;
-
-                if (userPhotoUri.equals("No_Photo")) {
-                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                } else {
-                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                }
-
-                invalidateOptionsMenu();
                 return true;
 
             case R.id.action_delete_user:
@@ -629,7 +630,7 @@ public class UserActivity extends AppCompatActivity {
         // далее, если фото будет выбрано, то дописываем путь к фото в базу с именем файла содержащим _id пользователя
         // в данном случае присваиваем фейковый _id = 1
 
-        _id = 1;
+        _idUser = 1;
 
         // в отдельном потоке пишем файл фотки в интернал сторидж
         Thread t = new Thread(new Runnable() {
@@ -675,6 +676,7 @@ public class UserActivity extends AppCompatActivity {
                                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
                                 invalidateOptionsMenu();
+                                fab.startAnimation(fabShowAnimation);
                             }
                         }
                     }
@@ -727,7 +729,9 @@ public class UserActivity extends AppCompatActivity {
                     editTextDate.setEnabled(false);
                     imagePhoto.setClickable(false);
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
                     invalidateOptionsMenu();
+                    fab.startAnimation(fabShowAnimation);
                 }
             }
         }
@@ -747,10 +751,10 @@ public class UserActivity extends AppCompatActivity {
             Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
         }
 
-        String fileName = "Image-" + _id + ".jpg";
+        String fileName = "Image-" + _idUser + ".jpg";
         File file = new File(myDir, fileName);
 
-        Log.d("file", "file = " + file);
+        //Log.d("file", "file = " + file);
         // при этом путь к файлу
         // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg
 
@@ -819,6 +823,7 @@ public class UserActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        fab.startAnimation(fabShowAnimation);
                         editTextName.setEnabled(false);
                         editTextDate.setEnabled(false);
                         imagePhoto.setClickable(false);
@@ -856,7 +861,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void goToDiseasesActivity() {
         Intent intent = new Intent(UserActivity.this, DiseasesActivity.class);
-        intent.putExtra("_id", _id);
+        intent.putExtra("_idUser", _idUser);
         intent.putExtra("UserName", textUserName);
         intent.putExtra("birthDate", textUserBirthDate);
         intent.putExtra("userPhotoUri", userPhotoUri);
