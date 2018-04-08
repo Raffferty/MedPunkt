@@ -160,13 +160,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // скручиваем клавиатуру
-                View view = UserActivity.this.getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
+                hideSoftInput();
 
                 // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
                 if (ActivityCompat.checkSelfPermission(UserActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -223,13 +217,7 @@ public class UserActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     // скручиваем клавиатуру
-                    View view = UserActivity.this.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                        }
-                    }
+                    hideSoftInput();
 
                     textInputLayoutDate.setError(null);
 
@@ -459,14 +447,7 @@ public class UserActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (userHasNotChanged() && !newUser) {
                         // скручиваем клавиатуру
-                        View viewToHide = getCurrentFocus();
-                        if (viewToHide != null) {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            if (imm != null) {
-                                imm.hideSoftInputFromWindow(viewToHide
-                                        .getWindowToken(), 0);
-                            }
-                        }
+                        hideSoftInput();
 
                         focusHolder.requestFocus();
 
@@ -571,7 +552,6 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void saveUser() {
-
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
@@ -599,22 +579,15 @@ public class UserActivity extends AppCompatActivity {
             textInputLayoutDate.setError(null);
         }
 
-        // скручиваем клавиатуру
-        View viewToHide = this.getCurrentFocus();
-        if (viewToHide != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(viewToHide
-                        .getWindowToken(), 0);
-            }
-        }
-
         // если поля имени и др были не верными - выходим
         if (wrongField) {
             return;
         }
 
         // проверка окончена, начинаем сохранение
+
+        // скручиваем клавиатуру
+        hideSoftInput();
 
         focusHolder.requestFocus();
 
@@ -648,11 +621,9 @@ public class UserActivity extends AppCompatActivity {
                     if (bitmap != null) {
                         saveUserPhoto(bitmap);
                     } else {
-
                         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
                         if (newUser) {
                             saveUserToDataBase();
-                            Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
 
                             if (goBack) {
                                 goToUsersActivity();
@@ -663,7 +634,6 @@ public class UserActivity extends AppCompatActivity {
                         // если НЕ новый пользователь, то обновляем в базу и
                         else {
                             updateUserToDataBase();
-                            Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
 
                             if (goBack) {
                                 goToUsersActivity();
@@ -698,6 +668,8 @@ public class UserActivity extends AppCompatActivity {
                 if (imgFile.exists()) {
                     if (!imgFile.delete()) {
                         Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(UserActivity.this, R.string.photo_deleted, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -707,8 +679,8 @@ public class UserActivity extends AppCompatActivity {
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
             if (newUser) {
                 saveUserToDataBase();
-                Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
 
+                // если была нажата стрелка "обратно" - идем обратно
                 if (goBack) {
                     goToUsersActivity();
                 } else {
@@ -718,8 +690,8 @@ public class UserActivity extends AppCompatActivity {
             // если НЕ новый пользователь, то обновляем в базу и
             else {
                 updateUserToDataBase();
-                Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
 
+                // если была нажата стрелка "обратно" - идем обратно
                 if (goBack) {
                     goToUsersActivity();
                 } else {
@@ -785,14 +757,6 @@ public class UserActivity extends AppCompatActivity {
         if (newUser) {
             saveUserToDataBase();
 
-            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
-
             if (goBack) {
                 goToUsersActivity();
             } else {
@@ -802,14 +766,6 @@ public class UserActivity extends AppCompatActivity {
         // если НЕ новый пользователь, то обновляем в базу и
         else {
             updateUserToDataBase();
-
-            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
 
             if (goBack) {
                 goToUsersActivity();
@@ -834,23 +790,6 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private void saveUserToDataBase() {
-        //TODO реализовать сохранение пользователя в базу
-
-    }
-
-    private void updateUserToDataBase() {
-        //TODO реализовать обновление пользователя в базу
-
-    }
-
-
-    private void deleteUserFromDataBase() {
-        //TODO реализовать удаление пользователя из базы
-
-        Toast.makeText(this, "Delete", Toast.LENGTH_LONG).show();
-    }
-
     // проверка на изменения пользователя
     private boolean userHasNotChanged() {
         return !userHasChangedPhoto &&
@@ -871,6 +810,43 @@ public class UserActivity extends AppCompatActivity {
     private void goToUsersActivity() {
         Intent intent = new Intent(UserActivity.this, UsersActivity.class);
         startActivity(intent);
+    }
+
+    private void hideSoftInput() {
+        View viewToHide = this.getCurrentFocus();
+        if (viewToHide != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
+            }
+        }
+    }
+
+    private void saveUserToDataBase() {
+        //TODO реализовать сохранение пользователя в базу
+        // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void updateUserToDataBase() {
+        //TODO реализовать обновление пользователя в базу
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
+    private void deleteUserFromDataBase() {
+        //TODO реализовать удаление пользователя из базы
+        Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
 }
 

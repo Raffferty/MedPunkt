@@ -34,7 +34,8 @@
     <string name="focusholder">focusHolder</string>
     <string name="user_photo_placeholder">user_photo_placeholder</string>
     <string name="usr_edit_img">usr_edit_img</string>
-    <string name="file_not_deleted">Файл фото не удалился</string>
+    <string name="file_not_deleted">Фото не удалилось</string>
+    <string name="photo_deleted">Photo deleted</string>
     <string name="title_activity_treatment">Добавить чем болел</string>
     <string name="filter_title_view_treatmentphotoactivity">filter_title_view_treatmentphotoactivity</string>
     <string name="disease_name">Название заболевания</string>
@@ -42,5 +43,6 @@
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
     <string name="delete_disease">Удалить чем болел</string>
+    <string name="error_disease_name">Укажите название заболевания</string>
 
 </resources>
