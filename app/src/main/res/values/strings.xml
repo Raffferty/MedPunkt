@@ -42,7 +42,14 @@
     <string name="disease_date">Дата лечения</string>
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
+    <string name="add_treatment_photo">\u2000Добавить снимок</string>
     <string name="delete_disease">Удалить чем болел</string>
     <string name="error_disease_name">Укажите название заболевания</string>
+
+    <string name="title_activity_fullscreen">Добавить снимок</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="photo_description">Краткое описание снимка</string>
+
 
 </resources>

@@ -72,6 +72,12 @@ public class TreatmentActivity extends AppCompatActivity {
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
 
+    // код загрузки фото из галерии
+    private static final int RESULT_LOAD_IMAGE = 9002;
+
+    // код разрешения на запись и чтение из экстернал
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,7 +192,10 @@ public class TreatmentActivity extends AppCompatActivity {
         recyclerTreatmentPhotoItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, TreatmentPhotoActivity.class);
+                /*Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, TreatmentPhotoActivity.class);
+                startActivity(intentToTreatmentPhoto);*/
+
+                Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
                 startActivity(intentToTreatmentPhoto);
             }
         });
@@ -413,7 +422,10 @@ public class TreatmentActivity extends AppCompatActivity {
 
         focusHolder.requestFocus();
 
+        // присваиваем стринам textDiseaseName и textTreatment значения полей editTextDiseaseName и editTextTreatment
+        // для дальнейшей проверки на их изменения
         textDiseaseName = nameToCheck;
+        textTreatment = editTextTreatment.getText().toString();
 
         actionBar.setTitle(textDiseaseName);
 

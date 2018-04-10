@@ -105,7 +105,7 @@
         android:background="@color/colorEditTextBackground"
         android:drawableStart="@drawable/ic_add_a_photo_orang_24dp"
         android:padding="4dp"
-        android:text=" Добавить снимок"
+        android:text="@string/add_treatment_photo"
         android:textColor="@color/colorFab"
         app:layout_constraintBottom_toBottomOf="@+id/editTextTreatment"
         app:layout_constraintEnd_toEndOf="@+id/editTextTreatment" />
