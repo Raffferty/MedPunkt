@@ -27,7 +27,7 @@
         android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
+            android:id="@+id/fullscreen_content_description"
             style="?metaButtonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             tools:ignore="UselessParent">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/text_input_layout_treatment_photo_name"
+                android:id="@+id/text_input_layout_photo_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="0dp"

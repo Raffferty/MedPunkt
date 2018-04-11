@@ -11,9 +11,9 @@
     <string name="set_photo">Установить Фото</string>
     <string name="user_name">Имя</string>
     <string name="date_of_birth">Дата рождения</string>
-    <string name="save">Сохранить\u2000</string>
+    <string name="save">cохранить\u2000</string>
     <string name="edit">Редактировать</string>
-    <string name="delete_user">Удалить пользователя</string>
+    <string name="delete_menu_item">Удалить</string>
     <string name="delete_photo">Удалить фото</string>
     <string name="title_activity_diseases">Заболевания</string>
     <string name="txt_no_title">No Title</string>
@@ -25,7 +25,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="why_need_permission_to_storage">Необходим доступ к фотографиям.</string>
-    <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрос Доступа к фотографиям.</string>
+    <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрашиваю Доступ к фотографиям.</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
     <string name="cant_save_photo">Фотографию не удалось сохранитжь</string>
     <string name="pathToPhoto">/data/user/0/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg</string>
@@ -44,6 +44,8 @@
     <string name="treatment_text">Описание лечения</string>
     <string name="add_treatment_photo">\u2000Добавить снимок</string>
     <string name="delete_disease">Удалить чем болел</string>
+    <string name="delete_user">Удалить ползователя</string>
+    <string name="delete_treatment_photo">Удалить снимок</string>
     <string name="error_disease_name">Укажите название заболевания</string>
 
     <string name="title_activity_fullscreen">Добавить снимок</string>

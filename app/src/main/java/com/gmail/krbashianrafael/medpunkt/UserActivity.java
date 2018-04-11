@@ -390,11 +390,12 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_user, menu);
+        getMenuInflater().inflate(R.menu.menu_user_treatment_fullphoto, menu);
 
-        menu.removeItem(R.id.action_delete_user);
+        menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
-        menu.add(0, R.id.action_delete_user, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp), getResources().getString(R.string.delete_user)));
+        menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
+                getResources().getString(R.string.delete_user)));
 
         return true;
     }
@@ -426,7 +427,7 @@ public class UserActivity extends AppCompatActivity {
             menuItemDelete.setVisible(false);
 
             // и создаем ActionView на основе элемента меню "сохранить" для применени анимации save_show
-            // т.к. в menu_user элемент "сохранить" имеет атрибут
+            // т.к. в menu_user_treatment_fullphoto элемент "сохранить" имеет атрибут
             // app:actionViewClass="android.widget.TextView"
             // то menuItemSave.getActionView() возвращает TextView
             // с которым и проделываем дальнейшие трансформации:
@@ -498,7 +499,7 @@ public class UserActivity extends AppCompatActivity {
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
 
-            case R.id.action_delete_user:
+            case R.id.action_delete:
                 deleteUserFromDataBase();
                 return true;
 

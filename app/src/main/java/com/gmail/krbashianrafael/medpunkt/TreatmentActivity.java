@@ -192,25 +192,26 @@ public class TreatmentActivity extends AppCompatActivity {
         recyclerTreatmentPhotoItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, TreatmentPhotoActivity.class);
-                startActivity(intentToTreatmentPhoto);*/
-
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
+                intentToTreatmentPhoto.putExtra("textPhotoDescription","Рентген");
                 startActivity(intentToTreatmentPhoto);
             }
         });
 
         final FrameLayout dividerFrameGray = findViewById(R.id.divider_frame_gray);
 
-        // добавление фиктивного фото
+        // добавление фото
         textViewAddTreatmentPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // скручиваем клавиатуру
-                hideSoftInput();
+                //hideSoftInput();
 
-                recyclerTreatmentPhotoItem.setVisibility(View.VISIBLE);
-                dividerFrameGray.setVisibility(View.VISIBLE);
+                Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
+                intentToTreatmentPhoto.putExtra("editTreatmentPhoto",true);
+                intentToTreatmentPhoto.putExtra("newTreatmentPhoto",true);
+                startActivity(intentToTreatmentPhoto);
+
             }
         });
 
@@ -227,11 +228,11 @@ public class TreatmentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_treatment, menu);
+        getMenuInflater().inflate(R.menu.menu_user_treatment_fullphoto, menu);
 
-        menu.removeItem(R.id.action_delete_disease);
+        menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
-        menu.add(0, R.id.action_delete_disease, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
+        menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
                 getResources().getString(R.string.delete_disease)));
 
         return true;
@@ -264,7 +265,7 @@ public class TreatmentActivity extends AppCompatActivity {
             menuItemDelete.setVisible(false);
 
             // и создаем ActionView на основе элемента меню "сохранить" для применени анимации save_show
-            // т.к. в menu_user элемент "сохранить" имеет атрибут
+            // т.к. в menu_user_treatment_fullphoto элемент "сохранить" имеет атрибут
             // app:actionViewClass="android.widget.TextView"
             // то menuItemSave.getActionView() возвращает TextView
             // с которым и проделываем дальнейшие трансформации:
@@ -341,7 +342,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
 
-            case R.id.action_delete_disease:
+            case R.id.action_delete:
                 deleteDiseaseAndTreatmentFromDataBase();
                 return true;
 
