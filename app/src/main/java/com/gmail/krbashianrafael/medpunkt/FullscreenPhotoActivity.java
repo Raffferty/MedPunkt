@@ -16,12 +16,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,18 +33,6 @@ import android.widget.Toast;
  * status bar and navigation/system bar) with user interaction.
  */
 public class FullscreenPhotoActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    //private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    //private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -78,13 +69,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-            //mDescriptionView.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.VISIBLE);
 
+            fab.setVisibility(View.VISIBLE);
         }
     };
 
-    private boolean mVisible, editTreatmentPhoto, newTreatmentPhoto;
+    private boolean mVisible, goBack, editTreatmentPhoto, newTreatmentPhoto;
 
     private final Runnable mHideRunnable = new Runnable() {
         @Override
@@ -93,27 +83,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
     };
 
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-   /* private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };*/
-
     // элемент меню "сохранить"
     TextView menuItemSaveView;
 
     // ActionBar actionBar
     ActionBar actionBar;
 
+    private EditText focusHolder;
     TextInputLayout textInputLayoutPhotoDescription;
     TextInputEditText editTextPhotoDescription;
     String textPhotoDescription;
@@ -130,12 +106,25 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         editTreatmentPhoto = intent.getBooleanExtra("editTreatmentPhoto", false);
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
+
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-
+        focusHolder = findViewById(R.id.focus_holder);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
-        editTextPhotoDescription = findViewById(R.id.editText_photo_name);
+        editTextPhotoDescription = findViewById(R.id.editText_photo_description);
+
+        editTextPhotoDescription.requestFocus();
+        editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
+
+        editTextPhotoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    textInputLayoutPhotoDescription.setErrorEnabled(false);
+                }
+            }
+        });
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -155,11 +144,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         mContentView = findViewById(R.id.fullscreen_image);
         fab = findViewById(R.id.fabEditTreatmentPhoto);
-        //fab.setOnTouchListener(mDelayHideTouchListener);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDescriptionView.setVisibility(View.VISIBLE);
+                editTextPhotoDescription.requestFocus();
+                editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
                 fab.setVisibility(View.GONE);
                 editTreatmentPhoto = true;
 
@@ -176,16 +166,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             }
         });
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        //findViewById(R.id.text_input_layout_treatment_photo_name).setOnTouchListener(mDelayHideTouchListener);
-
-        if (newTreatmentPhoto){
+        if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
             fab.setVisibility(View.GONE);
-
-
         }
     }
 
@@ -196,7 +179,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        if (!editTreatmentPhoto) {
+            delayedHide(100);
+        }
+
     }
 
     @Override
@@ -246,12 +232,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             menuItemSaveView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    hideSoftInput();
-                    editTreatmentPhoto = false;
-                    fab.setVisibility(View.VISIBLE);
-                    mDescriptionView.setVisibility(View.GONE);
-                    invalidateOptionsMenu();
-                    toggle();
+                    if (photoDescriptionHasNotChanged() && !newTreatmentPhoto) {
+
+                        hideSoftInput();
+
+                        editTreatmentPhoto = false;
+                        mDescriptionView.setVisibility(View.GONE);
+                        fab.setVisibility(View.VISIBLE);
+                        invalidateOptionsMenu();
+                    } else {
+                        saveTreatmentPhoto();
+                    }
                 }
             });
         }
@@ -260,16 +251,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     private void toggle() {
-        if (!editTreatmentPhoto){
+        if (!editTreatmentPhoto) {
             if (mVisible) {
                 hide();
             } else {
                 show();
             }
-        }
-        else {
-            show();
-            Toast.makeText(FullscreenPhotoActivity.this,"Opening Image",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(FullscreenPhotoActivity.this, "Opening Image", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -295,15 +284,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
-        if (newTreatmentPhoto){
+        if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
             fab.setVisibility(View.INVISIBLE);
-        }
-        else {
+        } else {
             fab.setVisibility(View.VISIBLE);
             mDescriptionView.setVisibility(View.INVISIBLE);
         }
-
 
         // Schedule a runnable to display UI elements after a delay
         mHideHandler.removeCallbacks(mHidePart2Runnable);
@@ -319,7 +306,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    private void hideSoftInput(){
+    private void hideSoftInput() {
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -335,12 +322,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 // Если не было изменений
-                if (diseaseAndTreatmentHasNotChanged()) {
+                if (photoDescriptionHasNotChanged()) {
                     goToTreatmentActivity();
                     return true;
                 }
 
-                //textInputLayoutDiseaseName.setError(null);
 
                 // Если были изменения
                 // если выходим без сохранения изменений
@@ -367,12 +353,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (diseaseAndTreatmentHasNotChanged()) {
+        if (photoDescriptionHasNotChanged()) {
             super.onBackPressed();
             return;
         }
-
-        //textInputLayoutDiseaseName.setError(null);
 
         DialogInterface.OnClickListener discardButtonClickListener =
                 new DialogInterface.OnClickListener() {
@@ -388,17 +372,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
+        hideSoftInput();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
         builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //goBack = true;
-                saveTreatmentPhotoToDataBase();
+
+                goBack = true;
 
                 if (dialog != null) {
                     dialog.dismiss();
                 }
+
+                saveTreatmentPhoto();
             }
         });
 
@@ -408,14 +396,70 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    // проверка на изменения фото и описания
-    private boolean diseaseAndTreatmentHasNotChanged() {
-        return false;
+    // проверка на изменения описания фото
+    private boolean photoDescriptionHasNotChanged() {
+        return editTextPhotoDescription.getText().toString().equals(textPhotoDescription);
     }
 
     private void goToTreatmentActivity() {
         Intent intent = new Intent(FullscreenPhotoActivity.this, TreatmentActivity.class);
         startActivity(intent);
+    }
+
+    private void saveTreatmentPhoto() {
+
+        hideSoftInput();
+
+        focusHolder.requestFocus();
+
+        // устанавливаем анимацию на случай Error
+        ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
+        scaleAnimation.setDuration(200);
+
+        // првоерка имени
+        String nameToCheck = editTextPhotoDescription.getText().toString().trim();
+
+        if (TextUtils.isEmpty(nameToCheck)) {
+            textInputLayoutPhotoDescription.setError(getString(R.string.error_photo_description));
+            editTextPhotoDescription.startAnimation(scaleAnimation);
+
+            return;
+        } else {
+            textInputLayoutPhotoDescription.setError(null);
+            textInputLayoutPhotoDescription.setErrorEnabled(false);
+        }
+
+        // проверка окончена, начинаем сохранение
+        textPhotoDescription = nameToCheck;
+        if (actionBar != null) {
+            actionBar.setTitle(textPhotoDescription);
+        }
+
+        if (newTreatmentPhoto) {
+            saveTreatmentPhotoToDataBase();
+            newTreatmentPhoto = false;
+
+            if (goBack) {
+                goToTreatmentActivity();
+            } else {
+                editTreatmentPhoto = false;
+                mDescriptionView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                invalidateOptionsMenu();
+            }
+
+        } else {
+            updateTreatmentPhotoToDataBase();
+
+            if (goBack) {
+                goToTreatmentActivity();
+            } else {
+                editTreatmentPhoto = false;
+                mDescriptionView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                invalidateOptionsMenu();
+            }
+        }
     }
 
     private void saveTreatmentPhotoToDataBase() {
@@ -424,7 +468,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FullscreenPhotoActivity.this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
+                Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -434,7 +478,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FullscreenPhotoActivity.this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
+                Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Updated To DataBase", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -442,6 +486,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     private void deleteTreatmentPhotoFromDataBase() {
         //TODO реализовать удаление пользователя из базы
-        Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "TreatmentPhoto Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
 }

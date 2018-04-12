@@ -7,7 +7,12 @@
     android:background="#0099cc"
     tools:context=".FullscreenPhotoActivity">
 
-
+    <EditText
+        android:id="@+id/focus_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:hint="@string/focusholder"
+        android:inputType="none" />
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -48,7 +53,7 @@
                 app:hintTextAppearance="@style/Lable">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/editText_photo_name"
+                    android:id="@+id/editText_photo_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="true"

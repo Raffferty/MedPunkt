@@ -625,6 +625,7 @@ public class UserActivity extends AppCompatActivity {
                         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
                         if (newUser) {
                             saveUserToDataBase();
+                            newUser =false;
 
                             if (goBack) {
                                 goToUsersActivity();
@@ -680,6 +681,7 @@ public class UserActivity extends AppCompatActivity {
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
             if (newUser) {
                 saveUserToDataBase();
+                newUser = false;
 
                 // если была нажата стрелка "обратно" - идем обратно
                 if (goBack) {
@@ -757,6 +759,7 @@ public class UserActivity extends AppCompatActivity {
 
         if (newUser) {
             saveUserToDataBase();
+            newUser = false;
 
             if (goBack) {
                 goToUsersActivity();

@@ -58,8 +58,10 @@ public class DiseasesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("_idDisease", 1);
+                treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
+                treatmentIntent.putExtra("textTreatment", "Пить чай");
 
                 startActivity(treatmentIntent);
             }
@@ -73,6 +75,9 @@ public class DiseasesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("newDisease", true);
+                treatmentIntent.putExtra("editDisease", false);
+                treatmentIntent.putExtra("diseaseName", "");
+                treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
             }
         });

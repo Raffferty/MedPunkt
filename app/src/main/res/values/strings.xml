@@ -47,10 +47,8 @@
     <string name="delete_user">Удалить ползователя</string>
     <string name="delete_treatment_photo">Удалить снимок</string>
     <string name="error_disease_name">Укажите название заболевания</string>
-
+    <string name="error_photo_description">Укажите краткое описание снимка</string>
     <string name="title_activity_fullscreen">Добавить снимок</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="photo_description">Краткое описание снимка</string>
 
 
