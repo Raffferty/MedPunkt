@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
     tools:context=".TreatmentActivity">
 
     <FrameLayout
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:inputType="textPersonName|textCapWords"
+            android:inputType="textPersonName|textCapWords|textMultiLine"
             android:textColor="@color/colorAccent"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -77,15 +77,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_disease_name" />
 
-
-    <EditText
+    <!-- это кастомный EditText у которого клавиатура не перекрывает текст -->
+    <com.gmail.krbashianrafael.medpunkt.MyEditText
         android:id="@+id/editTextTreatment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorEditTextBackground"
         android:hint="@string/treatment_text"
         android:inputType="textMultiLine"
-        android:maxHeight="200dp"
         android:paddingBottom="36dp"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
@@ -94,7 +93,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_title_treatmen">
 
-    </EditText>
+    </com.gmail.krbashianrafael.medpunkt.MyEditText>
 
     <TextView
         android:id="@+id/textViewAddTreatmentPhoto"
@@ -159,7 +158,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#c7c7c7"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_treatment_photo_item"/>
+        app:layout_constraintTop_toBottomOf="@+id/recycler_treatment_photo_item" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_treatment_photos"

@@ -21,7 +21,6 @@ import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -108,14 +107,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         focusHolder = findViewById(R.id.focus_holder);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
         editTextPhotoDescription = findViewById(R.id.editText_photo_description);
-
-        editTextPhotoDescription.requestFocus();
-        editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
 
         editTextPhotoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -168,7 +164,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
+            editTextPhotoDescription.requestFocus();
+            editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
             fab.setVisibility(View.GONE);
+        }
+        else {
+            mDescriptionView.setVisibility(View.GONE);
         }
     }
 
