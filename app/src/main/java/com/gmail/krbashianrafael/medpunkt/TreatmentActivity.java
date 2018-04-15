@@ -79,13 +79,6 @@ public class TreatmentActivity extends AppCompatActivity {
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
 
-    // код загрузки фото из галерии
-    private static final int RESULT_LOAD_IMAGE = 9002;
-
-    // код разрешения на запись и чтение из экстернал
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

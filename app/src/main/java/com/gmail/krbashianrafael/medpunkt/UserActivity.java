@@ -57,8 +57,7 @@ public class UserActivity extends AppCompatActivity {
     private ActionBar actionBar;
 
     // имя и дата рождени полей UserActivity
-    private String textUserName = "";
-    private String textUserBirthDate = "";
+    private String textUserName, textUserBirthDate;
 
     // поля имени, ДР и focusHolder
     private TextInputLayout textInputLayoutName, textInputLayoutDate;
@@ -240,10 +239,16 @@ public class UserActivity extends AppCompatActivity {
                 actionBar.setTitle(textUserName);
                 editTextName.setText(textUserName);
             }
+            else {
+                textUserName = "";
+            }
         }
 
         if (textUserBirthDate != null) {
             editTextDate.setText(textUserBirthDate);
+        }
+        else {
+            textUserBirthDate = "";
         }
 
         // анимация для элемента меню "сохранить"
@@ -324,6 +329,8 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+
+    // результат запроса на загрузку фото
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

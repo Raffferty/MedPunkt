@@ -1,16 +1,24 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +32,11 @@ import android.view.View;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -38,7 +49,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -48,7 +58,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            imagePhoto.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -89,9 +99,24 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     ActionBar actionBar;
 
     private EditText focusHolder;
-    TextInputLayout textInputLayoutPhotoDescription;
-    TextInputEditText editTextPhotoDescription;
-    String textPhotoDescription;
+    private TextInputLayout textInputLayoutPhotoDescription;
+    private TextInputEditText editTextPhotoDescription;
+    private String textPhotoDescription;
+
+    // путь к загружаемому фото
+    private Uri selectedImage;
+
+    // фото
+    private ImageView imagePhoto;
+
+    // угол поворота фотографии
+    private float rotate = 0;
+
+    // код загрузки фото из галерии
+    private static final int RESULT_LOAD_IMAGE = 9002;
+
+    // код разрешения на запись и чтение из экстернал
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +129,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         textPhotoDescription = intent.getStringExtra("textPhotoDescription");
         editTreatmentPhoto = intent.getBooleanExtra("editTreatmentPhoto", false);
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
-
-
-        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         focusHolder = findViewById(R.id.focus_holder);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
@@ -138,7 +159,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         mVisible = true;
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
-        mContentView = findViewById(R.id.fullscreen_image);
+        imagePhoto = findViewById(R.id.fullscreen_image);
         fab = findViewById(R.id.fabEditTreatmentPhoto);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,7 +176,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
@@ -171,6 +192,84 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         else {
             mDescriptionView.setVisibility(View.GONE);
         }
+
+        // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
+        if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Запрашиваем разрешение на чтение и запись фото
+            MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
+        } else {
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+        }
+    }
+
+    // результат запроса на загрузку фото
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //userHasChangedPhoto = true;
+
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+            } else {
+                Snackbar.make(imagePhoto, R.string.permission_was_denied,
+                        Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    // здесь грузим фотку в imagePhoto
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+            selectedImage = data.getData();
+
+            if (selectedImage != null) {
+                // получаем угол поворота фотки
+                rotate = getRotation(this, selectedImage);
+
+                Picasso.get().load(selectedImage).
+                        placeholder(R.color.colorAccent).
+                        error(R.color.colorAccentSecondary).
+                        //resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
+                        rotate(rotate).
+                        //centerInside().
+                        into(imagePhoto);
+
+                /*userHasChangedPhoto = true;
+                textDeleteUserPhoto.setVisibility(View.VISIBLE);
+                textViewNoUserPhoto.setVisibility(View.GONE);*/
+            }
+        }
+    }
+
+    // метод для получения оринетации (угол поворота) фотографии
+    // т.к. Picasso все фото вставляет боком, то нужно поворачивать на нужный угол
+    private int getRotation(Context context, Uri photoUri) {
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.getCount() != 1) {
+                cursor.close();
+                return -1;
+            }
+
+            cursor.moveToFirst();
+        }
+
+        int orientation = cursor.getInt(0);
+        cursor.close();
+        cursor = null;
+        return orientation;
     }
 
     @Override
@@ -260,6 +359,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(FullscreenPhotoActivity.this, "Opening Image", Toast.LENGTH_LONG).show();
+
+            // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
+            if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Запрашиваем разрешение на чтение и запись фото
+                MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
+            } else {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+            }
         }
 
     }
@@ -281,7 +391,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        imagePhoto.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 

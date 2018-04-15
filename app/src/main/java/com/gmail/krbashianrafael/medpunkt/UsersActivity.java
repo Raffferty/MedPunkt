@@ -49,6 +49,8 @@ public class UsersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("newUser", true);
                 startActivity(userIntent);
             }
         });
