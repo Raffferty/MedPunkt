@@ -21,7 +21,8 @@
         android:id="@+id/fullscreen_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/dog_muzzle_rose_640x1136"
+        android:layout_gravity="center"
+        android:background="@color/colorAccentThird"
         android:keepScreenOn="true" />
 
     <!-- This FrameLayout insets its children based on system windows using

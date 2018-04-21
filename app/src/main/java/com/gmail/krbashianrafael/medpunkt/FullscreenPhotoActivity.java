@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -26,8 +27,11 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -36,7 +40,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bogdwellers.pinchtozoom.ImageMatrixCorrector;
+import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.squareup.picasso.Picasso;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -103,6 +110,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     private TextInputEditText editTextPhotoDescription;
     private String textPhotoDescription;
 
+    // screenHeightDp, screenWidthDp
+    int myScreenHeightPx, myScreenWidthPx;
+
     // путь к загружаемому фото
     private Uri selectedImage;
 
@@ -111,6 +121,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     // угол поворота фотографии
     private float rotate = 0;
+
+    // zoom
+    MyImageMatrixTouchHandler imageMatrixTouchHandler;
 
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
@@ -122,6 +135,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen);
+
+        Resources r = getResources();
+        int myScreenHeightDp = r.getConfiguration().screenHeightDp;
+        myScreenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, myScreenHeightDp, r.getDisplayMetrics());
+
+        int myScreenWidthDp = r.getConfiguration().screenWidthDp;
+        myScreenWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, myScreenWidthDp, r.getDisplayMetrics());
+
 
         Intent intent = getIntent();
 
@@ -160,6 +181,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mVisible = true;
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
+
+        /*FrameLayout.LayoutParams params = new
+                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.gravity = Gravity.CENTER;
+        imagePhoto.setLayoutParams(params);*/
+
+        // zoomer
+        imageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
+        imagePhoto.setOnTouchListener(imageMatrixTouchHandler);
+
         fab = findViewById(R.id.fabEditTreatmentPhoto);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,20 +207,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        imagePhoto.setOnClickListener(new View.OnClickListener() {
+        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
             }
-        });
+        });*/
 
         if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
             editTextPhotoDescription.requestFocus();
             editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
             fab.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             mDescriptionView.setVisibility(View.GONE);
         }
 
@@ -203,6 +233,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
         }
+
     }
 
     // результат запроса на загрузку фото
@@ -233,21 +264,70 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             selectedImage = data.getData();
 
             if (selectedImage != null) {
-                // получаем угол поворота фотки
+
+                Log.d("screen", "screenWith = " + myScreenWidthPx + "screenHeight = " + myScreenHeightPx);
+
                 rotate = getRotation(this, selectedImage);
 
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
-                        //resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
+                        resize(myScreenWidthPx, myScreenHeightPx).
                         rotate(rotate).
-                        //centerInside().
+                        centerInside().
                         into(imagePhoto);
-
-                /*userHasChangedPhoto = true;
-                textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                textViewNoUserPhoto.setVisibility(View.GONE);*/
             }
+
+            // для экстернал
+            // String root = Environment.getExternalStorageDirectory().toString();
+            // File myDir = new File(root + "/Medpunkt/users_photos");
+            // при этом получится File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
+
+            // для интернал
+                /*
+                String root = getFilesDir().toString();
+                File myDir = new File(root + "/treatment_photos");
+
+                if (!myDir.mkdirs()) {
+                    Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
+                }
+
+                String fileName = "Image-" + 2 + ".jpg";
+                final File file = new File(myDir, fileName);
+
+                //Log.d("file", "file = " + file);
+                // при этом путь к файлу
+                // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg
+
+                // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
+                if (file.exists()) {
+                    if (!file.delete()) {
+                        Toast.makeText(FullscreenPhotoActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                new Thread(new Runnable() {
+                    FileOutputStream outputStream;
+
+                    @Override
+                    public void run() {
+                        try {
+                            Bitmap bitmap = Picasso.get().load(selectedImage).
+                                    resize(myScreenHeightDp, myScreenWidthDp).
+                                    centerInside().
+                                    get();
+                            outputStream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                            outputStream.flush();
+                            outputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                ).start();
+                */
+
         }
     }
 
@@ -350,7 +430,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         return true;
     }
 
-    private void toggle() {
+    public void toggle() {
         if (!editTreatmentPhoto) {
             if (mVisible) {
                 hide();
@@ -382,6 +462,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mDescriptionView.setVisibility(View.GONE);
         fab.setVisibility(View.GONE);
         mVisible = false;
+
+
+        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle();
+            }
+        });*/
+
 
         // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
@@ -481,7 +570,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     // Диалог "сохранить или выйти без сохранения"
-    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener
+                                                  discardButtonClickListener) {
 
         hideSoftInput();
 
@@ -582,6 +672,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
 
     private void updateTreatmentPhotoToDataBase() {
@@ -599,4 +691,83 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "TreatmentPhoto Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
+
+    // мой зумм класс
+    private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
+
+        public MyImageMatrixTouchHandler(Context context) {
+            super(context);
+        }
+
+        public MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
+            super(context, corrector);
+        }
+
+        // проверка в состоянии зума или нет
+        final boolean[] inZoom = {false};
+
+        // для DoubleTap
+        boolean firstTouch = false;
+        long time = 0;
+
+        @Override
+        public boolean onTouch(View view, final MotionEvent event) {
+
+            view.performClick();
+
+            boolean result = super.onTouch(view, event);
+
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+
+                // првоерка DoubleTap
+                // если DoubleTap, то не вызывается toggle()
+                if (firstTouch && (System.currentTimeMillis() - time) <= 300) {
+                    inZoom[0] = true;
+                    firstTouch = false;
+                } else {
+                    firstTouch = true;
+                    inZoom[0] = false;
+                    time = System.currentTimeMillis();
+                }
+
+                // в отдельном потоке ожидаем 1 сек после ACTION_DOWN
+                // и, если не было никаких движений (увеличение, перемещение картинки)
+                // то делаем  toggle()
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            if (!inZoom[0]) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        toggle();
+                                    }
+                                });
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+
+            // в остальных случаях не вызывается  toggle() блокировкой  inZoom[0] = true;
+            if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN ||
+                    event.getActionMasked() == MotionEvent.ACTION_POINTER_UP ||
+                    event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+
+                inZoom[0] = true;
+
+                return result;
+            }
+
+            return result;
+        }
+    }
 }
+
+
+
+

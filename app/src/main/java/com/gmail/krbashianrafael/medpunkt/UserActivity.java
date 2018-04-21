@@ -359,6 +359,16 @@ public class UserActivity extends AppCompatActivity {
                 // получаем угол поворота фотки
                 rotate = getRotation(this, selectedImage);
 
+
+
+
+                /*Picasso picasso = new Picasso.Builder(this).listener(new Picasso.Listener() {
+                    @Override
+                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }).build();*/
+
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
@@ -727,7 +737,7 @@ public class UserActivity extends AppCompatActivity {
 
         // для интернал
         String root = getFilesDir().toString();
-        File myDir = new File(root + "/users_photos");
+        File myDir = new File(root + "/users_photos"); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
 
         if (!myDir.mkdirs()) {
             Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
