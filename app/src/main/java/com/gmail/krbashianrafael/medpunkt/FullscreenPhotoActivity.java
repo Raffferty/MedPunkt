@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -27,7 +28,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -131,6 +131,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,11 +183,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
 
-        /*FrameLayout.LayoutParams params = new
-                FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.gravity = Gravity.CENTER;
-        imagePhoto.setLayoutParams(params);*/
-
         // zoomer
         imageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
         imagePhoto.setOnTouchListener(imageMatrixTouchHandler);
@@ -201,18 +197,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 fab.setVisibility(View.GONE);
                 editTreatmentPhoto = true;
 
+                imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
                 invalidateOptionsMenu();
             }
         });
-
-
-        // Set up the user interaction to manually show or hide the system UI.
-        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });*/
 
         if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
@@ -233,7 +222,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
         }
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     }
 
     // результат запроса на загрузку фото
@@ -265,8 +260,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
             if (selectedImage != null) {
 
-                Log.d("screen", "screenWith = " + myScreenWidthPx + "screenHeight = " + myScreenHeightPx);
-
                 rotate = getRotation(this, selectedImage);
 
                 Picasso.get().load(selectedImage).
@@ -277,6 +270,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                         centerInside().
                         into(imagePhoto);
             }
+
+            imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
             // для экстернал
             // String root = Environment.getExternalStorageDirectory().toString();
@@ -362,7 +357,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         if (!editTreatmentPhoto) {
             delayedHide(100);
         }
-
     }
 
     @Override
@@ -412,6 +406,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             menuItemSaveView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
                     if (photoDescriptionHasNotChanged() && !newTreatmentPhoto) {
 
                         hideSoftInput();
@@ -438,8 +435,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 show();
             }
         } else {
-            Toast.makeText(FullscreenPhotoActivity.this, "Opening Image", Toast.LENGTH_LONG).show();
-
             // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -462,15 +457,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mDescriptionView.setVisibility(View.GONE);
         fab.setVisibility(View.GONE);
         mVisible = false;
-
-
-        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });*/
-
 
         // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
@@ -526,7 +512,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     goToTreatmentActivity();
                     return true;
                 }
-
 
                 // Если были изменения
                 // если выходим без сохранения изменений
@@ -672,8 +657,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
 
     private void updateTreatmentPhotoToDataBase() {
@@ -718,8 +701,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             boolean result = super.onTouch(view, event);
 
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-
-                // првоерка DoubleTap
+                // првоерка DoubleTap (в промежутке 300 мс)
                 // если DoubleTap, то не вызывается toggle()
                 if (firstTouch && (System.currentTimeMillis() - time) <= 300) {
                     inZoom[0] = true;
@@ -731,7 +713,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 }
 
                 // в отдельном потоке ожидаем 1 сек после ACTION_DOWN
-                // и, если не было никаких движений (увеличение, перемещение картинки)
+                // в это время основной поток продолжает свою работу
+                // если будут какие-то движения - они пойдут дальше
+                // а, если не было никаких движений (увеличение, перемещение картинки)
                 // то делаем  toggle()
                 new Thread(new Runnable() {
                     @Override

@@ -22,7 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@color/colorAccentThird"
+        android:scaleType="center"
+        android:background="@color/colorPrimary"
         android:keepScreenOn="true" />
 
     <!-- This FrameLayout insets its children based on system windows using
