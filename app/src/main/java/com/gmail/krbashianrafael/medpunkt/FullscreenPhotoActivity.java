@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -90,7 +91,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
     };
 
-    private boolean mVisible, goBack, editTreatmentPhoto, newTreatmentPhoto;
+    private boolean mVisible, goBack, editTreatmentPhoto, newTreatmentPhoto, landscape;
 
     private final Runnable mHideRunnable = new Runnable() {
         @Override
@@ -100,10 +101,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     };
 
     // элемент меню "сохранить"
-    TextView menuItemSaveView;
+    private TextView menuItemSaveView;
 
     // ActionBar actionBar
-    ActionBar actionBar;
+    private ActionBar actionBar;
 
     private EditText focusHolder;
     private TextInputLayout textInputLayoutPhotoDescription;
@@ -143,7 +144,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         int myScreenWidthDp = r.getConfiguration().screenWidthDp;
         myScreenWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, myScreenWidthDp, r.getDisplayMetrics());
-
 
         Intent intent = getIntent();
 
@@ -197,7 +197,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 fab.setVisibility(View.GONE);
                 editTreatmentPhoto = true;
 
-                imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                 invalidateOptionsMenu();
             }
@@ -212,6 +212,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             mDescriptionView.setVisibility(View.GONE);
         }
 
+        // TODO здесь проверять новое фото или нет
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
         if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -228,7 +229,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            hide();
+            landscape = true;
+            imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            show();
+            landscape = false;
+            imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+        }
     }
 
     // результат запроса на загрузку фото
@@ -238,7 +250,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                //userHasChangedPhoto = true;
+                // TODO userHasChangedPhoto = true;
 
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -271,8 +283,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                         into(imagePhoto);
             }
 
-            imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
+            // TODO реализовать сохранение фото
+            // SystemClock.elapsedRealtime(); - для нумерации сохраняемых файлов
             // для экстернал
             // String root = Environment.getExternalStorageDirectory().toString();
             // File myDir = new File(root + "/Medpunkt/users_photos");
@@ -337,13 +351,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 cursor.close();
                 return -1;
             }
-
             cursor.moveToFirst();
         }
 
-        int orientation = cursor.getInt(0);
-        cursor.close();
-        cursor = null;
+        int orientation = 0;
+        if (cursor != null) {
+            orientation = cursor.getInt(0);
+            cursor.close();
+            cursor = null;
+        }
+
         return orientation;
     }
 
@@ -407,7 +424,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                     if (photoDescriptionHasNotChanged() && !newTreatmentPhoto) {
 
@@ -428,12 +445,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     public void toggle() {
+
+        imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
         if (!editTreatmentPhoto) {
+
+            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+
             if (mVisible) {
                 hide();
             } else {
                 show();
             }
+
         } else {
             // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -669,7 +693,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         });
     }
 
-
     private void deleteTreatmentPhotoFromDataBase() {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "TreatmentPhoto Deleted from DataBase", Toast.LENGTH_LONG).show();
@@ -678,11 +701,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     // мой зумм класс
     private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
 
-        public MyImageMatrixTouchHandler(Context context) {
+        MyImageMatrixTouchHandler(Context context) {
             super(context);
         }
 
-        public MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
+        MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
             super(context, corrector);
         }
 
@@ -694,7 +717,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         long time = 0;
 
         @Override
-        public boolean onTouch(View view, final MotionEvent event) {
+        public boolean onTouch(final View view, final MotionEvent event) {
 
             view.performClick();
 
@@ -712,7 +735,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     time = System.currentTimeMillis();
                 }
 
-                // в отдельном потоке ожидаем 1 сек после ACTION_DOWN
+                // в отдельном потоке ожидаем 2 сек после ACTION_DOWN
                 // в это время основной поток продолжает свою работу
                 // если будут какие-то движения - они пойдут дальше
                 // а, если не было никаких движений (увеличение, перемещение картинки)
@@ -721,8 +744,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            Thread.sleep(1000);
-                            if (!inZoom[0]) {
+                            Thread.sleep(500);
+                            if (!inZoom[0] && !landscape) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -743,13 +766,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     event.getActionMasked() == MotionEvent.ACTION_MOVE) {
 
                 inZoom[0] = true;
-
-                return result;
             }
 
             return result;
         }
     }
+
 }
 
 
