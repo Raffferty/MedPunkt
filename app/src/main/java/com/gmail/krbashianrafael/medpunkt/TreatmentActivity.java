@@ -1,9 +1,11 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +21,13 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -79,6 +84,7 @@ public class TreatmentActivity extends AppCompatActivity {
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,16 +142,6 @@ public class TreatmentActivity extends AppCompatActivity {
 
         editTextTreatment = findViewById(R.id.editTextTreatment);
         editTextTreatment.setText(textTreatment);
-        if (!hasEditTextMaxHeight) {
-            Resources r = getResources();
-            int screenHeightDp = r.getConfiguration().screenHeightDp;
-            int editTextMaxHeightDp = (int) (screenHeightDp / 1.88);
-            editTextMaxHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, editTextMaxHeightDp, r.getDisplayMetrics());
-
-            hasEditTextMaxHeight = true;
-        }
-
-        editTextTreatment.setMaxHeight(editTextMaxHeightPx);
 
         textViewAddTreatmentPhoto = findViewById(R.id.textViewAddTreatmentPhoto);
 
@@ -190,6 +186,19 @@ public class TreatmentActivity extends AppCompatActivity {
             }
         });
 
+        editTextTreatment.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Resources r = getResources();
+                int screenHeightDp = r.getConfiguration().screenHeightDp;
+
+
+
+
+                return true;
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,6 +224,38 @@ public class TreatmentActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(viewToShow, 0);
                 }
+
+                //if (!hasEditTextMaxHeight) {
+
+                Resources r = getResources();
+                int screenHeightDp = r.getConfiguration().screenHeightDp;
+                int editTextMaxHeightDp = (int) (screenHeightDp / 1.88);
+                editTextMaxHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, editTextMaxHeightDp, r.getDisplayMetrics());
+
+                hasEditTextMaxHeight = true;
+
+                editTextTreatment.setMaxHeight(editTextMaxHeightPx);
+
+                Log.d("screenHeight", " screenHeightDp = " + screenHeightDp);
+                Log.d("screenHeight", " editTextMaxHeightDp = " + editTextMaxHeightDp);
+                Log.d("screenHeight", " editTextMaxHeightPx = " + editTextMaxHeightPx);
+
+                int screenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenHeightDp, r.getDisplayMetrics());
+
+                Window mRootWindow = getWindow();
+                Rect rect = new Rect();
+                View rootView = mRootWindow.getDecorView();
+                rootView.getWindowVisibleDisplayFrame(rect);
+
+                int keyBoardHeight = screenHeightPx - rect.bottom;
+
+                Log.d("screenHeight", " screenHeightPx = " + screenHeightPx);
+                Log.d("screenHeight", " rect.bottom = " + rect.bottom);
+                Log.d("screenHeight", " keyBoardHeight = " + keyBoardHeight);
+
+                //}
+
+
 
             }
         });

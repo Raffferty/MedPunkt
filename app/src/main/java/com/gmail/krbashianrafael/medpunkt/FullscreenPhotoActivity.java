@@ -107,6 +107,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     private ActionBar actionBar;
 
     private EditText focusHolder;
+    private EditText textDate;
     private TextInputLayout textInputLayoutPhotoDescription;
     private TextInputEditText editTextPhotoDescription;
     private String textPhotoDescription;
@@ -153,9 +154,26 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
         focusHolder = findViewById(R.id.focus_holder);
-        textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
-        editTextPhotoDescription = findViewById(R.id.editText_photo_description);
 
+        textDate = findViewById(R.id.editText_date);
+        textDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                hideSoftInput();
+
+                // выбираем дату фото
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+        textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
+        // чтоб textInputLayoutPhotoDescription не реагировал на ClickL
+        textInputLayoutPhotoDescription.setOnClickListener(null);
+
+        editTextPhotoDescription = findViewById(R.id.editText_photo_description);
+        // при editTextPhotoDescription OnFocus убираем ошибку
         editTextPhotoDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -192,6 +210,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mDescriptionView.setVisibility(View.VISIBLE);
+                textDate.setVisibility(View.VISIBLE);
                 editTextPhotoDescription.requestFocus();
                 editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
                 fab.setVisibility(View.GONE);
@@ -205,23 +224,27 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         if (editTreatmentPhoto) {
             mDescriptionView.setVisibility(View.VISIBLE);
+            textDate.setVisibility(View.VISIBLE);
             editTextPhotoDescription.requestFocus();
             editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
             fab.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.GONE);
+            textDate.setVisibility(View.GONE);
         }
 
-        // TODO здесь проверять новое фото или нет
+        // если было нажато добваить фото
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
-        if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Запрашиваем разрешение на чтение и запись фото
-            MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
-        } else {
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+        if (newTreatmentPhoto){
+            if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Запрашиваем разрешение на чтение и запись фото
+                MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
+            } else {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+            }
         }
     }
 
@@ -338,6 +361,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 */
 
         }
+        // если не выбрали фото идем обратно
+        else {
+            if (newTreatmentPhoto) {
+                goToTreatmentActivity();
+            }
+        }
     }
 
     // метод для получения оринетации (угол поворота) фотографии
@@ -432,6 +461,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
                         editTreatmentPhoto = false;
                         mDescriptionView.setVisibility(View.GONE);
+                        textDate.setVisibility(View.GONE);
                         fab.setVisibility(View.VISIBLE);
                         invalidateOptionsMenu();
                     } else {
@@ -470,7 +500,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         }
-
     }
 
     private void hide() {
@@ -479,6 +508,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             actionBar.hide();
         }
         mDescriptionView.setVisibility(View.GONE);
+        textDate.setVisibility(View.GONE);
         fab.setVisibility(View.GONE);
         mVisible = false;
 
@@ -495,11 +525,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         mVisible = true;
 
         if (editTreatmentPhoto) {
-            mDescriptionView.setVisibility(View.VISIBLE);
             fab.setVisibility(View.INVISIBLE);
+            mDescriptionView.setVisibility(View.VISIBLE);
+            textDate.setVisibility(View.VISIBLE);
+
         } else {
             fab.setVisibility(View.VISIBLE);
             mDescriptionView.setVisibility(View.INVISIBLE);
+            textDate.setVisibility(View.INVISIBLE);
         }
 
         // Schedule a runnable to display UI elements after a delay
@@ -654,6 +687,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 editTreatmentPhoto = false;
                 mDescriptionView.setVisibility(View.GONE);
+                textDate.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
                 invalidateOptionsMenu();
             }
@@ -666,6 +700,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 editTreatmentPhoto = false;
                 mDescriptionView.setVisibility(View.GONE);
+                textDate.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
                 invalidateOptionsMenu();
             }

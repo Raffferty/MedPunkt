@@ -22,9 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:scaleType="fitCenter"
         android:background="@color/colorPrimary"
-        android:keepScreenOn="true" />
+        android:keepScreenOn="true"
+        android:scaleType="fitCenter" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -61,6 +61,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:inputType="textPersonName|textCapWords|textMultiLine"
+                    android:paddingEnd="32dp"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp" />
 
@@ -68,16 +69,31 @@
 
         </LinearLayout>
 
+        <EditText
+            android:id="@+id/editText_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/colorEditTextBackground"
+            android:drawableEnd="@drawable/ic_date_range_orange_32dp"
+            android:focusable="false"
+            android:gravity="top"
+            android:text="дата снимка "
+            android:textColor="@color/colorFab"
+            android:textSize="16sp" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabEditTreatmentPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_edit_white_24dp"
-            android:layout_gravity="bottom|end"
             android:visibility="invisible"
-            tools:visibility="visible"
-            app:backgroundTint="@color/colorFab"/>
+            app:backgroundTint="@color/colorFab"
+            tools:visibility="visible" />
 
     </FrameLayout>
 

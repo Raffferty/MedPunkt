@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -29,11 +30,12 @@ public class DatePickerFragment extends DialogFragment
         return new DatePickerDialog(Objects.requireNonNull(getActivity()), this, year, month, day);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onDateSet(@NonNull DatePicker view, int year, int month, int day) {
         EditText txtDate = Objects.requireNonNull(getActivity()).findViewById(R.id.editText_date);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         GregorianCalendar date = new GregorianCalendar(year,month,day);
-        txtDate.setText(simpleDateFormat.format(date.getTime()));
+        txtDate.setText(simpleDateFormat.format(date.getTime())+" ");
     }
 }

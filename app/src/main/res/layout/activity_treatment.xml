@@ -136,7 +136,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:drawableBottom="@drawable/ic_camera_alt_blue_24dp"
+            android:drawableBottom="@drawable/ic_camera_alt_green_24dp"
             android:text="01.02.2018"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
             android:textColor="@color/colorPrimaryDark" />

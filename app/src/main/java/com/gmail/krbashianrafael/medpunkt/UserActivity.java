@@ -623,7 +623,7 @@ public class UserActivity extends AppCompatActivity {
 
         _idUser = 1;
 
-        // в отдельном потоке пишем файл фотки в интернал сторидж
+        // в отдельном потоке пишем файл фотки в интернал
         Thread t = new Thread(new Runnable() {
             Bitmap bitmap = null;
 
