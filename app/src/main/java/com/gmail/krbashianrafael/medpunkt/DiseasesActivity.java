@@ -61,7 +61,9 @@ public class DiseasesActivity extends AppCompatActivity {
                 treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
-                treatmentIntent.putExtra("textTreatment", "Пить чай");
+                treatmentIntent.putExtra("textTreatment", "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
+                        "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
+                        "Пить чай\nПить чай\n");
 
                 startActivity(treatmentIntent);
             }

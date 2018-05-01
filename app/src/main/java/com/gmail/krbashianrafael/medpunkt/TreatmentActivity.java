@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -22,10 +23,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -40,6 +39,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TreatmentActivity extends AppCompatActivity {
+
+    Window myWindow;
 
     // id заболеввания
     private int _id_disease = 0;
@@ -61,6 +62,7 @@ public class TreatmentActivity extends AppCompatActivity {
     // это кастомный EditText у которого клавиатура не перекрывает текст
     private static boolean hasEditTextMaxHeight;
     private static int editTextMaxHeightPx;
+    private TextView txtTitleTreatmen;
     private MyEditText editTextTreatment;
 
     // TextView добавления фотоснимка лечения
@@ -79,7 +81,7 @@ public class TreatmentActivity extends AppCompatActivity {
     private Animation fabShowAnimation;
 
     // элемент меню "сохранить"
-    TextView menuItemSaveView;
+    private TextView menuItemSaveView;
 
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
@@ -91,7 +93,8 @@ public class TreatmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_treatment);
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        myWindow = getWindow();
+        myWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Intent intent = getIntent();
 
@@ -186,18 +189,11 @@ public class TreatmentActivity extends AppCompatActivity {
             }
         });
 
-        editTextTreatment.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Resources r = getResources();
-                int screenHeightDp = r.getConfiguration().screenHeightDp;
-
-
-
-
-                return true;
-            }
-        });
+        txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
+        Resources r = getResources();
+        int screenHeightDp = r.getConfiguration().screenHeightDp;
+        final int[] editTextTreatmentMaxHeight = {(int) (screenHeightDp / 1.5)};
+        editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,44 +214,85 @@ public class TreatmentActivity extends AppCompatActivity {
                 editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
                 editTextTreatment.requestFocus();
 
-                // показываем клавиатуру
+                // выдвигаем клавиатуру
+                //Log.d("onReceiveResult", " befor showSoftInput");
+
                 View viewToShow = TreatmentActivity.this.getCurrentFocus();
+                MyResultReceiver myResultReceiver = new MyResultReceiver(null);
                 if (viewToShow != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(viewToShow, 0);
+                    if (imm != null) {
+                        Log.d("screenHeight", " viewToShow ");
+                        imm.showSoftInput(viewToShow, 0);
+                    }
+                    else {
+                        Log.d("screenHeight", " view Null ");
+                    }
                 }
+
+                //myResultReceiver = null;
+
+                //Log.d("onReceiveResult", " after showSoftInput");
 
                 //if (!hasEditTextMaxHeight) {
 
-                Resources r = getResources();
-                int screenHeightDp = r.getConfiguration().screenHeightDp;
-                int editTextMaxHeightDp = (int) (screenHeightDp / 1.88);
-                editTextMaxHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, editTextMaxHeightDp, r.getDisplayMetrics());
+                // проверить показана ли клавиатура
 
-                hasEditTextMaxHeight = true;
+                /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                editTextTreatment.setMaxHeight(editTextMaxHeightPx);
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                Log.d("screenHeight", " screenHeightDp = " + screenHeightDp);
-                Log.d("screenHeight", " editTextMaxHeightDp = " + editTextMaxHeightDp);
-                Log.d("screenHeight", " editTextMaxHeightPx = " + editTextMaxHeightPx);
+                        Resources r = getResources();
+                        int screenHeightDp = r.getConfiguration().screenHeightDp;
+                        int editTextMaxHeightDp = (int) (screenHeightDp / 1.88);
+                        //editTextMaxHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, editTextMaxHeightDp, r.getDisplayMetrics());
 
-                int screenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenHeightDp, r.getDisplayMetrics());
+                        int screenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenHeightDp, r.getDisplayMetrics());
 
-                Window mRootWindow = getWindow();
-                Rect rect = new Rect();
-                View rootView = mRootWindow.getDecorView();
-                rootView.getWindowVisibleDisplayFrame(rect);
+                        Log.d("screenHeight", " screenHeightDp = " + screenHeightDp);
+                        Log.d("screenHeight", " editTextMaxHeightDp = " + editTextMaxHeightDp);
+                        Log.d("screenHeight", " screenHeightPx = " + screenHeightPx);
+                        //Log.d("screenHeight", " editTextMaxHeightPx = " + editTextMaxHeightPx);
 
-                int keyBoardHeight = screenHeightPx - rect.bottom;
+                        Window mRootWindow = getWindow();
+                        final Rect rect = new Rect();
+                        View rootView = mRootWindow.getDecorView();
+                        rootView.getWindowVisibleDisplayFrame(rect);
 
-                Log.d("screenHeight", " screenHeightPx = " + screenHeightPx);
-                Log.d("screenHeight", " rect.bottom = " + rect.bottom);
-                Log.d("screenHeight", " keyBoardHeight = " + keyBoardHeight);
+                        int keyBoardHeight = screenHeightPx - rect.bottom;
 
+                        Log.d("screenHeight", " rect.top = " + rect.top);
+                        Log.d("screenHeight", " rect.bottom = " + rect.bottom);
+                        Log.d("screenHeight", " keyBoardHeight = " + keyBoardHeight);
+
+
+
+                        //final int[] editTextTreatmentMaxHeight = {300};
+                        editTextTreatmentMaxHeight[0] = rect.bottom - rect.top - txtTitleTreatmen.getHeight();
+
+                        Log.d("screenHeight", " txtTitleTreatmen.getHeight() = " + txtTitleTreatmen.getHeight());
+                        Log.d("screenHeight", " editTextTreatmentMaxHeight new = " + editTextTreatmentMaxHeight[0]);
+
+
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
+                                hasEditTextMaxHeight = true;
+                            }
+                        });
+
+                    }
+                }).start();
+*/
                 //}
-
-
 
             }
         });
@@ -297,7 +334,7 @@ public class TreatmentActivity extends AppCompatActivity {
             editTextDiseaseName.setSelection(editTextDiseaseName.getText().toString().length());
         }
 
-        if (editDisease){
+        if (editDisease) {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             editTextTreatment.setFocusable(false);
             editTextTreatment.setFocusableInTouchMode(false);
@@ -308,6 +345,55 @@ public class TreatmentActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //fab.performClick();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                View viewToShow = myWindow.getCurrentFocus();
+                if (viewToShow != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        Log.d("screenHeight", " viewToShow ");
+                        imm.showSoftInput(viewToShow, 0);
+                    }
+                }
+
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                final Rect rect = new Rect();
+                View rootView = myWindow.getDecorView();
+                rootView.getWindowVisibleDisplayFrame(rect);
+
+                Log.d("screenHeight", " rect.bottom = " + rect.bottom);
+                Log.d("screenHeight", " rect.top = " + rect.top);
+                Log.d("screenHeight", " ect.bottom - rect.top = " + (rect.bottom - rect.top - txtTitleTreatmen.getHeight()));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        editTextTreatment.setMaxHeight(rect.bottom - rect.top - txtTitleTreatmen.getHeight());
+                    }
+                });
+
+                hideSoftInput();
+
+            }
+        }).start();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -579,6 +665,7 @@ public class TreatmentActivity extends AppCompatActivity {
     private void hideSoftInput() {
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
+            Log.d("screenHeight", " viewToHide ");
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
@@ -612,4 +699,38 @@ public class TreatmentActivity extends AppCompatActivity {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
+
+    private class MyResultReceiver extends ResultReceiver {
+
+        Handler mHandler;
+
+        public MyResultReceiver(Handler handler) {
+            super(handler);
+
+            mHandler = handler;
+        }
+
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+
+            final Rect rect = new Rect();
+            View rootView = findViewById(R.id.root_view);
+            rootView.getWindowVisibleDisplayFrame(rect);
+
+            Log.d("onReceiveResult", " rect.bottom - rect.top = " + (rect.bottom - rect.top));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    editTextTreatment.setMaxHeight(rect.bottom - rect.top - 41);
+                }
+            });
+
+        }
+
+    }
+
 }
+
+

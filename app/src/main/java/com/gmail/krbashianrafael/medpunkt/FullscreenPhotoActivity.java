@@ -7,9 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,16 +23,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
-import android.util.TypedValue;
-import android.view.Menu;
+import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -82,10 +77,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+            /*ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
-            }
+            }*/
 
             fab.setVisibility(View.VISIBLE);
         }
@@ -139,12 +134,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen);
 
-        Resources r = getResources();
+        /*Resources r = getResources();
         int myScreenHeightDp = r.getConfiguration().screenHeightDp;
         myScreenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, myScreenHeightDp, r.getDisplayMetrics());
 
         int myScreenWidthDp = r.getConfiguration().screenWidthDp;
         myScreenWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, myScreenWidthDp, r.getDisplayMetrics());
+*/
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        myScreenWidthPx = size.x;
+        myScreenHeightPx = size.y;
 
         Intent intent = getIntent();
 
@@ -165,6 +166,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 // выбираем дату фото
                 DatePickerFragment newFragment = new DatePickerFragment();
                 newFragment.show(getSupportFragmentManager(), "datePicker");
+
+                // удалить это
+                editTreatmentPhoto = false;
+                mDescriptionView.setVisibility(View.GONE);
+                textDate.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                //imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             }
         });
 
@@ -185,12 +193,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            /*actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_36dp);
-            actionBar.setElevation(0);
+            actionBar.setElevation(0);*/
+
+            actionBar.hide();
 
             if (textPhotoDescription != null) {
-                actionBar.setTitle(textPhotoDescription);
+                //actionBar.setTitle(textPhotoDescription);
                 editTextPhotoDescription.setText(textPhotoDescription);
             } else {
                 textPhotoDescription = "";
@@ -216,7 +226,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 fab.setVisibility(View.GONE);
                 editTreatmentPhoto = true;
 
-                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                //imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
                 invalidateOptionsMenu();
             }
@@ -235,7 +245,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         // если было нажато добваить фото
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
-        if (newTreatmentPhoto){
+        if (newTreatmentPhoto) {
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 // Запрашиваем разрешение на чтение и запись фото
@@ -256,13 +266,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             hide();
             landscape = true;
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+            //imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
 
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             show();
             landscape = false;
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+            //imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
         }
     }
 
@@ -295,18 +305,34 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
             if (selectedImage != null) {
 
+                hide();
+                //editTreatmentPhoto = false;
+
+
+                Log.d("imagePhotoSize", "Picasso befor");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
+
                 rotate = getRotation(this, selectedImage);
 
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
-                        resize(myScreenWidthPx, myScreenHeightPx).
+                        //resize(480, 854).
+                        //resize(myScreenWidthPx, myScreenHeightPx).
+                                resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
                         rotate(rotate).
                         centerInside().
                         into(imagePhoto);
-            }
 
-            imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                show();
+
+                imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                Log.d("imagePhotoSize", "Picasso after");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
+            }
 
             // TODO реализовать сохранение фото
             // SystemClock.elapsedRealtime(); - для нумерации сохраняемых файлов
@@ -405,7 +431,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user_treatment_fullphoto, menu);
 
@@ -415,19 +441,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 getResources().getString(R.string.delete_treatment_photo)));
 
         return true;
-    }
+    }*/
 
     // SpannableString с картикной для элеменов меню
-    private CharSequence menuIconWithText(Drawable r, String title) {
+   /* private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
         ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
@@ -453,7 +479,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    //imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
                     if (photoDescriptionHasNotChanged() && !newTreatmentPhoto) {
 
@@ -472,20 +498,39 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
 
         return true;
-    }
+    }*/
 
     public void toggle() {
 
-        imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        //imagePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
         if (!editTreatmentPhoto) {
 
-            imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
+            //imagePhoto.startAnimation(AnimationUtils.loadAnimation(FullscreenPhotoActivity.this, R.anim.scale_in_scale_out));
 
             if (mVisible) {
+                Log.d("imagePhotoSize", "toggle befor hide");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
+
                 hide();
+
+                Log.d("imagePhotoSize", "toggle after hide");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
+
+
             } else {
+                Log.d("imagePhotoSize", "toggle befor show");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
+
                 show();
+
+                Log.d("imagePhotoSize", "toggle after show");
+                Log.d("imagePhotoSize", "imagePhoto.getWidth() = " + imagePhoto.getWidth());
+                Log.d("imagePhotoSize", "imagePhoto.getHeight() = " + imagePhoto.getHeight());
             }
 
         } else {
@@ -504,9 +549,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     private void hide() {
         // Hide UI first
-        if (actionBar != null) {
+        /*if (actionBar != null) {
             actionBar.hide();
-        }
+        }*/
         mDescriptionView.setVisibility(View.GONE);
         textDate.setVisibility(View.GONE);
         fab.setVisibility(View.GONE);
@@ -808,7 +853,3 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
 }
-
-
-
-
