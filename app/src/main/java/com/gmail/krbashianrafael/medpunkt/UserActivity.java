@@ -359,16 +359,6 @@ public class UserActivity extends AppCompatActivity {
                 // получаем угол поворота фотки
                 rotate = getRotation(this, selectedImage);
 
-
-
-
-                /*Picasso picasso = new Picasso.Builder(this).listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        exception.printStackTrace();
-                    }
-                }).build();*/
-
                 Picasso.get().load(selectedImage).
                         placeholder(R.color.colorAccent).
                         error(R.color.colorAccentSecondary).
@@ -476,6 +466,7 @@ public class UserActivity extends AppCompatActivity {
                         textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
                         invalidateOptionsMenu();
+
                         fab.startAnimation(fabShowAnimation);
 
                     } else {
@@ -572,7 +563,7 @@ public class UserActivity extends AppCompatActivity {
     private void saveUser() {
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
-        scaleAnimation.setDuration(200);
+        scaleAnimation.setDuration(500);
 
         String nameToCheck = editTextName.getText().toString().trim();
         String birthDateToCheck = editTextDate.getText().toString();
