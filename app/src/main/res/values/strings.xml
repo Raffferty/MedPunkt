@@ -50,6 +50,9 @@
     <string name="error_photo_description">Укажите краткое описание снимка</string>
     <string name="title_activity_fullscreen">Добавить снимок</string>
     <string name="photo_description">Описание снимка</string>
+    <string name="date_of_treatment_photo">дата снимка</string>
+    <string name="error_date_of_treatment_photo">Укажите дату снимка</string>
+    <string name="fullscreen_image_description">fullscreen_image</string>
 
 
 </resources>

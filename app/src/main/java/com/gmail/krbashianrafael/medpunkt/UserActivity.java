@@ -565,11 +565,11 @@ public class UserActivity extends AppCompatActivity {
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
 
+        // првоерка имени и ДР
         String nameToCheck = editTextName.getText().toString().trim();
         String birthDateToCheck = editTextDate.getText().toString();
-
-        // првоерка имени и ДР
         boolean wrongField = false;
+
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutName.setError(getString(R.string.error_name));
             focusHolder.requestFocus();

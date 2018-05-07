@@ -23,14 +23,16 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:keepScreenOn="true"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/fullscreen_image_description" />
 
     <LinearLayout
         android:id="@+id/LL_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <FrameLayout
             android:id="@+id/frm_back"
@@ -106,7 +108,8 @@
                     android:inputType="textPersonName|textCapWords|textMultiLine"
                     android:paddingEnd="32dp"
                     android:textColor="@color/colorAccent"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RtlSymmetry" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -123,9 +126,11 @@
             android:drawableEnd="@drawable/ic_date_range_orange_32dp"
             android:focusable="false"
             android:gravity="top"
-            android:text="дата снимка "
-            android:textColor="@color/colorFab"
-            android:textSize="16sp" />
+            android:text="@string/date_of_treatment_photo"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            android:inputType="date"
+            tools:ignore="LabelFor" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabEditTreatmentPhoto"

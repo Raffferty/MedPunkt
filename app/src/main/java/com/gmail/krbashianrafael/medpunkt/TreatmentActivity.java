@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ResultReceiver;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -40,7 +38,7 @@ import android.widget.Toast;
 
 public class TreatmentActivity extends AppCompatActivity {
 
-    Window myWindow;
+    private Window myWindow;
 
     // id заболеввания
     private int _id_disease = 0;
@@ -143,8 +141,13 @@ public class TreatmentActivity extends AppCompatActivity {
         focusHolder = findViewById(R.id.focus_holder);
         focusHolder.requestFocus();
 
+        Resources r = getResources();
+        int screenHeightDp = r.getConfiguration().screenHeightDp;
+        final int[] editTextTreatmentMaxHeight = {(int) (screenHeightDp / 1.2)};
+
         editTextTreatment = findViewById(R.id.editTextTreatment);
         editTextTreatment.setText(textTreatment);
+        editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
 
         textViewAddTreatmentPhoto = findViewById(R.id.textViewAddTreatmentPhoto);
 
@@ -190,10 +193,6 @@ public class TreatmentActivity extends AppCompatActivity {
         });
 
         txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
-        Resources r = getResources();
-        int screenHeightDp = r.getConfiguration().screenHeightDp;
-        final int[] editTextTreatmentMaxHeight = {(int) (screenHeightDp / 1.5)};
-        editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +217,9 @@ public class TreatmentActivity extends AppCompatActivity {
                 //Log.d("onReceiveResult", " befor showSoftInput");
 
                 View viewToShow = TreatmentActivity.this.getCurrentFocus();
-                MyResultReceiver myResultReceiver = new MyResultReceiver(null);
+
+                //MyResultReceiver myResultReceiver = new MyResultReceiver(null);
+
                 if (viewToShow != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
@@ -321,7 +322,6 @@ public class TreatmentActivity extends AppCompatActivity {
                 textTreatment = editTextTreatment.getText().toString();
 
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
-                intentToTreatmentPhoto.putExtra("editTreatmentPhoto", true);
                 intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
 
                 startActivity(intentToTreatmentPhoto);
@@ -345,7 +345,7 @@ public class TreatmentActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     protected void onStart() {
         super.onStart();
         //fab.performClick();
@@ -393,7 +393,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
             }
         }).start();
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -700,7 +700,7 @@ public class TreatmentActivity extends AppCompatActivity {
         Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
 
-    private class MyResultReceiver extends ResultReceiver {
+   /* private class MyResultReceiver extends ResultReceiver {
 
         Handler mHandler;
 
@@ -729,7 +729,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
         }
 
-    }
+    }*/
 
 }
 

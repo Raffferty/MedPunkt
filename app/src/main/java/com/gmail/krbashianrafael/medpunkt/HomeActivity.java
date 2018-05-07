@@ -39,10 +39,10 @@ public class HomeActivity extends AppCompatActivity {
 
             // для версий начиная с Nougat	7.1	API level 25 исползуются круглые икнонки
             if (Build.VERSION.SDK_INT >= 25){
-                actionBar.setIcon(R.drawable.med_round_40dp);
+                actionBar.setIcon(R.drawable.med_round);
             }
             else {
-                actionBar.setIcon(R.drawable.med_rect_40dp);
+                actionBar.setIcon(R.drawable.med_rect);
             }
         }
 
