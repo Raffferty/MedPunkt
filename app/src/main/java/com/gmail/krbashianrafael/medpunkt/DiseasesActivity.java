@@ -41,7 +41,7 @@ public class DiseasesActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_36dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_30dp);
             actionBar.setElevation(0);
 
             if (textUserName != null) {

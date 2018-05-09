@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -39,15 +40,8 @@ import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.squareup.picasso.Picasso;
 
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class FullscreenPhotoActivity extends AppCompatActivity {
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
+
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -74,14 +68,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
             if (editTreatmentPhoto) {
                 mDescriptionView.setVisibility(View.VISIBLE);
-                textDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
                 frm_save.setVisibility(View.VISIBLE);
                 frm_delete.setVisibility(View.GONE);
 
             } else {
                 fab.startAnimation(fabShowAnimation);
                 mDescriptionView.setVisibility(View.INVISIBLE);
-                textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                 frm_save.setVisibility(View.GONE);
                 frm_delete.setVisibility(View.VISIBLE);
             }
@@ -100,10 +94,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged;
 
     private View LL_title, frm_back, frm_blank, frm_save, frm_delete;
-    private EditText focusHolder, textDateOfTreatmentPhoto;
+    private EditText focusHolder, editTextDateOfTreatmentPhoto;
     private TextInputLayout textInputLayoutPhotoDescription;
     private TextInputEditText editTextPhotoDescription;
-    private String textPhotoDescription;
+    private String textPhotoDescription, textDateOfTreatmentPhoto;
 
     private Animation LL_title_hideAnimation;
     private Animation LL_title_showAnimation;
@@ -148,6 +142,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
         //_id_disease = intent.getIntExtra("_id_disease", 0);
         textPhotoDescription = intent.getStringExtra("textPhotoDescription");
+        textDateOfTreatmentPhoto = intent.getStringExtra("textDateOfTreatmentPhoto");
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
         // инициализируем все View
@@ -156,12 +151,20 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         // устанавливаем слушатели
         setOnClickAndOnTouchListeners();
 
+        // записываем в поля описание и дату пришедшего снимка
         if (textPhotoDescription != null) {
             editTextPhotoDescription.setText(textPhotoDescription);
-        } else {
+        }
+        else {
             textPhotoDescription = "";
         }
 
+        if (textDateOfTreatmentPhoto != null) {
+            editTextDateOfTreatmentPhoto.setText(textDateOfTreatmentPhoto);
+        }
+        else {
+            textDateOfTreatmentPhoto = getString(R.string.date_of_treatment_photo);
+        }
 
         // если было нажато добваить фото
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
@@ -183,7 +186,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     frm_delete.setVisibility(View.GONE);
                 } else {
                     mDescriptionView.setVisibility(View.INVISIBLE);
-                    textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                     frm_save.setVisibility(View.GONE);
                     landscape = true;
                 }
@@ -199,7 +202,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             }
         } else {
             mDescriptionView.setVisibility(View.INVISIBLE);
-            textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
             frm_save.setVisibility(View.GONE);
 
             // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
@@ -218,7 +221,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         frm_save = findViewById(R.id.frm_save);
         frm_delete = findViewById(R.id.frm_delete);
         focusHolder = findViewById(R.id.focus_holder);
-        textDateOfTreatmentPhoto = findViewById(R.id.editText_date);
+        editTextDateOfTreatmentPhoto = findViewById(R.id.editText_date);
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
@@ -311,7 +314,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
                     editTreatmentPhoto = false;
                     mDescriptionView.setVisibility(View.INVISIBLE);
-                    textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                     fab.setVisibility(View.VISIBLE);
                     frm_save.setVisibility(View.GONE);
                     frm_delete.setVisibility(View.VISIBLE);
@@ -329,7 +332,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             }
         });
 
-        textDateOfTreatmentPhoto.setOnClickListener(new View.OnClickListener() {
+        editTextDateOfTreatmentPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -338,7 +341,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutPhotoDescription.setError(null);
                 textInputLayoutPhotoDescription.setErrorEnabled(false);
-                textDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable);
 
                 // выбираем дату фото
@@ -358,7 +361,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 textInputLayoutPhotoDescription.setError(null);
                 textInputLayoutPhotoDescription.setErrorEnabled(false);
                 textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable);
-                textDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 return false;
             }
@@ -371,7 +374,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mDescriptionView.setVisibility(View.VISIBLE);
-                textDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
                 editTextPhotoDescription.requestFocus();
                 editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
                 fab.setVisibility(View.INVISIBLE);
@@ -395,10 +398,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
@@ -410,7 +409,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         fab.startAnimation(fabHideAnimation);
 
         mDescriptionView.setVisibility(View.INVISIBLE);
-        textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+        editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -589,7 +588,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     public void toggle() {
-
         if (!editTreatmentPhoto) {
             if (mVisible) {
                 hide();
@@ -672,9 +670,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    // проверка на изменения описания фото
+    // проверка на изменения описания, даты и фото
     private boolean photoAndDescriptionHasNotChanged() {
-        return !treatmentPhotoHasChanged && editTextPhotoDescription.getText().toString().equals(textPhotoDescription);
+        return !treatmentPhotoHasChanged &&
+                TextUtils.equals(editTextPhotoDescription.getText().toString(), textPhotoDescription) &&
+                TextUtils.equals(editTextDateOfTreatmentPhoto.getText().toString(), textDateOfTreatmentPhoto);
     }
 
     private void goToTreatmentActivity() {
@@ -684,18 +684,22 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     private void saveTreatmentPhoto() {
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        }
+
         hideSoftInput();
 
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
 
-        String nameToCheck = editTextPhotoDescription.getText().toString().trim();
-        String dateOfTreatmentPhoto = textDateOfTreatmentPhoto.getText().toString();
+        String photoDescriptionToCheck = editTextPhotoDescription.getText().toString().trim();
+        String dateOfTreatmentPhotoToCheck = editTextDateOfTreatmentPhoto.getText().toString();
         boolean wrongField = false;
 
         // првоерка описания фото
-        if (TextUtils.isEmpty(nameToCheck)) {
+        if (TextUtils.isEmpty(photoDescriptionToCheck)) {
             textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable_Error);
             textInputLayoutPhotoDescription.setError(getString(R.string.error_photo_description));
             editTextPhotoDescription.startAnimation(scaleAnimation);
@@ -704,7 +708,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
 
         // првоерка Даты фото
-        if (TextUtils.equals(dateOfTreatmentPhoto, getString(R.string.date_of_treatment_photo))) {
+        if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.date_of_treatment_photo))) {
             if (wrongField) {
                 textInputLayoutPhotoDescription.setError(
                         getString(R.string.error_photo_description) + ".\n" +
@@ -714,18 +718,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 textInputLayoutPhotoDescription.setError(getString(R.string.error_date_of_treatment_photo));
             }
 
-            textDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorFab));
-            textDateOfTreatmentPhoto.startAnimation(scaleAnimation);
+            editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorFab));
+            editTextDateOfTreatmentPhoto.startAnimation(scaleAnimation);
             wrongField = true;
         }
 
-        // если поля описания и Даты фото не верные - выходим
+        // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
             return;
         }
 
         // проверка окончена, начинаем сохранение
-        textPhotoDescription = nameToCheck;
+        textPhotoDescription = photoDescriptionToCheck;
+        textDateOfTreatmentPhoto = dateOfTreatmentPhotoToCheck;
 
         // TODO это перенести в сохранение фото
         treatmentPhotoHasChanged = false;
@@ -739,7 +744,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 editTreatmentPhoto = false;
                 mDescriptionView.setVisibility(View.INVISIBLE);
-                textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                 fab.setVisibility(View.VISIBLE);
                 frm_save.setVisibility(View.GONE);
                 frm_delete.setVisibility(View.VISIBLE);
@@ -753,7 +758,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 editTreatmentPhoto = false;
                 mDescriptionView.setVisibility(View.INVISIBLE);
-                textDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                 fab.setVisibility(View.VISIBLE);
                 frm_save.setVisibility(View.GONE);
                 frm_delete.setVisibility(View.VISIBLE);

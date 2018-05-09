@@ -233,7 +233,7 @@ public class UserActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_36dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);

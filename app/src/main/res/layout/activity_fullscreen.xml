@@ -22,56 +22,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
+        android:contentDescription="@string/fullscreen_image_description"
         android:keepScreenOn="true"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/fullscreen_image_description" />
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:id="@+id/LL_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/frm_back"
-            android:layout_width="30dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/ic_arrow_back_white_36dp" />
+            android:layout_width="46dp"
+            android:layout_height="42dp">
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_arrow_back_white_30dp" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/frm_blank"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="42dp"
             android:layout_weight="1" />
 
         <FrameLayout
             android:id="@+id/frm_save"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/ic_check_white_24dp" />
+            android:layout_width="52dp"
+            android:layout_height="42dp">
+
+            <FrameLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_check_white_30dp" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/frm_delete"
+            android:layout_width="52dp"
+            android:layout_height="42dp">
+        <FrameLayout
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="11dp"
             android:background="@drawable/ic_delete_white_24dp" />
+        </FrameLayout>
 
     </LinearLayout>
 
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -126,10 +137,10 @@
             android:drawableEnd="@drawable/ic_date_range_orange_32dp"
             android:focusable="false"
             android:gravity="top"
+            android:inputType="date"
             android:text="@string/date_of_treatment_photo"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
-            android:inputType="date"
             tools:ignore="LabelFor" />
 
         <android.support.design.widget.FloatingActionButton

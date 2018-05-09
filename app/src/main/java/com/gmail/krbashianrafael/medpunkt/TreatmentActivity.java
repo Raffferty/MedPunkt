@@ -120,7 +120,7 @@ public class TreatmentActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_36dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
             actionBar.setElevation(0);
 
             if (!textDiseaseName.equals("")) {
@@ -308,6 +308,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
                 intentToTreatmentPhoto.putExtra("textPhotoDescription", "Рентген");
+                intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", "01.02.2018 ");
                 startActivity(intentToTreatmentPhoto);
             }
         });

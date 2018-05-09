@@ -26,7 +26,7 @@ public class UsersActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_24dp);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
         }
 
         // это видимо, т.к. добавлен фиктивный пользователь
