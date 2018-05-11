@@ -36,6 +36,7 @@ public class UsersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
+                userIntent.putExtra("_idUser", 1);
                 userIntent.putExtra("userPhotoUri", "No_Photo");
                 userIntent.putExtra("newUser", true);
                 startActivity(userIntent);
@@ -58,7 +59,7 @@ public class UsersActivity extends AppCompatActivity {
         // начало ------ Фиктивниый юзер с фото
         LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
         ImageView userImage = findViewById(R.id.user_image);
-        String pathToPhoto = getString(R.string.pathToPhoto);
+        String pathToPhoto = getString(R.string.path_to_user_photo);
         File imgFile = new File(pathToPhoto);
         if (imgFile.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());

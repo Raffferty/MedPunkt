@@ -609,9 +609,11 @@ public class UserActivity extends AppCompatActivity {
         // когда сохраняем НОВОГО пользователя в базу, вместо пути к фото пишем "No_Photo" на случай,
         // если фото не будет установленно
         // при сохранении пользователя в базу получаем его _id
-        // далее, если фото будет выбрано, то дописываем путь к фото в базу с именем файла содержащим _id пользователя
-        // в данном случае присваиваем фейковый _id = 1
+        // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу с именем файла содержащим _id пользователя
 
+        // в данном случае в Intent мы получили фейковый _idUser = 1 для существующего пользователя
+
+        // для нового пользователя присваиваем фейковый _idUser = 1
         _idUser = 1;
 
         // в отдельном потоке пишем файл фотки в интернал
@@ -673,7 +675,7 @@ public class UserActivity extends AppCompatActivity {
             // если фото было удалено, то удалить файл фото (если он есть)
             if (userSetNoPhotoUri.equals("Set_No_Photo")) {
                 //TODO здесь нужно будет формировать путь к фото по id
-                String pathToPhoto = getString(R.string.pathToPhoto);
+                String pathToPhoto = getString(R.string.path_to_user_photo);
                 File imgFile = new File(pathToPhoto);
                 if (imgFile.exists()) {
                     if (!imgFile.delete()) {
@@ -728,16 +730,19 @@ public class UserActivity extends AppCompatActivity {
 
         // для интернал
         String root = getFilesDir().toString();
+        Log.d("file", "root = " + root);
+
         File myDir = new File(root + "/users_photos"); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
+        Log.d("file", "myDir = " + myDir);
 
         if (!myDir.mkdirs()) {
-            Log.d("myDir.mkdirs", "users_photos_dir_Not_created");
+            Log.d("file", "users_photos_dir_Not_created");
         }
 
         String fileName = "Image-" + _idUser + ".jpg";
         File file = new File(myDir, fileName);
 
-        //Log.d("file", "file = " + file);
+        Log.d("file", "file = " + file);
         // при этом путь к файлу
         // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg
 
@@ -749,14 +754,16 @@ public class UserActivity extends AppCompatActivity {
         }
 
         FileOutputStream outputStream;
+
         try {
             outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         if (file.exists()) {
             userPhotoUri = file.toString();

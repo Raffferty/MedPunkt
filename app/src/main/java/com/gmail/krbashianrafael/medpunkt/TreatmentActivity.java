@@ -41,7 +41,7 @@ public class TreatmentActivity extends AppCompatActivity {
     private Window myWindow;
 
     // id заболеввания
-    private int _id_disease = 0;
+    private int _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private static boolean newDisease, goBack, editDisease;
@@ -96,7 +96,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        _id_disease = intent.getIntExtra("_id_disease", 0);
+        _idDisease = intent.getIntExtra("_idDisease", 0);
 
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
@@ -307,6 +307,8 @@ public class TreatmentActivity extends AppCompatActivity {
                 textTreatment = editTextTreatment.getText().toString();
 
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
+                intentToTreatmentPhoto.putExtra("_idDisease", 2);
+                intentToTreatmentPhoto.putExtra("treatmentPhotoUri", getString(R.string.path_to_treatment_photo));
                 intentToTreatmentPhoto.putExtra("textPhotoDescription", "Рентген");
                 intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", "01.02.2018 ");
                 startActivity(intentToTreatmentPhoto);
@@ -604,9 +606,9 @@ public class TreatmentActivity extends AppCompatActivity {
         }
 
         // когда сохраняем НОВОЕ заболевание получаем его _id
-        // в данном случае присваиваем фейковый _id = 1
+        // в данном случае присваиваем фейковый _idDisease = 2
 
-        _id_disease = 1;
+        _idDisease = 2;
 
         // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
         if (newDisease) {

@@ -57,7 +57,7 @@ public class DiseasesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
-                treatmentIntent.putExtra("_idDisease", 1);
+                treatmentIntent.putExtra("_idDisease", 2);
                 treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
