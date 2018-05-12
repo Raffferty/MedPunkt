@@ -12,9 +12,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.hardware.SensorManager;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
@@ -42,6 +42,8 @@ import android.widget.Toast;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixCorrector;
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -193,22 +195,45 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
             hide();
 
-            File imgFile = new File(treatmentPhotoUri);
-            if (imgFile.exists()) {
+            File savedimgFile = new File(treatmentPhotoUri);
+            if (savedimgFile.exists()) {
 
-                Uri uriFromTreatmentPhotoFile = Uri.fromFile(imgFile);
+                Uri uriFromTreatmentPhotoFile = Uri.fromFile(savedimgFile);
 
+                // Uri.fromFile = file:///storage/sdcard/Medpunkt/treatment_photos/Image-2.jpg
                 // Uri.fromFile = file:///storage/emulated/0/Medpunkt/treatment_photos/Image-2.jpg
+
                 Log.d("Uri.fromFile", "Uri.fromFile = " + uriFromTreatmentPhotoFile);
 
-                Picasso.get().load(Uri.fromFile(imgFile)).
-                        placeholder(R.color.colorAccent).
-                        error(R.color.colorAccentSecondary).
-                        resize(myScreenWidthPx, myScreenHeightPx).
-                        centerInside().
-                        into(imagePhoto);
+                // делаем memoryPolicy(MemoryPolicy.NO_CACHE )
+                // чтоб при изменении файла фото грузился новый файл, а не фото из Кэша
 
-                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                try {
+                    ExifInterface exifInterface = new ExifInterface(savedimgFile.getPath());
+                    int IMAGE_LENGTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
+                    int IMAGE_WIDTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+
+
+                    Log.d("bitmap", "IMAGE_LENGTH = " + IMAGE_LENGTH);
+                    Log.d("bitmap", "IMAGE_WIDTH = " + IMAGE_WIDTH);
+
+                    Picasso.get().load(uriFromTreatmentPhotoFile).
+                            memoryPolicy(MemoryPolicy.NO_CACHE).
+                            networkPolicy(NetworkPolicy.NO_CACHE).
+                            placeholder(R.color.colorAccent).
+                            error(R.color.colorAccentSecondary).
+                            resize(IMAGE_WIDTH, IMAGE_LENGTH).
+                            centerInside().
+                            into(imagePhoto);
+
+                    imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 
@@ -545,25 +570,51 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     show();
                 }
 
-                float rotate = getRotation(this, selectedImage);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = Picasso.get().
+                                    load(selectedImage).get();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                Log.d("Uri.fromFile", "rotate = " + rotate);
+                        final int bitmapHeight = bitmap.getHeight();
+                        final int bitmapWidth = bitmap.getWidth();
 
-                Picasso.get().load(selectedImage).
-                        placeholder(R.color.colorAccent).
-                        error(R.color.colorAccentSecondary).
-                        resize(myScreenWidthPx, myScreenHeightPx).
-                        rotate(rotate).
-                        centerInside().
-                        into(imagePhoto);
+                        Log.d("bitmap", "bitmapHeight = " + bitmapHeight);
+                        Log.d("bitmap", "bitmapWidth = " + bitmapWidth);
 
-                textInputLayoutPhotoDescription.setError(null);
-                textInputLayoutPhotoDescription.setErrorEnabled(false);
 
-                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                float rotate = getRotation(FullscreenPhotoActivity.this, selectedImage);
 
-                // флаг об изменении фото
-                treatmentPhotoHasChanged = true;
+                                Log.d("Uri.fromFile", "rotate = " + rotate);
+
+                                Picasso.get().load(selectedImage).
+                                        placeholder(R.color.colorAccent).
+                                        error(R.color.colorAccentSecondary).
+                                        //resize(myScreenWidthPx, myScreenHeightPx).
+                                        resize(bitmapWidth, bitmapHeight).
+                                        rotate(rotate).
+                                        centerInside().
+                                        into(imagePhoto);
+
+                                textInputLayoutPhotoDescription.setError(null);
+                                textInputLayoutPhotoDescription.setErrorEnabled(false);
+
+                                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            }
+                        });
+
+                        // флаг об изменении фото
+                        treatmentPhotoHasChanged = true;
+                    }
+                }).start();
             }
         }
         // если не выбрали фото идем обратно
@@ -766,15 +817,28 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             public void run() {
                 try {
                     float rotate = getRotation(FullscreenPhotoActivity.this, selectedImage);
-                    bitmap = Picasso.get().load(selectedImage).
+                    bitmap = Picasso.get().
+                            load(selectedImage).
+                            //resize(myScreenWidthPx, myScreenHeightPx).
+                            //resize(3840, 2400).
                             rotate(rotate).
+                            //centerInside().
                             get();
 
+                    int bitmapHeight = bitmap.getHeight();
+                    int bitmapWidth = bitmap.getWidth();
+
+                    Log.d("bitmap", "bitmapHeight = " + bitmapHeight);
+                    Log.d("bitmap", "bitmapWidth = " + bitmapWidth);
+
+
                     if (bitmap != null) {
-                        String root = Environment.getExternalStorageDirectory().toString();
+                        //String root = Environment.getExternalStorageDirectory().toString();
+                        String root = getFilesDir().toString();;
                         Log.d("file", "root = " + root);
 
-                        File myDir = new File(root + "/Medpunkt/treatment_photos");
+                        //File myDir = new File(root + "/Medpunkt/treatment_photos");
+                        File myDir = new File(root + "/treatment_photos");
                         Log.d("file", "myDir = " + myDir);
 
                         if (!myDir.mkdirs()) {
@@ -795,7 +859,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                         }
 
                         outputStream = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
                         outputStream.flush();
                         outputStream.close();
 

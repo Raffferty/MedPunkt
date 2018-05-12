@@ -55,7 +55,7 @@
     <string name="fullscreen_image_description">fullscreen_image</string>
     <string name="image_not_loaded">Ошибка загрузки фото</string>
     <string name="image_not_saved">Фото не сохранилось</string>
-    <string name="path_to_treatment_photo">/storage/emulated/0/Medpunkt/treatment_photos/Image-2.jpg</string>
+    <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
 
 
 

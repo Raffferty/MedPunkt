@@ -624,7 +624,8 @@ public class UserActivity extends AppCompatActivity {
             public void run() {
                 try {
                     // получаем bitmap
-                    bitmap = Picasso.get().load(selectedImage).
+                    bitmap = Picasso.get().
+                            load(selectedImage).
                             resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
                             centerInside().
                             rotate(rotate).
