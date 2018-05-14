@@ -42,13 +42,19 @@ import android.widget.Toast;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixCorrector;
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import static com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888;
 
 
 public class FullscreenPhotoActivity extends AppCompatActivity {
@@ -213,19 +219,30 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     ExifInterface exifInterface = new ExifInterface(savedimgFile.getPath());
                     int IMAGE_LENGTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
                     int IMAGE_WIDTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+                    int IMAGE_ORIENTATION = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
 
 
                     Log.d("bitmap", "IMAGE_LENGTH = " + IMAGE_LENGTH);
                     Log.d("bitmap", "IMAGE_WIDTH = " + IMAGE_WIDTH);
+                    Log.d("bitmap", "IMAGE_ORIENTATION = " + IMAGE_ORIENTATION);
 
-                    Picasso.get().load(uriFromTreatmentPhotoFile).
+                    // не пишем фото в Cache skipMemoryCache(true)
+                    GlideApp.with(FullscreenPhotoActivity.this)
+                            .load(uriFromTreatmentPhotoFile)
+                            .format(PREFER_ARGB_8888)
+                            .dontTransform()
+                            .skipMemoryCache(true)
+                            .into(imagePhoto);
+
+                    // грузим с Picasso
+                    /*Picasso.get().load(uriFromTreatmentPhotoFile).
                             memoryPolicy(MemoryPolicy.NO_CACHE).
                             networkPolicy(NetworkPolicy.NO_CACHE).
                             placeholder(R.color.colorAccent).
                             error(R.color.colorAccentSecondary).
                             resize(IMAGE_WIDTH, IMAGE_LENGTH).
                             centerInside().
-                            into(imagePhoto);
+                            into(imagePhoto);*/
 
                     imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -570,7 +587,80 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     show();
                 }
 
+
+                // грузим с Glide
+
+                // чистим imagePhoto
+                GlideApp.with(this).clear(imagePhoto);
+                // чистим память
+                Glide.get(this).clearMemory();
+
                 new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        File file = null;
+                        try {
+                            // чистим DiskCache
+                            Glide.get(FullscreenPhotoActivity.this).clearDiskCache();
+
+                            file = GlideApp.with(FullscreenPhotoActivity.this)
+                                    .applyDefaultRequestOptions(new RequestOptions())
+                                    .asFile()
+                                    .load(selectedImage)
+                                    .format(PREFER_ARGB_8888)
+                                    .dontTransform()
+                                    .submit()
+                                    .get();
+
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                GlideApp.with(FullscreenPhotoActivity.this)
+                                        .load(selectedImage)
+                                        //.format(PREFER_ARGB_8888)
+                                        .dontTransform()
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(imagePhoto);
+
+                                // чистим память
+                                Glide.get(FullscreenPhotoActivity.this).clearMemory();
+
+                                // чистим DiskCache
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.get(FullscreenPhotoActivity.this).clearDiskCache();
+                                    }
+                                }).start();
+                            }
+                        });
+
+
+                        // пишем файл
+                        File destination = new File("/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg");
+
+                        try {
+                            FileUtils.copyFile(file, destination);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }).start();
+
+
+                imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                treatmentPhotoHasChanged = true;
+
+
+                // грузим с Picasso
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Bitmap bitmap = null;
@@ -614,7 +704,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                         // флаг об изменении фото
                         treatmentPhotoHasChanged = true;
                     }
-                }).start();
+                }).start();*/
             }
         }
         // если не выбрали фото идем обратно
@@ -821,9 +911,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                             load(selectedImage).
                             //resize(myScreenWidthPx, myScreenHeightPx).
                             //resize(3840, 2400).
-                            rotate(rotate).
+                                    rotate(rotate).
                             //centerInside().
-                            get();
+                                    get();
 
                     int bitmapHeight = bitmap.getHeight();
                     int bitmapWidth = bitmap.getWidth();
@@ -834,7 +924,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
                     if (bitmap != null) {
                         //String root = Environment.getExternalStorageDirectory().toString();
-                        String root = getFilesDir().toString();;
+                        String root = getFilesDir().toString();
+                        ;
                         Log.d("file", "root = " + root);
 
                         //File myDir = new File(root + "/Medpunkt/treatment_photos");
