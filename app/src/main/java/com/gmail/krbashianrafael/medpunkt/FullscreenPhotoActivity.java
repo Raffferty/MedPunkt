@@ -9,15 +9,12 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -45,12 +42,10 @@ import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.squareup.picasso.Picasso;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -133,6 +128,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     // фото
     private ImageView imagePhoto;
+
+    // загруженный файл фотографии
+    private File fileOfPhoto = null;
 
     private int myScreenWidthPx;
     private int myScreenHeightPx;
@@ -222,15 +220,31 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     int IMAGE_ORIENTATION = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
 
 
-                    Log.d("bitmap", "IMAGE_LENGTH = " + IMAGE_LENGTH);
-                    Log.d("bitmap", "IMAGE_WIDTH = " + IMAGE_WIDTH);
-                    Log.d("bitmap", "IMAGE_ORIENTATION = " + IMAGE_ORIENTATION);
+                    Log.d("file", "IMAGE_LENGTH = " + IMAGE_LENGTH);
+                    Log.d("file", "IMAGE_WIDTH = " + IMAGE_WIDTH);
+                    Log.d("file", "IMAGE_ORIENTATION = " + IMAGE_ORIENTATION);
+
+                    float rotate = 0f;
+
+                    switch (IMAGE_ORIENTATION) {
+                        case ExifInterface.ORIENTATION_ROTATE_180: // 3
+                            rotate = 180f;
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_90: // 6
+                            rotate = -90f;
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_270: // 8
+                            rotate = 90f;
+                            break;
+                    }
 
                     // не пишем фото в Cache skipMemoryCache(true)
                     GlideApp.with(FullscreenPhotoActivity.this)
                             .load(uriFromTreatmentPhotoFile)
                             .format(PREFER_ARGB_8888)
                             .dontTransform()
+                            .dontTransform()
+                            .transform(new RotateTransformation(rotate))
                             .skipMemoryCache(true)
                             .into(imagePhoto);
 
@@ -595,15 +609,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 // чистим память
                 Glide.get(this).clearMemory();
 
+                final int[] IMAGE_ORIENTATION = {0};
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        File file = null;
+                        //File fileOfPhoto = null;
                         try {
                             // чистим DiskCache
                             Glide.get(FullscreenPhotoActivity.this).clearDiskCache();
 
-                            file = GlideApp.with(FullscreenPhotoActivity.this)
+                            fileOfPhoto = GlideApp.with(FullscreenPhotoActivity.this)
                                     .applyDefaultRequestOptions(new RequestOptions())
                                     .asFile()
                                     .load(selectedImage)
@@ -612,20 +628,59 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                                     .submit()
                                     .get();
 
-                        } catch (InterruptedException | ExecutionException e) {
+                            String fileAbsolutePath = fileOfPhoto.getAbsolutePath();
+
+                            Log.d("file", "selectedImage = " + selectedImage);
+                            Log.d("file", "fileAbsolutePath = " + fileAbsolutePath);
+
+                            //selectedImage = content://media/external/images/media/252
+                            //fileAbsolutePath = /storage/emulated/0/Pictures/puppy_dog_flower_3840x2400.jpg
+
+
+                            ExifInterface exifInterface = new ExifInterface(fileAbsolutePath);
+                            int IMAGE_LENGTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0);
+                            int IMAGE_WIDTH = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0);
+                            IMAGE_ORIENTATION[0] = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+
+                            Log.d("file", "IMAGE_LENGTH = " + IMAGE_LENGTH);
+                            Log.d("file", "IMAGE_WIDTH = " + IMAGE_WIDTH);
+                            Log.d("file", "IMAGE_ORIENTATION = " + IMAGE_ORIENTATION[0]);
+
+                        } catch (InterruptedException | ExecutionException | IOException e) {
                             e.printStackTrace();
                         }
 
+                        float rotate = 0f;
+
+                        switch (IMAGE_ORIENTATION[0]) {
+                            case ExifInterface.ORIENTATION_ROTATE_180: // 3
+                                rotate = 180f;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_90: // 6
+                                rotate = -90f;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_270: // 8
+                                rotate = 90f;
+                                break;
+                        }
+
+
+                        final float finalRotate = rotate;
+
+                        Log.d("file", "finalRotation = " + finalRotate);
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 GlideApp.with(FullscreenPhotoActivity.this)
                                         .load(selectedImage)
-                                        //.format(PREFER_ARGB_8888)
+                                        .format(PREFER_ARGB_8888)
                                         .dontTransform()
+                                        .transform(new RotateTransformation(finalRotate))
                                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .into(imagePhoto);
+
 
                                 // чистим память
                                 Glide.get(FullscreenPhotoActivity.this).clearMemory();
@@ -639,18 +694,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                                 }).start();
                             }
                         });
-
-
-                        // пишем файл
-                        File destination = new File("/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg");
-
-                        try {
-                            FileUtils.copyFile(file, destination);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
                     }
                 }).start();
 
@@ -717,7 +760,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     // метод для получения оринетации (угол поворота) фотографии
     // т.к. Picasso все фото вставляет боком, то нужно поворачивать на нужный угол
-    private int getRotation(Context context, Uri photoUri) {
+    /*private int getRotation(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
@@ -737,7 +780,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
 
         return orientation;
-    }
+    }*/
 
     public void toggle() {
         if (!editTreatmentPhoto) {
@@ -898,7 +941,86 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         // File myDir = new File(root + "/Medpunkt/treatment_photos");
         // при этом получится File imgFile = new File("/storage/emulated/0/Medpunkt/treatment_photos/Image-2.jpg");
 
+
+        // пишем файл методом FileUtils.copyFile
         Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (fileOfPhoto != null) {
+                    try {
+                        File destination = new File("/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg");
+
+                        if (destination.exists()) {
+                            if (!destination.delete()) {
+                                Toast.makeText(FullscreenPhotoActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        FileUtils.copyFile(fileOfPhoto, destination);
+
+                        if (destination.exists()) {
+                            treatmentPhotoUri = destination.toString();
+                        } else {
+                            Toast.makeText(FullscreenPhotoActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        if (newTreatmentPhoto) {
+                            saveTreatmentPhotoToDataBase();
+                            newTreatmentPhoto = false;
+
+                            if (goBack) {
+                                goToTreatmentActivity();
+                            } else {
+                                editTreatmentPhoto = false;
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mDescriptionView.setVisibility(View.INVISIBLE);
+                                        editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                                        fab.setVisibility(View.VISIBLE);
+                                        frm_save.setVisibility(View.GONE);
+                                        frm_delete.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                            }
+
+                        } else {
+                            updateTreatmentPhotoToDataBase();
+
+                            if (goBack) {
+                                goToTreatmentActivity();
+                            } else {
+                                editTreatmentPhoto = false;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mDescriptionView.setVisibility(View.INVISIBLE);
+                                        editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                                        fab.setVisibility(View.VISIBLE);
+                                        frm_save.setVisibility(View.GONE);
+                                        frm_delete.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                            }
+                        }
+
+                        // выставляем флаг treatmentPhotoHasChanged = false
+                        treatmentPhotoHasChanged = false;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_saved, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+        // пишем файл с помощю Picasso
+        /*Thread t = new Thread(new Runnable() {
 
             Bitmap bitmap = null;
             FileOutputStream outputStream = null;
@@ -1013,7 +1135,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
+
 
         if (selectedImage != null) {
             t.start();
