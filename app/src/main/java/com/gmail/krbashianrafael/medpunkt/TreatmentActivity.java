@@ -496,6 +496,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 // Если не было изменений
                 if (diseaseAndTreatmentHasNotChanged()) {
                     goToDiseasesActivity();
+                    finish();
                     return true;
                 }
 
@@ -521,7 +522,9 @@ public class TreatmentActivity extends AppCompatActivity {
                 return true;
 
             default:
-                return super.onOptionsItemSelected(item);
+                super.onOptionsItemSelected(item);
+                finish();
+                return true;
         }
     }
 
@@ -532,6 +535,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
         if (diseaseAndTreatmentHasNotChanged()) {
             super.onBackPressed();
+            finish();
             return;
         }
 
@@ -663,6 +667,8 @@ public class TreatmentActivity extends AppCompatActivity {
     private void goToDiseasesActivity() {
         Intent intent = new Intent(TreatmentActivity.this, DiseasesActivity.class);
         startActivity(intent);
+
+        finish();
     }
 
     private void hideSoftInput() {

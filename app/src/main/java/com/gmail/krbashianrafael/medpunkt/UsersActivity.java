@@ -64,8 +64,7 @@ public class UsersActivity extends AppCompatActivity {
         if (imgFile.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             userImage.setImageBitmap(myBitmap);
-        }
-        else {
+        } else {
             pathToPhoto = "No_Photo";
         }
 
@@ -109,6 +108,12 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
@@ -116,6 +121,8 @@ public class UsersActivity extends AppCompatActivity {
                 Intent intent = new Intent(UsersActivity.this, HomeActivity.class);
                 intent.putExtra("fromUsers", true);
                 startActivity(intent);
+
+                finish();
 
                 return true;
 

@@ -105,10 +105,20 @@ public class DiseasesActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent intent = new Intent(DiseasesActivity.this, UsersActivity.class);
                 startActivity(intent);
+
+                finish();
                 return true;
 
             default:
-                return super.onOptionsItemSelected(item);
+                super.onOptionsItemSelected(item);
+                finish();
+                return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

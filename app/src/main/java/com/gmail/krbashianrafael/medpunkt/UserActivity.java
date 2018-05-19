@@ -520,6 +520,7 @@ public class UserActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (userHasNotChanged()) {
             super.onBackPressed();
+            finish();
             return;
         }
 
@@ -740,7 +741,9 @@ public class UserActivity extends AppCompatActivity {
             Log.d("file", "users_photos_dir_Not_created");
         }
 
-        String fileName = "Image-" + _idUser + ".jpg";
+        //String fileName = "Image-" + _idUser + ".jpg";
+        // TODO  подмена String fileName = "Image-" + 2 + ".jpg";
+        String fileName = "Image-" + 2 + ".jpg";
         File file = new File(myDir, fileName);
 
         Log.d("file", "file = " + file);
@@ -825,11 +828,15 @@ public class UserActivity extends AppCompatActivity {
         intent.putExtra("birthDate", textUserBirthDate);
         intent.putExtra("userPhotoUri", userPhotoUri);
         startActivity(intent);
+
+        finish();
     }
 
     private void goToUsersActivity() {
         Intent intent = new Intent(UserActivity.this, UsersActivity.class);
         startActivity(intent);
+
+        finish();
     }
 
     private void hideSoftInput() {
