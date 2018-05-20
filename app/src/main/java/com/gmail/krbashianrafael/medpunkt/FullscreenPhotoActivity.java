@@ -370,8 +370,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         } else {
-            mDescriptionView.setVisibility(View.INVISIBLE);
-            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+            mDescriptionView.setVisibility(View.INVISIBLE); //View.INVISIBLE
+            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE); // View.INVISIBLE
             frm_save.setVisibility(View.GONE);
 
             // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
@@ -1381,6 +1381,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(final View view, final MotionEvent event) {
 
+            // TODO на таблете появляется клавиатура
             //Log.d("file", "event = " + event);
             Log.d("file", "taped = " + taped);
 
@@ -1466,6 +1467,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
                 taped = true;
 
+                myHandler.removeCallbacks(mtapedRunnable);
                 myHandler.postDelayed(mtapedRunnable, 100);
 
                 Log.d("file", "taped = " + taped);
