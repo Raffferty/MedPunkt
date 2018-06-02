@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".HomeActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -23,18 +24,22 @@
         </activity>
         <activity
             android:name=".UsersActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_users"
             android:screenOrientation="portrait" />
         <activity
             android:name=".UserActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_user"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DiseasesActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_diseases"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TreatmentActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_treatment"
             android:screenOrientation="portrait" />
         <activity

@@ -7,17 +7,22 @@ import android.util.Log;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
 // класс для вращения фото в Glide
-public class RotateTransformation extends BitmapTransformation {
+public class GetBitmapFromTransformation extends BitmapTransformation {
 
-    private Float rotateRotationAngle = 0f;
+    private static final String ID = "com.gmail.krbashianrafael.medpunkt.GetBitmapFromTransformation";
+    private static final byte[] ID_BYTES = ID.getBytes(Charset.forName("UTF-8"));
 
-    public RotateTransformation(float rotateRotationAngle) {
+
+    /*private Float rotateRotationAngle = 0f;
+
+    public GetBitmapFromTransformation(float rotateRotationAngle) {
 
         this.rotateRotationAngle = rotateRotationAngle;
-    }
+    }*/
 
     @Override
     protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
@@ -45,11 +50,14 @@ public class RotateTransformation extends BitmapTransformation {
         //Bitmap bitmap = Bitmap.createScaledBitmap(toTransform, toTransform.getWidth(), toTransform.getHeight(), true);
 
         //FullscreenPhotoActivity.loadedBitmap = bitmap;
+
+        // присваиваем FullscreenPhotoActivity.loadedBitmap = toTransform
+        FullscreenPhotoActivity.loadedBitmap = null;
         FullscreenPhotoActivity.loadedBitmap = toTransform;
 
         pool.clearMemory();
 
-        Log.d("file", "pool.getMaxSize() 2 = " + pool.getMaxSize());
+        //Log.d("file", "pool.getMaxSize() 2 = " + pool.getMaxSize());
 
 
 
@@ -67,20 +75,21 @@ public class RotateTransformation extends BitmapTransformation {
 
     @Override
     public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
-        messageDigest.update(("rotate" + rotateRotationAngle).getBytes());
+        //messageDigest.update(("rotate" + rotateRotationAngle).getBytes());
+        messageDigest.update(ID_BYTES);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof RotateTransformation) {
-            RotateTransformation other = (RotateTransformation) o;
+        /*if (o instanceof GetBitmapFromTransformation) {
+            GetBitmapFromTransformation other = (GetBitmapFromTransformation) o;
             return rotateRotationAngle.equals(other.rotateRotationAngle);
-        }
-        return false;
+        }*/
+        return o instanceof GetBitmapFromTransformation;
     }
 
     @Override
     public int hashCode() {
-        return rotateRotationAngle.hashCode();
+        return ID.hashCode();
     }
 }

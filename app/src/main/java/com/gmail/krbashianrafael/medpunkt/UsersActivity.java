@@ -84,6 +84,8 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
                 startActivity(userIntent);
+
+                finish();
             }
         });
 
@@ -101,6 +103,8 @@ public class UsersActivity extends AppCompatActivity {
                 userIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
                 startActivity(userIntent);
+
+                finish();
             }
         });
 
@@ -110,6 +114,10 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent intent = new Intent(UsersActivity.this, HomeActivity.class);
+        intent.putExtra("fromUsers", true);
+        startActivity(intent);
+
         finish();
     }
 

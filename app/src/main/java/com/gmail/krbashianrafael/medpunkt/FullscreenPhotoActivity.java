@@ -287,7 +287,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                             .load(uriFromTreatmentPhotoFile)
                             //.format(PREFER_ARGB_8888)
                             //.dontTransform()
-                            //.transform(new RotateTransformation(rotate))
+                            //.transform(new GetBitmapFromTransformation(rotate))
                             .skipMemoryCache(true)
                             .into(imagePhoto);
 
@@ -694,12 +694,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 Glide.get(this).clearMemory();
 
 
+                // в new GetBitmapFromTransformation(0) мы получаем FullscreenPhotoActivity.loadedBitmap
+                // и при этом сразу же грузим картинку в imagePhoto
                 GlideApp.with(this)
                         .load(selectedImage)
                         //.format(PREFER_ARGB_8888)
                         //.dontTransform()
                         //.override(setWidth, setHeight)
-                        .transform(new RotateTransformation(0))
+                        .transform(new GetBitmapFromTransformation())
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         //.skipMemoryCache(true)
                         .into(imagePhoto);
@@ -759,7 +761,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                                     //.format(PREFER_ARGB_8888)
                                     //.dontTransform()
                                     //.override(setWidth, setHeight)
-                                    .transform(new RotateTransformation(0))
+                                    .transform(new GetBitmapFromTransformation(0))
                                     .skipMemoryCache(true)
                                     .into(imagePhoto);
 
@@ -846,7 +848,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                                         .load(selectedImage)
                                         //.format(PPREFER_ARGB_8888)
                                         //.dontTransform()
-                                        //.transform(new RotateTransformation(finalRotate))
+                                        //.transform(new GetBitmapFromTransformation(finalRotate))
                                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .into(imagePhoto);
 
