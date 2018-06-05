@@ -303,9 +303,6 @@ public class TreatmentActivity extends AppCompatActivity {
         recyclerTreatmentPhotoItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textDiseaseName = editTextDiseaseName.getText().toString().trim();
-                textTreatment = editTextTreatment.getText().toString();
-
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
                 intentToTreatmentPhoto.putExtra("_idDisease", 2);
                 intentToTreatmentPhoto.putExtra("treatmentPhotoUri", getString(R.string.path_to_treatment_photo));
@@ -496,7 +493,6 @@ public class TreatmentActivity extends AppCompatActivity {
                 // Если не было изменений
                 if (diseaseAndTreatmentHasNotChanged()) {
                     goToDiseasesActivity();
-                    finish();
                     return true;
                 }
 
@@ -665,9 +661,6 @@ public class TreatmentActivity extends AppCompatActivity {
     }
 
     private void goToDiseasesActivity() {
-        Intent intent = new Intent(TreatmentActivity.this, DiseasesActivity.class);
-        startActivity(intent);
-
         finish();
     }
 

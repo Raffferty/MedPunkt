@@ -61,16 +61,17 @@ public class DiseasesActivity extends AppCompatActivity {
                 treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
-                treatmentIntent.putExtra("textTreatment", "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
+                /*treatmentIntent.putExtra("textTreatment", "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
                         "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
-                        "Пить чай\nПить чай\n");
+                        "Пить чай\nПить чай\n");*/
+
+                treatmentIntent.putExtra("textTreatment", "Пить чай");
 
                 startActivity(treatmentIntent);
             }
         });
 
-        // это сейчас не видимо
-        // сделать видимым, когда будет хоть одно заболевание
+
         FloatingActionButton fabAddDisease = findViewById(R.id.fabAddDisease);
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,8 +85,7 @@ public class DiseasesActivity extends AppCompatActivity {
             }
         });
 
-        // это сейчас видимо
-        // сделать не видимым, когда будет хоть одно заболевание
+
         TextView textViewAddDisease = findViewById(R.id.txt_empty_diseases);
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             //TODO открывать окно добавить заболевание
@@ -93,6 +93,9 @@ public class DiseasesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("newDisease", true);
+                treatmentIntent.putExtra("editDisease", false);
+                treatmentIntent.putExtra("diseaseName", "");
+                treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
             }
         });
@@ -103,12 +106,8 @@ public class DiseasesActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                Intent intent = new Intent(DiseasesActivity.this, UsersActivity.class);
-                startActivity(intent);
-
                 finish();
                 return true;
-
             default:
                 super.onOptionsItemSelected(item);
                 finish();

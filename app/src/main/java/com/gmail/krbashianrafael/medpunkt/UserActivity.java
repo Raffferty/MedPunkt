@@ -822,20 +822,17 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void goToDiseasesActivity() {
-        Intent intent = new Intent(UserActivity.this, DiseasesActivity.class);
-        intent.putExtra("_idUser", _idUser);
-        intent.putExtra("UserName", textUserName);
-        intent.putExtra("birthDate", textUserBirthDate);
-        intent.putExtra("userPhotoUri", userPhotoUri);
-        startActivity(intent);
+        Intent toDiseasesIntent = new Intent(UserActivity.this, DiseasesActivity.class);
+        toDiseasesIntent.putExtra("_idUser", _idUser);
+        toDiseasesIntent.putExtra("UserName", textUserName);
+        toDiseasesIntent.putExtra("birthDate", textUserBirthDate);
+        toDiseasesIntent.putExtra("userPhotoUri", userPhotoUri);
+        startActivity(toDiseasesIntent);
 
         finish();
     }
 
     private void goToUsersActivity() {
-        Intent intent = new Intent(UserActivity.this, UsersActivity.class);
-        startActivity(intent);
-
         finish();
     }
 

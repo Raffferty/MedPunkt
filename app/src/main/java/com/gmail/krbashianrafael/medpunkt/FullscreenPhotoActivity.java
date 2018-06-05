@@ -108,9 +108,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     private final Runnable mToToggleRunnable = new Runnable() {
         @Override
         public void run() {
-            //runOnUiThread(new Runnable() {
-            //@Override
-            //public void run() {
+
             Log.d("file", "in mToToggleRunnable");
             Log.d("file", "taped = " + taped);
             Log.d("file", "inZoom[0] = " + inZoom[0]);
@@ -123,14 +121,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 Log.d("file", "NOT Toggled");
             }
-            //}
-            //});
         }
     };
 
     private View mDescriptionView;
     private FloatingActionButton fab;
-    private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged,taped, onLoading;
+    private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, taped, onLoading;
 
     // проверка в состоянии зума или нет
     final boolean[] inZoom = {false};
@@ -283,14 +279,20 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     }).start();
 
                     // не пишем фото в Cache skipMemoryCache(true)
-                    GlideApp.with(FullscreenPhotoActivity.this)
-                            .load(uriFromTreatmentPhotoFile)
-                            //.format(PREFER_ARGB_8888)
-                            //.dontTransform()
-                            //.transform(new GetBitmapFromTransformation(rotate))
-                            .skipMemoryCache(true)
-                            .into(imagePhoto);
 
+                    if (rotate==0){
+                        GlideApp.with(FullscreenPhotoActivity.this)
+                                .load(uriFromTreatmentPhotoFile)
+                                .dontTransform()
+                                .skipMemoryCache(true)
+                                .into(imagePhoto);
+                    } else {
+                        GlideApp.with(FullscreenPhotoActivity.this)
+                                .load(uriFromTreatmentPhotoFile)
+                                .transform(new GetBitmapFromTransformation(rotate))
+                                .skipMemoryCache(true)
+                                .into(imagePhoto);
+                    }
 
                     // чистим память
                     Glide.get(this).clearMemory();
@@ -370,8 +372,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
         } else {
-            mDescriptionView.setVisibility(View.INVISIBLE); //View.INVISIBLE
-            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE); // View.INVISIBLE
+            mDescriptionView.setVisibility(View.INVISIBLE);
+            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
             frm_save.setVisibility(View.GONE);
 
             // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
@@ -550,25 +552,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         // на imagePhoto устанавливаем мой MatrixTouchHandler
         imagePhoto.setOnTouchListener(myImageMatrixTouchHandler);
 
-        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myHandler.removeCallbacks(mToToggleRunnable);
-                boolean ok = myHandler.postDelayed(mToToggleRunnable, 300);
-                //boolean ok = myHandler.post(mToToggleRunnable);
-                Log.d("file", "ok = " + ok);
-            }
-        });*/
-
-
-
-        /*imagePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });*/
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -701,7 +684,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                         //.format(PREFER_ARGB_8888)
                         //.dontTransform()
                         //.override(setWidth, setHeight)
-                        .transform(new GetBitmapFromTransformation())
+                        .transform(new GetBitmapFromTransformation(0f))
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         //.skipMemoryCache(true)
                         .into(imagePhoto);
@@ -1054,9 +1037,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     private void goToTreatmentActivity() {
-        Intent intent = new Intent(FullscreenPhotoActivity.this, TreatmentActivity.class);
-        startActivity(intent);
-
         finish();
     }
 
@@ -1329,7 +1309,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         if (selectedImage != null) {
             t.start();
         } else {
-            Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_loaded, Toast.LENGTH_LONG).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_loaded, Toast.LENGTH_LONG).show();
+                }
+            });
+
         }
     }
 
@@ -1361,7 +1347,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
     // мой Zoom класс
-    private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler  {
+    private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
 
         MyImageMatrixTouchHandler(Context context) {
             super(context);
@@ -1379,100 +1365,36 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         //long moveTime = 0;
 
 
-
         @Override
         public boolean onTouch(final View view, final MotionEvent event) {
-
-            // TODO на таблете появляется клавиатура
-            //Log.d("file", "event = " + event);
-            Log.d("file", "taped = " + taped);
 
             view.performClick();
 
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
                 taped = false;
-                if(firstTouch) inZoom[0] = false;
-                Log.d("file", "taped = " + taped);
-                Log.d("file", "inZoom[0] = " + inZoom[0]);
+                if (firstTouch) inZoom[0] = false;
             }
 
-            //if (!editTreatmentPhoto) {
-                super.onTouch(view, event);
-                Log.d("file", "super.onTouch");
-            //}
-
-            /*
-            event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN ||
-                    event.getActionMasked() == MotionEvent.ACTION_POINTER_UP ||
-                    event.getActionMasked() == MotionEvent.ACTION_MOVE
-             */
-
-           /* if (event.getActionMasked() == MotionEvent.ACTION_MOVE ) {
-                if (firstMove && (System.currentTimeMillis() - moveTime) >= 100) {
-                    inZoom[0] = true;
-                    taped = true;
-                    firstMove = false;
-                } else {
-                    firstMove = true;
-                    inZoom[0] = false;
-                    taped = false;
-                    moveTime = System.currentTimeMillis();
-                }
-
-                Log.d("file", "inACTION_MOVE");
-                Log.d("file", "inZoom[0] = " + inZoom[0]);
-
-
-            }*/
+            super.onTouch(view, event);
 
             if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
-
-                //if (!taped) {
                 inZoom[0] = true;
-                //}
-
-                Log.d("file", "inZoommmmm");
-                Log.d("file", "inZoom[0] = " + inZoom[0]);
             }
-
-
-            /*-------------------------------
-            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                Log.d("file", "MotionEvent.ACTION_DOWN");
-                taped = true;
-
-                myHandler.postDelayed(mtapedRunnable, 100);
-
-            }
-
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                Log.d("file", "MotionEvent.ACTION_UP");
-
-            }
-                --------------------------------*/
 
             if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-                //Log.d("file", "taped = " + taped);
                 if (!taped) {
-                    Log.d("file", "MotionEvent.ACTION_MOVE");
                     inZoom[0] = true;
                 } else {
-                    Log.d("file", "NOT MotionEvent.ACTION_MOVE");
                     inZoom[0] = false;
                 }
             }
 
-
-
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                //Log.d("file", "taped = " + taped);
 
                 taped = true;
 
                 myHandler.removeCallbacks(mtapedRunnable);
                 myHandler.postDelayed(mtapedRunnable, 100);
-
-                Log.d("file", "taped = " + taped);
 
                 // првоерка DoubleTap (в промежутке 300 мс)
                 // если DoubleTap, то не вызывается toggle()
@@ -1485,54 +1407,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     touchTime = System.currentTimeMillis();
                 }
 
-                //if (!inZoom[0]) {
                 myHandler.removeCallbacks(mToToggleRunnable);
-                boolean ToToggle = myHandler.postDelayed(mToToggleRunnable, 400);
-                //boolean ToToggle = myHandler.post(mToToggleRunnable);
-                Log.d("file", "ToToggle = " + ToToggle);
-                /*} else {
-                    Log.d("file", "ToToggle = false");
-                }
-
-                // в отдельном потоке ожидаем 0.3 сек после ACTION_DOWN
-                // в это время основной поток продолжает свою работу
-                // если будут какие-то движения - они пойдут дальше
-                // а, если не было никаких движений (увеличение, перемещение картинки)
-                // то делаем  toggle()
-                /*new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(300);
-                            if (!inZoom[0] && !landscape && !onLoading) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        toggle();
-                                    }
-                                });
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();*/
+                myHandler.postDelayed(mToToggleRunnable, 400);
 
             }
-
-           /* myHandler.removeCallbacks(mToToggleRunnable);
-            boolean ToToggle = myHandler.postDelayed(mToToggleRunnable, 300);
-            //boolean ToToggle = myHandler.post(mToToggleRunnable);
-            Log.d("file", "ToToggle = " + ToToggle);*/
-
-            // в остальных случаях не вызывается  toggle() блокировкой  inZoom[0] = true;
-
-            //if (!inZoom[0] && !landscape && !onLoading) {
-            /*myHandler.removeCallbacks(mToToggleRunnable);
-            boolean ok = myHandler.postDelayed(mToToggleRunnable, 300);
-            //boolean ok = myHandler.post(mToToggleRunnable);
-            Log.d("file", "ok = " + ok);*/
-            //}
 
             return true;
         }

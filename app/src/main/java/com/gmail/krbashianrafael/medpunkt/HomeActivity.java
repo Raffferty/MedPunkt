@@ -86,7 +86,6 @@ public class HomeActivity extends AppCompatActivity {
         if (!prefs.getBoolean("showGreeting", true) && !fromUsers) {
             Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
             startActivity(intentToUsers);
-            //finish();
         }else if (!prefs.getBoolean("showGreeting", true) && fromUsers){
             checkBox.setChecked(true);
         }
@@ -103,7 +102,9 @@ public class HomeActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_enter) {
             Intent intent = new Intent(HomeActivity.this, UsersActivity.class);
             startActivity(intent);
-            //finish();
+
+            finish();
+
             return true;
         }
         return super.onOptionsItemSelected(item);

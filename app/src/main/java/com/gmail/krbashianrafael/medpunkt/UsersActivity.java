@@ -77,15 +77,13 @@ public class UsersActivity extends AppCompatActivity {
         linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent userIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
-                userIntent.putExtra("_idUser", 1);
-                userIntent.putExtra("UserName", "Вася");
-                userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", finalPathToPhoto);
+                Intent userDiseasIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
+                userDiseasIntent.putExtra("_idUser", 1);
+                userDiseasIntent.putExtra("UserName", "Вася");
+                userDiseasIntent.putExtra("birthDate", "11.03.1968");
+                userDiseasIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
-                startActivity(userIntent);
-
-                finish();
+                startActivity(userDiseasIntent);
             }
         });
 
@@ -95,28 +93,24 @@ public class UsersActivity extends AppCompatActivity {
         userItemEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
-                userIntent.putExtra("_idUser", 1);
-                userIntent.putExtra("editUser", true);
-                userIntent.putExtra("UserName", "Вася");
-                userIntent.putExtra("birthDate", "11.03.1968");
-                userIntent.putExtra("userPhotoUri", finalPathToPhoto);
+                Intent userEditIntent = new Intent(UsersActivity.this, UserActivity.class);
+                userEditIntent.putExtra("_idUser", 1);
+                userEditIntent.putExtra("editUser", true);
+                userEditIntent.putExtra("UserName", "Вася");
+                userEditIntent.putExtra("birthDate", "11.03.1968");
+                userEditIntent.putExtra("userPhotoUri", finalPathToPhoto);
 
-                startActivity(userIntent);
-
-                finish();
+                startActivity(userEditIntent);
             }
         });
-
-
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(UsersActivity.this, HomeActivity.class);
-        intent.putExtra("fromUsers", true);
-        startActivity(intent);
+        Intent toHomeIntent = new Intent(UsersActivity.this, HomeActivity.class);
+        toHomeIntent.putExtra("fromUsers", true);
+        startActivity(toHomeIntent);
 
         finish();
     }
@@ -126,9 +120,9 @@ public class UsersActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                Intent intent = new Intent(UsersActivity.this, HomeActivity.class);
-                intent.putExtra("fromUsers", true);
-                startActivity(intent);
+                Intent toHomeIntent = new Intent(UsersActivity.this, HomeActivity.class);
+                toHomeIntent.putExtra("fromUsers", true);
+                startActivity(toHomeIntent);
 
                 finish();
 

@@ -1,8 +1,8 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
@@ -14,82 +14,46 @@ import java.security.MessageDigest;
 public class GetBitmapFromTransformation extends BitmapTransformation {
 
     private static final String ID = "com.gmail.krbashianrafael.medpunkt.GetBitmapFromTransformation";
-    private static final byte[] ID_BYTES = ID.getBytes(Charset.forName("UTF-8"));
 
-
-    /*private Float rotateRotationAngle = 0f;
+    private Float rotateRotationAngle = 0f;
 
     public GetBitmapFromTransformation(float rotateRotationAngle) {
-
         this.rotateRotationAngle = rotateRotationAngle;
-    }*/
+    }
 
     @Override
     protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-        //Matrix matrix = new Matrix();
-        //matrix.postRotate(rotateRotationAngle);
 
-        // toTransform.getWidth(), toTransform.getHeight()
+        if (rotateRotationAngle!=0){
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotateRotationAngle);
 
-        Log.d("file", "pool.getMaxSize() 1 = " + pool.getMaxSize());
-
-
-        Log.d("file", "toTransform = " + toTransform);
-        Log.d("file", "toTransform.getByteCount() = " + toTransform.getByteCount());
-        Log.d("file", "toTransform.getWidth() = " + toTransform.getWidth());
-        Log.d("file", "toTransform.getHeight() = " + toTransform.getHeight());
-
-
-
-        /*int setWidth = toTransform.getWidth();
-        int setHeight = toTransform.getHeight();
-
-        if (setWidth>2000) setWidth = 2000;
-        if (setHeight>2000) setHeight = 2000;*/
-
-        //Bitmap bitmap = Bitmap.createScaledBitmap(toTransform, toTransform.getWidth(), toTransform.getHeight(), true);
-
-        //FullscreenPhotoActivity.loadedBitmap = bitmap;
+            return Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
+        }
 
         // присваиваем FullscreenPhotoActivity.loadedBitmap = toTransform
         FullscreenPhotoActivity.loadedBitmap = null;
         FullscreenPhotoActivity.loadedBitmap = toTransform;
-
-        pool.clearMemory();
-
-        //Log.d("file", "pool.getMaxSize() 2 = " + pool.getMaxSize());
-
-
-
-       /* Log.d("file", "bitmap = " + bitmap);
-        Log.d("file", "bitmap.getByteCount() = " + bitmap.getByteCount());
-        Log.d("file", "bitmap.getWidth() = " + bitmap.getWidth());
-        Log.d("file", "bitmap.getHeight() = " + bitmap.getHeight());*/
-
-        //toTransform = null;
-
-        //Bitmap.createBitmap(bitmap, 0, 0, outWidth, outHeight, matrix, true);
 
         return toTransform;
     }
 
     @Override
     public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
-        //messageDigest.update(("rotate" + rotateRotationAngle).getBytes());
-        messageDigest.update(ID_BYTES);
+        messageDigest.update((ID + rotateRotationAngle).getBytes(Charset.forName("UTF-8")));
     }
 
     @Override
     public boolean equals(Object o) {
-        /*if (o instanceof GetBitmapFromTransformation) {
+        if (o instanceof GetBitmapFromTransformation) {
             GetBitmapFromTransformation other = (GetBitmapFromTransformation) o;
             return rotateRotationAngle.equals(other.rotateRotationAngle);
-        }*/
-        return o instanceof GetBitmapFromTransformation;
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return ID.hashCode();
+        return (ID + rotateRotationAngle).hashCode();
     }
 }
