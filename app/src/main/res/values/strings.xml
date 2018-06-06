@@ -53,9 +53,9 @@
     <string name="date_of_treatment_photo">дата снимка</string>
     <string name="error_date_of_treatment_photo">Укажите дату снимка</string>
     <string name="fullscreen_image_description">fullscreen_image</string>
-    <string name="image_not_loaded">Ошибка загрузки фото</string>
+    <string name="image_not_loaded">Новое фото не загружалось</string>
     <string name="image_not_saved">Фото не сохранилось</string>
-    <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-2.jpg</string>
+    <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
 
 
 

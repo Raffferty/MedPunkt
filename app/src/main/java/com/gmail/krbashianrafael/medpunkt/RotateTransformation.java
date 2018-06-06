@@ -12,13 +12,13 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
 // класс для вращения фото в Glide
-public class GetBitmapFromTransformation extends BitmapTransformation {
+public class RotateTransformation extends BitmapTransformation {
 
     private static final String ID = "com.gmail.krbashianrafael.medpunkt.GetBitmapFromTransformation";
 
     private Float rotateRotationAngle = 0f;
 
-    public GetBitmapFromTransformation(float rotateRotationAngle) {
+    public RotateTransformation(float rotateRotationAngle) {
         this.rotateRotationAngle = rotateRotationAngle;
     }
 
@@ -27,25 +27,14 @@ public class GetBitmapFromTransformation extends BitmapTransformation {
 
         Log.d("rotation", "toTransform =" + toTransform.getAllocationByteCount());
 
-        FullscreenPhotoActivity.loadedBitmap = null;
-
-        if (rotateRotationAngle!=0){
+        if (rotateRotationAngle != 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(rotateRotationAngle);
 
-            FullscreenPhotoActivity.loadedBitmap = Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
-
-            Log.d("rotation", "loadedBitmap =" + FullscreenPhotoActivity.loadedBitmap.getAllocationByteCount());
-
-            return FullscreenPhotoActivity.loadedBitmap;
+            return Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
         }
 
-        // присваиваем FullscreenPhotoActivity.loadedBitmap = toTransform
-        FullscreenPhotoActivity.loadedBitmap = toTransform;
-
-        Log.d("rotation", "loadedBitmap =" + FullscreenPhotoActivity.loadedBitmap.getAllocationByteCount());
-
-        return FullscreenPhotoActivity.loadedBitmap;
+        return toTransform;
     }
 
     @Override
@@ -55,8 +44,8 @@ public class GetBitmapFromTransformation extends BitmapTransformation {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof GetBitmapFromTransformation) {
-            GetBitmapFromTransformation other = (GetBitmapFromTransformation) o;
+        if (o instanceof RotateTransformation) {
+            RotateTransformation other = (RotateTransformation) o;
             return rotateRotationAngle.equals(other.rotateRotationAngle);
         }
         return false;

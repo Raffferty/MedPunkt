@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.media.ExifInterface;
@@ -16,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -124,6 +126,87 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
     };
 
+    private final Runnable mTretmentPhotoSavingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (loadedPhotoUri != null) {
+                try {
+                    fileOfPhoto = new File(loadedPhotoUri);
+                    File destination = new File("/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg");
+
+                    if (destination.exists()) {
+                        if (!destination.delete()) {
+                            Toast.makeText(FullscreenPhotoActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    FileUtils.copyFile(fileOfPhoto, destination);
+
+                    if (destination.exists()) {
+                        treatmentPhotoUri = destination.toString();
+                    } else {
+                        Toast.makeText(FullscreenPhotoActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (newTreatmentPhoto) {
+                        saveTreatmentPhotoToDataBase();
+                        newTreatmentPhoto = false;
+
+                        if (goBack) {
+                            goToTreatmentActivity();
+                        } else {
+                            editTreatmentPhoto = false;
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mDescriptionView.setVisibility(View.INVISIBLE);
+                                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                                    fab.setVisibility(View.VISIBLE);
+                                    frm_save.setVisibility(View.GONE);
+                                    frm_delete.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+
+                    } else {
+                        updateTreatmentPhotoToDataBase();
+
+                        if (goBack) {
+                            goToTreatmentActivity();
+                        } else {
+                            editTreatmentPhoto = false;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mDescriptionView.setVisibility(View.INVISIBLE);
+                                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                                    fab.setVisibility(View.VISIBLE);
+                                    frm_save.setVisibility(View.GONE);
+                                    frm_delete.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    }
+
+                    // выставляем флаг treatmentPhotoHasChanged = false
+                    treatmentPhotoHasChanged = false;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_saved, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    };
+
     private View mDescriptionView;
     private FloatingActionButton fab;
     private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, taped, onLoading;
@@ -146,7 +229,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     // путь к загружаемому фото из Галерии
     private Uri selectedImage;
 
+    // загруженная картинка
     public static Bitmap loadedBitmap;
+
+    // путь к сохраненному фото
+    private String loadedPhotoUri;
 
     // путь к сохраненному фото
     private String treatmentPhotoUri;
@@ -280,7 +367,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
                     // не пишем фото в Cache skipMemoryCache(true)
 
-                    if (rotate==0){
+                    if (rotate == 0) {
                         GlideApp.with(FullscreenPhotoActivity.this)
                                 .load(uriFromTreatmentPhotoFile)
                                 .dontTransform()
@@ -289,7 +376,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     } else {
                         GlideApp.with(FullscreenPhotoActivity.this)
                                 .load(uriFromTreatmentPhotoFile)
-                                .transform(new GetBitmapFromTransformation(rotate))
+                                .transform(new RotateTransformation(rotate))
                                 .skipMemoryCache(true)
                                 .into(imagePhoto);
                     }
@@ -480,14 +567,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (loadedBitmap != null) {
+                /*if (loadedBitmap != null) {
                     Log.d("file", "loadedBitmap = " + loadedBitmap);
                     Log.d("file", "loadedBitmap = " + loadedBitmap.getByteCount());
                     Log.d("file", "loadedBitmap.getWidth() = " + loadedBitmap.getWidth());
                     Log.d("file", "loadedBitmap.getHeight() = " + loadedBitmap.getHeight());
                 } else {
                     Log.d("file", "loadedBitmap = Null");
-                }
+                }*/
 
 
                 if (photoAndDescriptionHasNotChanged() && !newTreatmentPhoto) {
@@ -668,6 +755,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     show();
                 }
 
+                // получаем угол обратного (-1*) поворота картинки для приведения ее в вертикальное положение
+                float rotate = -1 * getRotation(this, selectedImage);
 
                 // грузим с Glide
 
@@ -677,18 +766,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 Glide.get(this).clearMemory();
 
 
-                // в new GetBitmapFromTransformation(0) мы получаем FullscreenPhotoActivity.loadedBitmap
+                // в new GetBitmapFromTransformation(rotate)
+                // мы получаем FullscreenPhotoActivity.loadedBitmap и приводим картинку в вертикальное положение
                 // и при этом сразу же грузим картинку в imagePhoto
                 GlideApp.with(this)
                         .load(selectedImage)
-                        //.format(PREFER_ARGB_8888)
-                        //.dontTransform()
-                        //.override(setWidth, setHeight)
-                        .transform(new GetBitmapFromTransformation(0f))
+                        .transform(new RotateTransformation(rotate))
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        //.skipMemoryCache(true)
                         .into(imagePhoto);
 
+                Log.d("rotation", "rotation =" + rotate);
 
                 Glide.get(this).clearMemory();
 
@@ -918,9 +1005,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     // метод для получения оринетации (угол поворота) фотографии
     // т.к. Picasso все фото вставляет боком, то нужно поворачивать на нужный угол
-    /*private int getRotation(Context context, Uri photoUri) {
+    private int getRotation(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
-                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION, MediaStore.Images.Media.DATA}, null, null, null);
 
         if (cursor != null) {
             if (cursor.getCount() != 1) {
@@ -931,14 +1018,20 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         }
 
         int orientation = 0;
+
         if (cursor != null) {
             orientation = cursor.getInt(0);
+            loadedPhotoUri = cursor.getString(1);
+
             cursor.close();
             cursor = null;
         }
 
+        Log.d("pathToFile", "orientation = " + orientation);
+        Log.d("pathToFile", "pathToFile = " + loadedPhotoUri);
+
         return orientation;
-    }*/
+    }
 
     // в toggle
     // либо скрываем-показываем элементы UI
@@ -1106,11 +1199,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
         // пишем файл методом FileUtils.copyFile
-        Thread t = new Thread(new Runnable() {
+        /*Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if (fileOfPhoto != null) {
+                if (loadedPhotoUri != null) {
                     try {
+                        fileOfPhoto = new File(loadedPhotoUri);
                         File destination = new File("/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg");
 
                         if (destination.exists()) {
@@ -1184,7 +1278,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                     });
                 }
             }
-        });
+        });*/
 
 
         // пишем файл с помощю Picasso
@@ -1307,14 +1401,55 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
 
         if (selectedImage != null) {
-            t.start();
+            //t.start();
+            myHandler.removeCallbacks(mTretmentPhotoSavingRunnable);
+            myHandler.post(mTretmentPhotoSavingRunnable);
         } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_loaded, Toast.LENGTH_LONG).show();
+            Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_loaded, Toast.LENGTH_LONG).show();
+
+            if (newTreatmentPhoto) {
+                saveTreatmentPhotoToDataBase();
+                newTreatmentPhoto = false;
+
+                if (goBack) {
+                    goToTreatmentActivity();
+                } else {
+                    editTreatmentPhoto = false;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDescriptionView.setVisibility(View.INVISIBLE);
+                            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                            fab.setVisibility(View.VISIBLE);
+                            frm_save.setVisibility(View.GONE);
+                            frm_delete.setVisibility(View.VISIBLE);
+                        }
+                    });
                 }
-            });
+
+            } else {
+                updateTreatmentPhotoToDataBase();
+
+                if (goBack) {
+                    goToTreatmentActivity();
+                } else {
+                    editTreatmentPhoto = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDescriptionView.setVisibility(View.INVISIBLE);
+                            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                            fab.setVisibility(View.VISIBLE);
+                            frm_save.setVisibility(View.GONE);
+                            frm_delete.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }
+
+            // выставляем флаг treatmentPhotoHasChanged = false
+            treatmentPhotoHasChanged = false;
 
         }
     }
@@ -1394,6 +1529,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 taped = true;
 
                 myHandler.removeCallbacks(mtapedRunnable);
+
+                // через 100 мс выставляем taped = false
+                // чтоб при ACTION_DOWN с реакцией экрана на скольжение пальца (ACTION_MOVE) inZoom[0] был false
                 myHandler.postDelayed(mtapedRunnable, 100);
 
                 // првоерка DoubleTap (в промежутке 300 мс)
