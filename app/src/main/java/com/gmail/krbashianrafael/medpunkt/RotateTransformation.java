@@ -3,7 +3,6 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
@@ -14,7 +13,7 @@ import java.security.MessageDigest;
 // класс для вращения фото в Glide
 public class RotateTransformation extends BitmapTransformation {
 
-    private static final String ID = "com.gmail.krbashianrafael.medpunkt.GetBitmapFromTransformation";
+    private static final String ID = "com.gmail.krbashianrafael.medpunkt.RotateTransformation";
 
     private Float rotateRotationAngle = 0f;
 
@@ -24,17 +23,10 @@ public class RotateTransformation extends BitmapTransformation {
 
     @Override
     protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotateRotationAngle);
 
-        Log.d("rotation", "toTransform =" + toTransform.getAllocationByteCount());
-
-        if (rotateRotationAngle != 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotateRotationAngle);
-
-            return Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
-        }
-
-        return toTransform;
+        return Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
     }
 
     @Override

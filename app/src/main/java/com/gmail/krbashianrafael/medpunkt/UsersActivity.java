@@ -1,8 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -14,9 +12,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+
 import java.io.File;
 
 public class UsersActivity extends AppCompatActivity {
+
+    private ImageView userImage;
+    private final String[] pathToPhoto = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +47,8 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
 
-        // это сейчас не видимо, т.к. добавлен фиктивный пользователь
-        // сделать не видимым, когда будет хоть один пользователь
+        // это сейчас невидимо, т.к. добавлен фиктивный пользователь
+        // TODO сделать невидимым, когда будет хоть один пользователь
         TextView addUsers = findViewById(R.id.txt_empty_users);
         addUsers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,20 +62,22 @@ public class UsersActivity extends AppCompatActivity {
 
         // начало ------ Фиктивниый юзер с фото
         LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
-        ImageView userImage = findViewById(R.id.user_image);
-        String pathToPhoto = getString(R.string.path_to_user_photo);
-        File imgFile = new File(pathToPhoto);
+        userImage = findViewById(R.id.user_image);
+        pathToPhoto[0] = getString(R.string.path_to_user_photo);
+
+        File imgFile = new File(pathToPhoto[0]);
         if (imgFile.exists()) {
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            userImage.setImageBitmap(myBitmap);
+            GlideApp.with(this)
+                    .load(pathToPhoto[0])
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.ic_camera_alt_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade(800))
+                    .into(userImage);
         } else {
-            pathToPhoto = "No_Photo";
+            pathToPhoto[0] = "No_Photo";
         }
-
         // конец ------ Фиктивниый юзер с фото
-
-        // это для анонимных классов ниже
-        final String finalPathToPhoto = pathToPhoto;
 
         // нажатие на юзера
         linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +87,7 @@ public class UsersActivity extends AppCompatActivity {
                 userDiseasIntent.putExtra("_idUser", 1);
                 userDiseasIntent.putExtra("UserName", "Вася");
                 userDiseasIntent.putExtra("birthDate", "11.03.1968");
-                userDiseasIntent.putExtra("userPhotoUri", finalPathToPhoto);
+                userDiseasIntent.putExtra("userPhotoUri", pathToPhoto[0]);
 
                 startActivity(userDiseasIntent);
             }
@@ -98,11 +104,34 @@ public class UsersActivity extends AppCompatActivity {
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", "Вася");
                 userEditIntent.putExtra("birthDate", "11.03.1968");
-                userEditIntent.putExtra("userPhotoUri", finalPathToPhoto);
+                userEditIntent.putExtra("userPhotoUri", pathToPhoto[0]);
 
                 startActivity(userEditIntent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // для возобновления фото при рестарте
+        pathToPhoto[0] = getString(R.string.path_to_user_photo);
+
+        File imgFile = new File(pathToPhoto[0]);
+        if (imgFile.exists()) {
+            GlideApp.with(this)
+                    .load(pathToPhoto[0])
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.ic_camera_alt_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade(500))
+                    .into(userImage);
+        } else {
+            userImage.setImageResource(R.drawable.ic_camera_alt_gray_24dp);
+            pathToPhoto[0] = "No_Photo";
+        }
+
     }
 
     @Override
@@ -132,5 +161,4 @@ public class UsersActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

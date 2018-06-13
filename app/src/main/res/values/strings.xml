@@ -56,7 +56,7 @@
     <string name="image_not_loaded">Новое фото не загружалось</string>
     <string name="image_not_saved">Фото не сохранилось</string>
     <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
-
+    <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
 
 
 </resources>

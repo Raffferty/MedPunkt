@@ -213,12 +213,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
                 editTextTreatment.requestFocus();
 
-                // выдвигаем клавиатуру
-                //Log.d("onReceiveResult", " befor showSoftInput");
-
                 View viewToShow = TreatmentActivity.this.getCurrentFocus();
-
-                //MyResultReceiver myResultReceiver = new MyResultReceiver(null);
 
                 if (viewToShow != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -230,71 +225,6 @@ public class TreatmentActivity extends AppCompatActivity {
                         Log.d("screenHeight", " view Null ");
                     }
                 }
-
-                //myResultReceiver = null;
-
-                //Log.d("onReceiveResult", " after showSoftInput");
-
-                //if (!hasEditTextMaxHeight) {
-
-                // проверить показана ли клавиатура
-
-                /*new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        Resources r = getResources();
-                        int screenHeightDp = r.getConfiguration().screenHeightDp;
-                        int editTextMaxHeightDp = (int) (screenHeightDp / 1.88);
-                        //editTextMaxHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, editTextMaxHeightDp, r.getDisplayMetrics());
-
-                        int screenHeightPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenHeightDp, r.getDisplayMetrics());
-
-                        Log.d("screenHeight", " screenHeightDp = " + screenHeightDp);
-                        Log.d("screenHeight", " editTextMaxHeightDp = " + editTextMaxHeightDp);
-                        Log.d("screenHeight", " screenHeightPx = " + screenHeightPx);
-                        //Log.d("screenHeight", " editTextMaxHeightPx = " + editTextMaxHeightPx);
-
-                        Window mRootWindow = getWindow();
-                        final Rect rect = new Rect();
-                        View rootView = mRootWindow.getDecorView();
-                        rootView.getWindowVisibleDisplayFrame(rect);
-
-                        int keyBoardHeight = screenHeightPx - rect.bottom;
-
-                        Log.d("screenHeight", " rect.top = " + rect.top);
-                        Log.d("screenHeight", " rect.bottom = " + rect.bottom);
-                        Log.d("screenHeight", " keyBoardHeight = " + keyBoardHeight);
-
-
-
-                        //final int[] editTextTreatmentMaxHeight = {300};
-                        editTextTreatmentMaxHeight[0] = rect.bottom - rect.top - txtTitleTreatmen.getHeight();
-
-                        Log.d("screenHeight", " txtTitleTreatmen.getHeight() = " + txtTitleTreatmen.getHeight());
-                        Log.d("screenHeight", " editTextTreatmentMaxHeight new = " + editTextTreatmentMaxHeight[0]);
-
-
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
-                                hasEditTextMaxHeight = true;
-                            }
-                        });
-
-                    }
-                }).start();
-*/
-                //}
-
             }
         });
 
@@ -305,7 +235,7 @@ public class TreatmentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intentToTreatmentPhoto = new Intent(TreatmentActivity.this, FullscreenPhotoActivity.class);
                 intentToTreatmentPhoto.putExtra("_idDisease", 2);
-                intentToTreatmentPhoto.putExtra("treatmentPhotoUri", getString(R.string.path_to_treatment_photo));
+                intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", getString(R.string.path_to_treatment_photo));
                 intentToTreatmentPhoto.putExtra("textPhotoDescription", "Рентген");
                 intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", "01.02.2018 ");
                 startActivity(intentToTreatmentPhoto);
@@ -344,56 +274,6 @@ public class TreatmentActivity extends AppCompatActivity {
             fab.startAnimation(fabShowAnimation);
         }
     }
-
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        //fab.performClick();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                View viewToShow = myWindow.getCurrentFocus();
-                if (viewToShow != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        Log.d("screenHeight", " viewToShow ");
-                        imm.showSoftInput(viewToShow, 0);
-                    }
-                }
-
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                final Rect rect = new Rect();
-                View rootView = myWindow.getDecorView();
-                rootView.getWindowVisibleDisplayFrame(rect);
-
-                Log.d("screenHeight", " rect.bottom = " + rect.bottom);
-                Log.d("screenHeight", " rect.top = " + rect.top);
-                Log.d("screenHeight", " ect.bottom - rect.top = " + (rect.bottom - rect.top - txtTitleTreatmen.getHeight()));
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        editTextTreatment.setMaxHeight(rect.bottom - rect.top - txtTitleTreatmen.getHeight());
-                    }
-                });
-
-                hideSoftInput();
-
-            }
-        }).start();
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -701,38 +581,6 @@ public class TreatmentActivity extends AppCompatActivity {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
     }
-
-   /* private class MyResultReceiver extends ResultReceiver {
-
-        Handler mHandler;
-
-        public MyResultReceiver(Handler handler) {
-            super(handler);
-
-            mHandler = handler;
-        }
-
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            super.onReceiveResult(resultCode, resultData);
-
-            final Rect rect = new Rect();
-            View rootView = findViewById(R.id.root_view);
-            rootView.getWindowVisibleDisplayFrame(rect);
-
-            Log.d("onReceiveResult", " rect.bottom - rect.top = " + (rect.bottom - rect.top));
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    editTextTreatment.setMaxHeight(rect.bottom - rect.top - 41);
-                }
-            });
-
-        }
-
-    }*/
-
 }
 
 

@@ -23,10 +23,8 @@ public class MyEditText extends android.support.v7.widget.AppCompatEditText {
     }
 
     @Override
-    public boolean onKeyPreIme(int keyCode, KeyEvent event)
-    {
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-        {
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             clearFocus();
         }
         return super.onKeyPreIme(keyCode, event);

@@ -6,16 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -42,7 +40,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,9 +67,6 @@ public class UserActivity extends AppCompatActivity {
 
     // фото пользоватлея
     private ImageView imagePhoto;
-
-    // угол поворота фотографии
-    private float rotate = 0;
 
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
@@ -143,13 +141,20 @@ public class UserActivity extends AppCompatActivity {
 
         imagePhoto = findViewById(R.id.image_photo);
 
-        if (!userPhotoUri.equals("No_Photo")) {
+        if (userPhotoUri != null && !userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
             textViewNoUserPhoto.setVisibility(View.GONE);
+
             File imgFile = new File(userPhotoUri);
+
             if (imgFile.exists()) {
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                imagePhoto.setImageBitmap(myBitmap);
+                GlideApp.with(this)
+                        .load(userPhotoUri)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.error_camera_alt_gray_128dp)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imagePhoto);
             }
         } else {
             textViewNoUserPhoto.setVisibility(View.VISIBLE);
@@ -238,16 +243,14 @@ public class UserActivity extends AppCompatActivity {
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
                 editTextName.setText(textUserName);
-            }
-            else {
+            } else {
                 textUserName = "";
             }
         }
 
         if (textUserBirthDate != null) {
             editTextDate.setText(textUserBirthDate);
-        }
-        else {
+        } else {
             textUserBirthDate = "";
         }
 
@@ -356,43 +359,20 @@ public class UserActivity extends AppCompatActivity {
             selectedImage = data.getData();
 
             if (selectedImage != null) {
-                // получаем угол поворота фотки
-                rotate = getRotation(this, selectedImage);
 
-                Picasso.get().load(selectedImage).
-                        placeholder(R.color.colorAccent).
-                        error(R.color.colorAccentSecondary).
-                        resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
-                        rotate(rotate).
-                        centerInside().
-                        into(imagePhoto);
+                GlideApp.with(this)
+                        .load(selectedImage)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.error_camera_alt_gray_128dp)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(imagePhoto);
 
                 userHasChangedPhoto = true;
                 textDeleteUserPhoto.setVisibility(View.VISIBLE);
                 textViewNoUserPhoto.setVisibility(View.GONE);
             }
         }
-    }
-
-    // метод для получения оринетации (угол поворота) фотографии
-    // т.к. Picasso все фото вставляет боком, то нужно поворачивать на нужный угол
-    private int getRotation(Context context, Uri photoUri) {
-        Cursor cursor = context.getContentResolver().query(photoUri,
-                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
-
-        if (cursor != null) {
-            if (cursor.getCount() != 1) {
-                cursor.close();
-                return -1;
-            }
-
-            cursor.moveToFirst();
-        }
-
-        int orientation = cursor.getInt(0);
-        cursor.close();
-        cursor = null;
-        return orientation;
     }
 
     @Override
@@ -617,62 +597,56 @@ public class UserActivity extends AppCompatActivity {
         // для нового пользователя присваиваем фейковый _idUser = 1
         _idUser = 1;
 
-        // в отдельном потоке пишем файл фотки в интернал
-        Thread t = new Thread(new Runnable() {
-            Bitmap bitmap = null;
-
-            @Override
-            public void run() {
-                try {
-                    // получаем bitmap
-                    bitmap = Picasso.get().
-                            load(selectedImage).
-                            resize(imagePhoto.getWidth(), imagePhoto.getHeight()).
-                            centerInside().
-                            rotate(rotate).
-                            get();
-                    if (bitmap != null) {
-                        saveUserPhoto(bitmap);
-                    } else {
-                        // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
-                        if (newUser) {
-                            saveUserToDataBase();
-                            newUser =false;
-
-                            if (goBack) {
-                                goToUsersActivity();
-                            } else {
-                                goToDiseasesActivity();
-                            }
-                        }
-                        // если НЕ новый пользователь, то обновляем в базу и
-                        else {
-                            updateUserToDataBase();
-
-                            if (goBack) {
-                                goToUsersActivity();
-                            } else {
-                                editUser = true;
-                                userHasChangedPhoto = false;
-                                editTextName.setEnabled(false);
-                                editTextDate.setEnabled(false);
-                                imagePhoto.setClickable(false);
-                                textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                                invalidateOptionsMenu();
-                                fab.startAnimation(fabShowAnimation);
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
         if (selectedImage != null) {
-            t.start();
 
+            final Bitmap[] bitmap = {null};
+
+            GlideApp.with(this)
+                    .asBitmap()
+                    .load(selectedImage)
+                    .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            // здесь получаем Bitmap
+                            bitmap[0] = resource;
+
+                            if (bitmap[0] != null) {
+                                Log.d("mBitmap", "bitmap != null");
+                                saveUserPhoto(bitmap[0]);
+                            } else {
+                                Log.d("mBitmap", "bitmap = null");
+                                // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
+                                if (newUser) {
+                                    saveUserToDataBase();
+                                    newUser = false;
+
+                                    if (goBack) {
+                                        goToUsersActivity();
+                                    } else {
+                                        goToDiseasesActivity();
+                                    }
+                                }
+                                // если НЕ новый пользователь, то обновляем в базу и
+                                else {
+                                    updateUserToDataBase();
+
+                                    if (goBack) {
+                                        goToUsersActivity();
+                                    } else {
+                                        editUser = true;
+                                        userHasChangedPhoto = false;
+                                        editTextName.setEnabled(false);
+                                        editTextDate.setEnabled(false);
+                                        imagePhoto.setClickable(false);
+                                        textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                                        invalidateOptionsMenu();
+                                        fab.startAnimation(fabShowAnimation);
+                                    }
+                                }
+                            }
+                        }
+                    });
         } else {
             // если фото было удалено, то удалить файл фото (если он есть)
             if (userSetNoPhotoUri.equals("Set_No_Photo")) {
@@ -725,14 +699,8 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void saveUserPhoto(Bitmap bitmap) {
-        // для экстернал
-        // String root = Environment.getExternalStorageDirectory().toString();
-        // File myDir = new File(root + "/Medpunkt/users_photos");
-        // при этом получится File imgFile = new File("/storage/emulated/0/Medpunkt/users_photos/Image-1.jpg");
-
         // для интернал
         String root = getFilesDir().toString();
-        Log.d("file", "root = " + root);
 
         File myDir = new File(root + "/users_photos"); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
         Log.d("file", "myDir = " + myDir);
@@ -742,11 +710,9 @@ public class UserActivity extends AppCompatActivity {
         }
 
         //String fileName = "Image-" + _idUser + ".jpg";
-        // TODO  подмена String fileName = "Image-" + 2 + ".jpg";
-        String fileName = "Image-" + 2 + ".jpg";
+        String fileName = "Image-" + 1 + ".jpg";
         File file = new File(myDir, fileName);
 
-        Log.d("file", "file = " + file);
         // при этом путь к файлу
         // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg
 
@@ -767,7 +733,6 @@ public class UserActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         if (file.exists()) {
             userPhotoUri = file.toString();

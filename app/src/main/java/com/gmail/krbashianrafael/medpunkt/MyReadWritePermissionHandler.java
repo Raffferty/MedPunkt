@@ -8,6 +8,8 @@ import android.view.View;
 
 /**
  * Created by raf on 17.03.2018.
+ *
+ * Вынесен в отдельный класс запрос на ReadWritePermission
  */
 
 class MyReadWritePermissionHandler {
