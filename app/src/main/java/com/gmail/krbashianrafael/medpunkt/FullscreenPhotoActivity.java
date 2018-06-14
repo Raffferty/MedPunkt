@@ -51,7 +51,7 @@ import java.io.IOException;
 public class FullscreenPhotoActivity extends AppCompatActivity {
 
     private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler myHandler = new Handler();
+    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     // Мой zoom класс
     private MyImageMatrixTouchHandler myImageMatrixTouchHandler;
@@ -209,10 +209,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 }
             } else {
                 //  Toast должен делаться в основном потоке
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                myHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_saved, Toast.LENGTH_LONG).show();
+                        Toast.makeText(FullscreenPhotoActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -922,8 +922,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             myHandler.removeCallbacks(mTretmentPhotoSavingRunnable);
             myHandler.post(mTretmentPhotoSavingRunnable);
         } else {
-            Toast.makeText(FullscreenPhotoActivity.this, R.string.image_not_loaded, Toast.LENGTH_LONG).show();
-
             if (newTreatmentPhoto) {
                 saveTreatmentPhotoToDataBase();
                 newTreatmentPhoto = false;
@@ -974,7 +972,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     private void saveTreatmentPhotoToDataBase() {
         //TODO реализовать сохранение пользователя в базу
         // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        myHandler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
@@ -984,7 +982,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
     private void updateTreatmentPhotoToDataBase() {
         //TODO реализовать обновление пользователя в базу
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        myHandler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Updated To DataBase", Toast.LENGTH_LONG).show();
