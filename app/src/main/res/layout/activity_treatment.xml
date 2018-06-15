@@ -5,6 +5,7 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorEditTextBackground"
     android:focusable="false"
     android:focusableInTouchMode="false"
     tools:context=".TreatmentActivity">
@@ -43,6 +44,7 @@
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
+        android:background="@color/colorEditTextBackground"
         android:hint="@string/disease_name"
         android:textColorHint="@color/colorPrimaryDark"
         app:hintTextAppearance="@style/Lable"

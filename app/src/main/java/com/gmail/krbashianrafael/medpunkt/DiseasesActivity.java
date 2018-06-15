@@ -76,11 +76,11 @@ public class DiseasesActivity extends AppCompatActivity {
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
-                treatmentIntent.putExtra("newDisease", true);
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
+                /*treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", false);
                 treatmentIntent.putExtra("diseaseName", "");
-                treatmentIntent.putExtra("textTreatment", "");
+                treatmentIntent.putExtra("textTreatment", "");*/
                 startActivity(treatmentIntent);
             }
         });

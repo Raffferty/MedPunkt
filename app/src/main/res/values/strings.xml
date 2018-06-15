@@ -42,6 +42,8 @@
     <string name="disease_date">Дата лечения</string>
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
+    <string name="description">Описание</string>
+    <string name="photos">Снимки</string>
     <string name="add_treatment_photo">\u2000Добавить снимок</string>
     <string name="delete_disease">Удалить чем болел</string>
     <string name="delete_user">Удалить ползователя</string>

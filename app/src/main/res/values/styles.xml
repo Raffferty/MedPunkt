@@ -26,5 +26,21 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+
+    <!-- Style for a tab that displays a category name -->
+    <style name="CategoryTab" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorHeight">4dp</item>
+        <item name="tabIndicatorColor">@color/colorFab</item>
+        <item name="tabSelectedTextColor">@color/colorEditTextBackground</item>
+        <item name="tabTextAppearance">@style/CategoryTabTextAppearance</item>
+
+
+    </style>
+
+    <!-- Text appearance style for a category tab -->
+    <style name="CategoryTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/black_overlay</item>
+    </style>
+
 </resources>
 
