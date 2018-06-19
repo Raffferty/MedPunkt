@@ -56,7 +56,8 @@ public class DiseasesActivity extends AppCompatActivity {
         recyclerDiseasesItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                //Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
                 treatmentIntent.putExtra("_idDisease", 2);
                 treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
@@ -77,10 +78,10 @@ public class DiseasesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
-                /*treatmentIntent.putExtra("newDisease", true);
+                treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", false);
                 treatmentIntent.putExtra("diseaseName", "");
-                treatmentIntent.putExtra("textTreatment", "");*/
+                treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
             }
         });
