@@ -40,18 +40,18 @@ public class NewTreatmentActivity extends AppCompatActivity {
     private int _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private static boolean newDisease, goBack, editDisease;
+    public boolean newDisease, goBack, editDisease; // private static
 
     private ActionBar actionBar;
 
     // название заболевания
-    private static String textDiseaseName = "";
-    private static String textTreatment = "";
+    private String textDiseaseName = ""; //private static
+    public String textTreatment = ""; //private static
 
     // поля названия заболевания, описания лечения и focusHolder
-    private TextInputLayout textInputLayoutDiseaseName;
-    private TextInputEditText editTextDiseaseName;
-    private EditText focusHolder;
+    public TextInputLayout textInputLayoutDiseaseName;
+    public TextInputEditText editTextDiseaseName;
+    public EditText focusHolder;
 
     // это кастомный EditText у которого клавиатура не перекрывает текст
     private static boolean hasEditTextMaxHeight;
@@ -303,21 +303,16 @@ public class NewTreatmentActivity extends AppCompatActivity {
                 startActivity(intentToTreatmentPhoto);
 
             }
-        });
+        });*/
 
         if (newDisease) {
             editTextDiseaseName.requestFocus();
-            editTextDiseaseName.setSelection(editTextDiseaseName.getText().toString().length());
-        }*/
+            editTextDiseaseName.setSelection(0);
+        }
 
         if (editDisease) {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
-            /*editTextTreatment.setFocusable(false);
-            editTextTreatment.setFocusableInTouchMode(false);
-            editTextTreatment.setCursorVisible(false);
             focusHolder.requestFocus();
-
-            fab.startAnimation(fabShowAnimation);*/
         }
     }
 
@@ -354,7 +349,6 @@ public class NewTreatmentActivity extends AppCompatActivity {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
-
             // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
             menuItemDelete.setVisible(false);

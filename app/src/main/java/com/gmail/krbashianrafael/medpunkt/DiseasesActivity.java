@@ -24,7 +24,7 @@ public class DiseasesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if (intent.hasExtra("UserName")){
+        if (intent.hasExtra("UserName")) {
             textUserName = intent.getStringExtra("UserName");
         }
 
@@ -62,11 +62,26 @@ public class DiseasesActivity extends AppCompatActivity {
                 treatmentIntent.putExtra("newDisease", false);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
-                /*treatmentIntent.putExtra("textTreatment", "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
-                        "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
-                        "Пить чай\nПить чай\n");*/
+                treatmentIntent.putExtra("textTreatment",
+                        "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
+                                "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
+                                "Пить чай\nПить чай\nДолго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень долго Пить чай\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить\n" +
+                                "Долго долго, очень очень очень долго Пить чай");
 
-                treatmentIntent.putExtra("textTreatment", "Пить чай");
+                //treatmentIntent.putExtra("textTreatment", "Пить чай");
 
                 startActivity(treatmentIntent);
             }
