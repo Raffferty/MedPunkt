@@ -13,6 +13,8 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
 
+    private int pagesCount = 2;
+
     public TreatmentAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
@@ -30,7 +32,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return pagesCount;
     }
 
     @Override
@@ -54,5 +56,9 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sb;
+    }
+
+    public void setPagesCount(int pagesCount) {
+        this.pagesCount = pagesCount;
     }
 }

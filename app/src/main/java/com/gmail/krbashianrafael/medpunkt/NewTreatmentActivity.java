@@ -33,25 +33,27 @@ import android.widget.Toast;
 
 public class NewTreatmentActivity extends AppCompatActivity {
 
-    //private Window myWindow;
+    TreatmentDescriptionFragment treatmentDescriptionFragment;
+    TreatmentPhotosFragment treatmentPhotosFragment;
 
 
     // id заболеввания
     private int _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    public boolean newDisease, goBack, editDisease; // private static
+    private boolean newDisease, goBack; // private static
+    protected boolean editDisease;
 
     private ActionBar actionBar;
 
     // название заболевания
     private String textDiseaseName = ""; //private static
-    public String textTreatment = ""; //private static
+    protected String textTreatment = ""; //private static
 
     // поля названия заболевания, описания лечения и focusHolder
-    public TextInputLayout textInputLayoutDiseaseName;
-    public TextInputEditText editTextDiseaseName;
-    public EditText focusHolder;
+    protected TextInputLayout textInputLayoutDiseaseName;
+    protected TextInputEditText editTextDiseaseName;
+    protected EditText focusHolder;
 
     // это кастомный EditText у которого клавиатура не перекрывает текст
     private static boolean hasEditTextMaxHeight;
@@ -90,11 +92,23 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
         TreatmentAdapter categoryAdapter = new TreatmentAdapter(this, getSupportFragmentManager());
 
-        viewPager.setAdapter(categoryAdapter);
+        //viewPager.setAdapter(categoryAdapter);
 
         final TabLayout tabLayout = findViewById(R.id.tabs);
 
-        tabLayout.setupWithViewPager(viewPager);
+
+        //((ViewGroup) tabLayout.getChildAt(0)).setV
+
+        //((ViewGroup) tabLayout.getChildAt(0)).getChildAt(1).setVisibility(View.GONE);
+        //((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0).setMinimumWidth(tabLayout.getWidth());
+
+        /*LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(0));
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+        layoutParams.weight = 1; // e.g. 0.5f
+        layout.setLayoutParams(layoutParams);*/
+
+
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -218,27 +232,27 @@ public class NewTreatmentActivity extends AppCompatActivity {
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
-        });
+        });*/
 
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
             }
         });
 
-        txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
+        /*txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,8 +327,15 @@ public class NewTreatmentActivity extends AppCompatActivity {
         if (editDisease) {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             focusHolder.requestFocus();
+        }else {
+            categoryAdapter.setPagesCount(1);
+            tabLayout.setVisibility(View.GONE);
         }
+
+        viewPager.setAdapter(categoryAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -376,6 +397,32 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
                     // скручиваем клавиатуру
                     hideSoftInput();
+
+                    if (treatmentDescriptionFragment == null) {
+                        treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
+
+                    }
+
+                    if (treatmentPhotosFragment == null) {
+                        treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
+                    }
+
+                    //if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
+                        editDisease = true;
+                        textInputLayoutDiseaseName.setVisibility(View.GONE);
+
+                        treatmentDescriptionFragment.editTextTreatment.setSelection(0);
+                        treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                        treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                        treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+
+                        focusHolder.requestFocus();
+
+                        invalidateOptionsMenu();
+                        treatmentDescriptionFragment.fab.startAnimation(fabShowAnimation);
+                    //}
+
+
 
                     /*if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
                         editDisease = true;

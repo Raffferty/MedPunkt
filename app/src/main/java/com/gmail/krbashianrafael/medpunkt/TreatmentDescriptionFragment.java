@@ -14,36 +14,34 @@ import android.view.inputmethod.InputMethodManager;
 
 public class TreatmentDescriptionFragment extends Fragment {
 
+    private NewTreatmentActivity newTreaymentActivity;
+
+    protected MyEditText editTextTreatment;
+
     // fab
-    private FloatingActionButton fab;
+    protected FloatingActionButton fab;
 
     // Animation fabHideAnimation
     private Animation fabHideAnimation;
 
-    // Animation fabShowAnimation
-    private Animation fabShowAnimation;
-
-    private NewTreatmentActivity newTreaymentActivity;
-
-    private MyEditText editTextTreatment;
-
 
     public TreatmentDescriptionFragment(){
-
+        // нужен конструктор
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.treatment_description_fragment, container, false);
+    }
 
-        final View rootView = inflater.inflate(R.layout.treatment_description_fragment, container, false);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        newTreaymentActivity = (NewTreatmentActivity) getActivity();
+        editTextTreatment = view.findViewById(R.id.editTextTreatment);
 
-        editTextTreatment = rootView.findViewById(R.id.editTextTreatment);
-        editTextTreatment.setText(newTreaymentActivity.textTreatment);
-
-        fab = rootView.findViewById(R.id.fabEditTreatmentDescripton);
+        fab = view.findViewById(R.id.fabEditTreatmentDescripton);
 
         fabHideAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_hide);
         fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -60,24 +58,17 @@ public class TreatmentDescriptionFragment extends Fragment {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+    }
 
-        fabShowAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_show);
-        fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
-            }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
-            }
+        newTreaymentActivity = (NewTreatmentActivity) getActivity();
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
-            }
-        });
+        if (newTreaymentActivity != null) {
+            editTextTreatment.setText(newTreaymentActivity.textTreatment);
+        }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,10 +104,7 @@ public class TreatmentDescriptionFragment extends Fragment {
             editTextTreatment.setFocusableInTouchMode(false);
             editTextTreatment.setCursorVisible(false);
 
-            fab.startAnimation(fabShowAnimation);
+            fab.setVisibility(View.VISIBLE);
         }
-
-        return rootView;
     }
-
 }
