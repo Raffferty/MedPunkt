@@ -6,8 +6,26 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccentThird">
 
+    <TextView
+        android:id="@+id/txt_empty_photos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawableBottom="@drawable/ic_add_a_photo_orang_80dp"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="@string/empty_photos_text"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
+
     <!-- фиктивные фото -->
     <ScrollView
+        android:id="@+id/scrollViewPhotos"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/fabAddTreatmentPhotos"
@@ -27,8 +45,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:elevation="5dp"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:elevation="5dp" />
 
             <LinearLayout
                 android:id="@+id/recycler_treatment_photo_item"
@@ -59,15 +77,15 @@
                     android:layout_margin="8dp"
                     android:text="Рентген"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                    android:textColor="@color/colorPrimaryDark" />
+                    android:textColor="@color/colorFab" />
 
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:elevation="5dp"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:elevation="5dp" />
 
 
             <LinearLayout
@@ -103,8 +121,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:elevation="5dp"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:elevation="5dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -139,8 +157,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:elevation="5dp"
-                android:background="@android:color/white"/>
+                android:background="@android:color/white"
+                android:elevation="5dp" />
 
 
             <LinearLayout
@@ -177,8 +195,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:elevation="5dp"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:elevation="5dp" />
 
         </LinearLayout>
     </ScrollView>

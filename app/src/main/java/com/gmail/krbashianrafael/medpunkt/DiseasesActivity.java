@@ -59,8 +59,6 @@ public class DiseasesActivity extends AppCompatActivity {
                 //Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
                 treatmentIntent.putExtra("_idDisease", 2);
-                treatmentIntent.putExtra("newDisease", false);
-                treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "Грипп");
                 treatmentIntent.putExtra("textTreatment",
                         "Пить чай\nПить чай\nПить чай\nПить чай\nПить чай\n" +
@@ -94,7 +92,7 @@ public class DiseasesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
                 treatmentIntent.putExtra("newDisease", true);
-                treatmentIntent.putExtra("editDisease", false);
+                treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);

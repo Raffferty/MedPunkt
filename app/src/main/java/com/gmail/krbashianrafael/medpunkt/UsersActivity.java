@@ -49,8 +49,8 @@ public class UsersActivity extends AppCompatActivity {
 
         // это сейчас невидимо, т.к. добавлен фиктивный пользователь
         // TODO сделать невидимым, когда будет хоть один пользователь
-        TextView addUsers = findViewById(R.id.txt_empty_users);
-        addUsers.setOnClickListener(new View.OnClickListener() {
+        TextView txtAddUsers = findViewById(R.id.txt_empty_users);
+        txtAddUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);

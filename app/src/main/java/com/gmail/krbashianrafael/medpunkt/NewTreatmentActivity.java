@@ -41,8 +41,8 @@ public class NewTreatmentActivity extends AppCompatActivity {
     private int _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean newDisease, goBack; // private static
-    protected boolean editDisease;
+    private boolean goBack; // private static
+    protected boolean editDisease, newDisease;
 
     private ActionBar actionBar;
 
@@ -67,7 +67,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
     // RecyclerView для фотоснимков лечения
     RecyclerView recyclerTreatmentPhotos;
 
-    // fab
+    // fabEditTreatmentDescripton
     private FloatingActionButton fab;
 
     // Animation fabHideAnimation
@@ -82,19 +82,27 @@ public class NewTreatmentActivity extends AppCompatActivity {
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
 
+    protected ViewPager viewPager;
+
+    protected TreatmentAdapter categoryAdapter;
+
+    protected TabLayout tabLayout;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_treatment);
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
 
-        TreatmentAdapter categoryAdapter = new TreatmentAdapter(this, getSupportFragmentManager());
+        //viewPager.getLayoutTransition().setDuration(500);
+
+        categoryAdapter = new TreatmentAdapter(this, getSupportFragmentManager());
 
         //viewPager.setAdapter(categoryAdapter);
 
-        final TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
 
 
         //((ViewGroup) tabLayout.getChildAt(0)).setV
@@ -106,8 +114,6 @@ public class NewTreatmentActivity extends AppCompatActivity {
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
         layoutParams.weight = 1; // e.g. 0.5f
         layout.setLayoutParams(layoutParams);*/
-
-
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -166,13 +172,13 @@ public class NewTreatmentActivity extends AppCompatActivity {
             textTreatment = intent.getStringExtra("textTreatment");
         }
 
-        if (intent.hasExtra("editDisease")) {
-            editDisease = intent.getBooleanExtra("editDisease", false);
-        }
+        //if (intent.hasExtra("editDisease")) {
+        editDisease = intent.getBooleanExtra("editDisease", false);
+        //}
 
-        if (intent.hasExtra("newDisease")) {
-            newDisease = intent.getBooleanExtra("newDisease", false);
-        }
+        //if (intent.hasExtra("newDisease")) {
+        newDisease = intent.getBooleanExtra("newDisease", false);
+        //}
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
@@ -216,7 +222,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
         recyclerTreatmentPhotos = findViewById(R.id.recycler_treatment_photos);
 
-        fab = findViewById(R.id.fabEditTreatment);
+        fabEditTreatmentDescripton = findViewById(R.id.fabEditTreatment);
 
         fabHideAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
         fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -226,7 +232,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                fab.setVisibility(View.INVISIBLE);
+                fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -238,27 +244,27 @@ public class NewTreatmentActivity extends AppCompatActivity {
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                treatmentDescriptionFragment.fab.setVisibility(View.VISIBLE);
+                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
         });
 
         /*txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                fab.startAnimation(fabHideAnimation);
+                fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
                 textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                 editTextDiseaseName.setEnabled(true);
@@ -319,17 +325,19 @@ public class NewTreatmentActivity extends AppCompatActivity {
             }
         });*/
 
+        /*if (newDisease) {
+            editTextDiseaseName.requestFocus();
+            editTextDiseaseName.setSelection(0);
+        }*/
+
         if (newDisease) {
             editTextDiseaseName.requestFocus();
             editTextDiseaseName.setSelection(0);
-        }
-
-        if (editDisease) {
-            textInputLayoutDiseaseName.setVisibility(View.GONE);
-            focusHolder.requestFocus();
-        }else {
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
+        } else {
+            textInputLayoutDiseaseName.setVisibility(View.GONE);
+            focusHolder.requestFocus();
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -363,10 +371,10 @@ public class NewTreatmentActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        // если в состоянии edit (тоесть есть кнопка fab со значком редактирования)
+        // если в состоянии Не edit (тоесть есть кнопка fabEditTreatmentDescripton со значком редактирования)
         // то в меню элемент "сохранить" делаем не видимым
         // видимым остается "удалить"
-        if (editDisease) {
+        if (!editDisease) {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
@@ -398,6 +406,10 @@ public class NewTreatmentActivity extends AppCompatActivity {
                     // скручиваем клавиатуру
                     hideSoftInput();
 
+                    categoryAdapter.setPagesCount(2);
+                    viewPager.setAdapter(categoryAdapter);
+                    //tabLayout.setupWithViewPager(viewPager);
+
                     if (treatmentDescriptionFragment == null) {
                         treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
 
@@ -408,18 +420,23 @@ public class NewTreatmentActivity extends AppCompatActivity {
                     }
 
                     //if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
-                        editDisease = true;
-                        textInputLayoutDiseaseName.setVisibility(View.GONE);
+                    editDisease = false;
+                    textInputLayoutDiseaseName.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.VISIBLE);
 
-                        treatmentDescriptionFragment.editTextTreatment.setSelection(0);
-                        treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
-                        treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
-                        treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+                    treatmentDescriptionFragment.editTextTreatment.setSelection(0);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                    treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
-                        focusHolder.requestFocus();
+                    focusHolder.requestFocus();
 
-                        invalidateOptionsMenu();
-                        treatmentDescriptionFragment.fab.startAnimation(fabShowAnimation);
+                    invalidateOptionsMenu();
+                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+
+                    if (newDisease) {
+                        tabLayout.getTabAt(1).select();
+                    }
                     //}
 
 
@@ -435,7 +452,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
                         focusHolder.requestFocus();
 
                         invalidateOptionsMenu();
-                        fab.startAnimation(fabShowAnimation);
+                        fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
                     } else {
                         saveDiseaseAndTreatment();
@@ -598,7 +615,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
                 //textViewAddTreatmentPhoto.setVisibility(View.INVISIBLE);
 
                 invalidateOptionsMenu();
-                fab.startAnimation(fabShowAnimation);
+                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
             }
         }
         // если НЕ новый пользователь, то обновляем в базу и
@@ -618,7 +635,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
                 //textViewAddTreatmentPhoto.setVisibility(View.INVISIBLE);
 
                 invalidateOptionsMenu();
-                fab.startAnimation(fabShowAnimation);
+                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
             }
         }*/
     }

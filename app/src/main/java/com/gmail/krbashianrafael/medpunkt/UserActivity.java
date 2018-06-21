@@ -184,7 +184,7 @@ public class UserActivity extends AppCompatActivity {
     // View mLayout для привязки snackbar
     private View mLayout;
 
-    // fab
+    // fabEditTreatmentDescripton
     private FloatingActionButton fab;
 
     // Animation fabHideAnimation
@@ -516,7 +516,7 @@ public class UserActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        // если в состоянии editUser (тоесть есть кнопка fab со значком редактирования)
+        // если в состоянии editUser (тоесть есть кнопка fabEditTreatmentDescripton со значком редактирования)
         // то в меню элемент "сохранить" делаем не видимым
         // видимым остается "удалить"
         if (editUser) {

@@ -1,6 +1,5 @@
 package com.gmail.krbashianrafael.medpunkt;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 
 public class TreatmentDescriptionFragment extends Fragment {
 
@@ -18,14 +16,14 @@ public class TreatmentDescriptionFragment extends Fragment {
 
     protected MyEditText editTextTreatment;
 
-    // fab
-    protected FloatingActionButton fab;
+    // fabEditTreatmentDescripton
+    protected FloatingActionButton fabEditTreatmentDescripton;
 
     // Animation fabHideAnimation
     private Animation fabHideAnimation;
 
 
-    public TreatmentDescriptionFragment(){
+    public TreatmentDescriptionFragment() {
         // нужен конструктор
     }
 
@@ -41,7 +39,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
         editTextTreatment = view.findViewById(R.id.editTextTreatment);
 
-        fab = view.findViewById(R.id.fabEditTreatmentDescripton);
+        fabEditTreatmentDescripton = view.findViewById(R.id.fabEditTreatmentDescripton);
 
         fabHideAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_hide);
         fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -51,7 +49,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                fab.setVisibility(View.INVISIBLE);
+                fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -67,44 +65,40 @@ public class TreatmentDescriptionFragment extends Fragment {
         newTreaymentActivity = (NewTreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
+
             editTextTreatment.setText(newTreaymentActivity.textTreatment);
-        }
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fab.startAnimation(fabHideAnimation);
+            fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
-                newTreaymentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
-                newTreaymentActivity.editTextDiseaseName.setEnabled(true);
+                    newTreaymentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                    newTreaymentActivity.editTextDiseaseName.setEnabled(true);
 
-                newTreaymentActivity.editDisease = false;
+                    newTreaymentActivity.editDisease = true;
 
-                newTreaymentActivity.invalidateOptionsMenu();
+                    newTreaymentActivity.invalidateOptionsMenu();
 
-                editTextTreatment.setFocusable(true);
-                editTextTreatment.setFocusableInTouchMode(true);
-                editTextTreatment.setCursorVisible(true);
-                editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
-                editTextTreatment.requestFocus();
+                    newTreaymentActivity.categoryAdapter.setPagesCount(1);
+                    newTreaymentActivity.viewPager.setAdapter(newTreaymentActivity.categoryAdapter);
+                    newTreaymentActivity.tabLayout.setVisibility(View.GONE);
 
-                View viewToShow = newTreaymentActivity.getCurrentFocus();
-
-                if (viewToShow != null) {
-                    InputMethodManager imm = (InputMethodManager) newTreaymentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.showSoftInput(viewToShow, 0);
-                    }
+                    editTextTreatment.setFocusable(true);
+                    editTextTreatment.setFocusableInTouchMode(true);
+                    editTextTreatment.setCursorVisible(true);
+                    editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+                    editTextTreatment.requestFocus();
                 }
+            });
+
+            if (!newTreaymentActivity.editDisease) {
+                editTextTreatment.setFocusable(false);
+                editTextTreatment.setFocusableInTouchMode(false);
+                editTextTreatment.setCursorVisible(false);
+
+                fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
-        });
-
-        if (newTreaymentActivity.editDisease) {
-            editTextTreatment.setFocusable(false);
-            editTextTreatment.setFocusableInTouchMode(false);
-            editTextTreatment.setCursorVisible(false);
-
-            fab.setVisibility(View.VISIBLE);
         }
     }
 }

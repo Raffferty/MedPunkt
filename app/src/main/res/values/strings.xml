@@ -6,7 +6,8 @@
     <string name="action_enter">enter</string>
     <string name="show_greeting">Больше не показывать</string>
     <string name="title_activity_users">Пользователи</string>
-    <string name="empty_users_text">Список пользователей пуст.\nДобавьте пользователя,\nпожалуйста</string>
+    <string name="empty_users_text">Список пользователей пуст.\nДобавьте пользователя</string>
+    <string name="empty_photos_text">Список снимков,\n связанных с лечением, пуст.\nЗдесь Вы можете добавить снимок</string>
     <string name="title_activity_user">Добавить Пользователя</string>
     <string name="set_photo">Установить Фото</string>
     <string name="user_name">Имя</string>
