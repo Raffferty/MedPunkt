@@ -44,8 +44,8 @@ public class NewTreatmentActivity extends AppCompatActivity {
     private boolean goBack, newDisease;
     protected boolean editDisease;
 
-    // временное поле для количества элементов в RecyclerView
-    protected int countOfPhotos = 0;
+    // это временно для отработки в treatmentPhotoRecyclerView пустого листа
+    protected boolean tempNewDisease;
 
     private ActionBar actionBar;
 
@@ -94,6 +94,9 @@ public class NewTreatmentActivity extends AppCompatActivity {
         editDisease = intent.getBooleanExtra("editDisease", false);
 
         newDisease = intent.getBooleanExtra("newDisease", false);
+
+        // это временно для отработки в treatmentPhotoRecyclerView пустого листа
+        tempNewDisease = newDisease;
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
@@ -157,13 +160,11 @@ public class NewTreatmentActivity extends AppCompatActivity {
             tabLayout.setVisibility(View.GONE);
 
             // это временно
-            countOfPhotos = 0;
         } else {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             focusHolder.requestFocus();
 
             // это временно
-            countOfPhotos = 1;
         }
 
         viewPager.setAdapter(categoryAdapter);

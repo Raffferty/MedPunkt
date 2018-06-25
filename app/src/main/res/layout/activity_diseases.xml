@@ -25,7 +25,7 @@
         android:layout_below="@+id/txt_diseases">
 
             <TextView
-                android:id="@+id/recycler_diseases_item_date"
+                android:id="@+id/recycler_photo_item_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
