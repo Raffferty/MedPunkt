@@ -12,8 +12,10 @@ import android.view.animation.AnimationUtils;
 
 public class TreatmentDescriptionFragment extends Fragment {
 
+    // Активити в котором находися этот фрагмент
     private NewTreatmentActivity newTreaymentActivity;
 
+    // кастомный EditText у которого клавиатура не перекрывает текст
     protected MyEditText editTextTreatment;
 
     // fabEditTreatmentDescripton
@@ -24,7 +26,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
 
     public TreatmentDescriptionFragment() {
-        // нужен конструктор
+        // нужен ПУСТОЙ конструктор
     }
 
     @Override
@@ -34,7 +36,7 @@ public class TreatmentDescriptionFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         editTextTreatment = view.findViewById(R.id.editTextTreatment);
@@ -64,7 +66,13 @@ public class TreatmentDescriptionFragment extends Fragment {
 
         newTreaymentActivity = (NewTreatmentActivity) getActivity();
 
+
         if (newTreaymentActivity != null) {
+
+            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
+            if (newTreaymentActivity.treatmentDescriptionFragment == null) {
+                newTreaymentActivity.initTreatmentDescriptionFragment();
+            }
 
             editTextTreatment.setText(newTreaymentActivity.textTreatment);
 
@@ -80,6 +88,8 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                     newTreaymentActivity.invalidateOptionsMenu();
 
+                    // оставляем только страницу редактирования описания лечения
+                    // страницу с фото убираем
                     newTreaymentActivity.categoryAdapter.setPagesCount(1);
                     newTreaymentActivity.viewPager.setAdapter(newTreaymentActivity.categoryAdapter);
                     newTreaymentActivity.tabLayout.setVisibility(View.GONE);

@@ -15,16 +15,22 @@ import android.widget.TextView;
 
 public class TreatmentPhotosFragment extends Fragment {
 
-    TextView txtAddPhotos;
-    FloatingActionButton fabAddTreatmentPhotos;
-    ScrollView scrollViewPhotos;
+    // TextView добавления фотоснимка лечения
+    private TextView txtAddPhotos;
+
+    private FloatingActionButton fabAddTreatmentPhotos;
+
+    private RecyclerView recyclerTreatmentPhotos;
+
+    // временный элемент, далее будет в RecyclerView
+    private ScrollView scrollViewPhotos;
 
     public TreatmentPhotosFragment() {
-
+        // нужен ПУСТОЙ конструктор
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.treatment_photos_fragment, container, false);
     }
@@ -33,17 +39,14 @@ public class TreatmentPhotosFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView recyclerTreatmentPhotos = view.findViewById(R.id.recycler_treatment_photos);
+        recyclerTreatmentPhotos = view.findViewById(R.id.recycler_treatment_photos);
 
-        scrollViewPhotos= view.findViewById(R.id.scrollViewPhotos);
+        scrollViewPhotos = view.findViewById(R.id.scrollViewPhotos);
 
         txtAddPhotos = view.findViewById(R.id.txt_empty_photos);
         txtAddPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //textDiseaseName = editTextDiseaseName.getText().toString().trim();
-                //textTreatment = editTextTreatment.getText().toString();
-
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
                 intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
 
@@ -55,9 +58,6 @@ public class TreatmentPhotosFragment extends Fragment {
         fabAddTreatmentPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //textDiseaseName = editTextDiseaseName.getText().toString().trim();
-                //textTreatment = editTextTreatment.getText().toString();
-
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
                 intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
 
@@ -79,8 +79,6 @@ public class TreatmentPhotosFragment extends Fragment {
                 startActivity(intentToTreatmentPhoto);
             }
         });
-
-
     }
 
     @Override
@@ -90,7 +88,14 @@ public class TreatmentPhotosFragment extends Fragment {
         NewTreatmentActivity newTreaymentActivity = (NewTreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
-            if (newTreaymentActivity.newDisease){
+
+            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
+            if (newTreaymentActivity.treatmentPhotosFragment == null) {
+                newTreaymentActivity.initTreatmentPhotosFragment();
+            }
+
+            // если еще нет снимков, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
+            if (newTreaymentActivity.countOfPhotos == 0) {
                 txtAddPhotos.setVisibility(View.VISIBLE);
                 fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
                 scrollViewPhotos.setVisibility(View.INVISIBLE);

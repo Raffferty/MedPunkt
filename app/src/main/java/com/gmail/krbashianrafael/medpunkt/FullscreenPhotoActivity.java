@@ -10,7 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.hardware.SensorManager;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
@@ -805,8 +806,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (photoAndDescriptionHasNotChanged()) {
-            super.onBackPressed();
-            finish();
+
+            // это, перед выходом, показывают сверху статус бар,
+            // чтоб при открывании предыдущего окна не было белой полосы сверху
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+            // а это закрывает текущее окно после небольшой задержки
+            myHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FullscreenPhotoActivity.super.onBackPressed();
+                    finish();
+                }
+            }, UI_ANIMATION_DELAY);
+
             return;
         }
 
@@ -814,7 +828,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
+
+                        // это, перед выходом, показывают сверху статус бар,
+                        // чтоб при открывании предыдущего окна не было белой полосы сверху
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+                        // а это закрывает текущее окно после небольшой задержки
+                        myHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, UI_ANIMATION_DELAY);
                     }
                 };
 
@@ -857,7 +883,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     }
 
     private void goToTreatmentActivity() {
-        finish();
+        // это, перед выходом, показывают сверху статус бар,
+        // чтоб при открывании предыдущего окна не было белой полосы сверху
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+        // а это закрывает текущее окно после небольшой задержки
+        myHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, UI_ANIMATION_DELAY);
     }
 
     private void saveTreatmentPhoto() {
@@ -1031,10 +1068,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             }
 
             if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-                if (!taped) {
-                    inZoom[0] = true;
-                } else {
+                if (taped) {
                     inZoom[0] = false;
+                } else {
+                    inZoom[0] = true;
                 }
             }
 

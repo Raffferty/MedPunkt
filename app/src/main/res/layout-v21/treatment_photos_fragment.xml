@@ -48,7 +48,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/green"/>
+                android:background="@color/green"
+                android:elevation="5dp" />
 
             <LinearLayout
                 android:id="@+id/recycler_treatment_photo_item"
@@ -86,7 +87,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/green"/>
+                android:background="@color/green"
+                android:elevation="5dp" />
 
 
             <LinearLayout
@@ -122,7 +124,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/green"/>
+                android:background="@color/green"
+                android:elevation="5dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -157,7 +160,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/green"/>
+                android:background="@color/green"
+                android:elevation="5dp" />
 
 
             <LinearLayout
@@ -194,7 +198,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/green"/>
+                android:background="@color/green"
+                android:elevation="5dp" />
 
         </LinearLayout>
     </ScrollView>

@@ -6,10 +6,10 @@
     <string name="action_enter">enter</string>
     <string name="show_greeting">Больше не показывать</string>
     <string name="title_activity_users">Пользователи</string>
-    <string name="empty_users_text">Список пользователей пуст.\nДобавьте пользователя</string>
-    <string name="empty_photos_text">Список снимков,\n связанных с лечением, пуст.\nЗдесь Вы можете добавить снимок</string>
+    <string name="empty_users_text">Добавить пользователя</string>
+    <string name="empty_photos_text">Добавить снимок,\nсвязанный с лечением</string>
     <string name="title_activity_user">Добавить Пользователя</string>
-    <string name="set_photo">Установить Фото</string>
+    <string name="set_photo">Фото</string>
     <string name="user_name">Имя</string>
     <string name="date_of_birth">Дата рождения</string>
     <string name="save">cохранить\u2000</string>
@@ -18,7 +18,7 @@
     <string name="delete_photo">Удалить фото</string>
     <string name="title_activity_diseases">Заболевания</string>
     <string name="txt_no_title">No Title</string>
-    <string name="empty_diseases_text">Список заболеваний пуст.\nДобавьте чем болели,\nпожалуйста</string>
+    <string name="empty_diseases_text">Добавить чем болел</string>
     <string name="txt_what_diseases">Чем болел</string>
     <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
     <string name="unsaved_changes_dialog_msg">Сохранить изменения?</string>

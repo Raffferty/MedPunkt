@@ -8,24 +8,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,51 +33,33 @@ import android.widget.Toast;
 
 public class NewTreatmentActivity extends AppCompatActivity {
 
-    TreatmentDescriptionFragment treatmentDescriptionFragment;
-    TreatmentPhotosFragment treatmentPhotosFragment;
-
+    // Фрагменты
+    protected TreatmentDescriptionFragment treatmentDescriptionFragment;
+    protected TreatmentPhotosFragment treatmentPhotosFragment;
 
     // id заболеввания
-    private int _idDisease = 0;
+    private int _idDisease = 2;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean goBack; // private static
-    protected boolean editDisease, newDisease;
+    private boolean goBack, newDisease;
+    protected boolean editDisease;
+
+    // временное поле для количества элементов в RecyclerView
+    protected int countOfPhotos = 0;
 
     private ActionBar actionBar;
 
     // название заболевания
-    private String textDiseaseName = ""; //private static
+    private String textDiseaseName = "";
     protected String textTreatment = ""; //private static
 
     // поля названия заболевания, описания лечения и focusHolder
     protected TextInputLayout textInputLayoutDiseaseName;
     protected TextInputEditText editTextDiseaseName;
-    protected EditText focusHolder;
-
-    // это кастомный EditText у которого клавиатура не перекрывает текст
-    private static boolean hasEditTextMaxHeight;
-    private static int editTextMaxHeightPx;
-    private TextView txtTitleTreatmen;
-    private MyEditText editTextTreatment;
-
-    // TextView добавления фотоснимка лечения
-    TextView textViewAddTreatmentPhoto;
-
-    // RecyclerView для фотоснимков лечения
-    RecyclerView recyclerTreatmentPhotos;
-
-    // fabEditTreatmentDescripton
-    private FloatingActionButton fab;
-
-    // Animation fabHideAnimation
-    private Animation fabHideAnimation;
+    private EditText focusHolder;
 
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
-
-    // элемент меню "сохранить"
-    private TextView menuItemSaveView;
 
     // Animation saveShowAnimation
     private Animation saveShowAnimation;
@@ -94,75 +76,12 @@ public class NewTreatmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_treatment);
 
-        viewPager = findViewById(R.id.viewpager);
-
-        //viewPager.getLayoutTransition().setDuration(500);
-
-        categoryAdapter = new TreatmentAdapter(this, getSupportFragmentManager());
-
-        //viewPager.setAdapter(categoryAdapter);
-
-        tabLayout = findViewById(R.id.tabs);
-
-
-        //((ViewGroup) tabLayout.getChildAt(0)).setV
-
-        //((ViewGroup) tabLayout.getChildAt(0)).getChildAt(1).setVisibility(View.GONE);
-        //((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0).setMinimumWidth(tabLayout.getWidth());
-
-        /*LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(0));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-        layoutParams.weight = 1; // e.g. 0.5f
-        layout.setLayoutParams(layoutParams);*/
-
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_white_24dp),
-                            getResources().getString(R.string.description)));
-                } else {
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_white_24dp),
-                            getResources().getString(R.string.photos)));
-                }
-
-                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
-                        getResources().getColor(android.R.color.white));
-
-                hideSoftInput();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_gray_24dp),
-                            getResources().getString(R.string.description)));
-                } else {
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_gray_24dp),
-                            getResources().getString(R.string.photos)));
-                }
-
-                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
-                        getResources().getColor(android.R.color.white));
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                hideSoftInput();
-            }
-
-        });
-
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        //myWindow = getWindow();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Intent intent = getIntent();
 
-        _idDisease = intent.getIntExtra("_idDisease", 0);
+        _idDisease = intent.getIntExtra("_idDisease", 2);
 
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
@@ -172,13 +91,9 @@ public class NewTreatmentActivity extends AppCompatActivity {
             textTreatment = intent.getStringExtra("textTreatment");
         }
 
-        //if (intent.hasExtra("editDisease")) {
         editDisease = intent.getBooleanExtra("editDisease", false);
-        //}
 
-        //if (intent.hasExtra("newDisease")) {
         newDisease = intent.getBooleanExtra("newDisease", false);
-        //}
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
@@ -210,36 +125,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
         // анимация для элемента меню "сохранить"
         saveShowAnimation = AnimationUtils.loadAnimation(this, R.anim.save_show);
 
-        /*Resources r = getResources();
-        int screenHeightDp = r.getConfiguration().screenHeightDp;
-        final int[] editTextTreatmentMaxHeight = {(int) (screenHeightDp / 1.2)};
-
-        editTextTreatment = findViewById(R.id.editTextTreatment);
-        editTextTreatment.setText(textTreatment);
-        editTextTreatment.setMaxHeight(editTextTreatmentMaxHeight[0]);
-
-        textViewAddTreatmentPhoto = findViewById(R.id.textViewAddTreatmentPhoto);
-
-        recyclerTreatmentPhotos = findViewById(R.id.recycler_treatment_photos);
-
-        fabEditTreatmentDescripton = findViewById(R.id.fabEditTreatment);
-
-        fabHideAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
-        fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });*/
-
+        // анимация для показа fabEditTreatmentDescripton
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -258,90 +144,78 @@ public class NewTreatmentActivity extends AppCompatActivity {
             }
         });
 
-        /*txtTitleTreatmen = findViewById(R.id.txt_title_treatmen);
+        categoryAdapter = new TreatmentAdapter(this, getSupportFragmentManager());
 
-        fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        viewPager = findViewById(R.id.viewpager);
 
-                fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
-
-                textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
-                editTextDiseaseName.setEnabled(true);
-
-                editDisease = false;
-
-                invalidateOptionsMenu();
-
-                editTextTreatment.setFocusable(true);
-                editTextTreatment.setFocusableInTouchMode(true);
-                editTextTreatment.setCursorVisible(true);
-                editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
-                editTextTreatment.requestFocus();
-
-                View viewToShow = NewTreatmentActivity.this.getCurrentFocus();
-
-                if (viewToShow != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        Log.d("screenHeight", " viewToShow ");
-                        imm.showSoftInput(viewToShow, 0);
-                    }
-                    else {
-                        Log.d("screenHeight", " view Null ");
-                    }
-                }
-            }
-        });
-
-        // это фиктивное фото заболевания
-        final LinearLayout recyclerTreatmentPhotoItem = findViewById(R.id.recycler_treatment_photo_item);
-        recyclerTreatmentPhotoItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intentToTreatmentPhoto = new Intent(NewTreatmentActivity.this, FullscreenPhotoActivity.class);
-                intentToTreatmentPhoto.putExtra("_idDisease", 2);
-                intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", getString(R.string.path_to_treatment_photo));
-                intentToTreatmentPhoto.putExtra("textPhotoDescription", "Рентген");
-                intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", "01.02.2018 ");
-                startActivity(intentToTreatmentPhoto);
-            }
-        });
-
-        final FrameLayout dividerFrameGray = findViewById(R.id.divider_frame_gray);
-
-        // добавление фото
-        textViewAddTreatmentPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                textDiseaseName = editTextDiseaseName.getText().toString().trim();
-                textTreatment = editTextTreatment.getText().toString();
-
-                Intent intentToTreatmentPhoto = new Intent(NewTreatmentActivity.this, FullscreenPhotoActivity.class);
-                intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
-
-                startActivity(intentToTreatmentPhoto);
-
-            }
-        });*/
-
-        /*if (newDisease) {
-            editTextDiseaseName.requestFocus();
-            editTextDiseaseName.setSelection(0);
-        }*/
+        tabLayout = findViewById(R.id.tabs);
 
         if (newDisease) {
             editTextDiseaseName.requestFocus();
             editTextDiseaseName.setSelection(0);
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
+
+            // это временно
+            countOfPhotos = 0;
         } else {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             focusHolder.requestFocus();
+
+            // это временно
+            countOfPhotos = 1;
         }
 
         viewPager.setAdapter(categoryAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_white_24dp),
+                            getResources().getString(R.string.description)));
+                } else {
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_white_24dp),
+                            getResources().getString(R.string.photos)));
+                }
+
+                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
+                        getResources().getColor(android.R.color.white));
+
+                hideSoftInput();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_gray_24dp),
+                            getResources().getString(R.string.description)));
+                } else {
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_gray_24dp),
+                            getResources().getString(R.string.photos)));
+                }
+
+                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
+                        getResources().getColor(android.R.color.white));
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                hideSoftInput();
+            }
+
+        });
+    }
+
+    // инициализация Фрагментов если они null
+    // вызов этого метода и проверка происходит в самих фрагментах
+    protected void initTreatmentDescriptionFragment() {
+        treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
+    }
+
+    protected void initTreatmentPhotosFragment() {
+        treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
     }
 
 
@@ -371,7 +245,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        // если в состоянии Не edit (тоесть есть кнопка fabEditTreatmentDescripton со значком редактирования)
+        // если в состоянии Не edit (тоесть, есть кнопка fabEditTreatmentDescripton со значком редактирования)
         // то в меню элемент "сохранить" делаем не видимым
         // видимым остается "удалить"
         if (!editDisease) {
@@ -392,7 +266,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
             // иначе после слова "сохранить" обычные пробелы автоматически убираются
             // и слово вплотную прилегает к краю экрана
             MenuItem menuItemSave = menu.getItem(1);
-            menuItemSaveView = (TextView) menuItemSave.getActionView();
+            TextView menuItemSaveView = (TextView) menuItemSave.getActionView();
             menuItemSaveView.setText(R.string.save);
             menuItemSaveView.setTextSize(18f);
             menuItemSaveView.setTextColor(getResources().getColor(R.color.colorAccentThird));
@@ -406,59 +280,33 @@ public class NewTreatmentActivity extends AppCompatActivity {
                     // скручиваем клавиатуру
                     hideSoftInput();
 
-                    categoryAdapter.setPagesCount(2);
-                    viewPager.setAdapter(categoryAdapter);
-                    //tabLayout.setupWithViewPager(viewPager);
+                    if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
 
-                    if (treatmentDescriptionFragment == null) {
-                        treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
+                        // делаем два листа в адаптере
+                        categoryAdapter.setPagesCount(2);
+                        viewPager.setAdapter(categoryAdapter);
 
-                    }
-
-                    if (treatmentPhotosFragment == null) {
-                        treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
-                    }
-
-                    //if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
-                    editDisease = false;
-                    textInputLayoutDiseaseName.setVisibility(View.GONE);
-                    tabLayout.setVisibility(View.VISIBLE);
-
-                    treatmentDescriptionFragment.editTextTreatment.setSelection(0);
-                    treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
-                    treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
-                    treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
-
-                    focusHolder.requestFocus();
-
-                    invalidateOptionsMenu();
-                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-
-                    if (newDisease) {
-                        tabLayout.getTabAt(1).select();
-                    }
-                    //}
-
-
-
-                    /*if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
-                        editDisease = true;
+                        editDisease = false;
                         textInputLayoutDiseaseName.setVisibility(View.GONE);
-                        editTextTreatment.setSelection(0);
-                        editTextTreatment.setFocusable(false);
-                        editTextTreatment.setFocusableInTouchMode(false);
-                        editTextTreatment.setCursorVisible(false);
+                        tabLayout.setVisibility(View.VISIBLE);
+
+                        treatmentDescriptionFragment.editTextTreatment.setSelection(0);
+                        treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                        treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                        treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
                         focusHolder.requestFocus();
 
+                        // обновляем OptionsMenu
                         invalidateOptionsMenu();
-                        fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+
+                        treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
                     } else {
                         saveDiseaseAndTreatment();
 
                         focusHolder.requestFocus();
-                    }*/
+                    }
                 }
             });
         }
@@ -471,14 +319,13 @@ public class NewTreatmentActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                hideSoftInput();
-                goToDiseasesActivity();
-
                 // Если не было изменений
-                /*if (diseaseAndTreatmentHasNotChanged()) {
+                if (diseaseAndTreatmentHasNotChanged()) {
                     goToDiseasesActivity();
                     return true;
                 }
+
+                hideSoftInput();
 
                 textInputLayoutDiseaseName.setError(null);
 
@@ -493,12 +340,12 @@ public class NewTreatmentActivity extends AppCompatActivity {
                         };
 
                 // если выходим с сохранением изменений
-                showUnsavedChangesDialog(discardButtonClickListener);*/
+                showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
 
             case R.id.action_delete:
                 hideSoftInput();
-                deleteDiseaseAndTreatmentFromDataBase();
+                deleteDiseaseAndTreatmentFromDataBase(_idDisease);
                 return true;
 
             default:
@@ -510,16 +357,13 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-
-        /*hideSoftInput();
-
         if (diseaseAndTreatmentHasNotChanged()) {
             super.onBackPressed();
             finish();
             return;
         }
+
+        hideSoftInput();
 
         textInputLayoutDiseaseName.setError(null);
 
@@ -531,13 +375,13 @@ public class NewTreatmentActivity extends AppCompatActivity {
                     }
                 };
 
-        showUnsavedChangesDialog(discardButtonClickListener);*/
+        showUnsavedChangesDialog(discardButtonClickListener);
     }
 
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
         builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -555,12 +399,12 @@ public class NewTreatmentActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.no, discardButtonClickListener);
 
         AlertDialog alertDialog = builder.create();
-        alertDialog.show();*/
+        alertDialog.show();
     }
 
     private void saveDiseaseAndTreatment() {
 
-        /*focusHolder.requestFocus();
+        focusHolder.requestFocus();
 
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
@@ -572,7 +416,6 @@ public class NewTreatmentActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutDiseaseName.setError(getString(R.string.error_disease_name));
             focusHolder.requestFocus();
-            //editTextDiseaseName.requestFocus();
             editTextDiseaseName.startAnimation(scaleAnimation);
 
             return;
@@ -582,69 +425,69 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
         // проверка окончена, начинаем сохранение
 
-        // присваиваем стрингам textDiseaseName и textTreatment значения полей editTextDiseaseName и editTextTreatment
-        // для дальнейшей проверки на их изменения
-        textDiseaseName = nameToCheck;
-        textTreatment = editTextTreatment.getText().toString();
-
-        if (actionBar != null) {
-            actionBar.setTitle(textDiseaseName);
-        }
-
         // когда сохраняем НОВОЕ заболевание получаем его _id
-        // в данном случае присваиваем фейковый _idDisease = 2
+        // в данном случае присвоенно фейковое знаяение _idDisease = 2
 
-        _idDisease = 2;
-
-        // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
-        if (newDisease) {
-
-            newDisease = false;
-            saveDiseaseAndTreatmentToDataBase();
-
-            // если была нажата стрелка "обратно" - идем обратно
-            if (goBack) {
-                goToDiseasesActivity();
+        // если было нажато идти обратно
+        if (goBack) {
+            if (newDisease) {
+                // сохранять в базу в отдельном треде
+                saveDiseaseAndTreatmentToDataBase(_idDisease);
             } else {
-                editDisease = true;
-                textInputLayoutDiseaseName.setVisibility(View.GONE);
-                editTextTreatment.setSelection(0);
-                editTextTreatment.setFocusable(false);
-                editTextTreatment.setFocusableInTouchMode(false);
-                editTextTreatment.setCursorVisible(false);
-                //textViewAddTreatmentPhoto.setVisibility(View.INVISIBLE);
-
-                invalidateOptionsMenu();
-                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+                // обновлять в базу в отдельном треде
+                updateDiseaseAndTreatmentToDataBase(_idDisease);
             }
+
+            //и идем в DiseasesActivity
+            goToDiseasesActivity();
+
+        } else {
+            if (newDisease) {
+                // т.к. сохраняем новое заболевание,
+                // то оно уже не newDisease
+                newDisease = false;
+
+                // сохранять в базу в отдельном треде
+                saveDiseaseAndTreatmentToDataBase(_idDisease);
+            } else {
+                // обновлять в базу в отдельном треде
+                updateDiseaseAndTreatmentToDataBase(_idDisease);
+            }
+
+            // и формируем UI
+            categoryAdapter.setPagesCount(2);
+            viewPager.setAdapter(categoryAdapter);
+
+            // присваиваем стрингам textDiseaseName и textTreatment значения полей editTextDiseaseName и editTextTreatment
+            // для дальнейшей проверки на их изменения
+            textDiseaseName = nameToCheck;
+            textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
+
+            if (actionBar != null) {
+                actionBar.setTitle(textDiseaseName);
+            }
+
+            editDisease = false;
+            textInputLayoutDiseaseName.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.VISIBLE);
+
+            treatmentDescriptionFragment.editTextTreatment.setSelection(0);
+            treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+            treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+            treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+
+            focusHolder.requestFocus();
+
+            invalidateOptionsMenu();
+
+            treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
         }
-        // если НЕ новый пользователь, то обновляем в базу и
-        else {
-            updateDiseaseAndTreatmentToDataBase();
-
-            // если была нажата стрелка "обратно" - идем обратно
-            if (goBack) {
-                goToDiseasesActivity();
-            } else {
-                editDisease = true;
-                textInputLayoutDiseaseName.setVisibility(View.GONE);
-                editTextTreatment.setSelection(0);
-                editTextTreatment.setFocusable(false);
-                editTextTreatment.setFocusableInTouchMode(false);
-                editTextTreatment.setCursorVisible(false);
-                //textViewAddTreatmentPhoto.setVisibility(View.INVISIBLE);
-
-                invalidateOptionsMenu();
-                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-            }
-        }*/
     }
 
     // проверка на изменения заболевания
     private boolean diseaseAndTreatmentHasNotChanged() {
-        /*return editTextDiseaseName.getText().toString().equals(textDiseaseName) &&
-                editTextTreatment.getText().toString().equals(textTreatment);*/
-        return true;
+        return editTextDiseaseName.getText().toString().equals(textDiseaseName) &&
+                treatmentDescriptionFragment.editTextTreatment.getText().toString().equals(textTreatment);
     }
 
     private void goToDiseasesActivity() {
@@ -654,7 +497,6 @@ public class NewTreatmentActivity extends AppCompatActivity {
     private void hideSoftInput() {
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
-            Log.d("screenHeight", " viewToHide ");
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
@@ -662,7 +504,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
         }
     }
 
-    private void saveDiseaseAndTreatmentToDataBase() {
+    private void saveDiseaseAndTreatmentToDataBase(int _idDisease) {
         //TODO реализовать сохранение пользователя в базу
         // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -673,7 +515,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
         });
     }
 
-    private void updateDiseaseAndTreatmentToDataBase() {
+    private void updateDiseaseAndTreatmentToDataBase(int _idDisease) {
         //TODO реализовать обновление пользователя в базу
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -684,8 +526,10 @@ public class NewTreatmentActivity extends AppCompatActivity {
     }
 
 
-    private void deleteDiseaseAndTreatmentFromDataBase() {
+    private void deleteDiseaseAndTreatmentFromDataBase(int _idDisease) {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
+
+        finish();
     }
 }
