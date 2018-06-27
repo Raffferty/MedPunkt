@@ -24,7 +24,7 @@ public class TreatmentPhotosFragment extends Fragment {
 
     private FloatingActionButton fabAddTreatmentPhotos;
 
-    private RecyclerView recyclerTreatmentPhotos;
+    protected RecyclerView recyclerTreatmentPhotos;
 
     private LinearLayoutManager linearLayoutManager;
 

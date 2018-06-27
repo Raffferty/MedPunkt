@@ -158,13 +158,9 @@ public class NewTreatmentActivity extends AppCompatActivity {
             editTextDiseaseName.setSelection(0);
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
-
-            // это временно
         } else {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             focusHolder.requestFocus();
-
-            // это временно
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -174,8 +170,10 @@ public class NewTreatmentActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
+                    // при нажатии на табы формируем внешний вид табов
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_white_24dp),
                             getResources().getString(R.string.description)));
+
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_white_24dp),
                             getResources().getString(R.string.photos)));
@@ -183,15 +181,15 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
                 tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
                         getResources().getColor(android.R.color.white));
-
-                hideSoftInput();
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                // при отжатии табов формируем внешний вид табов
                 if (tab.getPosition() == 0) {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_gray_24dp),
                             getResources().getString(R.string.description)));
+
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_gray_24dp),
                             getResources().getString(R.string.photos)));
@@ -203,9 +201,22 @@ public class NewTreatmentActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                hideSoftInput();
-            }
+                if (tab.getPosition() == 0) {
+                    // при повторном нажатии на таб "ОПИСАНИЕ" прокручиваем вверх описание лечения
+                    treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                    treatmentDescriptionFragment.editTextTreatment.requestFocus();
+                    treatmentDescriptionFragment.editTextTreatment.setSelection(0);
 
+                    treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                    focusHolder.requestFocus();
+
+                } else {
+                    // при повторном нажатии на таб "СНИМКИ" прокручиваем вверх список снимков
+                    treatmentPhotosFragment.recyclerTreatmentPhotos.smoothScrollToPosition(0);
+                }
+            }
         });
     }
 
@@ -291,6 +302,7 @@ public class NewTreatmentActivity extends AppCompatActivity {
                         textInputLayoutDiseaseName.setVisibility(View.GONE);
                         tabLayout.setVisibility(View.VISIBLE);
 
+                        treatmentDescriptionFragment.editTextTreatment.requestFocus();
                         treatmentDescriptionFragment.editTextTreatment.setSelection(0);
                         treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
                         treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);

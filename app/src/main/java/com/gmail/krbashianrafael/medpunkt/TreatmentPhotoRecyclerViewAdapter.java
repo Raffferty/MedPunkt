@@ -28,7 +28,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.treatmet_photo_recyclerviewitem, parent, false);
+        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.treatmet_photo_recyclerview_item, parent, false);
         return new TreatmentPhotoHolder(mView);
     }
 
@@ -68,7 +68,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             _treatmentId = itemView.findViewById(R.id._treatment_id);
             itemUri = itemView.findViewById(R.id.recycler_photo_item_uri);
-            itemDate = itemView.findViewById(R.id.recycler_photo_item_date);
+            itemDate = itemView.findViewById(R.id.disease_item_date);
             itemName = itemView.findViewById(R.id.recycler_photo_item_name);
 
             itemView.setOnClickListener(this);

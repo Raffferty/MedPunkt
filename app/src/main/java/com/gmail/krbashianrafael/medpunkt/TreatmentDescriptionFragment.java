@@ -21,9 +21,9 @@ public class TreatmentDescriptionFragment extends Fragment {
     // fabEditTreatmentDescripton
     protected FloatingActionButton fabEditTreatmentDescripton;
 
+
     // Animation fabHideAnimation
     private Animation fabHideAnimation;
-
 
     public TreatmentDescriptionFragment() {
         // нужен ПУСТОЙ конструктор
@@ -38,6 +38,7 @@ public class TreatmentDescriptionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         editTextTreatment = view.findViewById(R.id.editTextTreatment);
 
@@ -97,8 +98,8 @@ public class TreatmentDescriptionFragment extends Fragment {
                     editTextTreatment.setFocusable(true);
                     editTextTreatment.setFocusableInTouchMode(true);
                     editTextTreatment.setCursorVisible(true);
-                    editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
                     editTextTreatment.requestFocus();
+                    editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
                 }
             });
 

@@ -800,6 +800,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void goToDiseasesActivity() {
         Intent toDiseasesIntent = new Intent(UserActivity.this, DiseasesActivity.class);
+        toDiseasesIntent.putExtra("newUser", true);
         toDiseasesIntent.putExtra("_idUser", _idUser);
         toDiseasesIntent.putExtra("UserName", textUserName);
         toDiseasesIntent.putExtra("birthDate", textUserBirthDate);

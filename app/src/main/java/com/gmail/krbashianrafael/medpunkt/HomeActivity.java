@@ -11,10 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
@@ -89,9 +89,20 @@ public class HomeActivity extends AppCompatActivity {
         }else if (!prefs.getBoolean("showGreeting", true) && fromUsers){
             checkBox.setChecked(true);
         }
+
+        FrameLayout enter = findViewById(R.id.enter);
+        enter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, UsersActivity.class);
+                startActivity(intent);
+
+                finish();
+            }
+        });
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
@@ -108,6 +119,6 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
 }
