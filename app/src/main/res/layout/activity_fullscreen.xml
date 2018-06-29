@@ -119,7 +119,7 @@
                     android:focusableInTouchMode="true"
                     android:inputType="textPersonName|textCapWords|textMultiLine"
                     android:paddingEnd="32dp"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/green"
                     android:textSize="24sp"
                     tools:ignore="RtlSymmetry" />
 

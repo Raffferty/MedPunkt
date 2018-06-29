@@ -60,7 +60,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textPersonName|textCapWords|textMultiLine"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorFab"
             android:textSize="24sp"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"

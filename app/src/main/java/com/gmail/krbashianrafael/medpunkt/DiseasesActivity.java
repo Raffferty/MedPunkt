@@ -92,8 +92,10 @@ public class DiseasesActivity extends AppCompatActivity {
         });
 
 
+        // инициализируем recyclerDiseases
         recyclerDiseases = findViewById(R.id.recycler_diseases);
 
+        // при нажатии на "чем болел" список заболеваний прокручивется вверх
         TextView txtDiseases = findViewById(R.id.txt_diseases);
         txtDiseases.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,8 +16,8 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     private static Context mContext;
     private ArrayList<TreatmentPhotoItem> treatmentPhotosList;
 
-    public TreatmentPhotoRecyclerViewAdapter(Context context) {
-        this.mContext = context;
+    TreatmentPhotoRecyclerViewAdapter(Context context) {
+        mContext = context;
         this.treatmentPhotosList = new ArrayList<>();
     }
 
@@ -63,7 +63,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         TextView itemDate;
         TextView itemName;
 
-        public TreatmentPhotoHolder(View itemView) {
+        TreatmentPhotoHolder(View itemView) {
             super(itemView);
 
             _treatmentId = itemView.findViewById(R.id._treatment_id);

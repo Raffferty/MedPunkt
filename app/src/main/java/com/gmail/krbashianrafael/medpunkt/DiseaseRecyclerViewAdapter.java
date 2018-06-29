@@ -16,8 +16,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private static Context mContext;
     private ArrayList<DiseaseItem> diseaseList;
 
-    public DiseaseRecyclerViewAdapter(Context context) {
-        this.mContext = context;
+    DiseaseRecyclerViewAdapter(Context context) {
+        mContext = context;
         this.diseaseList = new ArrayList<>();
     }
 
@@ -60,7 +60,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView diseaseName;
         TextView treatmentText;
 
-        public DiseaseHolder(View itemView) {
+        DiseaseHolder(View itemView) {
             super(itemView);
 
             _diseaseId = itemView.findViewById(R.id.disease_item_id);

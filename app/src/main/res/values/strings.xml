@@ -58,6 +58,7 @@
     <string name="fullscreen_image_description">fullscreen_image</string>
     <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
     <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
+    <string name="no_photo">No_Photo</string>
 
 
 </resources>

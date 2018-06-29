@@ -1,26 +1,30 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-
-import java.io.File;
+import java.util.ArrayList;
 
 public class UsersActivity extends AppCompatActivity {
 
     private ImageView userImage;
     private final String[] pathToPhoto = new String[1];
+
+    private RecyclerView recyclerUsers;
+    private LinearLayoutManager linearLayoutManager;
+    private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +65,7 @@ public class UsersActivity extends AppCompatActivity {
         });
 
         // начало ------ Фиктивниый юзер с фото
-        LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
+        /*LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
         userImage = findViewById(R.id.user_image);
         pathToPhoto[0] = getString(R.string.path_to_user_photo);
 
@@ -76,11 +80,11 @@ public class UsersActivity extends AppCompatActivity {
                     .into(userImage);
         } else {
             pathToPhoto[0] = "No_Photo";
-        }
+        }*/
         // конец ------ Фиктивниый юзер с фото
 
         // нажатие на юзера
-        linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
+        /*linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userDiseasIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
@@ -91,10 +95,10 @@ public class UsersActivity extends AppCompatActivity {
 
                 startActivity(userDiseasIntent);
             }
-        });
+        });*/
 
         // кнопка редактирования юзера
-        FrameLayout userItemEdit = findViewById(R.id.user_item_edit);
+        /*FrameLayout userItemEdit = findViewById(R.id.user_item_edit);
 
         userItemEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +112,64 @@ public class UsersActivity extends AppCompatActivity {
 
                 startActivity(userEditIntent);
             }
-        });
+        });*/
+
+
+        // инициализируем recyclerUsers
+        recyclerUsers = findViewById(R.id.recycler_users);
+
+        // инициализируем linearLayoutManager
+        linearLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL,false);
+
+        // инизиализируем разделитель для элементов recyclerTreatmentPhotos
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                recyclerUsers.getContext(), linearLayoutManager.getOrientation()
+        );
+
+        //инициализируем Drawable, который будет установлен как разделитель между элементами
+        Drawable divider_blue = ContextCompat.getDrawable(this, R.drawable.blue_drawable);
+
+        //устанавливаем divider_blue как разделитель между элементами
+        if (divider_blue != null) {
+            itemDecoration.setDrawable(divider_blue);
+        }
+
+        //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
+        recyclerUsers.addItemDecoration(itemDecoration);
+
+        // устанавливаем LayoutManager для RecyclerView
+        recyclerUsers.setLayoutManager(linearLayoutManager);
+
+        // инициализируем usersRecyclerViewAdapter
+        usersRecyclerViewAdapter = new UsersRecyclerViewAdapter(this);
+
+        // устанавливаем адаптер для RecyclerView
+        recyclerUsers.setAdapter(usersRecyclerViewAdapter);
+
+        ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();
+        myData.clear();
+
+        String pathToPhoto = getString(R.string.path_to_user_photo);
+
+        myData.add(new UserItem(0,"11.03.1968","Я",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1948","Мама",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1938","Папа",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1973","Брат",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Вася",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Петя",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Саша",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Рая",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Роза",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Федя",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Степа",pathToPhoto));
+        myData.add(new UserItem(0,"11.03.1968","Гриша",pathToPhoto));
+
+        // если еще нет снимков, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
+        if (myData.size() == 0) {
+            txtAddUsers.setVisibility(View.VISIBLE);
+            fabAddUser.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -116,7 +177,10 @@ public class UsersActivity extends AppCompatActivity {
         super.onResume();
 
         // для возобновления фото при рестарте
-        pathToPhoto[0] = getString(R.string.path_to_user_photo);
+        usersRecyclerViewAdapter.notifyDataSetChanged();
+
+        // для возобновления фото при рестарте
+       /* pathToPhoto[0] = getString(R.string.path_to_user_photo);
 
         File imgFile = new File(pathToPhoto[0]);
         if (imgFile.exists()) {
@@ -130,7 +194,7 @@ public class UsersActivity extends AppCompatActivity {
         } else {
             userImage.setImageResource(R.drawable.ic_camera_alt_gray_24dp);
             pathToPhoto[0] = "No_Photo";
-        }
+        }*/
 
     }
 

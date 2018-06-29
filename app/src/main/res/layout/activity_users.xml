@@ -19,82 +19,6 @@
         android:layout_below="@+id/divider_frame_green"
         android:background="@color/colorPrimaryDark" />
 
-    <!-- начало Фиктивный юзер -->
-
-    <LinearLayout
-        android:id="@+id/recycler_view_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/user_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="6dp"
-            android:contentDescription="@string/user_photo_placeholder"
-            android:src="@drawable/ic_camera_alt_gray_24dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="Вася"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="@color/colorPrimaryDark" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="11.03.1968"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                android:textColor="@color/colorPrimaryDark" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/user_item_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="12dp"
-                android:layout_marginStart="8dp"
-                android:contentDescription="@string/usr_edit_img"
-                android:src="@drawable/ic_info_outline_blue_48dp" />
-
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/user_item_id"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"/>
-    </LinearLayout>
-
-    <!-- конец Фиктивный юзер -->
-
-    <!-- этот фрейм убрать -->
-    <FrameLayout
-        android:id="@+id/divider_frame_blue2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/recycler_view_item"
-        android:background="#c7c7c7" />
-
     <TextView
         android:id="@+id/txt_empty_users"
         android:layout_width="wrap_content"
@@ -110,9 +34,9 @@
         tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider_frame_blue2"
         android:layout_margin="8dp" />
 
     <android.support.design.widget.FloatingActionButton
