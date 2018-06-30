@@ -69,7 +69,7 @@ public class DiseasesActivity extends AppCompatActivity {
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "");
@@ -82,7 +82,7 @@ public class DiseasesActivity extends AppCompatActivity {
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent treatmentIntent = new Intent(DiseasesActivity.this, NewTreatmentActivity.class);
+                Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "");

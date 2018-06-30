@@ -37,13 +37,8 @@
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_diseases"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".TreatmentActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_treatment"
-            android:screenOrientation="portrait" />
 
-        <activity android:name=".NewTreatmentActivity"
+        <activity android:name=".TreatmentActivity"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_treatment"
             android:screenOrientation="portrait" />

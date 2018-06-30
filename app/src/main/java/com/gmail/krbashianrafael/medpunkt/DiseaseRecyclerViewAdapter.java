@@ -73,7 +73,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         @Override
         public void onClick(View view) {
-            Intent treatmentIntent = new Intent(mContext, NewTreatmentActivity.class);
+            Intent treatmentIntent = new Intent(mContext, TreatmentActivity.class);
             treatmentIntent.putExtra("_idDisease", _diseaseId.getText());
 
             treatmentIntent.putExtra("diseaseDate", diseaseDate.getText());

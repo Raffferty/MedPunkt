@@ -13,7 +13,7 @@ import android.view.animation.AnimationUtils;
 public class TreatmentDescriptionFragment extends Fragment {
 
     // Активити в котором находися этот фрагмент
-    private NewTreatmentActivity newTreaymentActivity;
+    private TreatmentActivity newTreaymentActivity;
 
     // кастомный EditText у которого клавиатура не перекрывает текст
     protected MyEditText editTextTreatment;
@@ -65,7 +65,7 @@ public class TreatmentDescriptionFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        newTreaymentActivity = (NewTreatmentActivity) getActivity();
+        newTreaymentActivity = (TreatmentActivity) getActivity();
 
 
         if (newTreaymentActivity != null) {

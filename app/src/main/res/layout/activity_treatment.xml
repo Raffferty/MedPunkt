@@ -5,7 +5,8 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorEditTextBackground"
+    android:animateLayoutChanges="true"
+    android:background="@color/colorPrimaryDark"
     android:focusable="false"
     android:focusableInTouchMode="false"
     tools:context=".TreatmentActivity">
@@ -59,8 +60,9 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textPersonName|textCapWords|textMultiLine"
-            android:textColor="@color/colorAccent"
-            android:textSize="18sp"
+            android:textColor="@color/colorFab"
+            android:textSize="24sp"
+            android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -70,7 +72,7 @@
         android:id="@+id/txt_title_treatmen"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:gravity="center_horizontal"
         android:text="@string/txt_title_treatmen"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
@@ -80,107 +82,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_disease_name" />
 
-    <!-- это кастомный EditText у которого клавиатура не перекрывает текст -->
-    <com.gmail.krbashianrafael.medpunkt.MyEditText
-        android:id="@+id/editTextTreatment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorEditTextBackground"
-        android:hint="@string/treatment_text"
-        android:inputType="textMultiLine"
-        android:paddingBottom="36dp"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
-        android:paddingTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_title_treatmen">
-
-    </com.gmail.krbashianrafael.medpunkt.MyEditText>
-
-    <TextView
-        android:id="@+id/textViewAddTreatmentPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/colorEditTextBackground"
-        android:drawableStart="@drawable/ic_add_a_photo_orang_24dp"
-        android:padding="4dp"
-        android:text="@string/add_treatment_photo"
-        android:textColor="@color/colorFab"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextTreatment"
-        app:layout_constraintEnd_toEndOf="@+id/editTextTreatment" />
-
-    <!-- этот фрейм убрать -->
-    <FrameLayout
-        android:id="@+id/divider_frame_gray1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#c7c7c7"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTreatment" />
-
-    <!-- фиктивное фото -->
-    <LinearLayout
-        android:id="@+id/recycler_treatment_photo_item"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        style="@style/CategoryTab"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider_frame_gray1">
+        app:layout_constraintTop_toBottomOf="@+id/txt_title_treatmen"
+        app:tabBackground="@drawable/tab_color_selector"
+        app:tabGravity="fill"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@android:color/white"
+        app:tabTextColor="@color/black_overlay" />
 
-        <TextView
-            android:id="@+id/disease_item_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:drawableBottom="@drawable/ic_camera_alt_blue_24dp"
-            android:text="01.02.2018"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-            android:textColor="@color/colorPrimaryDark" />
-
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/recycler_photo_item_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="  Рентген"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="@color/colorPrimaryDark" />
-
-    </LinearLayout>
-
-    <!-- этот фрейм убрать -->
-    <FrameLayout
-        android:id="@+id/divider_frame_gray"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#c7c7c7"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_treatment_photo_item" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_treatment_photos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/divider_frame_gray" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabEditTreatment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_edit_white_24dp"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorFab"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorEditTextBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabs"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>
 

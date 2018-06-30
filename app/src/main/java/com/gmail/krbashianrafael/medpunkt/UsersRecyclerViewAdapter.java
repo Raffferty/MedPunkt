@@ -68,8 +68,13 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     .transition(DrawableTransitionOptions.withCrossFade(800))
                     .into(((UserHolder) holder).userImage);
         } else {
+            // если без фото, то пишем "No_Photo"
             ((UserHolder) holder).userPhotoUri.setText(R.string.no_photo);
+
+            // чистим userImage
             GlideApp.with(mContext).clear(((UserHolder) holder).userImage);
+
+            // ставим в userImage R.drawable.ic_camera_alt_gray_24dp
             GlideApp.with(mContext).
                     load(R.drawable.ic_camera_alt_gray_24dp).
                     into(((UserHolder) holder).userImage);

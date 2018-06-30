@@ -81,7 +81,7 @@ public class TreatmentPhotosFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        NewTreatmentActivity newTreaymentActivity = (NewTreatmentActivity) getActivity();
+        TreatmentActivity newTreaymentActivity = (TreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
 

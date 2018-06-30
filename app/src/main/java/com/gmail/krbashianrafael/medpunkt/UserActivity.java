@@ -492,7 +492,7 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_user_treatment_fullphoto, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
 
         menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
@@ -523,52 +523,9 @@ public class UserActivity extends AppCompatActivity {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
-
             // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
             menuItemDelete.setVisible(false);
-
-            // и создаем ActionView на основе элемента меню "сохранить" для применени анимации save_show
-            // т.к. в menu_user_treatment_fullphoto элемент "сохранить" имеет атрибут
-            // app:actionViewClass="android.widget.TextView"
-            // то menuItemSave.getActionView() возвращает TextView
-            // с которым и проделываем дальнейшие трансформации:
-            // устанавливаем текст, размер шрифта, цвет шрифта, анимацию и слушатель нажатия
-            // текст берем из R.string.save, где присутствует юникодовский пробел \u2000
-            // иначе после слова "сохранить" обычные пробелы автоматически убираются
-            // и слово вплотную прилегает к краю экрана
-            MenuItem menuItemSave = menu.getItem(1);
-            menuItemSaveView = (TextView) menuItemSave.getActionView();
-            menuItemSaveView.setText(R.string.save);
-            menuItemSaveView.setTextSize(18f);
-            menuItemSaveView.setTextColor(getResources().getColor(R.color.colorAccentThird));
-
-            menuItemSaveView.startAnimation(saveShowAnimation);
-
-            menuItemSaveView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (userHasNotChanged() && !newUser) {
-                        // скручиваем клавиатуру
-                        hideSoftInput();
-
-                        focusHolder.requestFocus();
-
-                        editUser = true;
-                        editTextName.setEnabled(false);
-                        editTextDate.setEnabled(false);
-                        imagePhoto.setClickable(false);
-                        textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                        invalidateOptionsMenu();
-
-                        fab.startAnimation(fabShowAnimation);
-
-                    } else {
-                        saveUser();
-                    }
-                }
-            });
         }
 
         return true;
@@ -600,6 +557,29 @@ public class UserActivity extends AppCompatActivity {
 
                 // если выходим с сохранением изменений
                 showUnsavedChangesDialog(discardButtonClickListener);
+                return true;
+
+            case R.id.action_save:
+                if (userHasNotChanged() && !newUser) {
+
+                    hideSoftInput();
+
+                    focusHolder.requestFocus();
+
+                    editUser = true;
+                    editTextName.setEnabled(false);
+                    editTextDate.setEnabled(false);
+                    imagePhoto.setClickable(false);
+                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                    invalidateOptionsMenu();
+
+                    fab.startAnimation(fabShowAnimation);
+
+                } else {
+                    saveUser();
+                }
+
                 return true;
 
             case R.id.action_delete:
