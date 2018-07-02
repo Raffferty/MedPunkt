@@ -28,7 +28,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class TreatmentActivity extends AppCompatActivity {
@@ -60,9 +59,6 @@ public class TreatmentActivity extends AppCompatActivity {
 
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
-
-    // Animation saveShowAnimation
-    private Animation saveShowAnimation;
 
     protected ViewPager viewPager;
 
@@ -124,9 +120,6 @@ public class TreatmentActivity extends AppCompatActivity {
 
         focusHolder = findViewById(R.id.focus_holder);
         focusHolder.requestFocus();
-
-        // анимация для элемента меню "сохранить"
-        saveShowAnimation = AnimationUtils.loadAnimation(this, R.anim.save_show);
 
         // анимация для показа fabEditTreatmentDescripton
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
@@ -267,61 +260,6 @@ public class TreatmentActivity extends AppCompatActivity {
             // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
             menuItemDelete.setVisible(false);
-
-            // и создаем ActionView на основе элемента меню "сохранить" для применени анимации save_show
-            // т.к. в menu элемент "сохранить" имеет атрибут
-            // app:actionViewClass="android.widget.TextView"
-            // то menuItemSave.getActionView() возвращает TextView
-            // с которым и проделываем дальнейшие трансформации:
-            // устанавливаем текст, размер шрифта, цвет шрифта, анимацию и слушатель нажатия
-            // текст берем из R.string.save, где присутствует юникодовский пробел \u2000
-            // иначе после слова "сохранить" обычные пробелы автоматически убираются
-            // и слово вплотную прилегает к краю экрана
-            MenuItem menuItemSave = menu.getItem(1);
-            TextView menuItemSaveView = (TextView) menuItemSave.getActionView();
-            menuItemSaveView.setText(R.string.save);
-            menuItemSaveView.setTextSize(18f);
-            menuItemSaveView.setTextColor(getResources().getColor(R.color.colorAccentThird));
-
-            menuItemSaveView.startAnimation(saveShowAnimation);
-
-            menuItemSaveView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    // скручиваем клавиатуру
-                    hideSoftInput();
-
-                    if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
-
-                        // делаем два листа в адаптере
-                        categoryAdapter.setPagesCount(2);
-                        viewPager.setAdapter(categoryAdapter);
-
-                        editDisease = false;
-                        textInputLayoutDiseaseName.setVisibility(View.GONE);
-                        tabLayout.setVisibility(View.VISIBLE);
-
-                        treatmentDescriptionFragment.editTextTreatment.requestFocus();
-                        treatmentDescriptionFragment.editTextTreatment.setSelection(0);
-                        treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
-                        treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
-                        treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
-
-                        focusHolder.requestFocus();
-
-                        // обновляем OptionsMenu
-                        invalidateOptionsMenu();
-
-                        treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-
-                    } else {
-                        saveDiseaseAndTreatment();
-
-                        focusHolder.requestFocus();
-                    }
-                }
-            });
         }
 
         return true;
@@ -355,7 +293,39 @@ public class TreatmentActivity extends AppCompatActivity {
                 // если выходим с сохранением изменений
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
+            case R.id.action_save:
+                // скручиваем клавиатуру
+                hideSoftInput();
 
+                if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
+
+                    // делаем два листа в адаптере
+                    categoryAdapter.setPagesCount(2);
+                    viewPager.setAdapter(categoryAdapter);
+
+                    editDisease = false;
+                    textInputLayoutDiseaseName.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.VISIBLE);
+
+                    treatmentDescriptionFragment.editTextTreatment.requestFocus();
+                    treatmentDescriptionFragment.editTextTreatment.setSelection(0);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                    treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                    treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+
+                    focusHolder.requestFocus();
+
+                    // обновляем OptionsMenu
+                    invalidateOptionsMenu();
+
+                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+                } else {
+                    saveDiseaseAndTreatment();
+
+                    focusHolder.requestFocus();
+                }
+
+                return true;
             case R.id.action_delete:
                 hideSoftInput();
                 deleteDiseaseAndTreatmentFromDataBase(_idDisease);

@@ -50,6 +50,11 @@
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
+        <provider
+            android:name=".data.MedProvider"
+            android:authorities="com.gmail.krbashianrafael.medpunkt"
+            android:exported="false" />
+
 
     </application>
 

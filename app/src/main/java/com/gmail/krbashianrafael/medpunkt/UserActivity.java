@@ -2,10 +2,14 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -44,13 +48,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class UserActivity extends AppCompatActivity {
+public class UserActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final Handler myHandler = new Handler(Looper.getMainLooper());
 
@@ -169,12 +174,6 @@ public class UserActivity extends AppCompatActivity {
     // TextView удаления фото, при нажатии удаляется фото
     private TextView textDeleteUserPhoto;
 
-    // код загрузки фото из галерии
-    private static final int RESULT_LOAD_IMAGE = 9002;
-
-    // путь к загружаемому фото
-    private Uri imageUriInView;
-
     // путь к сохраненному фото
     private String userPhotoUri, userSetNoPhotoUri = "";
 
@@ -193,14 +192,23 @@ public class UserActivity extends AppCompatActivity {
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
 
-    // элемент меню "сохранить"
-    TextView menuItemSaveView;
-
-    // Animation saveShowAnimation
-    private Animation saveShowAnimation;
-
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+
+    // код загрузки фото из галерии
+    private static final int RESULT_LOAD_IMAGE = 9002;
+
+    /** Identifier for the user data loader
+     *  Лоадеров может много (они обрабатываются в case)
+     *  поэтому устанавливаем инициализатор для каждого лоадера
+     *  в данном случае private static final int EXISTING_USER_LOADER = 0;
+     *  */
+    private static final int EXISTING_USER_LOADER = 0;
+
+    // путь к загружаемому фото
+    private Uri imageUriInView;
+
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -219,6 +227,7 @@ public class UserActivity extends AppCompatActivity {
       иначе, откроется окно с данными существующего юзера для редактирования или удаления
      */
         Uri currentUserUri = intent.getData();
+
         _idUser = intent.getIntExtra("_idUser", 0);
         newUser = intent.getBooleanExtra("newUser", false);
         editUser = intent.getBooleanExtra("editUser", false);
@@ -348,9 +357,6 @@ public class UserActivity extends AppCompatActivity {
         } else {
             textUserBirthDate = "";
         }
-
-        // анимация для элемента меню "сохранить"
-        saveShowAnimation = AnimationUtils.loadAnimation(this, R.anim.save_show);
 
         fab = findViewById(R.id.fabEditUser);
 
@@ -694,8 +700,6 @@ public class UserActivity extends AppCompatActivity {
 
         if (imageUriInView != null) {
 
-            //final Bitmap[] mBitmap = {null};
-
             GlideApp.with(this)
                     .asBitmap()
                     .load(imageUriInView)
@@ -761,7 +765,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void saveUserPhoto() {
-        if (mBitmap == null) {
+        if (mBitmap[0] == null) {
             Toast.makeText(UserActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
             return;
         }
@@ -806,13 +810,40 @@ public class UserActivity extends AppCompatActivity {
 
     private void saveUserToDataBase() {
         //TODO реализовать сохранение пользователя в базу
+
+        Log.d("saveUserToDataBase ", "textUserName = " + textUserName);
+        Log.d("saveUserToDataBase ", "textUserBirthDate = " + textUserBirthDate);
+        Log.d("saveUserToDataBase ", "userPhotoUri = " + userPhotoUri);
+
+        // Create a ContentValues object where column names are the keys,
+        // and pet attributes from the editor are the values.
+        ContentValues values = new ContentValues();
+        values.put(MedEntry.COLUMN_USER_NAME, textUserName);
+        values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
+        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+
+        // делаем insert
+        Uri newUri = getContentResolver().insert(MedEntry.CONTENT_URI, values);
+
+        Log.d("saveUserToDataBase ", "newUri = "+ newUri);
+
+        // Show a toast message depending on whether or not the insertion was successful.
         // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-        myHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
-            }
-        });
+        if (newUri!=null){
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this, "User NOT Saved To DataBase", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private void updateUserToDataBase() {
@@ -829,6 +860,22 @@ public class UserActivity extends AppCompatActivity {
     private void deleteUserFromDataBase() {
         //TODO реализовать удаление пользователя из базы
         Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
+    }
+
+    // методы Лоадера
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
 
