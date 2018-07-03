@@ -2,14 +2,11 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -55,7 +52,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class UserActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class UserActivity extends AppCompatActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final Handler myHandler = new Handler(Looper.getMainLooper());
 
@@ -198,16 +196,16 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
 
-    /** Identifier for the user data loader
-     *  Лоадеров может много (они обрабатываются в case)
-     *  поэтому устанавливаем инициализатор для каждого лоадера
-     *  в данном случае private static final int EXISTING_USER_LOADER = 0;
-     *  */
+    /**
+     * Identifier for the user data loader
+     * Лоадеров может много (они обрабатываются в case)
+     * поэтому устанавливаем инициализатор для каждого лоадера
+     * в данном случае private static final int EXISTING_USER_LOADER = 0;
+     */
     private static final int EXISTING_USER_LOADER = 0;
 
     // путь к загружаемому фото
     private Uri imageUriInView;
-
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -223,8 +221,6 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
         // в дальнейшем значение currentUserUri заменит значение newUser
         /*
       Content URI for the existing user (null if it's a new user)
-      если в onCreate НЕ пришел Uri, то mCurrentPetUri будет null и откроется окно для добавления новго юзера
-      иначе, откроется окно с данными существующего юзера для редактирования или удаления
      */
         Uri currentUserUri = intent.getData();
 
@@ -589,7 +585,7 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
                 return true;
 
             case R.id.action_delete:
-                deleteUserFromDataBase();
+                showDeleteConfirmationDialog();
                 return true;
 
             default:
@@ -617,6 +613,27 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
                 };
 
         showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    // Диалог "Удалить пользователя или отменить удаление"
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteUserFromDataBase();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     // Диалог "сохранить или выйти без сохранения"
@@ -728,6 +745,7 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
 
                 userPhotoUri = "No_Photo";
+                userSetNoPhotoUri = "";
             }
 
             // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
@@ -816,7 +834,7 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.d("saveUserToDataBase ", "userPhotoUri = " + userPhotoUri);
 
         // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
+        // and user attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(MedEntry.COLUMN_USER_NAME, textUserName);
         values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
@@ -825,11 +843,11 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
         // делаем insert
         Uri newUri = getContentResolver().insert(MedEntry.CONTENT_URI, values);
 
-        Log.d("saveUserToDataBase ", "newUri = "+ newUri);
+        Log.d("saveUserToDataBase ", "newUri = " + newUri);
 
         // Show a toast message depending on whether or not the insertion was successful.
         // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-        if (newUri!=null){
+        if (newUri != null) {
             myHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -848,35 +866,86 @@ public class UserActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void updateUserToDataBase() {
         //TODO реализовать обновление пользователя в базу
-        myHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(UserActivity.this, "User Updated To DataBase", Toast.LENGTH_LONG).show();
-            }
-        });
+
+        Log.d("updateUserToDataBase ", "textUserName = " + textUserName);
+        Log.d("updateUserToDataBase ", "textUserBirthDate = " + textUserBirthDate);
+        Log.d("updateUserToDataBase ", "userPhotoUri = " + userPhotoUri);
+
+        // Create a ContentValues object where column names are the keys,
+        // and user attributes from the editor are the values.
+        ContentValues values = new ContentValues();
+        values.put(MedEntry.COLUMN_USER_NAME, textUserName);
+        values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
+        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+
+        // Uri к юзеру, который будет обновляться
+        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+
+        Log.d("updateUserToDataBase ", "mCurrentUserUri = " + mCurrentUserUri);
+
+        // делаем update
+        int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
+
+        Log.d("updateUserToDataBase ", "rowsAffected = " + rowsAffected);
+
+        // Show a toast message depending on whether or not the update was successful.
+        if (rowsAffected == 0) {
+            // If no rows were affected, then there was an error with the update.
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this, "User NOT Updated To DataBase",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            // Otherwise, the update was successful and we can display a toast.
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UserActivity.this, "User Updated To DataBase",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
 
     private void deleteUserFromDataBase() {
         //TODO реализовать удаление пользователя из базы
-        Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
+
+        // Uri к юзеру, который будет удаляться
+        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+        //Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(2));
+
+        Log.d("deleteUserFromDataBase ", "mCurrentUserUri = " + mCurrentUserUri);
+
+        // Call the ContentResolver to delete the user at the given content URI.
+        // Pass in null for the selection and selection args
+        // because the mCurrentUserUri content URI already identifies the user that we want.
+
+        int rowsDeleted = 0;
+
+        // делаем удаление
+        if (_idUser!=0){
+            rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
+        }
+
+        Log.d("deleteUserFromDataBase ", "rowsDeleted = " + rowsDeleted);
+
+        // Show a toast message depending on whether or not the delete was successful.
+        if (rowsDeleted == 0) {
+            // If no rows were deleted, then there was an error with the delete.
+            Toast.makeText(this, "User NOT Deleted from DataBase", Toast.LENGTH_LONG).show();
+        } else {
+            // Otherwise, the delete was successful and we can display a toast.
+            Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
+        }
+
+        finish();
     }
 
-    // методы Лоадера
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
-    }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 }
 
 

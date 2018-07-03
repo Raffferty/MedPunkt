@@ -1,6 +1,9 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +20,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class UsersActivity extends AppCompatActivity {
+public class UsersActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ImageView userImage;
     private final String[] pathToPhoto = new String[1];
@@ -224,5 +228,21 @@ public class UsersActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // методы Лоадера
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

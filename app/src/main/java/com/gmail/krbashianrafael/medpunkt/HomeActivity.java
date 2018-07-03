@@ -18,7 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity  {
 
     private static final String PREFS_NAME = "PREFS";
 

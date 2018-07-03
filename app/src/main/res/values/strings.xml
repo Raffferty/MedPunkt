@@ -26,8 +26,8 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="why_need_permission_to_storage">Необходим доступ к фотографиям.</string>
-    <string name="permission_not_available">Доступа к фотографиям НЕТ. Запрашиваю Доступ к фотографиям.</string>
-    <string name="permission_was_denied">В доступе к фотографиям отказано.</string>
+    <string name="permission_not_available">Доступа к фотографиям НЕТ.\nЗапрашиваю Доступ к фотографиям.</string>
+    <string name="permission_was_denied">В доступе к фотографиям отказано</string>
     <string name="cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="cant_load_photo">Фотографию не удалось загрузить</string>
     <string name="file_not_deleted">Фотография не удалилась</string>
@@ -38,14 +38,12 @@
     <string name="user_photo_placeholder">user_photo_placeholder</string>
     <string name="usr_edit_img">usr_edit_img</string>
     <string name="title_activity_treatment">Добавить чем болел</string>
-    <string name="filter_title_view_treatmentphotoactivity">filter_title_view_treatmentphotoactivity</string>
     <string name="disease_name">Название заболевания</string>
     <string name="disease_date">Дата лечения</string>
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
     <string name="description">ОПИСАНИЕ</string>
     <string name="photos">СНИМКИ</string>
-    <string name="add_treatment_photo">\u2000Добавить снимок</string>
     <string name="delete_disease">Удалить чем болел</string>
     <string name="delete_user">Удалить ползователя</string>
     <string name="delete_treatment_photo">Удалить снимок</string>
@@ -59,6 +57,13 @@
     <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
     <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
     <string name="no_photo">No_Photo</string>
+    <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
+    <string name="delete_dialog_msg">Удалить этого пользователя?</string>
+    <!-- Dialog button text for the option to confirm deleting the current user [CHAR LIMIT=20] -->
+    <string name="delete">Удалить</string>
+    <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->
+    <string name="cancel">Отменить</string>
+
 
 
 </resources>

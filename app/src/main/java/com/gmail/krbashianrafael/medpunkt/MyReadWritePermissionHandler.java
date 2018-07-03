@@ -8,14 +8,14 @@ import android.view.View;
 
 /**
  * Created by raf on 17.03.2018.
- *
+ * <p>
  * Вынесен в отдельный класс запрос на ReadWritePermission
  */
 
 class MyReadWritePermissionHandler {
 
-    public static void getReadWritePermission(final Activity mActivity, View mLayout,
-                                                          final int PERMISSION_WRITE_EXTERNAL_STORAGE) {
+    public static void getReadWritePermission(final Activity mActivity, final View mLayout,
+                                              final int PERMISSION_WRITE_EXTERNAL_STORAGE) {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -23,13 +23,11 @@ class MyReadWritePermissionHandler {
                     Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     ActivityCompat.requestPermissions(mActivity,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSION_WRITE_EXTERNAL_STORAGE);
                 }
             }).show();
-
         } else {
             Snackbar.make(mLayout,
                     R.string.permission_not_available,

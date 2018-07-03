@@ -49,7 +49,8 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class FullscreenPhotoActivity extends AppCompatActivity {
+public class FullscreenPhotoActivity extends AppCompatActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler myHandler = new Handler(Looper.getMainLooper());
@@ -357,6 +358,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
 
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
+
+
+                // убираем UI, кроме SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                mDescriptionView.setVisibility(View.INVISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+                mVisible = false;
+                LL_title.startAnimation(LL_title_hideAnimation);
+                fab.startAnimation(fabHideAnimation);
+
+                // делаем imagePhoto.setEnabled(false) чтоб не реагировал на клик
+                imagePhoto.setEnabled(false);
+
                 // Запрашиваем разрешение на чтение и запись фото
                 MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
             } else {
@@ -662,6 +675,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
             } else {
                 Snackbar.make(imagePhoto, R.string.permission_was_denied,
                         Snackbar.LENGTH_LONG).show();
+
+                // это, перед выходом, показывают сверху статус бар,
+                // чтоб при открывании предыдущего окна не было белой полосы сверху
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+                myHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, UI_ANIMATION_DELAY * 7);
             }
         }
     }
@@ -672,6 +697,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+
+            // делаем imagePhoto.setEnabled(true) чтоб реагировал на клик
+            imagePhoto.setEnabled(true);
+
+            // показываем UI
+            show();
 
             Uri newSelectedImageUri = data.getData();
 
@@ -806,21 +837,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (photoAndDescriptionHasNotChanged()) {
-
-            // это, перед выходом, показывают сверху статус бар,
-            // чтоб при открывании предыдущего окна не было белой полосы сверху
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
-            // а это закрывает текущее окно после небольшой задержки
-            myHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    FullscreenPhotoActivity.super.onBackPressed();
-                    finish();
-                }
-            }, UI_ANIMATION_DELAY);
-
+            goToTreatmentActivity();
             return;
         }
 
@@ -828,19 +845,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-                        // это, перед выходом, показывают сверху статус бар,
-                        // чтоб при открывании предыдущего окна не было белой полосы сверху
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
-                        // а это закрывает текущее окно после небольшой задержки
-                        myHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, UI_ANIMATION_DELAY);
+                        goToTreatmentActivity();
                     }
                 };
 
