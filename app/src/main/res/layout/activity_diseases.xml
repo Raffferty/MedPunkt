@@ -43,7 +43,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_diseases"
-        android:layout_margin="8dp" />
+        android:layout_margin="2dp"
+        android:clipToPadding="false"
+        android:paddingBottom="92dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddDisease"
