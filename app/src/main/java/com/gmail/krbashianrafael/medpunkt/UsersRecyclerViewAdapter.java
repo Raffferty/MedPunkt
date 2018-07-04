@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,8 +118,11 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.user_item_edit){
+
+                Log.d("toUser","toUser _userId = " + _userId.getText());
+
                 Intent userEditIntent = new Intent(mContext, UserActivity.class);
-                userEditIntent.putExtra("_idUser", _userId.getText());
+                userEditIntent.putExtra("_idUser", Integer.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
@@ -128,7 +132,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             } else {
                 Intent userDiseasIntent = new Intent(mContext, DiseasesActivity.class);
-                userDiseasIntent.putExtra("_idUser", _userId.getText());
+                userDiseasIntent.putExtra("_idUser", Integer.valueOf(_userId.getText().toString()));
                 userDiseasIntent.putExtra("UserName", userName.getText());
                 userDiseasIntent.putExtra("birthDate", userBirthDate.getText());
                 userDiseasIntent.putExtra("userPhotoUri", userPhotoUri.getText());

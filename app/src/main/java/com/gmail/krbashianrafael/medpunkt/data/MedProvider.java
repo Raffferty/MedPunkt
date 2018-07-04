@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.gmail.krbashianrafael.medpunkt.UsersActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
 
 public class MedProvider extends ContentProvider {
@@ -338,12 +339,11 @@ public class MedProvider extends ContentProvider {
             return null;
         }
 
-        // здесь устанавливаем флаг scrollToEnd в классе CatalogActivity в true
+        // здесь устанавливаем флаг mScrollToEnd в классе UsersActivity в true
         // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
         // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
-        //PetsCatalog.scrollToEnd = true;
-
+        UsersActivity.mScrollToEnd = true;
 
         // Notify all listeners that the data has changed for the user content URI
 

@@ -59,25 +59,31 @@ public class UserActivity extends AppCompatActivity
 
     private final Bitmap[] mBitmap = {null};
 
+    //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
+    String pathToUsersPhoto;
+
     private final Runnable userPhotoSavingRunnable = new Runnable() {
         @Override
         public void run() {
             // для интернал
-            String root = getFilesDir().toString();
+            if (pathToUsersPhoto==null) return;
 
-            File myDir = new File(root + "/users_photos"); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
-            Log.d("file", "myDir = " + myDir);
+            File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+            Log.d("mFile", "myDir = " + myDir);
 
             if (!myDir.mkdirs()) {
                 Log.d("file", "users_photos_dir_Not_created");
             }
 
             //String fileName = "Image-" + _idUser + ".jpg";
-            String fileName = "Image-" + 1 + ".jpg";
+            //String fileName = "Image-" + 1 + ".jpg";
+            String fileName = "usrImage.jpg";
             File file = new File(myDir, fileName);
 
+            Log.d("mFile", "file = " + file);
+
             // при этом путь к файлу
-            // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/Image-1.jpg
+            // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
 
             // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
             if (file.exists()) {
@@ -196,14 +202,6 @@ public class UserActivity extends AppCompatActivity
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
 
-    /**
-     * Identifier for the user data loader
-     * Лоадеров может много (они обрабатываются в case)
-     * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int EXISTING_USER_LOADER = 0;
-     */
-    private static final int EXISTING_USER_LOADER = 0;
-
     // путь к загружаемому фото
     private Uri imageUriInView;
 
@@ -230,6 +228,13 @@ public class UserActivity extends AppCompatActivity
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
         userPhotoUri = intent.getStringExtra("userPhotoUri");
+
+        Log.d("toUser","inUser _idUser = " + _idUser);
+
+        //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/
+        pathToUsersPhoto = getFilesDir().toString()+ "/users_photos/";
+
+        Log.d("mFile", "pathToUsersPhoto = " + pathToUsersPhoto);
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -618,7 +623,7 @@ public class UserActivity extends AppCompatActivity
     // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setMessage(getString(R.string.delete_dialog_msg) + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 deleteUserFromDataBase();
@@ -713,7 +718,7 @@ public class UserActivity extends AppCompatActivity
         // в данном случае в Intent мы получили фейковый _idUser = 1 для существующего пользователя
 
         // для нового пользователя присваиваем фейковый _idUser = 1
-        _idUser = 1;
+        //_idUser = 1;
 
         if (imageUriInView != null) {
 
@@ -735,10 +740,10 @@ public class UserActivity extends AppCompatActivity
         } else {
             // если фото было удалено, то удалить файл фото (если он есть)
             if (userSetNoPhotoUri.equals("Set_No_Photo")) {
-                //TODO здесь нужно будет формировать путь к фото по id
-                String pathToPhoto = getString(R.string.path_to_user_photo);
-                File imgFile = new File(pathToPhoto);
+                // /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
+                File imgFile = new File(pathToUsersPhoto + _idUser + "/usrImage.jpg");
                 if (imgFile.exists()) {
+                    Log.d("mFile", "imgFile deleting");
                     if (!imgFile.delete()) {
                         Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
                     }
