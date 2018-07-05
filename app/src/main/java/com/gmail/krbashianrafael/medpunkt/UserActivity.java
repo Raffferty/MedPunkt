@@ -2,6 +2,7 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,8 +67,9 @@ public class UserActivity extends AppCompatActivity
         @Override
         public void run() {
             // для интернал
-            if (pathToUsersPhoto==null) return;
+            if (pathToUsersPhoto == null) return;
 
+            // формируем путь к файлу фото юзера
             File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
             Log.d("mFile", "myDir = " + myDir);
 
@@ -108,6 +110,17 @@ public class UserActivity extends AppCompatActivity
 
             if (file.exists()) {
                 userPhotoUri = file.toString();
+
+                // обновляем данные юзера в базе с указание пути к его фото
+                updateUserToDataBase(true);
+
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UserActivity.this, "User with Photo Saved To DataBase", Toast.LENGTH_LONG).show();
+                    }
+                });
+
             } else {
                 userPhotoUri = "No_Photo";
                 myHandler.post(new Runnable() {
@@ -119,7 +132,7 @@ public class UserActivity extends AppCompatActivity
             }
 
             if (newUser) {
-                saveUserToDataBase();
+                //saveUserToDataBase();
                 newUser = false;
 
                 if (goBack) {
@@ -130,7 +143,7 @@ public class UserActivity extends AppCompatActivity
             }
             // если НЕ новый пользователь, то обновляем в базу и
             else {
-                updateUserToDataBase();
+                //updateUserToDataBase();
 
                 if (goBack) {
                     goToUsersActivity();
@@ -182,7 +195,7 @@ public class UserActivity extends AppCompatActivity
     private String userPhotoUri, userSetNoPhotoUri = "";
 
     // id пользователя
-    private int _idUser = 0;
+    private long _idUser = 0;
 
     // View mLayout для привязки snackbar
     private View mLayout;
@@ -222,17 +235,17 @@ public class UserActivity extends AppCompatActivity
      */
         Uri currentUserUri = intent.getData();
 
-        _idUser = intent.getIntExtra("_idUser", 0);
+        _idUser = intent.getLongExtra("_idUser", 0);
         newUser = intent.getBooleanExtra("newUser", false);
         editUser = intent.getBooleanExtra("editUser", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
         userPhotoUri = intent.getStringExtra("userPhotoUri");
 
-        Log.d("toUser","inUser _idUser = " + _idUser);
+        Log.d("toUser", "inUser _idUser = " + _idUser);
 
         //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/
-        pathToUsersPhoto = getFilesDir().toString()+ "/users_photos/";
+        pathToUsersPhoto = getFilesDir().toString() + "/users_photos/";
 
         Log.d("mFile", "pathToUsersPhoto = " + pathToUsersPhoto);
 
@@ -720,6 +733,7 @@ public class UserActivity extends AppCompatActivity
         // для нового пользователя присваиваем фейковый _idUser = 1
         //_idUser = 1;
 
+        // сохраняем пользователя с фотографией
         if (imageUriInView != null) {
 
             GlideApp.with(this)
@@ -731,9 +745,37 @@ public class UserActivity extends AppCompatActivity
                             // здесь получаем Bitmap
                             mBitmap[0] = resource;
 
-                            // и передаем на сохранение в файл
-                            //saveUserPhoto(mBitmap[0]);
-                            saveUserPhoto();
+                            // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
+                            if (newUser) {
+                                saveUserToDataBase();
+                                /*newUser = false;
+
+                                // если была нажата стрелка "обратно" - идем обратно
+                                if (goBack) {
+                                    goToUsersActivity();
+                                } else {
+                                    goToDiseasesActivity();
+                                }*/
+                            }
+                            // если НЕ новый пользователь, то обновляем в базу и
+                            else {
+                                updateUserToDataBase(false);
+
+                                // если была нажата стрелка "обратно" - идем обратно
+                                if (goBack) {
+                                    goToUsersActivity();
+                                } else {
+                                    editUser = true;
+                                    userHasChangedPhoto = false;
+                                    editTextName.setEnabled(false);
+                                    editTextDate.setEnabled(false);
+                                    imagePhoto.setClickable(false);
+                                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                                    invalidateOptionsMenu();
+                                    fab.startAnimation(fabShowAnimation);
+                                }
+                            }
                         }
                     });
             // если фото не выбиралось
@@ -767,7 +809,7 @@ public class UserActivity extends AppCompatActivity
             }
             // если НЕ новый пользователь, то обновляем в базу и
             else {
-                updateUserToDataBase();
+                updateUserToDataBase(false);
 
                 // если была нажата стрелка "обратно" - идем обратно
                 if (goBack) {
@@ -788,12 +830,12 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void saveUserPhoto() {
-        if (mBitmap[0] == null) {
+        /*if (mBitmap[0] == null) {
             Toast.makeText(UserActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
             return;
-        }
+        }*/
 
-        myHandler.removeCallbacks(userPhotoSavingRunnable);
+        //myHandler.removeCallbacks(userPhotoSavingRunnable);
         myHandler.post(userPhotoSavingRunnable);
     }
 
@@ -845,20 +887,34 @@ public class UserActivity extends AppCompatActivity
         values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
         values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
 
-        // делаем insert
+        // делаем insert и получаем Uri вставленной строки
         Uri newUri = getContentResolver().insert(MedEntry.CONTENT_URI, values);
 
         Log.d("saveUserToDataBase ", "newUri = " + newUri);
 
         // Show a toast message depending on whether or not the insertion was successful.
-        // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
+        // т.к. Toast.makeText может вызываться не с основного треда (в случае вставки юзера с фото),
+        // то надо делать через Looper
         if (newUri != null) {
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+
+            // получаем _idUser из возвращенного newUri при вставке нового пользователя
+            _idUser = ContentUris.parseId(newUri);
+
+            Log.d("saveUserToDataBase ", "newUserID = " + _idUser);
+            Log.d("saveUserToDataBase ", "userPhotoUri = " + userPhotoUri);
+
+            // если было фото, то сохраняем фото в папку под _idUser
+            // после сохранения файла фото в папку под _idUser, обновляем в бае userPhotoUri этого _idUser
+            if (mBitmap[0] != null) {
+                saveUserPhoto();
+            } else {
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UserActivity.this, "User with NO PHOTO Saved To DataBase", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         } else {
             myHandler.post(new Runnable() {
                 @Override
@@ -869,7 +925,7 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    private void updateUserToDataBase() {
+    private void updateUserToDataBase(boolean firstSavingWithPhoto) {
         //TODO реализовать обновление пользователя в базу
 
         Log.d("updateUserToDataBase ", "textUserName = " + textUserName);
@@ -905,13 +961,15 @@ public class UserActivity extends AppCompatActivity
             });
         } else {
             // Otherwise, the update was successful and we can display a toast.
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User Updated To DataBase",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            if (!firstSavingWithPhoto) {
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UserActivity.this, "User Updated To DataBase",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         }
     }
 
@@ -932,7 +990,7 @@ public class UserActivity extends AppCompatActivity
         int rowsDeleted = 0;
 
         // делаем удаление
-        if (_idUser!=0){
+        if (_idUser != 0) {
             rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
         }
 
@@ -943,6 +1001,29 @@ public class UserActivity extends AppCompatActivity
             // If no rows were deleted, then there was an error with the delete.
             Toast.makeText(this, "User NOT Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
+            // формируем путь к папке фото юзера
+            File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+
+            // формируем путь к файлу фото юзера
+            String fileName = "usrImage.jpg";
+            File file = new File(myDir, fileName);
+
+            // при этом путь к файлу
+            // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
+
+            // удаляем сначала фото, потом папку
+            if (file.exists()) {
+                if (!file.delete()) {
+                    Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                }
+
+                if (myDir.exists()) {
+                    if (!myDir.delete()) {
+                        Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
             // Otherwise, the delete was successful and we can display a toast.
             Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
         }

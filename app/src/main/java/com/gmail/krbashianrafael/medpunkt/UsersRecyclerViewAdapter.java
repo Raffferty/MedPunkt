@@ -122,7 +122,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 Log.d("toUser","toUser _userId = " + _userId.getText());
 
                 Intent userEditIntent = new Intent(mContext, UserActivity.class);
-                userEditIntent.putExtra("_idUser", Integer.valueOf(_userId.getText().toString()));
+                userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
@@ -132,7 +132,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             } else {
                 Intent userDiseasIntent = new Intent(mContext, DiseasesActivity.class);
-                userDiseasIntent.putExtra("_idUser", Integer.valueOf(_userId.getText().toString()));
+                userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userDiseasIntent.putExtra("UserName", userName.getText());
                 userDiseasIntent.putExtra("birthDate", userBirthDate.getText());
                 userDiseasIntent.putExtra("userPhotoUri", userPhotoUri.getText());
