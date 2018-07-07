@@ -31,6 +31,7 @@
     <string name="cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="cant_load_photo">Фотографию не удалось загрузить</string>
     <string name="file_not_deleted">Фотография не удалилась</string>
+    <string name="file_deleted">Фотография удалилась</string>
     <string name="path_to_users_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/</string>
     <string name="error_name">Укажите имя</string>
     <string name="error_date">Укажите дату рождения</string>

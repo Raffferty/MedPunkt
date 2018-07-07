@@ -48,6 +48,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -111,8 +113,11 @@ public class UserActivity extends AppCompatActivity
             if (file.exists()) {
                 userPhotoUri = file.toString();
 
-                // обновляем данные юзера в базе с указание пути к его фото
-                updateUserToDataBase(true);
+
+                // обновляем данные НОВОГО юзера в базе с указанием пути к его фото
+                if (newUser) {
+                    updateUserToDataBase(true);
+                }
 
                 myHandler.post(new Runnable() {
                     @Override
@@ -486,6 +491,7 @@ public class UserActivity extends AppCompatActivity
                             .transition(DrawableTransitionOptions.withCrossFade(500))
                             .into(imagePhoto);
 
+                    userPhotoUri = pathToUsersPhoto + _idUser + "/usrImage.jpg";
                     imageUriInView = newSelectedImageUri;
                     userHasChangedPhoto = true;
                     textDeleteUserPhoto.setVisibility(View.VISIBLE);
@@ -501,6 +507,7 @@ public class UserActivity extends AppCompatActivity
                             .transition(DrawableTransitionOptions.withCrossFade(500))
                             .into(imagePhoto);
 
+                    userPhotoUri = pathToUsersPhoto + _idUser + "/usrImage.jpg";
                     imageUriInView = newSelectedImageUri;
                     userHasChangedPhoto = true;
                     textDeleteUserPhoto.setVisibility(View.VISIBLE);
@@ -780,7 +787,8 @@ public class UserActivity extends AppCompatActivity
                     });
             // если фото не выбиралось
         } else {
-            // если фото было удалено, то удалить файл фото (если он есть)
+            // если фото было удалено нажатием на "удалить фото", то удалить файл фото (если он есть)
+            // при этом папка пользователя остается, а фото удаляется
             if (userSetNoPhotoUri.equals("Set_No_Photo")) {
                 // /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
                 File imgFile = new File(pathToUsersPhoto + _idUser + "/usrImage.jpg");
@@ -788,6 +796,8 @@ public class UserActivity extends AppCompatActivity
                     Log.d("mFile", "imgFile deleting");
                     if (!imgFile.delete()) {
                         Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(UserActivity.this, R.string.file_deleted, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -928,6 +938,9 @@ public class UserActivity extends AppCompatActivity
     private void updateUserToDataBase(boolean firstSavingWithPhoto) {
         //TODO реализовать обновление пользователя в базу
 
+
+
+
         Log.d("updateUserToDataBase ", "textUserName = " + textUserName);
         Log.d("updateUserToDataBase ", "textUserBirthDate = " + textUserBirthDate);
         Log.d("updateUserToDataBase ", "userPhotoUri = " + userPhotoUri);
@@ -962,13 +975,25 @@ public class UserActivity extends AppCompatActivity
         } else {
             // Otherwise, the update was successful and we can display a toast.
             if (!firstSavingWithPhoto) {
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UserActivity.this, "User Updated To DataBase",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                if (mBitmap[0] != null) {
+                    saveUserPhoto();
+
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UserActivity.this, "User with PHOTO Updated To DataBase",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UserActivity.this, "User with NO PHOTO Updated To DataBase", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
             }
         }
     }
@@ -1004,23 +1029,14 @@ public class UserActivity extends AppCompatActivity
             // формируем путь к папке фото юзера
             File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
 
-            // формируем путь к файлу фото юзера
-            String fileName = "usrImage.jpg";
-            File file = new File(myDir, fileName);
-
-            // при этом путь к файлу
-            // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
-
-            // удаляем сначала фото, потом папку
-            if (file.exists()) {
-                if (!file.delete()) {
-                    Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
-                }
-
-                if (myDir.exists()) {
-                    if (!myDir.delete()) {
-                        Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
-                    }
+            if (myDir.exists()) {
+                try {
+                    //  use Apache Commons IO
+                    FileUtils.deleteDirectory(myDir);
+                    Toast.makeText(this, "User Photo Deleted", Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    Toast.makeText(this, "User Photo NOT Deleted", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 }
             }
 
@@ -1030,8 +1046,6 @@ public class UserActivity extends AppCompatActivity
 
         finish();
     }
-
-
 }
 
 
