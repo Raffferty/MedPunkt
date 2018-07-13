@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -60,119 +61,10 @@ public class UserActivity extends AppCompatActivity
 
     private final Handler myHandler = new Handler(Looper.getMainLooper());
 
-    private final Bitmap[] mBitmap = {null};
+    // загруженный Bitmap фотографии
+    private Bitmap loadedBitmap;
 
-    //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos
-    String pathToUsersPhoto;
-
-    private final Runnable userPhotoSavingRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // для интернал
-            if (pathToUsersPhoto == null) return;
-
-            // формируем путь к файлу фото юзера
-            File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
-            Log.d("mFile", "myDir = " + myDir);
-
-            if (!myDir.mkdirs()) {
-                Log.d("file", "users_photos_dir_Not_created");
-            }
-
-            //String fileName = "Image-" + _idUser + ".jpg";
-            //String fileName = "Image-" + 1 + ".jpg";
-            String fileName = "usrImage.jpg";
-            File file = new File(myDir, fileName);
-
-            Log.d("mFile", "file = " + file);
-
-            // при этом путь к файлу
-            // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
-
-            // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
-            if (file.exists()) {
-                if (!file.delete()) {
-                    Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
-                }
-            }
-
-            FileOutputStream outputStream;
-
-            try {
-                outputStream = new FileOutputStream(file);
-                mBitmap[0].compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // обнуляем mBitmap[0]
-            mBitmap[0] = null;
-
-            if (file.exists()) {
-                userPhotoUri = file.toString();
-
-
-                // обновляем данные НОВОГО юзера в базе с указанием пути к его фото
-                if (newUser) {
-                    updateUserToDataBase(true);
-                }
-
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UserActivity.this, "User with Photo Saved To DataBase", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            } else {
-                userPhotoUri = "No_Photo";
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UserActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            if (newUser) {
-                //saveUserToDataBase();
-                newUser = false;
-
-                if (goBack) {
-                    goToUsersActivity();
-                } else {
-                    goToDiseasesActivity();
-                }
-            }
-            // если НЕ новый пользователь, то обновляем в базу и
-            else {
-                //updateUserToDataBase();
-
-                if (goBack) {
-                    goToUsersActivity();
-                } else {
-                    editUser = true;
-                    userHasChangedPhoto = false;
-                    invalidateOptionsMenu();
-
-                    // только основной тред может прикасаться к созданным им View
-                    // поэтому обарачиваем в runOnUiThread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            fab.startAnimation(fabShowAnimation);
-                            editTextName.setEnabled(false);
-                            editTextDate.setEnabled(false);
-                            imagePhoto.setClickable(false);
-                            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-                        }
-                    });
-                }
-            }
-        }
-    };
+    private String pathToUsersPhoto;
 
     // возможность изменфть пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean newUser, goBack, editUser, userHasChangedPhoto;
@@ -232,27 +124,22 @@ public class UserActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        // получаем переданный в интенте Uri,
-        // есл intent.getData(); вернул null, значит это новый пользователь
-        // в дальнейшем значение currentUserUri заменит значение newUser
-        /*
-      Content URI for the existing user (null if it's a new user)
-     */
-        Uri currentUserUri = intent.getData();
-
         _idUser = intent.getLongExtra("_idUser", 0);
         newUser = intent.getBooleanExtra("newUser", false);
         editUser = intent.getBooleanExtra("editUser", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
-        userPhotoUri = intent.getStringExtra("userPhotoUri");
 
-        Log.d("toUser", "inUser _idUser = " + _idUser);
+        if (intent.hasExtra("userPhotoUri")) {
+            userPhotoUri = intent.getStringExtra("userPhotoUri");
+        } else {
+            userPhotoUri = "No_Photo";
+        }
 
         //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/
-        pathToUsersPhoto = getFilesDir().toString() + "/users_photos/";
-
-        Log.d("mFile", "pathToUsersPhoto = " + pathToUsersPhoto);
+        if (getFilesDir() != null) {
+            pathToUsersPhoto = getFilesDir().toString() + "/users_photos/";
+        }
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -264,7 +151,7 @@ public class UserActivity extends AppCompatActivity
 
         imagePhoto = findViewById(R.id.image_photo);
 
-        if (userPhotoUri != null && !userPhotoUri.equals("No_Photo")) {
+        if (!userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
             textViewNoUserPhoto.setVisibility(View.GONE);
 
@@ -310,6 +197,7 @@ public class UserActivity extends AppCompatActivity
             public void onClick(View v) {
                 imagePhoto.setImageResource(R.color.colorPrimaryLight);
                 imageUriInView = null;
+                loadedBitmap = null;
                 textViewNoUserPhoto.setVisibility(View.VISIBLE);
                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
@@ -483,38 +371,46 @@ public class UserActivity extends AppCompatActivity
             } else {
                 // если грузим фотку в первый раз
                 if (imageUriInView == null) {
-                    GlideApp.with(this)
-                            .load(newSelectedImageUri)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .error(R.drawable.error_camera_alt_gray_128dp)
-                            .transition(DrawableTransitionOptions.withCrossFade(500))
-                            .into(imagePhoto);
-
-                    userPhotoUri = pathToUsersPhoto + _idUser + "/usrImage.jpg";
-                    imageUriInView = newSelectedImageUri;
-                    userHasChangedPhoto = true;
-                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                    textViewNoUserPhoto.setVisibility(View.GONE);
+                    loadPhotoIntoViewAndGetBitmap(newSelectedImageUri);
 
                     // если грузим другую фотку вместо уже загруженной (ту же фотку повторно не грузим)
                 } else if (!imageUriInView.equals(newSelectedImageUri)) {
-                    GlideApp.with(this)
-                            .load(newSelectedImageUri)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .error(R.drawable.error_camera_alt_gray_128dp)
-                            .transition(DrawableTransitionOptions.withCrossFade(500))
-                            .into(imagePhoto);
-
-                    userPhotoUri = pathToUsersPhoto + _idUser + "/usrImage.jpg";
-                    imageUriInView = newSelectedImageUri;
-                    userHasChangedPhoto = true;
-                    textDeleteUserPhoto.setVisibility(View.VISIBLE);
-                    textViewNoUserPhoto.setVisibility(View.GONE);
+                    loadPhotoIntoViewAndGetBitmap(newSelectedImageUri);
                 }
             }
         }
+    }
+
+    private void loadPhotoIntoViewAndGetBitmap(Uri newSelectedImageUri) {
+        GlideApp.with(this)
+                .load(newSelectedImageUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.error_camera_alt_gray_128dp)
+                .transition(DrawableTransitionOptions.withCrossFade(500))
+                .into(imagePhoto);
+
+        if (pathToUsersPhoto != null && _idUser != 0) {
+            userPhotoUri = pathToUsersPhoto + _idUser + "/usrImage.jpg";
+        }
+
+        imageUriInView = newSelectedImageUri;
+        userHasChangedPhoto = true;
+        textDeleteUserPhoto.setVisibility(View.VISIBLE);
+        textViewNoUserPhoto.setVisibility(View.GONE);
+
+        loadedBitmap = null;
+
+        GlideApp.with(this)
+                .asBitmap()
+                .load(imageUriInView)
+                .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        // здесь получаем Bitmap
+                        loadedBitmap = resource;
+                    }
+                });
     }
 
     @Override
@@ -577,7 +473,11 @@ public class UserActivity extends AppCompatActivity
                 DialogInterface.OnClickListener discardButtonClickListener =
                         new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (dialog != null) {
+                                    dialog.dismiss();
+                                }
+
                                 goToUsersActivity();
                             }
                         };
@@ -604,7 +504,7 @@ public class UserActivity extends AppCompatActivity
                     fab.startAnimation(fabShowAnimation);
 
                 } else {
-                    saveUser();
+                    saveOrUpdateUser();
                 }
 
                 return true;
@@ -632,8 +532,14 @@ public class UserActivity extends AppCompatActivity
         DialogInterface.OnClickListener discardButtonClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
+                    public void onClick(DialogInterface dialog, int id) {
+                        //hideSoftInput();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+
+                        goToUsersActivity();
+                        //finish();
                     }
                 };
 
@@ -667,10 +573,12 @@ public class UserActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
-        builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, discardButtonClickListener);
+
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 goBack = true;
-                saveUser();
+                saveOrUpdateUser();
 
                 if (dialog != null) {
                     dialog.dismiss();
@@ -678,13 +586,11 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        builder.setPositiveButton(R.string.no, discardButtonClickListener);
-
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
-    private void saveUser() {
+    private void saveOrUpdateUser() {
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
@@ -729,124 +635,118 @@ public class UserActivity extends AppCompatActivity
 
         actionBar.setTitle(textUserName);
 
-        //TODO сохранение пути к фото в базу
         // когда сохраняем НОВОГО пользователя в базу, вместо пути к фото пишем "No_Photo" на случай,
         // если фото не будет установленно
         // при сохранении пользователя в базу получаем его _id
-        // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу с именем файла содержащим _id пользователя
+        // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу в папку под номером _id пользователя
 
-        // в данном случае в Intent мы получили фейковый _idUser = 1 для существующего пользователя
+        // если фото было удалено нажатием на "удалить фото", то удалить папка с (единственным) фото (если она есть)
+        if (userSetNoPhotoUri.equals("Set_No_Photo") && pathToUsersPhoto != null) {
 
-        // для нового пользователя присваиваем фейковый _idUser = 1
-        //_idUser = 1;
+            // формируем путь к папке фото юзера
+            File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
 
-        // сохраняем пользователя с фотографией
-        if (imageUriInView != null) {
-
-            GlideApp.with(this)
-                    .asBitmap()
-                    .load(imageUriInView)
-                    .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            // здесь получаем Bitmap
-                            mBitmap[0] = resource;
-
-                            // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
-                            if (newUser) {
-                                saveUserToDataBase();
-                                /*newUser = false;
-
-                                // если была нажата стрелка "обратно" - идем обратно
-                                if (goBack) {
-                                    goToUsersActivity();
-                                } else {
-                                    goToDiseasesActivity();
-                                }*/
-                            }
-                            // если НЕ новый пользователь, то обновляем в базу и
-                            else {
-                                updateUserToDataBase(false);
-
-                                // если была нажата стрелка "обратно" - идем обратно
-                                if (goBack) {
-                                    goToUsersActivity();
-                                } else {
-                                    editUser = true;
-                                    userHasChangedPhoto = false;
-                                    editTextName.setEnabled(false);
-                                    editTextDate.setEnabled(false);
-                                    imagePhoto.setClickable(false);
-                                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                                    invalidateOptionsMenu();
-                                    fab.startAnimation(fabShowAnimation);
-                                }
-                            }
-                        }
-                    });
-            // если фото не выбиралось
-        } else {
-            // если фото было удалено нажатием на "удалить фото", то удалить файл фото (если он есть)
-            // при этом папка пользователя остается, а фото удаляется
-            if (userSetNoPhotoUri.equals("Set_No_Photo")) {
-                // /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
-                File imgFile = new File(pathToUsersPhoto + _idUser + "/usrImage.jpg");
-                if (imgFile.exists()) {
-                    Log.d("mFile", "imgFile deleting");
-                    if (!imgFile.delete()) {
-                        Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(UserActivity.this, R.string.file_deleted, Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                userPhotoUri = "No_Photo";
-                userSetNoPhotoUri = "";
-            }
-
-            // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
-            if (newUser) {
-                saveUserToDataBase();
-                newUser = false;
-
-                // если была нажата стрелка "обратно" - идем обратно
-                if (goBack) {
-                    goToUsersActivity();
-                } else {
-                    goToDiseasesActivity();
+            if (myDir.exists()) {
+                try {
+                    //  use Apache Commons IO
+                    FileUtils.deleteDirectory(myDir);
+                    Toast.makeText(this, "User's Photo Deleted", Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 }
             }
-            // если НЕ новый пользователь, то обновляем в базу и
-            else {
-                updateUserToDataBase(false);
 
-                // если была нажата стрелка "обратно" - идем обратно
-                if (goBack) {
-                    goToUsersActivity();
-                } else {
-                    editUser = true;
-                    userHasChangedPhoto = false;
-                    editTextName.setEnabled(false);
-                    editTextDate.setEnabled(false);
-                    imagePhoto.setClickable(false);
-                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+            userPhotoUri = "No_Photo";
+            userSetNoPhotoUri = "";
+        }
 
-                    invalidateOptionsMenu();
-                    fab.startAnimation(fabShowAnimation);
-                }
-            }
+        // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
+        if (newUser) {
+            saveUserToDataBase();
+        }
+        // если НЕ новый пользователь, то обновляем в базу и
+        else {
+            updateUserToDataBase();
         }
     }
 
-    private void saveUserPhoto() {
-        /*if (mBitmap[0] == null) {
-            Toast.makeText(UserActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
-            return;
-        }*/
+    private void afterSaveUser() {
+        if (goBack) {
+            goToUsersActivity();
+        } else {
+            goToDiseasesActivity();
+        }
+    }
 
-        //myHandler.removeCallbacks(userPhotoSavingRunnable);
-        myHandler.post(userPhotoSavingRunnable);
+    private void afterUpdateUser() {
+        // если была нажата стрелка "обратно" - идем обратно
+        if (goBack) {
+            goToUsersActivity();
+        } else {
+            editUser = true;
+            userHasChangedPhoto = false;
+
+            invalidateOptionsMenu();
+
+            fab.startAnimation(fabShowAnimation);
+            editTextName.setEnabled(false);
+            editTextDate.setEnabled(false);
+            imagePhoto.setClickable(false);
+            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // saveUserPhoto() исполняется в backThread
+    private File saveUserPhoto() {
+
+        if (pathToUsersPhoto == null) {
+            return null;
+        }
+
+        // формируем путь к файлу фото юзера
+        //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+        File myDir = new File(pathToUsersPhoto + _idUser);
+
+        if (!myDir.mkdirs()) {
+            Log.d("file", "users_photos_dir_Not_created");
+        }
+
+        String fileName = "usrImage.jpg";
+        File file = new File(myDir, fileName);
+
+        // при этом путь к файлу
+        // получается: /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1/usrImage.jpg
+
+        // заменяем файл удалением, т.к. у юзера бдует тольок одно фото
+        if (file.exists()) {
+            if (!file.delete()) {
+                // т.к. это исполняется в backThread
+                // Toast.makeText надо делать через myHandler.post (тосты делаются в основном треде)
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UserActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = new FileOutputStream(file);
+            loadedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            loadedBitmap = null;
+            return null;
+        }
+
+        return file;
     }
 
     // проверка на изменения пользователя
@@ -870,6 +770,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void goToUsersActivity() {
+        hideSoftInput();
         finish();
     }
 
@@ -884,69 +785,103 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void saveUserToDataBase() {
-        //TODO реализовать сохранение пользователя в базу
 
-        Log.d("saveUserToDataBase ", "textUserName = " + textUserName);
-        Log.d("saveUserToDataBase ", "textUserBirthDate = " + textUserBirthDate);
-        Log.d("saveUserToDataBase ", "userPhotoUri = " + userPhotoUri);
-
-        // Create a ContentValues object where column names are the keys,
-        // and user attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(MedEntry.COLUMN_USER_NAME, textUserName);
         values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
         values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
 
-        // делаем insert и получаем Uri вставленной строки
+        // при сохранении пользователя делаем сначала insert и получаем Uri вставленной строки
         Uri newUri = getContentResolver().insert(MedEntry.CONTENT_URI, values);
 
-        Log.d("saveUserToDataBase ", "newUri = " + newUri);
-
-        // Show a toast message depending on whether or not the insertion was successful.
-        // т.к. Toast.makeText может вызываться не с основного треда (в случае вставки юзера с фото),
-        // то надо делать через Looper
         if (newUri != null) {
 
             // получаем _idUser из возвращенного newUri при вставке нового пользователя
             _idUser = ContentUris.parseId(newUri);
 
-            Log.d("saveUserToDataBase ", "newUserID = " + _idUser);
-            Log.d("saveUserToDataBase ", "userPhotoUri = " + userPhotoUri);
+            // если фото было загружено (loadedBitmap), то сохраняем фото в папку под _idUser
+            // insertUserPhotoUriToDataBase(String userPhotoUri) после сохранения файла фото в папку под _idUser,
+            // обновляем в бае userPhotoUri этого _idUser
 
-            // если было фото, то сохраняем фото в папку под _idUser
-            // после сохранения файла фото в папку под _idUser, обновляем в бае userPhotoUri этого _idUser
-            if (mBitmap[0] != null) {
-                saveUserPhoto();
+            if (loadedBitmap != null && pathToUsersPhoto != null) {
+                new UserPhotoSavingAsyncTask().execute();
             } else {
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UserActivity.this, "User with NO PHOTO Saved To DataBase", Toast.LENGTH_LONG).show();
-                    }
-                });
+                Toast.makeText(UserActivity.this, "User Saved To DataBase", Toast.LENGTH_LONG).show();
+                afterSaveUser();
             }
         } else {
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User NOT Saved To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+            Toast.makeText(UserActivity.this, "User NOT Saved To DataBase", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void updateUserToDataBase(boolean firstSavingWithPhoto) {
-        //TODO реализовать обновление пользователя в базу
+    // для добавления userPhotoUri нового пользователя после получения _idUser делаем update
+    private void insertUserPhotoUriToDataBase(String userPhotoUri) {
 
+        ContentValues values = new ContentValues();
 
+        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
 
+        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
 
-        Log.d("updateUserToDataBase ", "textUserName = " + textUserName);
-        Log.d("updateUserToDataBase ", "textUserBirthDate = " + textUserBirthDate);
-        Log.d("updateUserToDataBase ", "userPhotoUri = " + userPhotoUri);
+        // делаем update
+        int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
-        // Create a ContentValues object where column names are the keys,
-        // and user attributes from the editor are the values.
+        if (rowsAffected == 0) {
+            Toast.makeText(UserActivity.this, "User's PhotoUri NOT Saved To DataBase",
+                    Toast.LENGTH_LONG).show();
+
+            // если не получилось обновить userPhotoUri нового пользователя,
+            // то удаляем папку с сохраненным фото, а userPhotoUri будет No_Photo
+            // формируем путь к папке фото юзера и удалем папку с фото
+            File myDir = null;
+
+            if (pathToUsersPhoto != null) {
+                //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+                myDir = new File(pathToUsersPhoto + _idUser);
+            }
+
+            if (myDir != null && myDir.exists()) {
+                try {
+                    //  use Apache Commons IO
+                    FileUtils.deleteDirectory(myDir);
+                    Toast.makeText(this, "User's Photo Deleted", Toast.LENGTH_LONG).show();
+
+                    // после проблемного обновленя userPhotoUri и удаления файла фото
+                    // остаемся в UserActivity
+                    goBack = false;
+                    newUser = false;
+                    afterUpdateUser();
+
+                } catch (IOException e) {
+                    Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+                    goBack = false;
+                    newUser = false;
+                    afterUpdateUser();
+
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+                goBack = false;
+                newUser = false;
+                afterUpdateUser();
+            }
+
+        } else {
+            // если userPhotoUri обновилось,
+            // то идем по нормальному сценарию выхода после сохранения нового пользователя
+            Toast.makeText(UserActivity.this, "User's PhotoUri Saved To DataBase",
+                    Toast.LENGTH_LONG).show();
+
+            afterSaveUser();
+        }
+
+    }
+
+    private void updateUserToDataBase() {
+
         ContentValues values = new ContentValues();
         values.put(MedEntry.COLUMN_USER_NAME, textUserName);
         values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
@@ -955,96 +890,177 @@ public class UserActivity extends AppCompatActivity
         // Uri к юзеру, который будет обновляться
         Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
 
-        Log.d("updateUserToDataBase ", "mCurrentUserUri = " + mCurrentUserUri);
+        // делаем update
+        int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
+
+        if (rowsAffected == 0) {
+            Toast.makeText(UserActivity.this, "User NOT Updated To DataBase",
+                    Toast.LENGTH_LONG).show();
+
+            // если обновление было неудачным, то остаемся на месте
+            goBack = false;
+            afterUpdateUser();
+        } else {
+            // если была загрузенна новое фото loadedBitmap != null,
+            // то в отдельном потоке сохраняем фото в файл в папку юзера
+            if (loadedBitmap != null && pathToUsersPhoto != null) {
+                new UserPhotoSavingAsyncTask().execute();
+            } else {
+                // если новое фото не было загружено,
+                // то обновление в базе уже было и больше ничего делать не надо
+                Toast.makeText(UserActivity.this, "User Updated To DataBase",
+                        Toast.LENGTH_LONG).show();
+                afterUpdateUser();
+            }
+        }
+    }
+
+    // если при обновлении файла фото во время обновления пользователя
+    // фото не сохранилось или возникли ошибки при сохранении файла фото,
+    // то удаляем папку со всем содержимым и прописываем в базу userPhotoUri = No_Photo
+
+    // если не получилось прописать в базу userPhotoUri = No_Photo,
+    // то оставляем все как есть
+    private void updateUserPhotoUriToDataBase(String userPhotoUri) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+
+        // Uri к юзеру, который будет обновляться
+        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
 
         // делаем update
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
-        Log.d("updateUserToDataBase ", "rowsAffected = " + rowsAffected);
-
-        // Show a toast message depending on whether or not the update was successful.
         if (rowsAffected == 0) {
-            // If no rows were affected, then there was an error with the update.
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(UserActivity.this, "User NOT Updated To DataBase",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            Toast.makeText(UserActivity.this, "User's PhotoUri NOT Updated To DataBase",
+                    Toast.LENGTH_LONG).show();
         } else {
-            // Otherwise, the update was successful and we can display a toast.
-            if (!firstSavingWithPhoto) {
-                if (mBitmap[0] != null) {
-                    saveUserPhoto();
+            Toast.makeText(UserActivity.this, "User's PhotoUri " + userPhotoUri + " Updated To DataBase",
+                    Toast.LENGTH_LONG).show();
+        }
 
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(UserActivity.this, "User with PHOTO Updated To DataBase",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(UserActivity.this, "User with NO PHOTO Updated To DataBase", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
+        // формируем путь к папке фото юзера и удалем папку с фото
+        File myDir = null;
 
+        if (pathToUsersPhoto != null) {
+            //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+            myDir = new File(pathToUsersPhoto + _idUser);
+        }
+
+        if (myDir != null && myDir.exists()) {
+            try {
+                FileUtils.deleteDirectory(myDir);
+                Toast.makeText(this, "User's Photo Deleted", Toast.LENGTH_LONG).show();
+
+                goBack = false;
+                afterUpdateUser();
+
+            } catch (IOException e) {
+                Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+                goBack = false;
+                afterUpdateUser();
+
+                e.printStackTrace();
             }
+        } else {
+            Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+            goBack = false;
+            afterUpdateUser();
         }
     }
 
 
     private void deleteUserFromDataBase() {
-        //TODO реализовать удаление пользователя из базы
-
         // Uri к юзеру, который будет удаляться
         Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
-        //Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(2));
-
-        Log.d("deleteUserFromDataBase ", "mCurrentUserUri = " + mCurrentUserUri);
-
-        // Call the ContentResolver to delete the user at the given content URI.
-        // Pass in null for the selection and selection args
-        // because the mCurrentUserUri content URI already identifies the user that we want.
 
         int rowsDeleted = 0;
 
-        // делаем удаление
+        // делаем удаление пользователя из Базы
         if (_idUser != 0) {
             rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
         }
 
-        Log.d("deleteUserFromDataBase ", "rowsDeleted = " + rowsDeleted);
-
-        // Show a toast message depending on whether or not the delete was successful.
         if (rowsDeleted == 0) {
-            // If no rows were deleted, then there was an error with the delete.
             Toast.makeText(this, "User NOT Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
-            // формируем путь к папке фото юзера
-            File myDir = new File(pathToUsersPhoto + _idUser); //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
 
-            if (myDir.exists()) {
-                try {
-                    //  use Apache Commons IO
-                    FileUtils.deleteDirectory(myDir);
-                    Toast.makeText(this, "User Photo Deleted", Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
-                    Toast.makeText(this, "User Photo NOT Deleted", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
+            Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
+
+            // формируем путь к папке фото юзера и удалем папку с фото
+            File myDir = null;
+
+            if (pathToUsersPhoto != null) {
+                //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
+                myDir = new File(pathToUsersPhoto + _idUser);
             }
 
-            // Otherwise, the delete was successful and we can display a toast.
-            Toast.makeText(this, "User Deleted from DataBase", Toast.LENGTH_LONG).show();
+            if (myDir != null && myDir.exists()) {
+                try {
+                    FileUtils.deleteDirectory(myDir);
+                    Toast.makeText(this, "User's Photo Deleted", Toast.LENGTH_LONG).show();
+
+                    goToUsersActivity();
+
+                } catch (IOException e) {
+                    Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+                    goBack = false;
+                    afterUpdateUser();
+
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
+
+                goBack = false;
+                afterUpdateUser();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class UserPhotoSavingAsyncTask extends AsyncTask<Void, Void, File> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
-        finish();
+        @Override
+        protected File doInBackground(Void... voids) {
+            return saveUserPhoto();
+        }
+
+
+        @Override
+        protected void onPostExecute(File file) {
+            super.onPostExecute(file);
+
+            // обнуляем loadedBitmap
+            loadedBitmap = null;
+
+            if (file != null && file.exists()) {
+                userPhotoUri = file.toString();
+
+                if (newUser) {
+                    Toast.makeText(UserActivity.this, "User's Photo Saved", Toast.LENGTH_LONG).show();
+                    insertUserPhotoUriToDataBase(userPhotoUri);
+                } else {
+                    Toast.makeText(UserActivity.this, "User with Photo Updated", Toast.LENGTH_LONG).show();
+                    afterUpdateUser();
+                }
+
+            } else {
+                userPhotoUri = "No_Photo";
+                Toast.makeText(UserActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                updateUserPhotoUriToDataBase(userPhotoUri);
+            }
+        }
     }
 }
 
