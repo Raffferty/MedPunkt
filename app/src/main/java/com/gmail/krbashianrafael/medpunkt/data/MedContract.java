@@ -145,8 +145,5 @@ public final class MedContract {
          * хранится будет ссылка на фото
          */
         public final static String COLUMN_USER_PHOTO = "u_photo";
-
-        // сразу прописываме констатнту "No_Photo" по умолчанию
-        public final static String DEFAULT_USER_PHOTO = "No_Photo";
     }
 }

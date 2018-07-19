@@ -365,7 +365,7 @@ public class MedProvider extends ContentProvider {
         if it has requested to receive self-change notifications by implementing deliverSelfNotifications() to return true.
          */
 
-        if ( getContext()!=null){
+        if (getContext()!=null){
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
