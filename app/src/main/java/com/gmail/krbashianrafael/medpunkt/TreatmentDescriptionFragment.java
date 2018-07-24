@@ -100,6 +100,9 @@ public class TreatmentDescriptionFragment extends Fragment {
                     editTextTreatment.setCursorVisible(true);
                     editTextTreatment.requestFocus();
                     editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+
+                    // выбор даты делаем невидимым
+                    newTreaymentActivity.editTextDateOfDisease.setVisibility(View.VISIBLE);
                 }
             });
 

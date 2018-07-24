@@ -42,9 +42,8 @@
         android:id="@+id/text_input_layout_disease_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
+        android:paddingTop="3dp"
         android:background="@color/colorEditTextBackground"
         android:hint="@string/disease_name"
         android:textColorHint="@color/colorPrimaryDark"
@@ -60,9 +59,8 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textPersonName|textCapWords|textMultiLine"
-            android:textColor="@color/colorFab"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="24sp"
-            android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -96,6 +94,24 @@
         app:tabMode="fixed"
         app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="@color/black_overlay" />
+
+    <EditText
+        android:id="@+id/editText_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorEditTextBackground"
+        android:drawableEnd="@drawable/ic_date_range_orange_32dp"
+        android:focusable="false"
+        android:gravity="top"
+        android:inputType="date"
+        android:text="@string/disease_date"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

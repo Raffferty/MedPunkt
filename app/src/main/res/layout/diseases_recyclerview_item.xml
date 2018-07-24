@@ -25,7 +25,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="@color/colorFab"
+        android:textColor="@color/colorPrimaryDark"
         tools:text="Грипп" />
 
     <TextView

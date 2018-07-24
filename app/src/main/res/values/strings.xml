@@ -40,7 +40,7 @@
     <string name="usr_edit_img">usr_edit_img</string>
     <string name="title_activity_treatment">Добавить чем болел</string>
     <string name="disease_name">Название заболевания</string>
-    <string name="disease_date">Дата лечения</string>
+    <string name="disease_date">Дата</string>
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
     <string name="description">ОПИСАНИЕ</string>
@@ -49,6 +49,7 @@
     <string name="delete_user">Удалить ползователя</string>
     <string name="delete_treatment_photo">Удалить снимок</string>
     <string name="error_disease_name">Укажите название заболевания</string>
+    <string name="error_date_of_disease">Укажите дату заболевания</string>
     <string name="error_photo_description">Укажите краткое описание снимка</string>
     <string name="title_activity_fullscreen">Добавить снимок</string>
     <string name="photo_description">Описание снимка</string>

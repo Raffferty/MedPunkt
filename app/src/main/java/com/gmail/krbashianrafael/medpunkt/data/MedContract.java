@@ -121,7 +121,7 @@ public final class MedContract {
          *
          * Type: INTEGER
          */
-        public final static String _ID = BaseColumns._ID;
+        public final static String U_ID = BaseColumns._ID;
 
         /**
          * Name of the user.

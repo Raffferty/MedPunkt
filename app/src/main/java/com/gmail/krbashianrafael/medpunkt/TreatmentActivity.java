@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -50,11 +51,13 @@ public class TreatmentActivity extends AppCompatActivity {
 
     // название заболевания
     private String textDiseaseName = "";
-    protected String textTreatment = ""; //private static
+    private String textDateOfDisease = "";
+    protected String textTreatment = "";
 
     // поля названия заболевания, описания лечения и focusHolder
     protected TextInputLayout textInputLayoutDiseaseName;
     protected TextInputEditText editTextDiseaseName;
+    protected EditText editTextDateOfDisease;
     private EditText focusHolder;
 
     // Animation fabShowAnimation
@@ -79,9 +82,16 @@ public class TreatmentActivity extends AppCompatActivity {
 
         _idDisease = intent.getIntExtra("_idDisease", 2);
 
+        if (intent.hasExtra("diseaseDate")) {
+            textDateOfDisease = intent.getStringExtra("diseaseDate");
+        } else {
+            textDateOfDisease = getString(R.string.disease_date);
+        }
+
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
         }
+
 
         if (intent.hasExtra("textTreatment")) {
             textTreatment = intent.getStringExtra("textTreatment");
@@ -97,6 +107,29 @@ public class TreatmentActivity extends AppCompatActivity {
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
 
+        editTextDateOfDisease = findViewById(R.id.editText_date);
+        if (textDateOfDisease != null) {
+            editTextDateOfDisease.setText(textDateOfDisease);
+        }
+        editTextDateOfDisease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                hideSoftInput();
+
+                // убираем показ ошибок в textInputLayoutPhotoDescription
+                textInputLayoutDiseaseName.setError(null);
+                textInputLayoutDiseaseName.setErrorEnabled(false);
+                textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable);
+                editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                // выбираем дату фото
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -109,12 +142,17 @@ public class TreatmentActivity extends AppCompatActivity {
             }
         }
 
-        editTextDiseaseName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        // при OnTouch editTextPhotoDescription убираем ошибку
+        editTextDiseaseName.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    textInputLayoutDiseaseName.setErrorEnabled(false);
-                }
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                textInputLayoutDiseaseName.setError(null);
+                textInputLayoutDiseaseName.setErrorEnabled(false);
+                textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable);
+                editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                return false;
             }
         });
 
@@ -153,6 +191,7 @@ public class TreatmentActivity extends AppCompatActivity {
             tabLayout.setVisibility(View.GONE);
         } else {
             textInputLayoutDiseaseName.setVisibility(View.GONE);
+            editTextDateOfDisease.setVisibility(View.GONE);
             focusHolder.requestFocus();
         }
 
@@ -305,6 +344,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
                     editDisease = false;
                     textInputLayoutDiseaseName.setVisibility(View.GONE);
+                    editTextDateOfDisease.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.VISIBLE);
 
                     treatmentDescriptionFragment.editTextTreatment.requestFocus();
@@ -320,9 +360,8 @@ public class TreatmentActivity extends AppCompatActivity {
 
                     treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
                 } else {
-                    saveDiseaseAndTreatment();
-
                     focusHolder.requestFocus();
+                    saveDiseaseAndTreatment();
                 }
 
                 return true;
@@ -387,26 +426,56 @@ public class TreatmentActivity extends AppCompatActivity {
 
     private void saveDiseaseAndTreatment() {
 
-        focusHolder.requestFocus();
+        //focusHolder.requestFocus();
 
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
 
-        // првоерка имени
         String nameToCheck = editTextDiseaseName.getText().toString().trim();
+        String dateOfDiseaseToCheck = editTextDateOfDisease.getText().toString();
+        boolean wrongField = false;
 
+        // првоерка названия заболевания
         if (TextUtils.isEmpty(nameToCheck)) {
+            textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable_Error);
             textInputLayoutDiseaseName.setError(getString(R.string.error_disease_name));
-            focusHolder.requestFocus();
             editTextDiseaseName.startAnimation(scaleAnimation);
+            editTextDiseaseName.requestFocus();
+            wrongField = true;
+        }
 
+        // проверка Даты заболевания
+        if (TextUtils.equals(dateOfDiseaseToCheck, getString(R.string.disease_date))) {
+            if (wrongField) {
+                textInputLayoutDiseaseName.setError(
+                        getString(R.string.error_disease_name) + ".\n" +
+                                getString(R.string.error_date_of_disease)
+                );
+            } else {
+                textInputLayoutDiseaseName.setError(getString(R.string.error_date_of_disease));
+            }
+
+            editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorFab));
+            editTextDateOfDisease.startAnimation(scaleAnimation);
+            wrongField = true;
+        }
+
+        // если поля описания и Дата фото не верные - выходим
+        if (wrongField) {
             return;
         } else {
             textInputLayoutDiseaseName.setError(null);
         }
 
         // проверка окончена, начинаем сохранение
+
+        // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
+        // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
+        // для дальнейшей проверки на их изменения
+        textDiseaseName = nameToCheck;
+        textDateOfDisease = editTextDateOfDisease.getText().toString();
+        textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
         // когда сохраняем НОВОЕ заболевание получаем его _id
         // в данном случае присвоенно фейковое знаяение _idDisease = 2
@@ -441,17 +510,13 @@ public class TreatmentActivity extends AppCompatActivity {
             categoryAdapter.setPagesCount(2);
             viewPager.setAdapter(categoryAdapter);
 
-            // присваиваем стрингам textDiseaseName и textTreatment значения полей editTextDiseaseName и editTextTreatment
-            // для дальнейшей проверки на их изменения
-            textDiseaseName = nameToCheck;
-            textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
-
             if (actionBar != null) {
                 actionBar.setTitle(textDiseaseName);
             }
 
             editDisease = false;
             textInputLayoutDiseaseName.setVisibility(View.GONE);
+            editTextDateOfDisease.setVisibility(View.GONE);
             tabLayout.setVisibility(View.VISIBLE);
 
             treatmentDescriptionFragment.editTextTreatment.setSelection(0);
@@ -467,13 +532,15 @@ public class TreatmentActivity extends AppCompatActivity {
         }
     }
 
-    // проверка на изменения заболевания
+    // проверка на изменения заболевания (название, дата, описание)
     private boolean diseaseAndTreatmentHasNotChanged() {
-        return editTextDiseaseName.getText().toString().equals(textDiseaseName) &&
-                treatmentDescriptionFragment.editTextTreatment.getText().toString().equals(textTreatment);
+        return TextUtils.equals(editTextDiseaseName.getText().toString(), textDiseaseName) &&
+                TextUtils.equals(editTextDateOfDisease.getText(), textDateOfDisease) &&
+                TextUtils.equals(treatmentDescriptionFragment.editTextTreatment.getText(), textTreatment);
     }
 
     private void goToDiseasesActivity() {
+        hideSoftInput();
         finish();
     }
 

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static Context mContext;
+    private Context mContext;
     private ArrayList<TreatmentPhotoItem> treatmentPhotosList;
 
     TreatmentPhotoRecyclerViewAdapter(Context context) {
@@ -29,7 +29,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.treatmet_photo_recyclerview_item, parent, false);
-        return new TreatmentPhotoHolder(mView);
+        return new TreatmentPhotoHolder(mView, mContext);
     }
 
     @Override
@@ -58,17 +58,20 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     public static class TreatmentPhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        Context myContext;
         TextView _treatmentId;
         TextView itemUri;
         TextView itemDate;
         TextView itemName;
 
-        TreatmentPhotoHolder(View itemView) {
+        TreatmentPhotoHolder(View itemView, Context context) {
             super(itemView);
+
+            myContext = context;
 
             _treatmentId = itemView.findViewById(R.id._treatment_id);
             itemUri = itemView.findViewById(R.id.recycler_photo_item_uri);
-            itemDate = itemView.findViewById(R.id.disease_item_date);
+            itemDate = itemView.findViewById(R.id.photo_item_date);
             itemName = itemView.findViewById(R.id.recycler_photo_item_name);
 
             itemView.setOnClickListener(this);
@@ -76,13 +79,17 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         @Override
         public void onClick(View view) {
-            Intent intentToTreatmentPhoto = new Intent(mContext, FullscreenPhotoActivity.class);
+            if (myContext==null) {
+                return;
+            }
+
+            Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
             intentToTreatmentPhoto.putExtra("_idDisease", _treatmentId.getText());
             intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
             intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
             intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());
 
-            mContext.startActivity(intentToTreatmentPhoto);
+            myContext.startActivity(intentToTreatmentPhoto);
         }
     }
 }

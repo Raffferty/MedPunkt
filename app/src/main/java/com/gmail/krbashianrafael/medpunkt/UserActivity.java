@@ -924,67 +924,6 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    /*// если при обновлении файла фото во время обновления пользователя
-    // фото не сохранилось или возникли ошибки при сохранении файла фото,
-    // то удаляем папку со всем содержимым и прописываем в базу userPhotoUri = No_Photo
-    private void setUserPhotoUriToNoPhotoInDataBase(String userPhotoUriNoPhoto) {
-
-        ContentValues values = new ContentValues();
-
-        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUriNoPhoto);
-
-        // Uri к юзеру, который будет обновляться
-        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
-
-        // делаем update
-        int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
-
-        // если не получилось прописать в базу userPhotoUri = No_Photo,
-        // то оставляем все как есть
-        if (rowsAffected == 0) {
-            Toast.makeText(UserActivity.this, "User's PhotoUri NOT Updated To DataBase",
-                    Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(UserActivity.this, "User's PhotoUri set to No_Photo in DataBase",
-                    Toast.LENGTH_LONG).show();
-        }
-
-        // если при обновлении файла фото во время обновления пользователя
-        // фото не сохранилось или возникли ошибки при сохранении файла фото,
-        // то удаляем папку со всем содержимым и прописываем в базу userPhotoUri = No_Photo
-        // формируем путь к папке фото юзера и удалем папку с фото
-        File myDir = null;
-
-        if (pathToUsersPhoto != null) {
-            //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
-            myDir = new File(pathToUsersPhoto + _idUser);
-        }
-
-        if (myDir != null && myDir.exists()) {
-            try {
-                FileUtils.deleteDirectory(myDir);
-                Toast.makeText(this, "User's Photo Deleted", Toast.LENGTH_LONG).show();
-
-                goBack = false;
-                afterUpdateUser();
-
-            } catch (IOException e) {
-                Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
-
-                goBack = false;
-                afterUpdateUser();
-
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(this, "User's Photo NOT Deleted", Toast.LENGTH_LONG).show();
-
-            goBack = false;
-            afterUpdateUser();
-        }
-    }*/
-
-
     private void deleteUserFromDataBase() {
         // Uri к юзеру, который будет удаляться
         Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));

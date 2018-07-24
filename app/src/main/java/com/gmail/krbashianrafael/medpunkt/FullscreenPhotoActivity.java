@@ -888,6 +888,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     }
 
     private void goToTreatmentActivity() {
+
+        hideSoftInput();
+
         // это, перед выходом, показывают сверху статус бар,
         // чтоб при открывании предыдущего окна не было белой полосы сверху
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -953,6 +956,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
 
             return;
+        }else {
+            textInputLayoutPhotoDescription.setError(null);
         }
 
         // проверка окончена, начинаем сохранение
@@ -1073,11 +1078,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
 
             if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-                if (taped) {
-                    inZoom[0] = false;
-                } else {
-                    inZoom[0] = true;
-                }
+                inZoom[0] = !taped;
             }
 
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {

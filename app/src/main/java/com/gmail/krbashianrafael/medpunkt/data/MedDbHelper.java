@@ -30,7 +30,7 @@ public class MedDbHelper extends SQLiteOpenHelper {
         //                                          u_photo TEXT);
 
         String SQL_CREATE_USERS_TABLE = "CREATE TABLE " + MedEntry.USERS_TABLE_NAME + " ("
-                + MedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MedEntry.U_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + MedEntry.COLUMN_USER_NAME + " TEXT NOT NULL, "
                 + MedEntry.COLUMN_USER_DATE + " TEXT NOT NULL, "
                 + MedEntry.COLUMN_USER_PHOTO + " TEXT);";
