@@ -1,13 +1,14 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -31,14 +32,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
+
 public class TreatmentActivity extends AppCompatActivity {
 
     // Фрагменты
     protected TreatmentDescriptionFragment treatmentDescriptionFragment;
     protected TreatmentPhotosFragment treatmentPhotosFragment;
 
+    // id пользователя
+    private long _idUser = 0;
+
     // id заболеввания
-    private int _idDisease = 2;
+    private long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean goBack, newDisease;
@@ -80,7 +86,9 @@ public class TreatmentActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        _idDisease = intent.getIntExtra("_idDisease", 2);
+        _idUser = intent.getLongExtra("_idUser", 0);
+
+        _idDisease = intent.getLongExtra("_idDisease", 0);
 
         if (intent.hasExtra("diseaseDate")) {
             textDateOfDisease = intent.getStringExtra("diseaseDate");
@@ -91,7 +99,6 @@ public class TreatmentActivity extends AppCompatActivity {
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
         }
-
 
         if (intent.hasExtra("textTreatment")) {
             textTreatment = intent.getStringExtra("textTreatment");
@@ -367,7 +374,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 return true;
             case R.id.action_delete:
                 hideSoftInput();
-                deleteDiseaseAndTreatmentFromDataBase(_idDisease);
+                deleteDiseaseAndTreatmentFromDataBase();
                 return true;
 
             default:
@@ -381,7 +388,7 @@ public class TreatmentActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (diseaseAndTreatmentHasNotChanged()) {
             super.onBackPressed();
-            finish();
+            goToDiseasesActivity();
             return;
         }
 
@@ -426,8 +433,6 @@ public class TreatmentActivity extends AppCompatActivity {
 
     private void saveDiseaseAndTreatment() {
 
-        //focusHolder.requestFocus();
-
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
@@ -449,7 +454,7 @@ public class TreatmentActivity extends AppCompatActivity {
         if (TextUtils.equals(dateOfDiseaseToCheck, getString(R.string.disease_date))) {
             if (wrongField) {
                 textInputLayoutDiseaseName.setError(
-                        getString(R.string.error_disease_name) + ".\n" +
+                        getString(R.string.error_disease_name) + "\n" +
                                 getString(R.string.error_date_of_disease)
                 );
             } else {
@@ -477,17 +482,14 @@ public class TreatmentActivity extends AppCompatActivity {
         textDateOfDisease = editTextDateOfDisease.getText().toString();
         textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-        // когда сохраняем НОВОЕ заболевание получаем его _id
-        // в данном случае присвоенно фейковое знаяение _idDisease = 2
-
         // если было нажато идти обратно
         if (goBack) {
             if (newDisease) {
                 // сохранять в базу в отдельном треде
-                saveDiseaseAndTreatmentToDataBase(_idDisease);
+                saveDiseaseAndTreatmentToDataBase();
             } else {
                 // обновлять в базу в отдельном треде
-                updateDiseaseAndTreatmentToDataBase(_idDisease);
+                updateDiseaseAndTreatmentToDataBase();
             }
 
             //и идем в DiseasesActivity
@@ -500,10 +502,10 @@ public class TreatmentActivity extends AppCompatActivity {
                 newDisease = false;
 
                 // сохранять в базу в отдельном треде
-                saveDiseaseAndTreatmentToDataBase(_idDisease);
+                saveDiseaseAndTreatmentToDataBase();
             } else {
                 // обновлять в базу в отдельном треде
-                updateDiseaseAndTreatmentToDataBase(_idDisease);
+                updateDiseaseAndTreatmentToDataBase();
             }
 
             // и формируем UI
@@ -554,32 +556,66 @@ public class TreatmentActivity extends AppCompatActivity {
         }
     }
 
-    private void saveDiseaseAndTreatmentToDataBase(int _idDisease) {
-        //TODO реализовать сохранение пользователя в базу
-        // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
-            }
-        });
+    private void saveDiseaseAndTreatmentToDataBase() {
+        ContentValues values = new ContentValues();
+        values.put(DiseasesEntry.COLUMN_U_ID, _idUser);
+        values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
+        values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
+        values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
+
+        // при сохранении пользователя в Базу делаем insert и получаем Uri вставленной строки
+        Uri newUri = getContentResolver().insert(DiseasesEntry.CONTENT_DISEASES_URI, values);
+
+        if (newUri != null) {
+            // получаем _idDisease из возвращенного newUri
+            _idDisease = ContentUris.parseId(newUri);
+
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment NOT Saved To DataBase", Toast.LENGTH_LONG).show();
+        }
     }
 
-    private void updateDiseaseAndTreatmentToDataBase(int _idDisease) {
-        //TODO реализовать обновление пользователя в базу
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
-            }
-        });
+    private void updateDiseaseAndTreatmentToDataBase() {
+        ContentValues values = new ContentValues();
+        //values.put(DiseasesEntry.COLUMN_U_ID, _idUser);
+        values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
+        values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
+        values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
+
+        // Uri к заболеванию, которое будет обновляться
+        Uri mCurrentUserUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
+
+        // делаем update в Базе
+        int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
+
+        if (rowsAffected == 0) {
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
+
+        } else {
+            // update в Базе был успешным
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
+        }
     }
 
 
-    private void deleteDiseaseAndTreatmentFromDataBase(int _idDisease) {
-        //TODO реализовать удаление пользователя из базы
-        Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
+    private void deleteDiseaseAndTreatmentFromDataBase() {
+        // Uri к заболеванию, который будет удаляться
+        Uri mCurrentUserUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
 
-        finish();
+        int rowsDeleted = 0;
+
+        // делаем удаление пользователя из Базы
+        if (_idDisease != 0) {
+            rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
+        }
+
+        if (rowsDeleted == 0) {
+            Toast.makeText(this, "DiseaseAndTreatment has NOT been  Deleted from DataBase", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
+
+            finish();
+        }
     }
 }

@@ -8,7 +8,7 @@ public class TreatmentPhotoItem {
     // путь к фото
     private String itemPhotoUri;
 
-    public TreatmentPhotoItem(int _treatmentId, String itemDate, String itemName, String itemPhotoUri) {
+    TreatmentPhotoItem(int _treatmentId, String itemDate, String itemName, String itemPhotoUri) {
         this._treatmentId = _treatmentId;
         this.itemDate = itemDate;
         this.itemName = itemName;

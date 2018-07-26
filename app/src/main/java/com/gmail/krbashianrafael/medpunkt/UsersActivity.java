@@ -18,23 +18,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
 import java.util.ArrayList;
 
 public class UsersActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private ImageView userImage;
-    private final String[] pathToPhoto = new String[1];
-
     private TextView txtAddUsers;
     private FloatingActionButton fabAddUser;
     private RecyclerView recyclerUsers;
-    private LinearLayoutManager linearLayoutManager;
     private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
     // Animation fabShowAnimation
@@ -95,8 +91,6 @@ public class UsersActivity extends AppCompatActivity
             }
         });
 
-        // это сейчас невидимо, т.к. добавлен фиктивный пользователь
-        // TODO сделать невидимым, когда будет хоть один пользователь
         txtAddUsers = findViewById(R.id.txt_empty_users);
         txtAddUsers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,63 +102,12 @@ public class UsersActivity extends AppCompatActivity
             }
         });
 
-        // начало ------ Фиктивниый юзер с фото
-        /*LinearLayout linearLayoutRecyclerViewItem = findViewById(R.id.recycler_view_item);
-        userImage = findViewById(R.id.user_image);
-        pathToUsersPhoto[0] = getString(R.string.path_to_user_photo);
-
-        File imgFile = new File(pathToUsersPhoto[0]);
-        if (imgFile.exists()) {
-            GlideApp.with(this)
-                    .load(pathToUsersPhoto[0])
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .error(R.drawable.ic_camera_alt_gray_24dp)
-                    .transition(DrawableTransitionOptions.withCrossFade(800))
-                    .into(userImage);
-        } else {
-            pathToUsersPhoto[0] = "No_Photo";
-        }*/
-        // конец ------ Фиктивниый юзер с фото
-
-        // нажатие на юзера
-        /*linearLayoutRecyclerViewItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent userDiseasIntent = new Intent(UsersActivity.this, DiseasesActivity.class);
-                userDiseasIntent.putExtra("_idUser", 1);
-                userDiseasIntent.putExtra("UserName", "Вася");
-                userDiseasIntent.putExtra("birthDate", "11.03.1968");
-                userDiseasIntent.putExtra("userPhotoUri", pathToUsersPhoto[0]);
-
-                startActivity(userDiseasIntent);
-            }
-        });*/
-
-        // кнопка редактирования юзера
-        /*FrameLayout userItemEdit = findViewById(R.id.user_item_edit);
-
-        userItemEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent userEditIntent = new Intent(UsersActivity.this, UserActivity.class);
-                userEditIntent.putExtra("_idUser", 1);
-                userEditIntent.putExtra("editUser", true);
-                userEditIntent.putExtra("UserName", "Вася");
-                userEditIntent.putExtra("birthDate", "11.03.1968");
-                userEditIntent.putExtra("userPhotoUri", pathToUsersPhoto[0]);
-
-                startActivity(userEditIntent);
-            }
-        });*/
-
-
         // инициализируем recyclerUsers
         recyclerUsers = findViewById(R.id.recycler_users);
 
         // инициализируем linearLayoutManager
-        linearLayoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
 
         // инизиализируем разделитель для элементов recyclerTreatmentPhotos
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
@@ -202,24 +145,6 @@ public class UsersActivity extends AppCompatActivity
 
         // для возобновления фото при рестарте
         usersRecyclerViewAdapter.notifyDataSetChanged();
-
-        // для возобновления фото при рестарте
-       /* pathToUsersPhoto[0] = getString(R.string.path_to_user_photo);
-
-        File imgFile = new File(pathToUsersPhoto[0]);
-        if (imgFile.exists()) {
-            GlideApp.with(this)
-                    .load(pathToUsersPhoto[0])
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .error(R.drawable.ic_camera_alt_gray_24dp)
-                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                    .into(userImage);
-        } else {
-            userImage.setImageResource(R.drawable.ic_camera_alt_gray_24dp);
-            pathToUsersPhoto[0] = "No_Photo";
-        }*/
-
     }
 
     @Override
@@ -274,15 +199,15 @@ public class UsersActivity extends AppCompatActivity
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
-                MedEntry._ID,
-                MedEntry.COLUMN_USER_NAME,
-                MedEntry.COLUMN_USER_DATE,
-                MedEntry.COLUMN_USER_PHOTO};
+                MedContract.UsersEntry._ID,
+                UsersEntry.COLUMN_USER_NAME,
+                MedContract.UsersEntry.COLUMN_USER_DATE,
+                MedContract.UsersEntry.COLUMN_USER_PHOTO_PATH};
 
         // This loader will execute the ContentProvider's query method on a background thread
         // Loader грузит ВСЕ данные из таблицы users через Provider в usersRecyclerViewAdapter и далее в recyclerUsers
         return new CursorLoader(this,   // Parent activity context
-                MedEntry.CONTENT_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/users/
+                UsersEntry.CONTENT_USERS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/users/
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,                   // No selection arguments
@@ -334,21 +259,6 @@ public class UsersActivity extends AppCompatActivity
         ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();
         myData.clear();
 
-        /*String pathToUsersPhoto = getString(R.string.path_to_user_photo);
-
-        myData.add(new UserItem(0,"11.03.1968","Я",));
-        myData.add(new UserItem(0,"11.03.1948","Мама",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1938","Папа",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1973","Брат",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Вася",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Петя",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Саша",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Рая",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Роза",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Федя",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Степа",pathToUsersPhoto));
-        myData.add(new UserItem(0,"11.03.1968","Гриша",pathToUsersPhoto));*/
-
         if (cursor != null) {
 
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
@@ -357,25 +267,25 @@ public class UsersActivity extends AppCompatActivity
             // проходим в цикле курсор и заполняем объектами UserItem наш ArrayList<UserItem> myData
             while (cursor.moveToNext()) {
 
-                // Find the columns of pet attributes that we're interested in
-                int _idColumnIndex = cursor.getColumnIndex(MedEntry._ID);
-                int nameColumnIndex = cursor.getColumnIndex(MedEntry.COLUMN_USER_NAME);
-                int dateColumnIndex = cursor.getColumnIndex(MedEntry.COLUMN_USER_DATE);
-                int photoColumnIndex = cursor.getColumnIndex(MedEntry.COLUMN_USER_PHOTO);
+                // Find the columns of user attributes that we're interested in
+                int user_idColumnIndex = cursor.getColumnIndex(UsersEntry._ID);
+                int user_nameColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_NAME);
+                int user_dateColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_DATE);
+                int user_photoColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_PHOTO_PATH);
 
-                // Read the pet attributes from the Cursor for the current pet
-                int _userId = cursor.getInt(_idColumnIndex);
-                String userName = cursor.getString(nameColumnIndex);
-                String userBirthDate = cursor.getString(dateColumnIndex);
-                String userPhotoUri = cursor.getString(photoColumnIndex);
+                // Read the user attributes from the Cursor for the current user
+                int _userId = cursor.getInt(user_idColumnIndex);
+                String userName = cursor.getString(user_nameColumnIndex);
+                String userBirthDate = cursor.getString(user_dateColumnIndex);
+                String userPhotoUri = cursor.getString(user_photoColumnIndex);
 
 
-                // добавляем новый Pet в ArrayList<Pet> myData
+                // добавляем новый user в ArrayList<UserItem> myData
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
             }
         }
 
-        // если еще пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
+        // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
         // и fabAddUser.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
             txtAddUsers.setVisibility(View.VISIBLE);
@@ -429,6 +339,6 @@ public class UsersActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        //
     }
 }

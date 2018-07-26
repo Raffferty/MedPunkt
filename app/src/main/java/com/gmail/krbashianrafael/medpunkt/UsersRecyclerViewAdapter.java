@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static Context mContext;
+    private Context mContext;
     private ArrayList<UserItem> usersList;
 
     UsersRecyclerViewAdapter(Context context) {
@@ -37,7 +36,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_recycleview_item, parent, false);
-        return new UserHolder(mView);
+        return new UserHolder(mView, mContext);
     }
 
     @Override
@@ -89,6 +88,8 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        Context myContext;
+
         TextView _userId;
         TextView userPhotoUri;
         TextView userBirthDate;
@@ -98,8 +99,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         LinearLayout usersItem;
         FrameLayout userEdit;
 
-        UserHolder(View itemView) {
+        UserHolder(View itemView, Context context) {
             super(itemView);
+
+            myContext = context;
 
             _userId = itemView.findViewById(R.id.user_item_id);
             userPhotoUri = itemView.findViewById(R.id.user_item_photo_uri);
@@ -117,27 +120,26 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View view) {
+            if (myContext==null){
+                return;
+            }
+
             if (view.getId() == R.id.user_item_edit){
-
-                Log.d("toUser","toUser _userId = " + _userId.getText());
-
-                Intent userEditIntent = new Intent(mContext, UserActivity.class);
+                Intent userEditIntent = new Intent(myContext, UserActivity.class);
                 userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
                 userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
-                mContext.startActivity(userEditIntent);
+                myContext.startActivity(userEditIntent);
 
             } else {
-                Intent userDiseasIntent = new Intent(mContext, DiseasesActivity.class);
+                Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
                 userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userDiseasIntent.putExtra("UserName", userName.getText());
-                userDiseasIntent.putExtra("birthDate", userBirthDate.getText());
-                userDiseasIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
-                mContext.startActivity(userDiseasIntent);
+                myContext.startActivity(userDiseasIntent);
             }
         }
     }

@@ -47,7 +47,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
 import org.apache.commons.io.FileUtils;
 
@@ -735,12 +736,10 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void goToDiseasesActivity() {
-        Intent toDiseasesIntent = new Intent(UserActivity.this, DiseasesActivity.class);
+        Intent toDiseasesIntent = new Intent(this, DiseasesActivity.class);
         toDiseasesIntent.putExtra("newUser", true);
         toDiseasesIntent.putExtra("_idUser", _idUser);
         toDiseasesIntent.putExtra("UserName", textUserName);
-        toDiseasesIntent.putExtra("birthDate", textUserBirthDate);
-        toDiseasesIntent.putExtra("userPhotoUri", userPhotoUri);
         startActivity(toDiseasesIntent);
 
         finish();
@@ -764,13 +763,13 @@ public class UserActivity extends AppCompatActivity
     private void saveUserToDataBase() {
 
         ContentValues values = new ContentValues();
-        values.put(MedEntry.COLUMN_USER_NAME, textUserName);
-        values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
+        values.put(UsersEntry.COLUMN_USER_NAME, textUserName);
+        values.put(UsersEntry.COLUMN_USER_DATE, textUserBirthDate);
         // при вставке нового пользователя в Базу его userPhotoUri = "No_Photo";
-        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+        values.put(UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUri);
 
         // при сохранении пользователя в Базу делаем сначала insert и получаем Uri вставленной строки
-        Uri newUri = getContentResolver().insert(MedEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(UsersEntry.CONTENT_USERS_URI, values);
 
         // если первичное сохранение нового пользователя в Базу было успешным
         if (newUri != null) {
@@ -869,9 +868,9 @@ public class UserActivity extends AppCompatActivity
 
         ContentValues values = new ContentValues();
 
-        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+        values.put(UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUri);
 
-        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+        Uri mCurrentUserUri = Uri.withAppendedPath(UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
         // делаем update
         return getContentResolver().update(mCurrentUserUri, values, null, null);
@@ -880,13 +879,13 @@ public class UserActivity extends AppCompatActivity
     private void updateUserToDataBase() {
 
         ContentValues values = new ContentValues();
-        values.put(MedEntry.COLUMN_USER_NAME, textUserName);
-        values.put(MedEntry.COLUMN_USER_DATE, textUserBirthDate);
+        values.put(MedContract.UsersEntry.COLUMN_USER_NAME, textUserName);
+        values.put(MedContract.UsersEntry.COLUMN_USER_DATE, textUserBirthDate);
         //userPhotoUri = /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1
-        values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUri);
+        values.put(MedContract.UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUri);
 
         // Uri к юзеру, который будет обновляться
-        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+        Uri mCurrentUserUri = Uri.withAppendedPath(UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
         // создаем папку и получаем путь к папке файла фото пользователя для обновления
         File fileDir = null;
@@ -926,7 +925,7 @@ public class UserActivity extends AppCompatActivity
 
     private void deleteUserFromDataBase() {
         // Uri к юзеру, который будет удаляться
-        Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+        Uri mCurrentUserUri = Uri.withAppendedPath(UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
         int rowsDeleted = 0;
 
@@ -1172,10 +1171,10 @@ public class UserActivity extends AppCompatActivity
 
             String userPhotoUriNoPhoto = "No_Photo";
 
-            values.put(MedEntry.COLUMN_USER_PHOTO, userPhotoUriNoPhoto);
+            values.put(UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUriNoPhoto);
 
             // Uri к юзеру, который будет обновляться
-            Uri mCurrentUserUri = Uri.withAppendedPath(MedEntry.CONTENT_URI, String.valueOf(_idUser));
+            Uri mCurrentUserUri = Uri.withAppendedPath(MedContract.UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
             // делаем update прописываем userPhotoUri = "No_Photo";
             return context.getContentResolver().update(mCurrentUserUri, values, null, null);

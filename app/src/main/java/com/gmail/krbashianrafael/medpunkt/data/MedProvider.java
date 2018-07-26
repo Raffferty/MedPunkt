@@ -11,8 +11,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.gmail.krbashianrafael.medpunkt.DiseasesActivity;
 import com.gmail.krbashianrafael.medpunkt.UsersActivity;
-import com.gmail.krbashianrafael.medpunkt.data.MedContract.MedEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
 public class MedProvider extends ContentProvider {
 
@@ -30,6 +33,26 @@ public class MedProvider extends ContentProvider {
      * URI matcher code for the content URI for a single user in the users table
      */
     private static final int USER_ID = 101;
+
+    /**
+     * URI matcher code for the content URI for the diseases table
+     */
+    private static final int DISEASES = 200;
+
+    /**
+     * URI matcher code for the content URI for a single user in the diseases table
+     */
+    private static final int DISEASES_ID = 201;
+
+    /**
+     * URI matcher code for the content URI for the treatmentPhotos table
+     */
+    private static final int TREATMENT_PHOTOS = 300;
+
+    /**
+     * URI matcher code for the content URI for a single user in the treatmentPhotos table
+     */
+    private static final int TREATMENT_PHOTOS_ID = 301;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -91,6 +114,27 @@ public class MedProvider extends ContentProvider {
         // com.gmail.krbashianrafael.medpunkt/users/#
         // и возвращаемое значение 101
         sUriMatcher.addURI(MedContract.CONTENT_AUTHORITY, MedContract.PATH_USERS + "/#", USER_ID);
+
+
+        // для доступа ко всей таблице diseases:
+        // com.gmail.krbashianrafael.medpunkt/diseases
+        // и возвращаемое значение 200
+        sUriMatcher.addURI(MedContract.CONTENT_AUTHORITY, MedContract.PATH_DISEASES, DISEASES);
+
+        // для доступа к одной строке из таблицы diseases:
+        // com.gmail.krbashianrafael.medpunkt/diseases/#
+        // и возвращаемое значение 201
+        sUriMatcher.addURI(MedContract.CONTENT_AUTHORITY, MedContract.PATH_DISEASES + "/#", DISEASES_ID);
+
+        // для доступа ко всей таблице treatmentPhotos:
+        // com.gmail.krbashianrafael.medpunkt/treatmentPhotos
+        // и возвращаемое значение 300
+        sUriMatcher.addURI(MedContract.CONTENT_AUTHORITY, MedContract.PATH_TREATMENT_PHOTOS, TREATMENT_PHOTOS);
+
+        // для доступа к одной строке из таблицы treatmentPhotos:
+        // com.gmail.krbashianrafael.medpunkt/treatmentPhotos/#
+        // и возвращаемое значение 301
+        sUriMatcher.addURI(MedContract.CONTENT_AUTHORITY, MedContract.PATH_TREATMENT_PHOTOS + "/#", TREATMENT_PHOTOS_ID);
 
     }
 
@@ -155,7 +199,6 @@ public class MedProvider extends ContentProvider {
         // Figure out if the URI matcher can match the URI to a specific code
         int match = sUriMatcher.match(uri);
 
-
         switch (match) {
             case USERS:
                 /*
@@ -199,7 +242,7 @@ public class MedProvider extends ContentProvider {
 
                 //т.к. case USERS, то и таблица для запроса будет users
 
-                cursor = database.query(MedEntry.USERS_TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(UsersEntry.USERS_TABLE_NAME, projection, selection, selectionArgs,
                         null, null, null);
                 break;
             case USER_ID:
@@ -213,15 +256,40 @@ public class MedProvider extends ContentProvider {
                 // selection, we have 1 String in the selection arguments' String array.
 
                 // ниже переопредделяем selection и selectionArgs в зависимости от входящего URI
-                selection = MedEntry._ID + "=?";
+                selection = UsersEntry._ID + "=?";
                 // ContentUris.parseId(uri) возвращает Id из uri
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
                 // This will perform a query on the users table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
 
-                cursor = database.query(MedEntry.USERS_TABLE_NAME, projection, selection, selectionArgs,
-                        null, null, sortOrder);
+                cursor = database.query(UsersEntry.USERS_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, null);
+                break;
+            case DISEASES:
+                cursor = database.query(DiseasesEntry.DISEASES_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, null);
+
+                break;
+            case DISEASES_ID:
+                selection = DiseasesEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+                cursor = database.query(DiseasesEntry.DISEASES_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, null);
+
+                break;
+            case TREATMENT_PHOTOS:
+                cursor = database.query(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, null);
+                break;
+            case TREATMENT_PHOTOS_ID:
+                selection = TreatmentPhotosEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+                cursor = database.query(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, null);
+
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
@@ -254,7 +322,7 @@ public class MedProvider extends ContentProvider {
         поэтому здесь мы устанавливаем слушателя на изменения в данном курсоре по данному uri
         и лишь после этого возвращаем актуальный курсор
          */
-        if (getContext()!=null){
+        if (getContext() != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
         }
 
@@ -264,17 +332,25 @@ public class MedProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
+
+        if (contentValues == null) {
+            return null;
+        }
+
         //проверяем входящий Uri
         //т.к. вставка может быть только в таблицу (а не в строку),
         //то используем только case USERS:
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case USERS:
-                //вызываем вспомогатлеьный метод insertUser
-                if (contentValues==null) {
-                    return null;
-                }
+                //вызываем вспомогатлеьный метод добавления пользователя
                 return insertUser(uri, contentValues);
+            case DISEASES:
+                //вызываем вспомогатлеьный метод добавления заболевания
+                return insertDisease(uri, contentValues);
+            case TREATMENT_PHOTOS:
+                //вызываем вспомогатлеьный метод добавления снимка лечения
+                return insertTreatmentPhoto(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -286,17 +362,17 @@ public class MedProvider extends ContentProvider {
      */
     private Uri insertUser(Uri uri, ContentValues values) {
         // Check that the name is not null
-        //values.getAsString(MedEntry.COLUMN_USER_NAME);
+        //values.getAsString(UsersEntry.COLUMN_USER_NAME);
         //возвращает значение по ключу из ContentValues
         // проверка имени на null
-        String userName = values.getAsString(MedEntry.COLUMN_USER_NAME);
+        String userName = values.getAsString(MedContract.UsersEntry.COLUMN_USER_NAME);
         if (userName == null) {
             throw new IllegalArgumentException("user requires a name");
         }
 
         // Check that the birthday is valid
         // проверка даты рождения на null
-        String userDate = values.getAsString(MedEntry.COLUMN_USER_DATE);
+        String userDate = values.getAsString(UsersEntry.COLUMN_USER_DATE);
         if (userDate == null) {
             throw new IllegalArgumentException("user requires a birthday");
         }
@@ -331,7 +407,7 @@ public class MedProvider extends ContentProvider {
         long
         the row ID of the newly inserted row, or -1 if an error occurred
          */
-        long id = database.insert(MedEntry.USERS_TABLE_NAME, null, values);
+        long id = database.insert(UsersEntry.USERS_TABLE_NAME, null, values);
 
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -365,7 +441,7 @@ public class MedProvider extends ContentProvider {
         if it has requested to receive self-change notifications by implementing deliverSelfNotifications() to return true.
          */
 
-        if (getContext()!=null){
+        if (getContext() != null) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
@@ -401,36 +477,100 @@ public class MedProvider extends ContentProvider {
         Appends the given ID to the end of the path.
          */
 
-        Log.d(LOG_TAG, "insirt");
+        // возвращаем полный ContentUri с id вставленной строки
+        return ContentUris.withAppendedId(uri, id);
+    }
+
+    // добавление заболевания
+    private Uri insertDisease(Uri uri, ContentValues values) {
+
+        Long userId = values.getAsLong(DiseasesEntry.COLUMN_U_ID);
+        if (userId == null || userId == 0) {
+            throw new IllegalArgumentException("disease requires userId");
+        }
+
+        String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
+        if (diseaseName == null) {
+            throw new IllegalArgumentException("disease requires a name");
+        }
+
+        String diseaseDate = values.getAsString(DiseasesEntry.COLUMN_DISEASE_DATE);
+        if (diseaseDate == null) {
+            throw new IllegalArgumentException("disease requires a registration day");
+        }
+
+        // DISEASE_TREATMENT не проверяем на null
+
+        // Get writeable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Insert the new disease with the given values
+
+        long id = database.insert(DiseasesEntry.DISEASES_TABLE_NAME, null, values);
+
+        // If the ID is -1, then the insertion failed. Log an error and return null.
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+
+        // здесь устанавливаем флаг mScrollToEnd в классе DiseasesActivity в true
+        // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
+        // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
+
+        DiseasesActivity.mScrollToEnd = true;
+
+        // Notify all listeners that the data has changed for the user content URI
+
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Once we know the ID of the new row in the table,
+        // return the new URI with the ID appended to the end of it
 
         // возвращаем полный ContentUri с id вставленной строки
         return ContentUris.withAppendedId(uri, id);
     }
 
+    // TODO добавление снимка лечения
+    private Uri insertTreatmentPhoto(Uri uri, ContentValues values) {
+        return null;
+    }
+
     @Override
     public int update(@NonNull Uri uri,
                       @Nullable ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
-        Log.d(LOG_TAG, "update, " + uri.toString());
+
+        if (contentValues == null) {
+            return 0;
+        }
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            // это если обновлятся будут несколько строк во всей таблице users
             case USERS:
-                if (contentValues==null){
-                    return 0;
-                }
+                // это если обновлятся будут несколько строк во всей таблице users
                 return updateUser(uri, contentValues, selection, selectionArgs);
             case USER_ID:
-                if (contentValues==null){
-                    return 0;
-                }
                 // это, если будет обновлятся одна строка в таблице users
                 // For the USER_ID code, extract out the ID from the URI,
                 // so we know which row to update. Selection will be "_id=?"
                 // and selection arguments will be a String array containing the actual ID.
-                selection = MedEntry._ID + "=?";
+                selection = UsersEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateUser(uri, contentValues, selection, selectionArgs);
+            case DISEASES:
+                return updateDisease(uri, contentValues, selection, selectionArgs);
+            case DISEASES_ID:
+                selection = DiseasesEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateDisease(uri, contentValues, selection, selectionArgs);
+            case TREATMENT_PHOTOS:
+                return updateTreatmentPhoto(uri, contentValues, selection, selectionArgs);
+            case TREATMENT_PHOTOS_ID:
+                selection = TreatmentPhotosEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateTreatmentPhoto(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
@@ -443,21 +583,28 @@ public class MedProvider extends ContentProvider {
      * Return the number of rows that were successfully updated.
      */
     private int updateUser(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // If the {@link MedEntry#COLUMN_USER_NAME} key is present,
+
+        // If there are no values to update, then don't try to update the database
+        // если ничего не передано для обновления - базу не обновляем и сразу возвращаем ноль (количество обновленных строк)
+        if (values==null || values.size() == 0) {
+            return 0;
+        }
+
+        // If the {@link UsersEntry#COLUMN_USER_NAME} key is present,
         // check that the name value is not null.
         // проверка имени на null
-        if (values.containsKey(MedEntry.COLUMN_USER_NAME)) {
-            String userName = values.getAsString(MedEntry.COLUMN_USER_NAME);
+        if (values.containsKey(UsersEntry.COLUMN_USER_NAME)) {
+            String userName = values.getAsString(UsersEntry.COLUMN_USER_NAME);
             if (userName == null) {
                 throw new IllegalArgumentException("User requires a name");
             }
         }
 
-        // If the {@link MedEntry.COLUMN_USER_DATE} key is present,
+        // If the {@link UsersEntry.COLUMN_USER_DATE} key is present,
         // check that the birthday value is valid.
         // проверка birthday на null
-        if (values.containsKey(MedEntry.COLUMN_USER_DATE)) {
-            String userDate = values.getAsString(MedEntry.COLUMN_USER_DATE);
+        if (values.containsKey(UsersEntry.COLUMN_USER_DATE)) {
+            String userDate = values.getAsString(UsersEntry.COLUMN_USER_DATE);
             if (userDate == null) {
                 throw new IllegalArgumentException("User requires a birthday");
             }
@@ -466,23 +613,17 @@ public class MedProvider extends ContentProvider {
         // photo - это путь к файлу, либо, по умолчанию, No_Photo
         // не проверяем на null
 
-        // If there are no values to update, then don't try to update the database
-        // если ничего не передано для обновления - базу не обновляем и сразу возвращаем ноль (количество обновленных строк)
-        if (values.size() == 0) {
-            return 0;
-        }
-
-        // Otherwise, get writeable database to update the data
-        // иначе, открываем базу для записи
+        // get writeable database to update the data
+        // открываем базу для записи
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Perform the update on the database and get the number of rows affected
-        int rowsUpdated = database.update(MedEntry.USERS_TABLE_NAME, values, selection, selectionArgs);
+        int rowsUpdated = database.update(UsersEntry.USERS_TABLE_NAME, values, selection, selectionArgs);
 
         //If 1 or more rows were updated, then notify all listeners that the data at the
         // given URI has changed
         if (rowsUpdated != 0) {
-            if (getContext()!=null){
+            if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(uri, null);
             }
         }
@@ -490,6 +631,56 @@ public class MedProvider extends ContentProvider {
         // Returns the number of database rows affected by the update statement
         // обновляем базу, при этом, возвращается колиество обновленных строк
         return rowsUpdated;
+    }
+
+    // TODO вспомогательный метод для обновления заболевания
+    private int updateDisease(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        if (values==null || values.size() == 0) {
+            return 0;
+        }
+
+        //DiseasesEntry.COLUMN_U_ID) на update подаваться не будет
+        // поэтому не проверяем его
+
+        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)){
+            String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
+            if (diseaseName == null) {
+                throw new IllegalArgumentException("disease requires a name");
+            }
+        }
+
+        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_DATE)) {
+            String diseaseDate = values.getAsString(DiseasesEntry.COLUMN_DISEASE_DATE);
+            if (diseaseDate == null) {
+                throw new IllegalArgumentException("disease requires a registration day");
+            }
+        }
+
+        // DISEASE_TREATMENT не проверяем на null
+
+        // открываем базу для записи
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(DiseasesEntry.DISEASES_TABLE_NAME, values, selection, selectionArgs);
+
+        //If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            if (getContext() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+        }
+
+        // Returns the number of database rows affected by the update statement
+        // обновляем базу, при этом, возвращается колиество обновленных строк
+        return rowsUpdated;
+    }
+
+    // TODO вспомогательный метод для обновления снимка лечения
+    private int updateTreatmentPhoto(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        return 0;
     }
 
     /**
@@ -514,7 +705,6 @@ public class MedProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        Log.d(LOG_TAG, "delete, " + uri.toString());
 
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -547,26 +737,40 @@ public class MedProvider extends ContentProvider {
                 the number of rows affected if a whereClause is passed in, 0 otherwise.
                 To remove all rows and get a count pass "1" as the whereClause.
                  */
-                rowsDeleted = database.delete(MedEntry.USERS_TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(UsersEntry.USERS_TABLE_NAME, selection, selectionArgs);
                 break;
             case USER_ID:
                 // Delete a single row given by the ID in the URI
-                selection = MedEntry._ID + "=?";
+                selection = UsersEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                rowsDeleted = database.delete(MedEntry.USERS_TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(UsersEntry.USERS_TABLE_NAME, selection, selectionArgs);
 
+                break;
+            case DISEASES:
+                rowsDeleted = database.delete(DiseasesEntry.DISEASES_TABLE_NAME, selection, selectionArgs);
+                break;
+            case DISEASES_ID:
+                selection = DiseasesEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(DiseasesEntry.DISEASES_TABLE_NAME, selection, selectionArgs);
+                break;
+            case TREATMENT_PHOTOS:
+                rowsDeleted = database.delete(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, selection, selectionArgs);
+                break;
+            case TREATMENT_PHOTOS_ID:
+                selection = TreatmentPhotosEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
 
-        Log.d(LOG_TAG, "deleted " + rowsDeleted + " rows");
-
         // If 1 or more rows were deleted, then notify all listeners that the data at the
         // given URI has changed
         if (rowsDeleted != 0) {
-            if (getContext()!=null){
+            if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(uri, null);
             }
         }
@@ -599,14 +803,20 @@ public class MedProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        Log.d(LOG_TAG, "getType, " + uri.toString());
-
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case USERS:
-                return MedEntry.CONTENT_USERS_LIST_TYPE; //"vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/users/"
+                return UsersEntry.CONTENT_USERS_LIST_TYPE; //"vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/users/"
             case USER_ID:
-                return MedEntry.CONTENT_USERS_ITEM_TYPE; // "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/users/"
+                return UsersEntry.CONTENT_USERS_ITEM_TYPE; // "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/users/"
+            case DISEASES:
+                return DiseasesEntry.CONTENT_DISEASES_LIST_TYPE; //"vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/diseases/"
+            case DISEASES_ID:
+                return DiseasesEntry.CONTENT_DISEASES_ITEM_TYPE; // "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/diseases/"
+            case TREATMENT_PHOTOS:
+                return TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_LIST_TYPE; //"vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/treatmentPhotos/"
+            case TREATMENT_PHOTOS_ID:
+                return TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_ITEM_TYPE; // "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/treatmentPhotos/"
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }

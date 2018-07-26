@@ -930,7 +930,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.date_of_treatment_photo))) {
             if (wrongField) {
                 textInputLayoutPhotoDescription.setError(
-                        getString(R.string.error_photo_description) + ".\n" +
+                        getString(R.string.error_photo_description) + "\n" +
                                 getString(R.string.error_date_of_treatment_photo)
                 );
             } else {
