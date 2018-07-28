@@ -15,7 +15,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
 
     private int pagesCount = 2;
 
-    public TreatmentAdapter(Context context, FragmentManager fm) {
+    TreatmentAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
     }
@@ -43,7 +43,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
                     mContext.getResources().getString(R.string.description));
         } else if (position == 1) {
             //return mContext.getString(R.string.photos);
-            return iconWithText(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_gray_24dp),
+            return iconWithText(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
                     mContext.getResources().getString(R.string.photos));
         }
         return "---";

@@ -23,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:background="@color/colorEditTextBackground"
+        android:background="@android:color/white"
         android:hint="@string/disease_name"
         android:paddingTop="3dp"
         android:textColorHint="@color/colorPrimaryDark"
@@ -87,12 +87,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider_frame_blue_3"
-        app:tabBackground="@drawable/tab_color_selector"
+        app:tabBackground="@drawable/white_drawable"
         app:tabGravity="fill"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/colorPrimaryDark"
-        app:tabTextColor="@color/black_overlay" />
+        app:tabSelectedTextColor="@color/colorFab"
+        app:tabTextColor="@android:color/black" />
+
 
     <EditText
         android:id="@+id/editText_date"
@@ -100,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginTop="6dp"
-        android:background="@color/colorEditTextBackground"
+        android:background="@android:color/white"
         android:drawableEnd="@drawable/ic_date_range_orange_32dp"
         android:focusable="false"
         android:gravity="top"
@@ -116,7 +117,7 @@
         android:id="@+id/viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorEditTextBackground"
+        android:background="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

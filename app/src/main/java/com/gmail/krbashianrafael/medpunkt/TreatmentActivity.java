@@ -218,26 +218,23 @@ public class TreatmentActivity extends AppCompatActivity {
                             getResources().getString(R.string.photos)));
                 }
 
-               /* tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
-                        getResources().getColor(android.R.color.white));*/
-
-                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
-                        getResources().getColor(R.color.colorPrimaryDark));
+                tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
+                        getResources().getColor(R.color.colorFab));
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 // при отжатии табов формируем внешний вид табов
                 if (tab.getPosition() == 0) {
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_gray_24dp),
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
                             getResources().getString(R.string.description)));
 
                 } else {
-                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_gray_24dp),
+                    tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
                             getResources().getString(R.string.photos)));
                 }
 
-                tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
+               tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
                         getResources().getColor(R.color.colorFab));
             }
 

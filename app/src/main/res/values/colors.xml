@@ -9,6 +9,7 @@
     <color name="colorEditTextBackground">#fffde7</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="my_gray">#c7c7c7</color>
     <color name="green">#00a303</color>
 
 </resources>
