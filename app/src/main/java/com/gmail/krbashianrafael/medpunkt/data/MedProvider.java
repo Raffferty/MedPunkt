@@ -11,8 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.gmail.krbashianrafael.medpunkt.DiseasesActivity;
-import com.gmail.krbashianrafael.medpunkt.UsersActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
@@ -415,12 +413,6 @@ public class MedProvider extends ContentProvider {
             return null;
         }
 
-        // здесь устанавливаем флаг mScrollToEnd в классе UsersActivity в true
-        // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
-        // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
-
-        UsersActivity.mScrollToEnd = true;
-
         // Notify all listeners that the data has changed for the user content URI
 
         /*
@@ -514,14 +506,7 @@ public class MedProvider extends ContentProvider {
             return null;
         }
 
-        // здесь устанавливаем флаг mScrollToEnd в классе DiseasesActivity в true
-        // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
-        // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
-
-        DiseasesActivity.mScrollToEnd = true;
-
         // Notify all listeners that the data has changed for the user content URI
-
         if (getContext() != null) {
             getContext().getContentResolver().notifyChange(uri, null);
         }

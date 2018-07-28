@@ -60,7 +60,9 @@
     <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
     <string name="no_photo">No_Photo</string>
     <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
-    <string name="delete_dialog_msg">Удалить пользователя</string>
+    <string name="delete_disease_dialog_msg">Удалить заболевание</string>
+    <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
+    <string name="delete_user_dialog_msg">Удалить пользователя</string>
     <!-- Dialog button text for the option to confirm deleting the current user [CHAR LIMIT=20] -->
     <string name="delete">Удалить</string>
     <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->

@@ -576,7 +576,7 @@ public class UserActivity extends AppCompatActivity
     // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.delete_dialog_msg) + " " + editTextName.getText() + "?");
+        builder.setMessage(getString(R.string.delete_user_dialog_msg) + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 deleteUserFromDataBase();
@@ -776,6 +776,12 @@ public class UserActivity extends AppCompatActivity
 
             // получаем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
+
+            // здесь устанавливаем флаг mScrollToEnd в классе UsersActivity в true
+            // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
+            // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
+
+            UsersActivity.mScrollToEnd = true;
 
             // создаем папку и получаем путь к папке файла фото пользователя для сохранения
             // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения

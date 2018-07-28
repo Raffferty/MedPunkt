@@ -17,6 +17,7 @@
     <style name="Lable.Error" parent="@android:style/TextAppearance">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/colorFab</item>
+
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -29,11 +30,9 @@
 
     <!-- Style for a tab that displays a category name -->
     <style name="CategoryTab" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorHeight">5dp</item>
+        <item name="tabIndicatorHeight">3dp</item>
         <item name="tabIndicatorColor">@color/colorFab</item>
         <item name="tabTextAppearance">@style/CategoryTabTextAppearance</item>
-
-
     </style>
 
     <!-- Text appearance style for a category tab

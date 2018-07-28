@@ -35,7 +35,7 @@ public class MedDbHelper extends SQLiteOpenHelper {
         // строка для создания таблицы diseases:
         String SQL_CREATE_DISEASES_TABLE = "CREATE TABLE " + DiseasesEntry.DISEASES_TABLE_NAME + " ("
                 + DiseasesEntry.DIS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + DiseasesEntry.COLUMN_U_ID + " LONG NOT NULL, "
+                + DiseasesEntry.COLUMN_U_ID + " INTEGER NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_NAME + " TEXT NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_DATE + " TEXT NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_TREATMENT + " TEXT);";
@@ -43,8 +43,8 @@ public class MedDbHelper extends SQLiteOpenHelper {
         // строка для создания таблицы treatmentPhotos:
         String SQL_CREATE_TREATMENT_PHOTOS_TABLE = "CREATE TABLE " + TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME + " ("
                 + TreatmentPhotosEntry.TR_PHOTO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TreatmentPhotosEntry.COLUMN_U_ID + " LONG NOT NULL, "
-                + TreatmentPhotosEntry.COLUMN_DIS_ID + " LONG NOT NULL, "
+                + TreatmentPhotosEntry.COLUMN_U_ID + " INTEGER NOT NULL, "
+                + TreatmentPhotosEntry.COLUMN_DIS_ID + " INTEGER NOT NULL, "
                 + TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME + " TEXT NOT NULL, "
                 + TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE + " TEXT NOT NULL, "
                 + TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH + " TEXT);";
