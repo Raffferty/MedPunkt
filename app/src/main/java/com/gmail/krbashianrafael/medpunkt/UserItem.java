@@ -1,7 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 public class UserItem {
-    private int _userId;
+    private long _userId;
     private String userBirthDate;
     private String userName;
 
@@ -15,7 +15,7 @@ public class UserItem {
         this.userPhotoUri = userPhotoUri;
     }
 
-    public int get_userId() {
+    public long get_userId() {
         return _userId;
     }
 

@@ -518,9 +518,52 @@ public class MedProvider extends ContentProvider {
         return ContentUris.withAppendedId(uri, id);
     }
 
-    // TODO добавление снимка лечения
     private Uri insertTreatmentPhoto(Uri uri, ContentValues values) {
-        return null;
+
+        Long userId = values.getAsLong(TreatmentPhotosEntry.COLUMN_U_ID);
+        if (userId == null || userId == 0) {
+            throw new IllegalArgumentException("disease requires userId");
+        }
+
+        Long disId = values.getAsLong(TreatmentPhotosEntry.COLUMN_DIS_ID);
+        if (disId == null || disId == 0) {
+            throw new IllegalArgumentException("disease requires userId");
+        }
+
+        String trPhotoName = values.getAsString(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME);
+        if (trPhotoName == null) {
+            throw new IllegalArgumentException("disease requires a name");
+        }
+
+        String trPhotoDate = values.getAsString(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE);
+        if (trPhotoDate == null) {
+            throw new IllegalArgumentException("disease requires a registration day");
+        }
+
+        // COLUMN_TR_PHOTO_PATH не проверяем на null
+
+        // Get writeable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Insert the new treatmentPhoto with the given values
+        long id = database.insert(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, null, values);
+
+        // If the ID is -1, then the insertion failed. Log an error and return null.
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+
+        // Notify all listeners that the data has changed for the user content URI
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Once we know the ID of the new row in the table,
+        // return the new URI with the ID appended to the end of it
+
+        // возвращаем полный ContentUri с id вставленной строки
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
@@ -618,7 +661,6 @@ public class MedProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    // TODO вспомогательный метод для обновления заболевания
     private int updateDisease(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
         if (values==null || values.size() == 0) {

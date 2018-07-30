@@ -1,7 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 public class DiseaseItem {
-    private int _diseaseId;
+    private long _diseaseId;
     private long _diseaseUserId;
     private String diseaseDate;
     private String diseaseName;
@@ -15,7 +15,7 @@ public class DiseaseItem {
         this.diseaseTreatment = diseaseTreatment;
     }
 
-    public int get_diseaseId() {
+    public long get_diseaseId() {
         return _diseaseId;
     }
 

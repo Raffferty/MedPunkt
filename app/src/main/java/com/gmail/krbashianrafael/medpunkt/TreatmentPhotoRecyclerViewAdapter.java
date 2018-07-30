@@ -34,14 +34,19 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        int _treatmentId = treatmentPhotosList.get(position).get_treatmentId();
+        long _trPhotoId = treatmentPhotosList.get(position).get_trPhotoId();
+        long _userId = treatmentPhotosList.get(position).get_userId();
+        long _diseaseId = treatmentPhotosList.get(position).get_diseaseId();
+
         String itemDate = treatmentPhotosList.get(position).getItemDate();
         String itemName = treatmentPhotosList.get(position).getItemName();
         String itemPhotoUri = treatmentPhotosList.get(position).getItemPhotoUri();
 
-        // _treatmentId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
+        // _diseaseId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
         // для его дальнейшего использования при onClick на itemView
-        ((TreatmentPhotoHolder) holder)._treatmentId.setText(String.valueOf(_treatmentId));
+        ((TreatmentPhotoHolder) holder)._trPhotoId.setText(String.valueOf(_trPhotoId));
+        ((TreatmentPhotoHolder) holder)._userId.setText(String.valueOf(_userId));
+        ((TreatmentPhotoHolder) holder)._diseaseId.setText(String.valueOf(_diseaseId));
 
         // itemUri прописываем в "невидимое" recycler_photo_item_uri (т.к. размеры этого TextView в нулях)
         // для его дальнейшего использования при onClick на itemView
@@ -59,7 +64,10 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     public static class TreatmentPhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         Context myContext;
-        TextView _treatmentId;
+
+        TextView _trPhotoId;
+        TextView _userId;
+        TextView _diseaseId;
         TextView itemUri;
         TextView itemDate;
         TextView itemName;
@@ -69,7 +77,9 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             myContext = context;
 
-            _treatmentId = itemView.findViewById(R.id._treatment_id);
+            _trPhotoId = itemView.findViewById(R.id.tr_photo_id);
+            _userId = itemView.findViewById(R.id.user_id);
+            _diseaseId = itemView.findViewById(R.id.disease_id);
             itemUri = itemView.findViewById(R.id.recycler_photo_item_uri);
             itemDate = itemView.findViewById(R.id.photo_item_date);
             itemName = itemView.findViewById(R.id.recycler_photo_item_name);
@@ -84,7 +94,12 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             }
 
             Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
-            intentToTreatmentPhoto.putExtra("_idDisease", _treatmentId.getText());
+
+            intentToTreatmentPhoto.putExtra("_idTrPhoto", Long.valueOf(_trPhotoId.getText().toString()));
+
+            intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+            intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+
             intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
             intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
             intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());

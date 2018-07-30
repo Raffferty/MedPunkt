@@ -41,12 +41,12 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        int _userId = usersList.get(position).get_userId();
+        long _userId = usersList.get(position).get_userId();
         String userBirthDate = usersList.get(position).getUserBirthDate();
         String userName = usersList.get(position).getUserName();
         String userPhotoUri = usersList.get(position).getUserPhotoUri();
 
-        // _treatmentId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
+        // _diseaseId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
         // для его дальнейшего использования при onClick на itemView
         ((UserHolder) holder)._userId.setText(String.valueOf(_userId));
 

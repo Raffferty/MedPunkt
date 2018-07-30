@@ -41,10 +41,10 @@ public class TreatmentActivity extends AppCompatActivity {
     protected TreatmentPhotosFragment treatmentPhotosFragment;
 
     // id пользователя
-    private long _idUser = 0;
+    protected long _idUser = 0;
 
     // id заболеввания
-    private long _idDisease = 0;
+    protected long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean goBack, newDisease, onSavingOrUpdating;

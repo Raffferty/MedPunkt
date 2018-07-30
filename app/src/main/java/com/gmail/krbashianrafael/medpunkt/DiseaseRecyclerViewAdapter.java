@@ -34,7 +34,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        int _diseaseId = diseaseList.get(position).get_diseaseId();
+        long _diseaseId = diseaseList.get(position).get_diseaseId();
         long _diseaseUserId = diseaseList.get(position).get_diseaseUserId();
         String diseaseDate = diseaseList.get(position).getDiseaseDate();
         String diseaseName = diseaseList.get(position).getDiseaseName();

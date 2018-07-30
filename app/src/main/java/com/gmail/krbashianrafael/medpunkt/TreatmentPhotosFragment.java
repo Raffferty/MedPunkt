@@ -19,16 +19,18 @@ import java.util.ArrayList;
 
 public class TreatmentPhotosFragment extends Fragment {
 
+    // id пользователя
+    private long _idUser = 0;
+
+    // id заболеввания
+    private long _idDisease = 0;
+
     // TextView добавления фотоснимка лечения
     private TextView txtAddPhotos;
 
     private FloatingActionButton fabAddTreatmentPhotos;
 
     protected RecyclerView recyclerTreatmentPhotos;
-
-    private LinearLayoutManager linearLayoutManager;
-
-    private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
     // boolean scrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
@@ -59,6 +61,10 @@ public class TreatmentPhotosFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
+
+                intentToTreatmentPhoto.putExtra("_idUser", _idUser);
+                intentToTreatmentPhoto.putExtra("_idDisease", _idDisease);
+
                 intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
 
                 startActivity(intentToTreatmentPhoto);
@@ -70,6 +76,10 @@ public class TreatmentPhotosFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
+
+                intentToTreatmentPhoto.putExtra("_idUser", _idUser);
+                intentToTreatmentPhoto.putExtra("_idDisease", _idDisease);
+
                 intentToTreatmentPhoto.putExtra("newTreatmentPhoto", true);
 
                 startActivity(intentToTreatmentPhoto);
@@ -90,9 +100,12 @@ public class TreatmentPhotosFragment extends Fragment {
                 newTreaymentActivity.initTreatmentPhotosFragment();
             }
 
+            _idUser = newTreaymentActivity._idUser;
+            _idDisease = newTreaymentActivity._idDisease;
+
             // инициализируем linearLayoutManager
-            linearLayoutManager = new LinearLayoutManager(newTreaymentActivity,
-                    LinearLayoutManager.VERTICAL,false);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(newTreaymentActivity,
+                    LinearLayoutManager.VERTICAL, false);
 
             // инизиализируем разделитель для элементов recyclerTreatmentPhotos
             DividerItemDecoration itemDecoration = new DividerItemDecoration(
@@ -114,7 +127,7 @@ public class TreatmentPhotosFragment extends Fragment {
             recyclerTreatmentPhotos.setLayoutManager(linearLayoutManager);
 
             // инициализируем TreatmentPhotoRecyclerViewAdapter
-            treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(newTreaymentActivity);
+            TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(newTreaymentActivity);
 
             // устанавливаем адаптер для RecyclerView
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
@@ -126,22 +139,12 @@ public class TreatmentPhotosFragment extends Fragment {
 
             // tempNewDisease - это временно для отработки в treatmentPhotoRecyclerView пустого листа
             if (!newTreaymentActivity.tempNewDisease){
-                myData.add(new TreatmentPhotoItem(2,"25.06.2018","Кардиограмма",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"26.06.2018","Узи",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"27.06.2018","Давление",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы Кровь",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы Моча",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы Кал",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 1",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 2",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 3",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 4",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 5",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 6",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 7",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 8",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 9",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,"28.06.2018","Анализы 10",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(1,1,1,"25.06.2018","Кардиограмма",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(2,1,1,"26.06.2018","Узи",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(3,1,2,"27.06.2018","Давление",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(4,2,1,"28.06.2018","Анализы Кровь",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(5,2,2,"28.06.2018","Анализы Моча",pathToPhoto));
+                myData.add(new TreatmentPhotoItem(6,2,2,"28.06.2018","Анализы Кал",pathToPhoto));
             }
 
             // если еще нет снимков, то делаем txtAddPhotos.setVisibility(View.VISIBLE);

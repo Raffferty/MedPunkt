@@ -28,7 +28,17 @@
         tools:text="Рентген" />
 
     <TextView
-        android:id="@+id/_treatment_id"
+        android:id="@+id/tr_photo_id"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        android:id="@+id/disease_id"
         android:layout_width="0dp"
         android:layout_height="0dp"/>
 

@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.hardware.SensorManager;
-import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,10 +20,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -129,7 +130,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // сохранение загруженного фото
             if (loadedImageFilePath != null) {
                 try {
-                    fileOfPhoto = new File(loadedImageFilePath);
+                    File fileOfPhoto = new File(loadedImageFilePath);
                     // TODO создать логику имени сохраняемого фото
                     // SystemClock.elapsedRealtime(); - для нумерации сохраняемых файлов
 
@@ -241,14 +242,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // файловый путь к загружаемому фото
     private String loadedImageFilePath;
 
-    // загруженный файл фотографии
-    private File fileOfPhoto = null;
-
     // путь к сохраненному фото
     private String treatmentPhotoFilePath;
 
+    // id фото лечения
+    private long _idTrPhoto = 0;
+    // id пользователя
+    private long _idUser = 0;
     // id заболевания
-    private int _idDisease = 0;
+    private long _idDisease = 0;
+
 
     // ImageView
     private ImageView imagePhoto;
@@ -272,10 +275,22 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        _idDisease = intent.getIntExtra("_idDisease", 0);
+        _idTrPhoto = intent.getLongExtra("_idTrPhoto", 0);
+
+        Log.d("trPhoto", "_idTrPhoto = " + _idTrPhoto);
+
+        _idUser = intent.getLongExtra("_idUser", 0);
+
+        Log.d("trPhoto", "_idUser = " + _idUser);
+
+        _idDisease = intent.getLongExtra("_idDisease", 0);
+
+        Log.d("trPhoto", "_idDisease = " + _idDisease);
+
         treatmentPhotoFilePath = intent.getStringExtra("treatmentPhotoFilePath");
         textPhotoDescription = intent.getStringExtra("textPhotoDescription");
         textDateOfTreatmentPhoto = intent.getStringExtra("textDateOfTreatmentPhoto");
+
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
         // инициализируем все View
@@ -956,7 +971,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
 
             return;
-        }else {
+        } else {
             textInputLayoutPhotoDescription.setError(null);
         }
 
