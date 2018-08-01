@@ -624,9 +624,9 @@ public class TreatmentActivity extends AppCompatActivity {
 
             DiseasesActivity.mScrollToEnd = true;
 
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment NOT Saved To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "DiseaseAndTreatment has NOT been Saved To DataBase", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -644,11 +644,11 @@ public class TreatmentActivity extends AppCompatActivity {
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "DiseaseAndTreatment has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
 
         } else {
             // update в Базе был успешным
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -659,7 +659,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
         int rowsDeleted = 0;
 
-        // делаем удаление пользователя из Базы
+        // удаляем заболевание из Базы
         if (_idDisease != 0) {
             rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
         }
@@ -669,7 +669,7 @@ public class TreatmentActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
 
-            finish();
+            goToDiseasesActivity();
         }
     }
 }

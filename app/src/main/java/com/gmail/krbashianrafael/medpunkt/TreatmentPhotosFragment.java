@@ -1,12 +1,17 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,9 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+
 import java.util.ArrayList;
 
-public class TreatmentPhotosFragment extends Fragment {
+public class TreatmentPhotosFragment extends Fragment
+        implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+
+    // parent Activity
+    private TreatmentActivity newTreaymentActivity;
 
     // id пользователя
     private long _idUser = 0;
@@ -32,13 +43,20 @@ public class TreatmentPhotosFragment extends Fragment {
 
     protected RecyclerView recyclerTreatmentPhotos;
 
+    private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
+
     // boolean scrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertTreatmentPhoto
-    public static boolean scrollToEnd = false;
+    public static boolean mScrollToEnd = false;
 
-    // временный элемент, далее будет в RecyclerView
-    //private ScrollView scrollViewPhotos;
+    /**
+     * Identifier for the user data loader
+     * Лоадеров может много (они обрабатываются в case)
+     * поэтому устанавливаем инициализатор для каждого лоадера
+     * в данном случае private static final int TR_PHOTOS_LOADER = 2;
+     */
+    private static final int TR_PHOTOS_LOADER = 2;
 
     public TreatmentPhotosFragment() {
         // нужен ПУСТОЙ конструктор
@@ -88,10 +106,19 @@ public class TreatmentPhotosFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // для возобновления данных
+        if (treatmentPhotoRecyclerViewAdapter!=null){
+            treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        TreatmentActivity newTreaymentActivity = (TreatmentActivity) getActivity();
+        newTreaymentActivity = (TreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
 
@@ -127,31 +154,107 @@ public class TreatmentPhotosFragment extends Fragment {
             recyclerTreatmentPhotos.setLayoutManager(linearLayoutManager);
 
             // инициализируем TreatmentPhotoRecyclerViewAdapter
-            TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(newTreaymentActivity);
+            treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(newTreaymentActivity);
 
             // устанавливаем адаптер для RecyclerView
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
 
-            ArrayList<TreatmentPhotoItem> myData = treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList();
-            myData.clear();
+            // Инициализируем Loader
+            getLoaderManager().initLoader(TR_PHOTOS_LOADER, null, this);
+        }
+    }
 
-            String pathToPhoto = getString(R.string.path_to_treatment_photo);
 
-            // tempNewDisease - это временно для отработки в treatmentPhotoRecyclerView пустого листа
-            if (!newTreaymentActivity.tempNewDisease){
-                myData.add(new TreatmentPhotoItem(1,1,1,"25.06.2018","Кардиограмма",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(2,1,1,"26.06.2018","Узи",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(3,1,2,"27.06.2018","Давление",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(4,2,1,"28.06.2018","Анализы Кровь",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(5,2,2,"28.06.2018","Анализы Моча",pathToPhoto));
-                myData.add(new TreatmentPhotoItem(6,2,2,"28.06.2018","Анализы Кал",pathToPhoto));
-            }
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        // Define a projection that specifies the columns from the table we care about.
+        // для Loader в projection обязательно нужно указывать поле с _ID
+        // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
+        String[] projection = {
+                TreatmentPhotosEntry.TR_PHOTO_ID,
+                TreatmentPhotosEntry.COLUMN_U_ID,
+                TreatmentPhotosEntry.COLUMN_DIS_ID,
+                TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME,
+                TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE,
+                TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
 
-            // если еще нет снимков, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
-            if (myData.size() == 0) {
-                txtAddPhotos.setVisibility(View.VISIBLE);
-                fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+        // выборку заболеванй делаем по _idUser
+        String  selection = TreatmentPhotosEntry.COLUMN_U_ID + "=? AND " + TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(_idUser), String.valueOf(_idDisease)};
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        // Loader грузит ВСЕ данные из таблицы users через Provider в diseaseRecyclerViewAdapter и далее в recyclerDiseases
+        return new CursorLoader(newTreaymentActivity,   // Parent activity context
+                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
+                projection,             // Columns to include in the resulting Cursor
+                selection,                   // selection by TreatmentPhotosEntry.COLUMN_U_ID AND TreatmentPhotosEntry.COLUMN_DIS_ID
+                selectionArgs,                   // selection arguments by _idUser AND _idDisease
+                null);                  // Default sort order
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+        ArrayList<TreatmentPhotoItem> myData = treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList();
+        myData.clear();
+
+        if (cursor != null) {
+
+            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
+            cursor.moveToPosition(-1);
+
+            // проходим в цикле курсор и заполняем объектами DiseaseItem наш ArrayList<TreatmentPhotoItem> myData
+            while (cursor.moveToNext()) {
+
+                // Find the columns of disease attributes that we're interested in
+                int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
+                int trPhotoUser_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_U_ID);
+                int trPhotoDisease_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_DIS_ID);
+                int trPhoto_nameColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME);
+                int trPhoto_dateColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE);
+                int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
+
+                // Read the disease attributes from the Cursor for the current disease
+                long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
+                long _userId = cursor.getInt(trPhotoUser_IdColumnIndex);
+                long _diseaseId = cursor.getInt(trPhotoDisease_IdColumnIndex);
+                String trPhotoName = cursor.getString(trPhoto_nameColumnIndex);
+                String trPhotoDate = cursor.getString(trPhoto_dateColumnIndex);
+                String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
+
+
+                // добавляем новый DiseaseItem в ArrayList<DiseaseItem> myData
+                myData.add(new TreatmentPhotoItem(_trPhotoId, _userId, _diseaseId, trPhotoName, trPhotoDate, trPhotoUri));
             }
         }
+
+        // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
+        // и fabAddDisease.setVisibility(View.INVISIBLE);
+        if (myData.size() == 0) {
+            txtAddPhotos.setVisibility(View.VISIBLE);
+            fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+        } else {
+            txtAddPhotos.setVisibility(View.INVISIBLE);
+            fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+        }
+
+        // оповещаем LayoutManager, что произошли изменения
+        // LayoutManager обновляет RecyclerView
+        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+        // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
+        // чтоб увидеть новый вставленный элемент
+        // и снова scrollToEnd выставляем в false
+        if (mScrollToEnd && myData.size() != 0) {
+            recyclerTreatmentPhotos.smoothScrollToPosition(myData.size() - 1);
+            mScrollToEnd = false;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        ArrayList<TreatmentPhotoItem> myData = treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList();
+        myData.clear();
+        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

@@ -7,7 +7,7 @@ public class DiseaseItem {
     private String diseaseName;
     private String diseaseTreatment;
 
-    DiseaseItem(int _diseaseId, long _diseaseUserId, String diseaseName, String diseaseDate, String diseaseTreatment) {
+    DiseaseItem(long _diseaseId, long _diseaseUserId, String diseaseName, String diseaseDate, String diseaseTreatment) {
         this._diseaseId = _diseaseId;
         this._diseaseUserId = _diseaseUserId;
         this.diseaseDate = diseaseDate;

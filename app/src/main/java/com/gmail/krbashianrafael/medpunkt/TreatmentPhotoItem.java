@@ -4,20 +4,20 @@ public class TreatmentPhotoItem {
     private long _trPhotoId;
     private long _userId;
     private long _diseaseId;
-    private String itemDate;
-    private String itemName;
+    private String trPhotoName;
+    private String trPhotoDate;
 
     // путь к фото
-    private String itemPhotoUri;
+    private String trPhotoUri;
 
-    TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String itemDate, String itemName, String itemPhotoUri) {
+    TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String trPhotoName, String trPhotoDate, String trPhotoUri) {
         this._trPhotoId = _trPhotoId;
         this._userId = _userId;
         this._diseaseId = _diseaseId;
 
-        this.itemDate = itemDate;
-        this.itemName = itemName;
-        this.itemPhotoUri = itemPhotoUri;
+        this.trPhotoDate = trPhotoDate;
+        this.trPhotoName = trPhotoName;
+        this.trPhotoUri = trPhotoUri;
     }
 
     public long get_trPhotoId() {
@@ -32,15 +32,15 @@ public class TreatmentPhotoItem {
         return _diseaseId;
     }
 
-    public String getItemDate() {
-        return itemDate;
+    public String getTrPhotoDate() {
+        return trPhotoDate;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getTrPhotoName() {
+        return trPhotoName;
     }
 
-    public String getItemPhotoUri() {
-        return itemPhotoUri;
+    public String getTrPhotoUri() {
+        return trPhotoUri;
     }
 }

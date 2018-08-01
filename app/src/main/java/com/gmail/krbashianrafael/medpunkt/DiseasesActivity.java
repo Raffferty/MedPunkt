@@ -159,7 +159,9 @@ public class DiseasesActivity extends AppCompatActivity
         super.onResume();
 
         // для возобновления данных
-        diseaseRecyclerViewAdapter.notifyDataSetChanged();
+        if (diseaseRecyclerViewAdapter!=null){
+            diseaseRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -193,7 +195,7 @@ public class DiseasesActivity extends AppCompatActivity
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
-                DiseasesEntry._ID,
+                DiseasesEntry.DIS_ID,
                 DiseasesEntry.COLUMN_U_ID,
                 DiseasesEntry.COLUMN_DISEASE_NAME,
                 DiseasesEntry.COLUMN_DISEASE_DATE,
@@ -235,8 +237,8 @@ public class DiseasesActivity extends AppCompatActivity
                 int disease_treatmentColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
 
                 // Read the disease attributes from the Cursor for the current disease
-                int _diseaseId = cursor.getInt(disease_idColumnIndex);
-                long _diseaseUserId = cursor.getInt(diseaseUser_IdColumnIndex);
+                long _diseaseId = cursor.getLong(disease_idColumnIndex);
+                long _diseaseUserId = cursor.getLong(diseaseUser_IdColumnIndex);
                 String diseaseName = cursor.getString(disease_nameColumnIndex);
                 String diseaseDate = cursor.getString(disease_dateColumnIndex);
                 String diseaseTreatment = cursor.getString(disease_treatmentColumnIndex);
@@ -264,7 +266,7 @@ public class DiseasesActivity extends AppCompatActivity
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент
         // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd) {
+        if (mScrollToEnd  && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(myData.size() - 1);
             mScrollToEnd = false;
         }
@@ -273,6 +275,8 @@ public class DiseasesActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //
+        ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
+        myData.clear();
+        diseaseRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

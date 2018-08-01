@@ -705,9 +705,48 @@ public class MedProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    // TODO вспомогательный метод для обновления снимка лечения
     private int updateTreatmentPhoto(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        if (values==null || values.size() == 0) {
+            return 0;
+        }
+
+        //TreatmentPhotosEntry.COLUMN_U_ID на update подаваться не будет
+        //TreatmentPhotosEntry.COLUMN_DIS_ID на update подаваться не будет
+        // поэтому не проверяем их
+
+        if (values.containsKey(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME)){
+            String trPhotoName = values.getAsString(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME);
+            if (trPhotoName == null) {
+                throw new IllegalArgumentException("disease requires a name");
+            }
+        }
+
+        if (values.containsKey(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE)) {
+            String trPhotoDate = values.getAsString(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE);
+            if (trPhotoDate == null) {
+                throw new IllegalArgumentException("disease requires a registration day");
+            }
+        }
+
+        // TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH не проверяем на null
+
+        // открываем базу для записи
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, values, selection, selectionArgs);
+
+        //If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            if (getContext() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+        }
+
+        // Returns the number of database rows affected by the update statement
+        // обновляем базу, при этом, возвращается колиество обновленных строк
+        return rowsUpdated;
     }
 
     /**

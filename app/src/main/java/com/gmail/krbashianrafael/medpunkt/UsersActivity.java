@@ -144,7 +144,9 @@ public class UsersActivity extends AppCompatActivity
         super.onResume();
 
         // для возобновления фото при рестарте
-        usersRecyclerViewAdapter.notifyDataSetChanged();
+        if (usersRecyclerViewAdapter!=null){
+            usersRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -199,7 +201,7 @@ public class UsersActivity extends AppCompatActivity
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
-                MedContract.UsersEntry._ID,
+                UsersEntry.U_ID,
                 UsersEntry.COLUMN_USER_NAME,
                 MedContract.UsersEntry.COLUMN_USER_DATE,
                 MedContract.UsersEntry.COLUMN_USER_PHOTO_PATH};
@@ -274,7 +276,7 @@ public class UsersActivity extends AppCompatActivity
                 int user_photoColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_PHOTO_PATH);
 
                 // Read the user attributes from the Cursor for the current user
-                int _userId = cursor.getInt(user_idColumnIndex);
+                long _userId = cursor.getLong(user_idColumnIndex);
                 String userName = cursor.getString(user_nameColumnIndex);
                 String userBirthDate = cursor.getString(user_dateColumnIndex);
                 String userPhotoUri = cursor.getString(user_photoColumnIndex);
@@ -330,7 +332,7 @@ public class UsersActivity extends AppCompatActivity
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент
         // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd) {
+        if (mScrollToEnd && myData.size() != 0) {
             recyclerUsers.smoothScrollToPosition(myData.size() - 1);
             mScrollToEnd = false;
         }
@@ -339,6 +341,8 @@ public class UsersActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //
+        ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();
+        myData.clear();
+        usersRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

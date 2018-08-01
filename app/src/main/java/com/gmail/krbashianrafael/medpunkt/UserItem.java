@@ -8,7 +8,7 @@ public class UserItem {
     // путь к фото
     private String userPhotoUri;
 
-    UserItem(int _userId, String userBirthDate, String userName, String userPhotoUri) {
+    UserItem(long _userId, String userBirthDate, String userName, String userPhotoUri) {
         this._userId = _userId;
         this.userBirthDate = userBirthDate;
         this.userName = userName;
