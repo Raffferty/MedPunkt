@@ -31,6 +31,7 @@
     <string name="cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="cant_load_photo">Фотографию не удалось загрузить</string>
     <string name="file_not_deleted">Фотография не удалилась</string>
+    <string name="file_copy">фотографии скопирована</string>
     <string name="file_copy_error">При копировании фотографии возникли ошибки</string>
     <string name="old_file_not_deleted">Обновляемая фотография не удалилась</string>
     <string name="file_deleted">Фотография удалилась</string>

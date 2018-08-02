@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -52,6 +53,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 
 public class FullscreenPhotoActivity extends AppCompatActivity
@@ -128,91 +130,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         }
     };
 
-    private final Runnable mTretmentPhotoSavingRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // сохранение загруженного фото
-            if (loadedImageFilePath != null) {
-
-                File fileOfPhoto = new File(loadedImageFilePath);
-
-                // для интернал
-                String root = getFilesDir().toString();
-
-                //  /data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos
-                File myDir = new File(root + "/treatment_photos");
-                if (!myDir.mkdirs()) {
-                    Log.d("file", "users_photos_dir_Not_created");
-                }
-
-                // SystemClock.elapsedRealtime(); для нумерации сохраняемых файлов
-                String fileName = "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg";
-                File destination = new File(myDir, fileName);
-
-                // копируем файл
-                try {
-                    FileUtils.copyFile(fileOfPhoto, destination);
-                } catch (NullPointerException | IOException e) {
-
-                    // если были ошибки во время копирования
-                    // то удаляем конечный файл (если он образовался)
-                    if (destination.exists()) {
-                        if (!destination.delete()) {
-                            Toast.makeText(FullscreenPhotoActivity.this, R.string.file_copy_error, Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    e.getStackTrace();
-                }
-
-                if (destination.exists()) {
-                    if (newTreatmentPhoto) {
-                        // если новая (не обновляемая) фотография
-                        treatmentPhotoFilePath = destination.toString();
-                        saveTreatmentPhotoToDataBase();
-                        newTreatmentPhoto = false;
-
-                        afterSaveOrUpdate();
-
-                    } else {
-                        // если обновляемая фотография
-                        // удаляем старую фотографию
-                        File oldFile = new File(treatmentPhotoFilePath);
-                        if (oldFile.exists()) {
-                            if (!oldFile.delete()) {
-                                Toast.makeText(FullscreenPhotoActivity.this, R.string.old_file_not_deleted, Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                        treatmentPhotoFilePath = destination.toString();
-                        updateTreatmentPhotoToDataBase();
-
-                        afterSaveOrUpdate();
-                    }
-
-                    // после сохранения выставляем флаг treatmentPhotoHasChanged = false
-                    treatmentPhotoHasChanged = false;
-
-                } else {
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(FullscreenPhotoActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            } else {
-                //  Toast должен делаться в основном потоке
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(FullscreenPhotoActivity.this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }
-    };
-
     // проверка в состоянии зума или нет
     final boolean[] inZoom = {false};
     // onLoading - в процессе загрузки или нет
@@ -243,7 +160,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // id заболевания
     private long _idDisease = 0;
 
-
     // ImageView
     private ImageView imagePhoto;
 
@@ -268,15 +184,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
         _idTrPhoto = intent.getLongExtra("_idTrPhoto", 0);
 
-        //Log.d("trPhoto", "_idTrPhoto = " + _idTrPhoto);
-
         _idUser = intent.getLongExtra("_idUser", 0);
 
-        //Log.d("trPhoto", "_idUser = " + _idUser);
-
         _idDisease = intent.getLongExtra("_idDisease", 0);
-
-        //Log.d("trPhoto", "_idDisease = " + _idDisease);
 
         treatmentPhotoFilePath = intent.getStringExtra("treatmentPhotoFilePath");
         textPhotoDescription = intent.getStringExtra("textPhotoDescription");
@@ -293,6 +203,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         // если пришел путь к сохраненному ранее фото, то грузим фото
         if (!newTreatmentPhoto && treatmentPhotoFilePath != null && new File(treatmentPhotoFilePath).exists()) {
 
+            // скрываем UI
             hide();
 
             // получаем угол поворота картинки из файла
@@ -343,7 +254,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        } else if(!newTreatmentPhoto) {
+            // если не новое фото и не может загрузить
+        } else if (!newTreatmentPhoto) {
             Toast.makeText(this, R.string.cant_load_photo, Toast.LENGTH_LONG).show();
         }
 
@@ -360,14 +272,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             textDateOfTreatmentPhoto = getString(R.string.date_of_treatment_photo);
         }
 
-        // если было нажато добваить фото
+        // если было нажато добваить новое фото
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
         if (newTreatmentPhoto) {
             editTreatmentPhoto = true;
 
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-
 
                 // убираем UI, кроме SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 mDescriptionView.setVisibility(View.INVISIBLE);
@@ -403,6 +314,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
+
+            // если открывется уже существующее фото
         } else {
             mDescriptionView.setVisibility(View.INVISIBLE);
             editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
@@ -624,7 +537,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (!editTreatmentPhoto) {
-            delayedHide(300);
+            delayedHide();
         }
     }
 
@@ -653,9 +566,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         mOrientationListener.disable();
     }
 
-    private void delayedHide(int delayMillis) {
+    private void delayedHide() {
         myHandler.removeCallbacks(mHideRunnable);
-        myHandler.postDelayed(mHideRunnable, delayMillis);
+        myHandler.postDelayed(mHideRunnable, 300);
     }
 
     // Диалог "Удалить заболевание или отменить удаление"
@@ -666,6 +579,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int id) {
                 if (deleteTreatmentPhoto()) {
                     deleteTreatmentPhotoFromDataBase();
+                } else {
+                    Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -722,7 +637,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 Snackbar.make(imagePhoto, R.string.permission_was_denied,
                         Snackbar.LENGTH_LONG).show();
 
-                // это, перед выходом, показывают сверху статус бар,
+                // это, перед выходом, показывает сверху статус бар,
                 // чтоб при открывании предыдущего окна не было белой полосы сверху
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -730,6 +645,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 myHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        hideSoftInput();
                         finish();
                     }
                 }, UI_ANIMATION_DELAY * 7);
@@ -753,6 +669,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             Uri newSelectedImageUri = data.getData();
 
             if (newSelectedImageUri != null) {
+                // если выбрали то же фото, которое уже было загружено ИЗ ГАЛЕРИИ,
+                // то повторно не грузим
                 if (imageUriInView != null && imageUriInView.equals(newSelectedImageUri)) {
                     onLoading = false;
                     treatmentPhotoHasChanged = false;
@@ -1014,9 +932,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
         // в отдельном потоке пишем файл фотки в интернал
         if (imageUriInView != null) {
-            myHandler.removeCallbacks(mTretmentPhotoSavingRunnable);
-            myHandler.post(mTretmentPhotoSavingRunnable);
+
+            copyTreatmentPhotoAndSaveOrUpdateToDataBase();
+
+            // imageUriInView = null, чтоб повторно не сохранять то же фото
+            imageUriInView = null;
+
         } else {
+            // хотя, новое фото без фото быть не должно
             if (newTreatmentPhoto) {
                 saveTreatmentPhotoToDataBase();
                 newTreatmentPhoto = false;
@@ -1028,7 +951,75 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
             // выставляем флаг treatmentPhotoHasChanged = false
             treatmentPhotoHasChanged = false;
+        }
+    }
 
+    private void copyTreatmentPhotoAndSaveOrUpdateToDataBase() {
+        // сохранение загруженного фото
+        if (loadedImageFilePath != null) {
+
+            File fileOfPhoto = new File(loadedImageFilePath);
+
+            // Получаем путь к файлам для интернал
+            String root = getFilesDir().toString();
+
+            //  /data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos
+            File myDir = new File(root + "/treatment_photos");
+            if (!myDir.mkdirs()) {
+                Log.d("file", "users_photos_dir_Not_created");
+            }
+
+            // SystemClock.elapsedRealtime(); для нумерации сохраняемых файлов
+            String destinationFileName = "trImage-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg";
+            File destinationFile = new File(myDir, destinationFileName);
+
+            if (newTreatmentPhoto) {
+                // если новая (не обновляемая) фотография
+                treatmentPhotoFilePath = destinationFile.toString();
+
+                // если в Базу сохранилось удачно,
+                // то копируем файл снимка в TreatmentPhotoCopyAsyncTask в отдельном потоке
+                // и даем новому файлу имя
+                // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
+                if (saveTreatmentPhotoToDataBase()) {
+                    new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
+
+                    newTreatmentPhoto = false;
+                    afterSaveOrUpdate();
+                    // после сохранения выставляем флаг treatmentPhotoHasChanged = false
+                    treatmentPhotoHasChanged = false;
+                } else {
+                    Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                }
+
+            } else {
+                // если фотография обновляется, то сначала удаляем старую фотографию
+                File oldFile = new File(treatmentPhotoFilePath);
+                if (oldFile.exists()) {
+                    if (!oldFile.delete()) {
+                        Toast.makeText(this, R.string.old_file_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                treatmentPhotoFilePath = destinationFile.toString();
+
+                if (updateTreatmentPhotoToDataBase()) {
+                    // если в Базу сохранилось удачно,
+                    // то копируем файл снимка в TreatmentPhotoCopyAsyncTask в отдельном потоке
+                    // и даем новому файлу имя
+                    // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
+                    new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
+                } else {
+                    Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                }
+
+                afterSaveOrUpdate();
+
+                // после сохранения выставляем флаг treatmentPhotoHasChanged = false
+                treatmentPhotoHasChanged = false;
+            }
+        } else {
+            Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1037,20 +1028,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             goToTreatmentActivity();
         } else {
             editTreatmentPhoto = false;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mDescriptionView.setVisibility(View.INVISIBLE);
-                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
-                    fab.setVisibility(View.VISIBLE);
-                    frm_save.setVisibility(View.GONE);
-                    frm_delete.setVisibility(View.VISIBLE);
-                }
-            });
+            mDescriptionView.setVisibility(View.INVISIBLE);
+            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+            fab.setVisibility(View.VISIBLE);
+            frm_save.setVisibility(View.GONE);
+            frm_delete.setVisibility(View.VISIBLE);
         }
     }
 
-    private void saveTreatmentPhotoToDataBase() {
+    private boolean saveTreatmentPhotoToDataBase() {
 
         ContentValues values = new ContentValues();
         values.put(TreatmentPhotosEntry.COLUMN_U_ID, _idUser);
@@ -1072,25 +1058,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
             TreatmentPhotosFragment.mScrollToEnd = true;
 
-            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+            Toast.makeText(this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
+
+            return true;
+
         } else {
-            // т.к. Toast.makeText вызывается не с основного треда, надо делать через Looper
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Saved To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+            Toast.makeText(this, "TreatmentPhoto has NOT been Saved To DataBase", Toast.LENGTH_LONG).show();
+
+            return false;
         }
     }
 
-    private void updateTreatmentPhotoToDataBase() {
+    private boolean updateTreatmentPhotoToDataBase() {
 
         ContentValues values = new ContentValues();
         values.put(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME, textPhotoDescription);
@@ -1104,21 +1083,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+
+            Toast.makeText(this, "TreatmentPhoto has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
+
+            return false;
 
         } else {
             // update в Базе был успешным
-            myHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto Updated To DataBase", Toast.LENGTH_LONG).show();
-                }
-            });
+
+            Toast.makeText(this, "TreatmentPhoto Updated To DataBase", Toast.LENGTH_LONG).show();
+
+            return true;
         }
     }
 
@@ -1126,10 +1101,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         File toBeDeletedFile = new File(treatmentPhotoFilePath);
         if (toBeDeletedFile.exists()) {
             if (!toBeDeletedFile.delete()) {
-                Toast.makeText(FullscreenPhotoActivity.this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
                 return false;
             }
         }
+
+        Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
+
         return true;
     }
 
@@ -1154,7 +1132,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         }
     }
 
-
     // мой Zoom класс
     private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
 
@@ -1167,11 +1144,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         }
 
         // для DoubleTap
-        //boolean taped = false;
         boolean firstTouch = false;
-        //boolean firstMove = false;
         long touchTime = 0;
-        //long moveTime = 0;
 
         @Override
         public boolean onTouch(final View view, final MotionEvent event) {
@@ -1217,10 +1191,61 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
                 myHandler.removeCallbacks(mToToggleRunnable);
                 myHandler.postDelayed(mToToggleRunnable, 400);
-
             }
 
             return true;
+        }
+    }
+
+    // класс TreatmentPhotoCopyAsyncTask (для копирования файла фото) делаем статическим,
+    // чтоб не было утечки памяти при его работе
+    private static class TreatmentPhotoCopyAsyncTask extends AsyncTask<File, Void, Void> {
+        // получаем WeakReference на FullscreenPhotoActivity,
+        // чтобы GC мог его собрать
+        private WeakReference<FullscreenPhotoActivity> fullscreenPhotoActivityReference;
+
+        TreatmentPhotoCopyAsyncTask(FullscreenPhotoActivity context) {
+            fullscreenPhotoActivityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Void doInBackground(File... files) {
+            File fileOfPhoto = files[0];
+            File destination = files[1];
+
+            final FullscreenPhotoActivity fullscreenPhotoActivity = fullscreenPhotoActivityReference.get();
+
+            try {
+                FileUtils.copyFile(fileOfPhoto, destination);
+
+                if (fullscreenPhotoActivity != null) {
+                    fullscreenPhotoActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(fullscreenPhotoActivity, R.string.file_copy, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+            } catch (NullPointerException | IOException e) {
+                // если были ошибки во время копирования
+                // то удаляем конечный файл (если он образовался)
+                if (destination.exists()) {
+                    if (!destination.delete()) {
+                        if (fullscreenPhotoActivity != null) {
+                            fullscreenPhotoActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(fullscreenPhotoActivity, R.string.file_copy_error, Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                }
+
+                e.getStackTrace();
+            }
+            return null;
         }
     }
 }
