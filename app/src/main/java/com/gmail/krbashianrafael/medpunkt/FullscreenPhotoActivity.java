@@ -24,7 +24,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -206,51 +205,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // скрываем UI
             hide();
 
-            // получаем угол поворота картинки из файла
-            float rotate = 0f;
-            try {
-                ExifInterface exifInterface = new ExifInterface(treatmentPhotoFilePath);
-                int IMAGE_ORIENTATION = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
-
-                switch (IMAGE_ORIENTATION) {
-                    case ExifInterface.ORIENTATION_ROTATE_180: // 3
-                        rotate = 180f;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_90: // 6
-                        rotate = -90f;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270: // 8
-                        rotate = 90f;
-                        break;
-                    default:
-                        break;
-                }
-            } catch (IOException e) {
-                Toast.makeText(this, R.string.no_image_orientation, Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-
-            // если угол = 0 - вставляем картинку без трансформации
-            // если не 0 - с трансформацией (поворот в обратную сторону для выравнивания)
-            if (rotate == 0) {
-                GlideApp.with(this)
-                        .load(treatmentPhotoFilePath)
-                        .dontTransform()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .error(R.drawable.error_camera_alt_gray_128dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imagePhoto);
-            } else {
-                GlideApp.with(this)
-                        .load(treatmentPhotoFilePath)
-                        .transform(new RotateTransformation(rotate))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .error(R.drawable.error_camera_alt_gray_128dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imagePhoto);
-            }
+            // грузим фото в imagePhoto
+            GlideApp.with(this)
+                    .load(treatmentPhotoFilePath)
+                    .dontTransform()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.error_camera_alt_gray_128dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imagePhoto);
 
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -685,29 +648,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                         show();
                     }
 
-                    // получаем угол обратного (-1*) поворота картинки для приведения ее в вертикальное положение
-                    float rotate = -1 * getRotation(this, newSelectedImageUri);
+                    // получаем путь к загруженному фото
+                    loadedImageFilePath = getLoadedImageFilePath(this, newSelectedImageUri);
 
                     // грузим картинку в imagePhoto
-                    if (rotate == 0f) {
-                        GlideApp.with(this)
-                                .load(newSelectedImageUri)
-                                .dontTransform()
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .skipMemoryCache(true)
-                                .error(R.drawable.error_camera_alt_gray_128dp)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imagePhoto);
-                    } else {
-                        GlideApp.with(this)
-                                .load(newSelectedImageUri)
-                                .transform(new RotateTransformation(rotate))
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .skipMemoryCache(true)
-                                .error(R.drawable.error_camera_alt_gray_128dp)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imagePhoto);
-                    }
+                    GlideApp.with(this)
+                            .load(newSelectedImageUri)
+                            .dontTransform()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .error(R.drawable.error_camera_alt_gray_128dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(imagePhoto);
 
                     imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     treatmentPhotoHasChanged = true;
@@ -728,31 +680,27 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         }
     }
 
-    // метод для получения оринетации (угол поворота) фотографии
-    // и, в этом же методе получаем путь к загружаемому фото (loadedImageFilePath) для дальнейшего сохранения этого фото
-    private int getRotation(Context context, Uri photoUri) {
+    // метод для получения пути к загружаемому фото (loadedImageFilePath) для дальнейшего сохранения этого фото
+    private String getLoadedImageFilePath(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
-                new String[]{MediaStore.Images.ImageColumns.ORIENTATION, MediaStore.Images.Media.DATA}, null, null, null);
+                new String[]{MediaStore.Images.Media.DATA}, null, null, null);
 
         if (cursor != null) {
+
             if (cursor.getCount() != 1) {
                 cursor.close();
-                return -1;
+                return null;
             }
+
             cursor.moveToFirst();
-        }
 
-        int imageOrientation = 0;
-
-        if (cursor != null) {
-            imageOrientation = cursor.getInt(0);
-            loadedImageFilePath = cursor.getString(1);
-
+            String mLoadedImageFilePath = cursor.getString(0);
             cursor.close();
             cursor = null;
+            return mLoadedImageFilePath;
         }
 
-        return imageOrientation;
+        return null;
     }
 
     // в toggle
