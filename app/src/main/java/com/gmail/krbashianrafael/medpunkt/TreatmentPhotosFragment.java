@@ -56,7 +56,7 @@ public class TreatmentPhotosFragment extends Fragment
      * поэтому устанавливаем инициализатор для каждого лоадера
      * в данном случае private static final int TR_PHOTOS_LOADER = 2;
      */
-    private static final int TR_PHOTOS_LOADER = 2;
+    private static final int TR_PHOTOS_IN_FRAGMENT_LOADER = 2;
 
     public TreatmentPhotosFragment() {
         // нужен ПУСТОЙ конструктор
@@ -103,11 +103,24 @@ public class TreatmentPhotosFragment extends Fragment
                 startActivity(intentToTreatmentPhoto);
             }
         });
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Инициализируем Loader
+        getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // Инициализируем Loader
+        getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
+
         // для возобновления данных
         if (treatmentPhotoRecyclerViewAdapter!=null){
             treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
@@ -158,11 +171,10 @@ public class TreatmentPhotosFragment extends Fragment
 
             // устанавливаем адаптер для RecyclerView
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
-
-            // Инициализируем Loader
-            getLoaderManager().initLoader(TR_PHOTOS_LOADER, null, this);
         }
     }
+
+
 
 
     @NonNull
@@ -228,6 +240,13 @@ public class TreatmentPhotosFragment extends Fragment
             }
         }
 
+        // оповещаем LayoutManager, что произошли изменения
+        // LayoutManager обновляет RecyclerView
+        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+        // делаем destroyLoader, чтоб он сам повторно не вызывался
+        getLoaderManager().destroyLoader(TR_PHOTOS_IN_FRAGMENT_LOADER);
+
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
@@ -237,10 +256,6 @@ public class TreatmentPhotosFragment extends Fragment
             txtAddPhotos.setVisibility(View.INVISIBLE);
             fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
         }
-
-        // оповещаем LayoutManager, что произошли изменения
-        // LayoutManager обновляет RecyclerView
-        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент

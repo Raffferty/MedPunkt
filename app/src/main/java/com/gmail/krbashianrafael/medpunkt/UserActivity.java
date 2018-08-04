@@ -71,7 +71,7 @@ public class UserActivity extends AppCompatActivity
     // новый ли пользователь, возможность изменфть пользователя,
     // показывать стрелку обратно, был ли изменен пользователь,
     // в процессе сохранения или нет
-    private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdating;
+    private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting;
 
     private ActionBar actionBar;
 
@@ -500,11 +500,11 @@ public class UserActivity extends AppCompatActivity
 
                 // флаг, чтоб повторный клик не работал,
                 // пока идет сохранения
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
 
-                onSavingOrUpdating = true;
+                onSavingOrUpdatingOrDeleting = true;
 
                 if (userHasNotChanged() && !newUser) {
 
@@ -522,7 +522,7 @@ public class UserActivity extends AppCompatActivity
 
                     fab.startAnimation(fabShowAnimation);
 
-                    onSavingOrUpdating = false;
+                    onSavingOrUpdatingOrDeleting = false;
 
                 } else {
                     saveOrUpdateUser();
@@ -533,9 +533,11 @@ public class UserActivity extends AppCompatActivity
             case R.id.action_delete:
                 // флаг, чтоб клик не работал,
                 // пока идет сохранения
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
+
+                onSavingOrUpdatingOrDeleting = true;
 
                 showDeleteConfirmationDialog();
                 return true;
@@ -579,12 +581,20 @@ public class UserActivity extends AppCompatActivity
         builder.setMessage(getString(R.string.delete_user_dialog_msg) + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteUserFromDataBase();
+                if (onSavingOrUpdatingOrDeleting){
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }else {
+                    onSavingOrUpdatingOrDeleting = true;
+                    deleteUserFromDataBase();
+                }
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (dialog != null) {
+                    onSavingOrUpdatingOrDeleting = false;
                     dialog.dismiss();
                 }
             }
@@ -647,7 +657,7 @@ public class UserActivity extends AppCompatActivity
 
         // если поля имени и др были не верными - выходим
         if (wrongField) {
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
             return;
         }
 
@@ -723,7 +733,7 @@ public class UserActivity extends AppCompatActivity
             imagePhoto.setClickable(false);
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
         }
     }
 
@@ -860,11 +870,13 @@ public class UserActivity extends AppCompatActivity
                 if (loadedBitmap != null) {
                     new UserPhotoSavingAsyncTask(this, loadedBitmap, fileDir).execute();
                 } else {
+                    onSavingOrUpdatingOrDeleting = false;
                     afterSaveUser();
                 }
             }
             // если первичное сохранение нового пользователя в Базу НЕ было успешным
         } else {
+            onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(UserActivity.this, "User NOT Saved To DataBase", Toast.LENGTH_LONG).show();
         }
     }
@@ -941,6 +953,7 @@ public class UserActivity extends AppCompatActivity
         }
 
         if (rowsDeleted == 0) {
+            onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(this, "User NOT Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
 
@@ -1142,7 +1155,13 @@ public class UserActivity extends AppCompatActivity
             super.onPostExecute(savedFile);
 
             UserActivity activity = userActivityReference.get();
-            if (activity == null || activity.isFinishing() || savedFile == null) {
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
+
+            if (savedFile == null){
+                activity.goBack = false;
+                activity.afterUpdateUser();
                 return;
             }
 
@@ -1164,6 +1183,8 @@ public class UserActivity extends AppCompatActivity
                 // если сохранение или обновление файла фото было НЕ удачным
             } else {
                 activity.userPhotoUri = "No_Photo";
+                activity.goBack = false;
+                activity.afterUpdateUser();
                 Toast.makeText(activity, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
             }
         }

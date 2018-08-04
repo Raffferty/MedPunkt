@@ -255,7 +255,6 @@ public class UsersActivity extends AppCompatActivity
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
         // получаем ссылку на данные в usersRecyclerViewAdapter
         // и очищаем ArrayList<UserItem> myData от данных
         ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();

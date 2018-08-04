@@ -1,11 +1,15 @@
 package com.gmail.krbashianrafael.medpunkt;
 
 import android.annotation.SuppressLint;
+import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -33,8 +38,20 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 
-public class TreatmentActivity extends AppCompatActivity {
+import java.io.File;
+
+public class TreatmentActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    /**
+     * Identifier for the user data loader
+     * Лоадеров может много (они обрабатываются в case)
+     * поэтому устанавливаем инициализатор для каждого лоадера
+     * в данном случае private static final int TR_PHOTOS_LOADER = 2;
+     */
+    private static final int TR_PHOTOS_LOADER = 22;
 
     // Фрагменты
     protected TreatmentDescriptionFragment treatmentDescriptionFragment;
@@ -47,7 +64,7 @@ public class TreatmentActivity extends AppCompatActivity {
     protected long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean goBack, newDisease, onSavingOrUpdating;
+    private boolean goBack, newDisease, onSavingOrUpdatingOrDeleting;
     protected boolean editDisease;
 
     // это временно для отработки в treatmentPhotoRecyclerView пустого листа
@@ -234,7 +251,7 @@ public class TreatmentActivity extends AppCompatActivity {
                             getResources().getString(R.string.photos)));
                 }
 
-               tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
+                tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
                         getResources().getColor(R.color.colorFab));
             }
 
@@ -343,11 +360,11 @@ public class TreatmentActivity extends AppCompatActivity {
 
                 // флаг, чтоб повторный клик не работал,
                 // пока идет сохранения
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
 
-                onSavingOrUpdating = true;
+                onSavingOrUpdatingOrDeleting = true;
 
                 // скручиваем клавиатуру
                 hideSoftInput();
@@ -376,7 +393,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
                     treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
-                    onSavingOrUpdating = false;
+                    onSavingOrUpdatingOrDeleting = false;
                 } else {
                     focusHolder.requestFocus();
                     saveDiseaseAndTreatment();
@@ -386,7 +403,7 @@ public class TreatmentActivity extends AppCompatActivity {
             case R.id.action_delete:
                 // флаг, чтоб клик не работал,
                 // пока идет сохранения
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
 
@@ -455,12 +472,20 @@ public class TreatmentActivity extends AppCompatActivity {
         builder.setMessage(getString(R.string.delete_disease_dialog_msg) + " " + editTextDiseaseName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteDiseaseAndTreatmentFromDataBase();
+                if (onSavingOrUpdatingOrDeleting){
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }else {
+                    onSavingOrUpdatingOrDeleting = true;
+                    deleteDiseaseAndTreatmentFromDataBase();
+                }
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (dialog != null) {
+                    onSavingOrUpdatingOrDeleting = false;
                     dialog.dismiss();
                 }
             }
@@ -511,7 +536,7 @@ public class TreatmentActivity extends AppCompatActivity {
 
         // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
             return;
         } else {
             textInputLayoutDiseaseName.setError(null);
@@ -536,7 +561,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 updateDiseaseAndTreatmentToDataBase();
             }
 
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
 
             //и идем в DiseasesActivity
             goToDiseasesActivity();
@@ -554,7 +579,7 @@ public class TreatmentActivity extends AppCompatActivity {
                 updateDiseaseAndTreatmentToDataBase();
             }
 
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
 
             // и формируем UI
             categoryAdapter.setPagesCount(2);
@@ -632,7 +657,6 @@ public class TreatmentActivity extends AppCompatActivity {
 
     private void updateDiseaseAndTreatmentToDataBase() {
         ContentValues values = new ContentValues();
-        //values.put(DiseasesEntry.COLUMN_U_ID, _idUser);
         values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
@@ -654,22 +678,107 @@ public class TreatmentActivity extends AppCompatActivity {
 
 
     private void deleteDiseaseAndTreatmentFromDataBase() {
-        // Uri к заболеванию, который будет удаляться
-        Uri mCurrentUserUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
+        // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
+        // которые будут удаляться вместе с удалением заболевания из таблицы diseases
+        // кроме того, перед удалением строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
+        getLoaderManager().initLoader(TR_PHOTOS_LOADER, null, this);
+    }
 
-        int rowsDeleted = 0;
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        // для Loader в projection обязательно нужно указывать поле с _ID
+        // здесь мы указываем поля таблицы treatmentPhotos , которые будем брать из Cursor для дальнейшей обработки
+        String[] projection = {
+                TreatmentPhotosEntry.TR_PHOTO_ID,
+                TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
+
+        // выборку фото делаем по _idDisease, который будет удаляться
+        String selection = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(_idDisease)};
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        // Loader грузит ВСЕ данные из таблицы users через Provider
+        return new CursorLoader(this,   // Parent activity context
+                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
+                projection,
+                selection,
+                selectionArgs,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null) {
+
+            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
+            cursor.moveToPosition(-1);
+
+            // проходим в цикле курсор
+            while (cursor.moveToNext()) {
+
+                int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
+                int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
+
+                long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
+                String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
+
+                // УДАЛЯЕМ ФАЙЛ СНИМКА
+                File toBeDeletedFile = new File(trPhotoUri);
+                if (toBeDeletedFile.exists()) {
+                    // TODO действия, если файл фото не удалилился
+                    if (!toBeDeletedFile.delete()) {
+                        Log.d("mOnLoadFinished", "file_not_deleted");
+                    } else {
+                        Log.d("mOnLoadFinished", "file_deleted");
+                    }
+                } else {
+                    Log.d("mOnLoadFinished", "file_deleted");
+                }
+
+                // УДАЛЯЕМ СТРОКУ ИЗ ТАБЛИЦЫ treatmentPhotos
+                // Uri к строке в таблице treatmentPhotos, которая будет удаляться
+                Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_trPhotoId));
+
+                // удаляем строку из таблицы treatmentPhotos
+                int rowsTrPhotoDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
+
+                // TODO действия, если фото не удалилилось из Базы
+                if (rowsTrPhotoDeleted == 0) {
+                    Log.d("mOnLoadFinished", "TreatmentPhoto has NOT been deleted from DataBase");
+                } else {
+                    Log.d("mOnLoadFinished", "TreatmentPhoto Deleted from DataBase");
+                }
+            }
+        }
+
+        // делаем destroyLoader, чтоб он сам повторно не вызывался
+        getLoaderManager().destroyLoader(TR_PHOTOS_LOADER);
+
+        // ПОСЛЕ УДАЛЕНИЯ ВСЕХ СНИМКОВ, СВЯЗАННЫХ С ЛЕЧЕНИЕМ УДАЛЯЕМОГО ЗАБОЛЕВАНИЯ,
+        // УДАЛЯЕМ САМО ЗАБОЛЕВАНИЕ ИЗ ТАБЛИЦЫ diseases
+        // Uri к заболеванию, который будет удаляться из таблицы diseases
+        Uri mCurrentDiseaseUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
+
+        int rowsDiseaseDeleted = 0;
 
         // удаляем заболевание из Базы
         if (_idDisease != 0) {
-            rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
+            rowsDiseaseDeleted = getContentResolver().delete(mCurrentDiseaseUri, null, null);
         }
 
-        if (rowsDeleted == 0) {
-            Toast.makeText(this, "DiseaseAndTreatment has NOT been  Deleted from DataBase", Toast.LENGTH_LONG).show();
+        // TODO действия, если заболевание не удалилилось из Базы
+        if (rowsDiseaseDeleted == 0) {
+            onSavingOrUpdatingOrDeleting = false;
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
 
             goToDiseasesActivity();
         }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //
     }
 }

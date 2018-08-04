@@ -114,8 +114,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     private final Runnable mtapedRunnable = new Runnable() {
         @Override
         public void run() {
-            // выставляет taped = false (вызывается с задержкой 100 мс)
-            taped = false;
+            // выставляет tapped = false (вызывается с задержкой 100 мс)
+            tapped = false;
         }
     };
 
@@ -123,7 +123,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         @Override
         public void run() {
             // вызывает toggle() при исполнении условий (вызывается с задержкой 400 мс)
-            if (!taped && !inZoom[0] && !landscape && !onLoading) {
+            if (!tapped && !inZoom[0] && !landscape && !onLoading) {
                 toggle();
             }
         }
@@ -132,7 +132,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // проверка в состоянии зума или нет
     final boolean[] inZoom = {false};
     // onLoading - в процессе загрузки или нет
-    private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, taped, onLoading, onSavingOrUpdating;
+    private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, tapped;
+    private boolean onLoading, onSavingOrUpdatingOrDeleting;
 
     private View mDescriptionView, LL_title, frm_back, frm_blank, frm_save, frm_delete;
     private EditText focusHolder, editTextDateOfTreatmentPhoto;
@@ -402,11 +403,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         frm_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return;
                 }
 
-                onSavingOrUpdating = true;
+                onSavingOrUpdatingOrDeleting = true;
 
                 if (photoAndDescriptionHasNotChanged() && !newTreatmentPhoto) {
 
@@ -420,17 +421,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     frm_delete.setVisibility(View.VISIBLE);
                 } else {
                     focusHolder.requestFocus();
-                    saveTreatmentPhoto();
+                    saveOrUpdateTreatmentPhoto();
                 }
 
-                onSavingOrUpdating = false;
+                onSavingOrUpdatingOrDeleting = false;
             }
         });
 
         frm_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (onSavingOrUpdating) {
+                if (onSavingOrUpdatingOrDeleting) {
                     return;
                 }
 
@@ -540,9 +541,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         builder.setMessage(getString(R.string.delete_trPhoto_dialog_msg) + " " + editTextPhotoDescription.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                if (onSavingOrUpdatingOrDeleting) {
+                    return;
+                }
+
+                onSavingOrUpdatingOrDeleting = true;
+
                 if (deleteTreatmentPhoto()) {
                     deleteTreatmentPhotoFromDataBase();
                 } else {
+                    onSavingOrUpdatingOrDeleting = false;
                     Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
                 }
             }
@@ -550,6 +558,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (dialog != null) {
+                    onSavingOrUpdatingOrDeleting = false;
                     dialog.dismiss();
                 }
             }
@@ -782,7 +791,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     dialog.dismiss();
                 }
 
-                saveTreatmentPhoto();
+                saveOrUpdateTreatmentPhoto();
             }
         });
 
@@ -817,7 +826,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         }, UI_ANIMATION_DELAY);
     }
 
-    private void saveTreatmentPhoto() {
+    private void saveOrUpdateTreatmentPhoto() {
 
         hideSoftInput();
 
@@ -867,7 +876,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 mOrientationListener.enable();
             }
 
-            onSavingOrUpdating = false;
+            onSavingOrUpdatingOrDeleting = false;
 
             return;
         } else {
@@ -932,11 +941,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 if (saveTreatmentPhotoToDataBase()) {
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
 
+                    // после сохранения выставляем флаги = false
                     newTreatmentPhoto = false;
-                    afterSaveOrUpdate();
-                    // после сохранения выставляем флаг treatmentPhotoHasChanged = false
                     treatmentPhotoHasChanged = false;
+                    onSavingOrUpdatingOrDeleting = false;
+
+                    afterSaveOrUpdate();
                 } else {
+                    onSavingOrUpdatingOrDeleting = false;
                     Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
                 }
 
@@ -957,7 +969,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     // и даем новому файлу имя
                     // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
+
+                    onSavingOrUpdatingOrDeleting = false;
+
                 } else {
+                    onSavingOrUpdatingOrDeleting = false;
                     Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
                 }
 
@@ -967,6 +983,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 treatmentPhotoHasChanged = false;
             }
         } else {
+            onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
         }
     }
@@ -1051,10 +1068,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             if (!toBeDeletedFile.delete()) {
                 Toast.makeText(this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
                 return false;
+            } else {
+                Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
             }
+        } else {
+            Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
         }
-
-        Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
 
         return true;
     }
@@ -1062,16 +1081,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     private void deleteTreatmentPhotoFromDataBase() {
 
         // Uri к снимку, который будет удаляться
-        Uri mCurrentUserUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_idTrPhoto));
+        Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_idTrPhoto));
 
         int rowsDeleted = 0;
 
         // удаляем снимок из Базы
         if (_idTrPhoto != 0) {
-            rowsDeleted = getContentResolver().delete(mCurrentUserUri, null, null);
+            rowsDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
         }
 
         if (rowsDeleted == 0) {
+            onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(this, "TreatmentPhoto has NOT been deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "TreatmentPhoto Deleted from DataBase", Toast.LENGTH_LONG).show();
@@ -1101,7 +1121,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             view.performClick();
 
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                taped = false;
+                tapped = false;
                 if (firstTouch) inZoom[0] = false;
             }
 
@@ -1112,23 +1132,23 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
 
             if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-                inZoom[0] = !taped;
+                inZoom[0] = !tapped;
             }
 
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
 
-                taped = true;
+                tapped = true;
 
                 myHandler.removeCallbacks(mtapedRunnable);
 
-                // через 100 мс выставляем taped = false
+                // через 100 мс выставляем tapped = false
                 // чтоб при ACTION_DOWN с реакцией экрана на скольжение пальца (ACTION_MOVE) inZoom[0] был false
                 myHandler.postDelayed(mtapedRunnable, 100);
 
                 // првоерка DoubleTap (в промежутке 300 мс)
                 // если DoubleTap, то не вызывается toggle()
                 if (firstTouch && (System.currentTimeMillis() - touchTime) <= 300) {
-                    taped = false;
+                    tapped = false;
                     inZoom[0] = true;
                     firstTouch = false;
                 } else {
@@ -1192,6 +1212,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 }
 
                 e.getStackTrace();
+
+                return null;
             }
             return null;
         }
