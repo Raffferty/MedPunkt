@@ -33,11 +33,10 @@
     <string name="file_not_deleted">Фотография не удалилась</string>
     <string name="file_copy">фотографии скопирована</string>
     <string name="file_copy_error">При копировании фотографии возникли ошибки</string>
+    <string name="disease_deleting_error">При удалении заболевания возникли ошибки</string>
+    <string name="disease_deleted">Заболевания удалилось</string>
     <string name="old_file_not_deleted">Обновляемая фотография не удалилась</string>
     <string name="file_deleted">Фотография удалилась</string>
-
-    <string name="path_to_users_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/</string>
-
     <string name="error_name">Укажите имя</string>
     <string name="error_date">Укажите дату рождения</string>
     <string name="focusholder">focusHolder</string>
@@ -61,18 +60,15 @@
     <string name="date_of_treatment_photo">дата снимка</string>
     <string name="error_date_of_treatment_photo">Укажите дату снимка</string>
     <string name="fullscreen_image_description">fullscreen_image</string>
-    <string name="path_to_treatment_photo">/data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos/Image-2.jpg</string>
     <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
     <string name="no_photo">No_Photo</string>
-    <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
     <string name="delete_trPhoto_dialog_msg">Удалить снимок</string>
-    <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
     <string name="delete_disease_dialog_msg">Удалить заболевание</string>
     <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
     <string name="delete_user_dialog_msg">Удалить пользователя</string>
-    <!-- Dialog button text for the option to confirm deleting the current user [CHAR LIMIT=20] -->
+    <!-- Dialog button text for the option to confirm deleting [CHAR LIMIT=20] -->
     <string name="delete">Удалить</string>
-    <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->
+    <!-- Dialog button text for the option to cancel deletion [CHAR LIMIT=20] -->
     <string name="cancel">Отменить</string>
 
 

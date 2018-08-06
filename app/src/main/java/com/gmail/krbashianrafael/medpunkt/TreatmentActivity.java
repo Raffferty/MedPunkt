@@ -2,6 +2,8 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,10 +11,15 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -37,13 +44,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class TreatmentActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Identifier for the user data loader
@@ -472,13 +484,16 @@ public class TreatmentActivity extends AppCompatActivity
         builder.setMessage(getString(R.string.delete_disease_dialog_msg) + " " + editTextDiseaseName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                if (onSavingOrUpdatingOrDeleting){
+                if (onSavingOrUpdatingOrDeleting) {
                     if (dialog != null) {
                         dialog.dismiss();
                     }
-                }else {
+                } else {
                     onSavingOrUpdatingOrDeleting = true;
-                    deleteDiseaseAndTreatmentFromDataBase();
+                    deleteDiseaseAndTreatmentPhotos();
+                    /*if (deleteDiseaseAndTreatmentPhotosFromDataBase() !=0){
+                        deleteTreatmentPhotos();
+                    }*/
                 }
             }
         });
@@ -676,8 +691,7 @@ public class TreatmentActivity extends AppCompatActivity
         }
     }
 
-
-    private void deleteDiseaseAndTreatmentFromDataBase() {
+    private void deleteDiseaseAndTreatmentPhotos() {
         // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
         // которые будут удаляться вместе с удалением заболевания из таблицы diseases
         // кроме того, перед удалением строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
@@ -708,6 +722,9 @@ public class TreatmentActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // ArrayList для путей к файлам фото, которые нужно будет удалить
+        ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
+
         if (cursor != null) {
 
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
@@ -716,14 +733,16 @@ public class TreatmentActivity extends AppCompatActivity
             // проходим в цикле курсор
             while (cursor.moveToNext()) {
 
-                int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
+                //int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
 
-                long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
+                //long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
 
+                photoFilePathesToBeDeletedList.add(trPhotoUri);
+
                 // УДАЛЯЕМ ФАЙЛ СНИМКА
-                File toBeDeletedFile = new File(trPhotoUri);
+                /*File toBeDeletedFile = new File(trPhotoUri);
                 if (toBeDeletedFile.exists()) {
                     // TODO действия, если файл фото не удалилился
                     if (!toBeDeletedFile.delete()) {
@@ -733,52 +752,216 @@ public class TreatmentActivity extends AppCompatActivity
                     }
                 } else {
                     Log.d("mOnLoadFinished", "file_deleted");
-                }
+                }*/
 
                 // УДАЛЯЕМ СТРОКУ ИЗ ТАБЛИЦЫ treatmentPhotos
                 // Uri к строке в таблице treatmentPhotos, которая будет удаляться
-                Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_trPhotoId));
+                //Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_trPhotoId));
 
                 // удаляем строку из таблицы treatmentPhotos
-                int rowsTrPhotoDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
+                //int rowsTrPhotoDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
 
                 // TODO действия, если фото не удалилилось из Базы
-                if (rowsTrPhotoDeleted == 0) {
+                /*if (rowsTrPhotoDeleted == 0) {
                     Log.d("mOnLoadFinished", "TreatmentPhoto has NOT been deleted from DataBase");
                 } else {
                     Log.d("mOnLoadFinished", "TreatmentPhoto Deleted from DataBase");
-                }
+                }*/
             }
         }
 
         // делаем destroyLoader, чтоб он сам повторно не вызывался
         getLoaderManager().destroyLoader(TR_PHOTOS_LOADER);
 
+        // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
+        // а далее, и для удаления файлов
+        new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute();
+
+
         // ПОСЛЕ УДАЛЕНИЯ ВСЕХ СНИМКОВ, СВЯЗАННЫХ С ЛЕЧЕНИЕМ УДАЛЯЕМОГО ЗАБОЛЕВАНИЯ,
         // УДАЛЯЕМ САМО ЗАБОЛЕВАНИЕ ИЗ ТАБЛИЦЫ diseases
         // Uri к заболеванию, который будет удаляться из таблицы diseases
-        Uri mCurrentDiseaseUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
+        //Uri mCurrentDiseaseUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
 
-        int rowsDiseaseDeleted = 0;
+        //int rowsDiseaseDeleted = 0;
 
         // удаляем заболевание из Базы
-        if (_idDisease != 0) {
+        /*if (_idDisease != 0) {
             rowsDiseaseDeleted = getContentResolver().delete(mCurrentDiseaseUri, null, null);
-        }
+        }*/
 
-        // TODO действия, если заболевание не удалилилось из Базы
-        if (rowsDiseaseDeleted == 0) {
+        /*if (rowsDiseaseDeleted == 0) {
             onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
 
             goToDiseasesActivity();
-        }
+        }*/
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         //
+    }
+
+    // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
+    // чтоб не было утечки памяти при его работе
+    private static class DiseaseAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<TreatmentActivity> treatmentActivityReference;
+        ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private int mRowsFromTreatmentPhotosDeleted = -1;
+
+        // в конструкторе получаем WeakReference<TreatmentActivity>
+        // и образовываем список ArrayList<String> mPhotoFilePathesListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
+        // это список путей к файлам, которые необходимо будет удалить
+        // тоесть наш mPhotoFilePathesListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
+        DiseaseAndTreatmentPhotosDeletingAsyncTask(TreatmentActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
+            treatmentActivityReference = new WeakReference<>(context);
+            mPhotoFilePathesListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
+        }
+
+        // в onPreExecute получаем  TreatmentActivity treatmentActivity
+        // и если он null, то никакое удаление не происходит
+        // если же treatmentActivity не null,
+        // то в основном треде удаляем строки из таблиц treatmentPhotos и diseases в одной транзакции
+        // при этом, получаем (как резульат удаления строк из таблицы treatmentPhotos) количество удаленных строк
+        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathesListToBeDeleted
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            TreatmentActivity treatmentActivity = treatmentActivityReference.get();
+            if (treatmentActivity == null) {
+                return;
+            }
+
+            mRowsFromTreatmentPhotosDeleted = deleteDiseaseAndTreatmentPhotosFromDataBase(treatmentActivity);
+        }
+
+        // метод удаления строк из таблиц treatmentPhotos и diseases в одной транзакции
+        // возвращает количество удаленных строк из таблицы treatmentPhotos или -1
+        private int deleteDiseaseAndTreatmentPhotosFromDataBase(TreatmentActivity treatmentActivity) {
+            // ArrayList для операций по удалению строк из таблиц treatmentPhotos и diseases
+            // в одной транзакции
+            ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
+
+            // пишем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos
+            String selectionTrPhoto = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
+            String[] selectionArgsTrPhoto = new String[]{String.valueOf(treatmentActivity._idDisease)};
+
+            ContentProviderOperation deleteTreatmentPhotosFromDbOperation = ContentProviderOperation
+                    .newDelete(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI)
+                    .withSelection(selectionTrPhoto, selectionArgsTrPhoto)
+                    .build();
+
+            // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
+            deletingFromDbOperations.add(deleteTreatmentPhotosFromDbOperation);
+
+            // пишем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases
+            String selectionDisease = DiseasesEntry.DIS_ID + "=?";
+            String[] selectionArgsDisease = new String[]{String.valueOf(treatmentActivity._idDisease)};
+
+            ContentProviderOperation deleteDiseaseFromDbOperation = ContentProviderOperation
+                    .newDelete(DiseasesEntry.CONTENT_DISEASES_URI)
+                    .withSelection(selectionDisease, selectionArgsDisease)
+                    .build();
+
+            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
+            deletingFromDbOperations.add(deleteDiseaseFromDbOperation);
+
+            // переменная количества удаленных строк из таблицы treatmentPhotos
+            int rowsFromTreatmentPhotosDeleted = -1;
+
+            try {
+                // запускаем транзакцию удаления строк из таблиц treatmentPhotos и diseases
+                // и получаем результат
+                ContentProviderResult[] results = treatmentActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
+
+                // если транзакция прошла успешно
+                if (results[0] != null) {
+                    // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
+                    rowsFromTreatmentPhotosDeleted = results[0].count;
+                }
+            } catch (RemoteException | OperationApplicationException e) {
+                e.printStackTrace();
+                // если транзакция НЕ прошла успешно, то возвращаем -1
+                return rowsFromTreatmentPhotosDeleted;
+            }
+
+            // возвращаем количество удаленных строк из аблицы treatmentPhotos
+            return rowsFromTreatmentPhotosDeleted;
+        }
+
+        // в doInBackground осуществляем удаление файлов фотографий
+        // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (mRowsFromTreatmentPhotosDeleted == -1) {
+                // если были ошибки во время удаления строк из таблиц treatmentPhotos и diseases
+                // возвращаем false
+                // и выводим сообщение, что заболевания не удалилось и оставляем все как есть (не удаляем файлы)
+                return false;
+            } else if (mRowsFromTreatmentPhotosDeleted == 0) {
+                // если у заболевания не было фотографий,
+                // то ограничиваемся удалением заболевания и таблицы diseases
+                return true;
+            } else {
+                // если mRowsFromTreatmentPhotosDeleted > 0,
+                // то удаляем соответствующие файлы фотографий
+
+                Log.d("mOnLoadFinished", "mRowsFromTreatmentPhotosDeleted = " + mRowsFromTreatmentPhotosDeleted);
+                Log.d("mOnLoadFinished", "mPhotoFilePathesListToBeDeleted.size() = " + mPhotoFilePathesListToBeDeleted.size());
+
+                for (String fPath : mPhotoFilePathesListToBeDeleted) {
+                    Log.d("mOnLoadFinished", "fPath = " + fPath);
+
+                    File toBeDeletedFile = new File(fPath);
+
+                    if (toBeDeletedFile.exists()) {
+                        // TODO действия, если файл фото не удалилился
+                        if (!toBeDeletedFile.delete()) {
+                            Log.d("mOnLoadFinished", "file_not_deleted");
+                        } else {
+                            Log.d("mOnLoadFinished", "file_deleted");
+                        }
+                    } else {
+                        Log.d("mOnLoadFinished", "file_deleted");
+                    }
+                }
+
+                //final TreatmentActivity treatmentActivity = treatmentActivityReference.get();
+
+                /*if (treatmentActivity != null) {
+                    treatmentActivity.myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }*/
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            final TreatmentActivity treatmentActivity = treatmentActivityReference.get();
+
+            if (treatmentActivity == null) {
+                return;
+            }
+
+            if (result) {
+                Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
+                treatmentActivity.goToDiseasesActivity();
+            } else {
+                treatmentActivity.onSavingOrUpdatingOrDeleting = false;
+                Toast.makeText(treatmentActivity, R.string.disease_deleting_error, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
