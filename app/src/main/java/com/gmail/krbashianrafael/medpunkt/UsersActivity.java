@@ -152,10 +152,6 @@ public class UsersActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent toHomeIntent = new Intent(UsersActivity.this, HomeActivity.class);
-        toHomeIntent.putExtra("fromUsers", true);
-        startActivity(toHomeIntent);
-
         finish();
     }
 
@@ -164,12 +160,7 @@ public class UsersActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                Intent toHomeIntent = new Intent(UsersActivity.this, HomeActivity.class);
-                toHomeIntent.putExtra("fromUsers", true);
-                startActivity(toHomeIntent);
-
                 finish();
-
                 return true;
 
             default:

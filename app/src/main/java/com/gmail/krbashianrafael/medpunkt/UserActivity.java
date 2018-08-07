@@ -1045,7 +1045,7 @@ public class UserActivity extends AppCompatActivity
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(activity, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, R.string.photo_not_deleted, Toast.LENGTH_LONG).show();
                         }
                     });
 

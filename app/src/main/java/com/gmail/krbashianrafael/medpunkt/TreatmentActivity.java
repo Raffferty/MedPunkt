@@ -12,13 +12,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
@@ -31,7 +30,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -54,8 +52,6 @@ import java.util.ArrayList;
 
 public class TreatmentActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Identifier for the user data loader
@@ -244,7 +240,7 @@ public class TreatmentActivity extends AppCompatActivity
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
-                            getResources().getString(R.string.photos)));
+                            getResources().getString(R.string.pictures)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -260,7 +256,7 @@ public class TreatmentActivity extends AppCompatActivity
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
-                            getResources().getString(R.string.photos)));
+                            getResources().getString(R.string.pictures)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -491,9 +487,6 @@ public class TreatmentActivity extends AppCompatActivity
                 } else {
                     onSavingOrUpdatingOrDeleting = true;
                     deleteDiseaseAndTreatmentPhotos();
-                    /*if (deleteDiseaseAndTreatmentPhotosFromDataBase() !=0){
-                        deleteTreatmentPhotos();
-                    }*/
                 }
             }
         });
@@ -547,7 +540,6 @@ public class TreatmentActivity extends AppCompatActivity
 
             wrongField = true;
         }
-
 
         // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
@@ -726,47 +718,16 @@ public class TreatmentActivity extends AppCompatActivity
         ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
 
         if (cursor != null) {
-
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
             // проходим в цикле курсор
+            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathesToBeDeletedList
             while (cursor.moveToNext()) {
-
-                //int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
-
-                //long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
 
                 photoFilePathesToBeDeletedList.add(trPhotoUri);
-
-                // УДАЛЯЕМ ФАЙЛ СНИМКА
-                /*File toBeDeletedFile = new File(trPhotoUri);
-                if (toBeDeletedFile.exists()) {
-                    // TODO действия, если файл фото не удалилился
-                    if (!toBeDeletedFile.delete()) {
-                        Log.d("mOnLoadFinished", "file_not_deleted");
-                    } else {
-                        Log.d("mOnLoadFinished", "file_deleted");
-                    }
-                } else {
-                    Log.d("mOnLoadFinished", "file_deleted");
-                }*/
-
-                // УДАЛЯЕМ СТРОКУ ИЗ ТАБЛИЦЫ treatmentPhotos
-                // Uri к строке в таблице treatmentPhotos, которая будет удаляться
-                //Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_trPhotoId));
-
-                // удаляем строку из таблицы treatmentPhotos
-                //int rowsTrPhotoDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
-
-                // TODO действия, если фото не удалилилось из Базы
-                /*if (rowsTrPhotoDeleted == 0) {
-                    Log.d("mOnLoadFinished", "TreatmentPhoto has NOT been deleted from DataBase");
-                } else {
-                    Log.d("mOnLoadFinished", "TreatmentPhoto Deleted from DataBase");
-                }*/
             }
         }
 
@@ -775,29 +736,7 @@ public class TreatmentActivity extends AppCompatActivity
 
         // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
         // а далее, и для удаления файлов
-        new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute();
-
-
-        // ПОСЛЕ УДАЛЕНИЯ ВСЕХ СНИМКОВ, СВЯЗАННЫХ С ЛЕЧЕНИЕМ УДАЛЯЕМОГО ЗАБОЛЕВАНИЯ,
-        // УДАЛЯЕМ САМО ЗАБОЛЕВАНИЕ ИЗ ТАБЛИЦЫ diseases
-        // Uri к заболеванию, который будет удаляться из таблицы diseases
-        //Uri mCurrentDiseaseUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
-
-        //int rowsDiseaseDeleted = 0;
-
-        // удаляем заболевание из Базы
-        /*if (_idDisease != 0) {
-            rowsDiseaseDeleted = getContentResolver().delete(mCurrentDiseaseUri, null, null);
-        }*/
-
-        /*if (rowsDiseaseDeleted == 0) {
-            onSavingOrUpdatingOrDeleting = false;
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(TreatmentActivity.this, "DiseaseAndTreatment Deleted from DataBase", Toast.LENGTH_LONG).show();
-
-            goToDiseasesActivity();
-        }*/
+        new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
@@ -807,10 +746,12 @@ public class TreatmentActivity extends AppCompatActivity
 
     // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
     // чтоб не было утечки памяти при его работе
-    private static class DiseaseAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    private static class DiseaseAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Context, Void, Integer> {
 
-        private WeakReference<TreatmentActivity> treatmentActivityReference;
-        ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private static final String PREFS_NAME = "PREFS";
+
+        private final WeakReference<TreatmentActivity> treatmentActivityReference;
+        private final ArrayList<String> mPhotoFilePathesListToBeDeleted;
         private int mRowsFromTreatmentPhotosDeleted = -1;
 
         // в конструкторе получаем WeakReference<TreatmentActivity>
@@ -896,57 +837,69 @@ public class TreatmentActivity extends AppCompatActivity
         // в doInBackground осуществляем удаление файлов фотографий
         // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Integer doInBackground(Context... contexts) {
             if (mRowsFromTreatmentPhotosDeleted == -1) {
                 // если были ошибки во время удаления строк из таблиц treatmentPhotos и diseases
-                // возвращаем false
+                // возвращаем -1
                 // и выводим сообщение, что заболевания не удалилось и оставляем все как есть (не удаляем файлы)
-                return false;
+                return -1;
             } else if (mRowsFromTreatmentPhotosDeleted == 0) {
                 // если у заболевания не было фотографий,
-                // то ограничиваемся удалением заболевания и таблицы diseases
-                return true;
+                // то ограничиваемся удалением заболевания из таблицы diseases
+                return 1;
             } else {
+                // в этом блоке ошибки возвращают 0
+                Context mContext = contexts[0];
+
+                if (mContext == null) {
+                    return 0;
+                }
+
+                // получаем SharedPreferences, чтоб писать в файл "PREFS"
+                SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                final SharedPreferences.Editor prefsEditor = prefs.edit();
+
                 // если mRowsFromTreatmentPhotosDeleted > 0,
                 // то удаляем соответствующие файлы фотографий
 
-                Log.d("mOnLoadFinished", "mRowsFromTreatmentPhotosDeleted = " + mRowsFromTreatmentPhotosDeleted);
-                Log.d("mOnLoadFinished", "mPhotoFilePathesListToBeDeleted.size() = " + mPhotoFilePathesListToBeDeleted.size());
+                StringBuilder sb = new StringBuilder();
 
                 for (String fPath : mPhotoFilePathesListToBeDeleted) {
-                    Log.d("mOnLoadFinished", "fPath = " + fPath);
-
                     File toBeDeletedFile = new File(fPath);
 
                     if (toBeDeletedFile.exists()) {
-                        // TODO действия, если файл фото не удалилился
                         if (!toBeDeletedFile.delete()) {
-                            Log.d("mOnLoadFinished", "file_not_deleted");
-                        } else {
-                            Log.d("mOnLoadFinished", "file_deleted");
+                            // если файл не удалился,
+                            // то дописываем в sb его путь и ставим запятую,
+                            // чтоб потом по запятой делать split
+                            sb.append(fPath).append(",");
                         }
-                    } else {
-                        Log.d("mOnLoadFinished", "file_deleted");
                     }
                 }
 
-                //final TreatmentActivity treatmentActivity = treatmentActivityReference.get();
+                if (sb.length() > 0) {
+                    // если есть висячие файлов,
+                    // то пишем в поле notDeletedFilesPathes строку путей к этим файлам, разделенных запятой
+                    // и выходим с return 0
+                    sb.deleteCharAt(sb.length() - 1);
 
-                /*if (treatmentActivity != null) {
-                    treatmentActivity.myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }*/
+                    prefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                    prefsEditor.apply();
+
+                    return 0;
+                }
+
+                // если нет висячих файлов, то очищаем поле notDeletedFilesPathes
+                // и выходим с return 1
+                prefsEditor.putString("notDeletedFilesPathes", null);
+                prefsEditor.apply();
             }
 
-            return true;
+            return 1;
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
 
             final TreatmentActivity treatmentActivity = treatmentActivityReference.get();
@@ -955,12 +908,18 @@ public class TreatmentActivity extends AppCompatActivity
                 return;
             }
 
-            if (result) {
-                Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
-                treatmentActivity.goToDiseasesActivity();
-            } else {
+            if (result == -1) {
+                // если заболевание не удалилось из базы и фото не были удалены
                 treatmentActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(treatmentActivity, R.string.disease_deleting_error, Toast.LENGTH_LONG).show();
+            } else if (result == 0) {
+                Toast.makeText(treatmentActivity, R.string.disease_pictures_not_deleted, Toast.LENGTH_LONG).show();
+                treatmentActivity.goToDiseasesActivity();
+            } else {
+                // result == 1
+                // заболевание удалилось и снимки удалены (или отсутствуют)
+                Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
+                treatmentActivity.goToDiseasesActivity();
             }
         }
     }

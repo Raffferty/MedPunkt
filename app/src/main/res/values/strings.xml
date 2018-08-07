@@ -7,7 +7,7 @@
     <string name="show_greeting">Больше не показывать</string>
     <string name="title_activity_users">Пользователи</string>
     <string name="empty_users_text">Добавить пользователя</string>
-    <string name="empty_photos_text">Добавить снимок,\nсвязанный с лечением</string>
+    <string name="empty_picture_text">Добавить снимок,\nсвязанный с лечением</string>
     <string name="title_activity_user">Добавить Пользователя</string>
     <string name="set_photo">Фото</string>
     <string name="user_name">Имя</string>
@@ -30,13 +30,17 @@
     <string name="permission_was_denied">В доступе к фотографиям отказано</string>
     <string name="cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="cant_load_photo">Фотографию не удалось загрузить</string>
-    <string name="file_not_deleted">Фотография не удалилась</string>
-    <string name="file_copy">фотографии скопирована</string>
-    <string name="file_copy_error">При копировании фотографии возникли ошибки</string>
+    <string name="photo_not_deleted">Фотография не удалилась</string>
+    <string name="cant_save_picture">Снимок не удалось сохранить</string>
+    <string name="cant_load_picture">Снимок не удалось загрузить</string>
+    <string name="picture_not_deleted">Снимок не удалился</string>
+    <string name="picture_copy">Снимок скопирован</string>
+    <string name="picture_copy_error">При копировании снимка возникли ошибки</string>
     <string name="disease_deleting_error">При удалении заболевания возникли ошибки</string>
-    <string name="disease_deleted">Заболевания удалилось</string>
-    <string name="old_file_not_deleted">Обновляемая фотография не удалилась</string>
-    <string name="file_deleted">Фотография удалилась</string>
+    <string name="disease_deleted">Заболевание удалилось</string>
+    <string name="disease_pictures_not_deleted">Остались НЕ удаленные снимки</string>
+    <string name="old_picture_not_deleted">Обновляемый снимок не удалился</string>
+    <string name="picture_deleted">Снимок удалился</string>
     <string name="error_name">Укажите имя</string>
     <string name="error_date">Укажите дату рождения</string>
     <string name="focusholder">focusHolder</string>
@@ -48,21 +52,20 @@
     <string name="txt_title_treatmen">Лечение</string>
     <string name="treatment_text">Описание лечения</string>
     <string name="description">ОПИСАНИЕ</string>
-    <string name="photos">СНИМКИ</string>
+    <string name="pictures">СНИМКИ</string>
     <string name="delete_disease">Удалить чем болел</string>
     <string name="delete_user">Удалить ползователя</string>
-    <string name="delete_treatment_photo">Удалить снимок</string>
     <string name="error_disease_name">Укажите название заболевания</string>
     <string name="error_date_of_disease">Укажите дату заболевания</string>
-    <string name="error_photo_description">Укажите краткое описание снимка</string>
+    <string name="error_picture_description">Укажите краткое описание снимка</string>
     <string name="title_activity_fullscreen">Добавить снимок</string>
-    <string name="photo_description">Описание снимка</string>
-    <string name="date_of_treatment_photo">дата снимка</string>
-    <string name="error_date_of_treatment_photo">Укажите дату снимка</string>
+    <string name="picture_description">Описание снимка</string>
+    <string name="date_of_treatment_picture">дата снимка</string>
+    <string name="error_date_of_treatment_picture">Укажите дату снимка</string>
     <string name="fullscreen_image_description">fullscreen_image</string>
     <string name="no_image_orientation">угол поворота картинки НЕ определен</string>
     <string name="no_photo">No_Photo</string>
-    <string name="delete_trPhoto_dialog_msg">Удалить снимок</string>
+    <string name="delete_tr_picture_dialog_msg">Удалить снимок</string>
     <string name="delete_disease_dialog_msg">Удалить заболевание</string>
     <!-- Dialog message to ask the user to confirm deleting the current user [CHAR LIMIT=NONE] -->
     <string name="delete_user_dialog_msg">Удалить пользователя</string>
@@ -70,6 +73,4 @@
     <string name="delete">Удалить</string>
     <!-- Dialog button text for the option to cancel deletion [CHAR LIMIT=20] -->
     <string name="cancel">Отменить</string>
-
-
 </resources>

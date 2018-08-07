@@ -44,7 +44,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
         } else if (position == 1) {
             //return mContext.getString(R.string.photos);
             return iconWithText(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
-                    mContext.getResources().getString(R.string.photos));
+                    mContext.getResources().getString(R.string.pictures));
         }
         return "---";
     }

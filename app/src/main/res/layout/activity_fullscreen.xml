@@ -107,7 +107,7 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="8dp"
-                android:hint="@string/photo_description"
+                android:hint="@string/picture_description"
                 android:textColorHint="@color/colorPrimaryDark"
                 app:hintTextAppearance="@style/Lable">
 
@@ -139,7 +139,7 @@
             android:focusable="false"
             android:gravity="top"
             android:inputType="date"
-            android:text="@string/date_of_treatment_photo"
+            android:text="@string/date_of_treatment_picture"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             tools:ignore="LabelFor" />

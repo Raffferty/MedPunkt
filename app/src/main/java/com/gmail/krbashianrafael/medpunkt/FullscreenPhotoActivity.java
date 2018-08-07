@@ -220,7 +220,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
             // если не новое фото и не может загрузить
         } else if (!newTreatmentPhoto) {
-            Toast.makeText(this, R.string.cant_load_photo, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.cant_load_picture, Toast.LENGTH_LONG).show();
         }
 
         // записываем в поля описание и дату пришедшего снимка
@@ -233,7 +233,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         if (textDateOfTreatmentPhoto != null) {
             editTextDateOfTreatmentPhoto.setText(textDateOfTreatmentPhoto);
         } else {
-            textDateOfTreatmentPhoto = getString(R.string.date_of_treatment_photo);
+            textDateOfTreatmentPhoto = getString(R.string.date_of_treatment_picture);
         }
 
         // если было нажато добваить новое фото
@@ -538,7 +538,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.delete_trPhoto_dialog_msg) + " " + editTextPhotoDescription.getText() + "?");
+        builder.setMessage(getString(R.string.delete_tr_picture_dialog_msg) + " " + editTextPhotoDescription.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (onSavingOrUpdatingOrDeleting) {
@@ -841,21 +841,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         // првоерка описания фото
         if (TextUtils.isEmpty(photoDescriptionToCheck)) {
             textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable_Error);
-            textInputLayoutPhotoDescription.setError(getString(R.string.error_photo_description));
+            textInputLayoutPhotoDescription.setError(getString(R.string.error_picture_description));
             editTextPhotoDescription.startAnimation(scaleAnimation);
             editTextPhotoDescription.requestFocus();
             wrongField = true;
         }
 
         // првоерка Даты фото
-        if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.date_of_treatment_photo))) {
+        if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.date_of_treatment_picture))) {
             if (wrongField) {
                 textInputLayoutPhotoDescription.setError(
-                        getString(R.string.error_photo_description) + "\n" +
-                                getString(R.string.error_date_of_treatment_photo)
+                        getString(R.string.error_picture_description) + "\n" +
+                                getString(R.string.error_date_of_treatment_picture)
                 );
             } else {
-                textInputLayoutPhotoDescription.setError(getString(R.string.error_date_of_treatment_photo));
+                textInputLayoutPhotoDescription.setError(getString(R.string.error_date_of_treatment_picture));
             }
 
             editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorFab));
@@ -949,7 +949,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     afterSaveOrUpdate();
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
-                    Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
                 }
 
             } else {
@@ -957,7 +957,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 File oldFile = new File(treatmentPhotoFilePath);
                 if (oldFile.exists()) {
                     if (!oldFile.delete()) {
-                        Toast.makeText(this, R.string.old_file_not_deleted, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.old_picture_not_deleted, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -974,7 +974,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
-                    Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
                 }
 
                 afterSaveOrUpdate();
@@ -984,7 +984,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
         } else {
             onSavingOrUpdatingOrDeleting = false;
-            Toast.makeText(this, R.string.cant_save_photo, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1066,13 +1066,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         File toBeDeletedFile = new File(treatmentPhotoFilePath);
         if (toBeDeletedFile.exists()) {
             if (!toBeDeletedFile.delete()) {
-                Toast.makeText(this, R.string.file_not_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.picture_not_deleted, Toast.LENGTH_LONG).show();
                 return false;
             } else {
-                Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.picture_deleted, Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(this, R.string.file_deleted, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.picture_deleted, Toast.LENGTH_LONG).show();
         }
 
         return true;
@@ -1190,7 +1190,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     fullscreenPhotoActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(fullscreenPhotoActivity, R.string.file_copy, Toast.LENGTH_LONG).show();
+                            Toast.makeText(fullscreenPhotoActivity, R.string.picture_copy, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -1204,7 +1204,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                             fullscreenPhotoActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(fullscreenPhotoActivity, R.string.file_copy_error, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(fullscreenPhotoActivity, R.string.picture_copy_error, Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
