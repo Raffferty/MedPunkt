@@ -54,10 +54,9 @@ public class TreatmentActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
-     * Identifier for the user data loader
      * Лоадеров может много (они обрабатываются в case)
      * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int TR_PHOTOS_LOADER = 2;
+     * в данном случае private static final int TR_PHOTOS_LOADER = 22;
      */
     private static final int TR_PHOTOS_LOADER = 22;
 
@@ -686,7 +685,7 @@ public class TreatmentActivity extends AppCompatActivity
     private void deleteDiseaseAndTreatmentPhotos() {
         // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
         // которые будут удаляться вместе с удалением заболевания из таблицы diseases
-        // кроме того, перед удалением строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
+        // кроме того, после удаления строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
         getLoaderManager().initLoader(TR_PHOTOS_LOADER, null, this);
     }
 
