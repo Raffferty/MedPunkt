@@ -37,8 +37,10 @@
     <string name="picture_copy">Снимок скопирован</string>
     <string name="picture_copy_error">При копировании снимка возникли ошибки</string>
     <string name="disease_deleting_error">При удалении заболевания возникли ошибки</string>
+    <string name="user_deleting_error">При удалении пользователя возникли ошибки</string>
     <string name="disease_deleted">Заболевание удалилось</string>
-    <string name="disease_pictures_not_deleted">Остались НЕ удаленные снимки</string>
+    <string name="user_deleted">Пользователь удалился</string>
+    <string name="no_pictures_to_delete">Нет снимков для удаления</string>
     <string name="old_picture_not_deleted">Обновляемый снимок не удалился</string>
     <string name="picture_deleted">Снимок удалился</string>
     <string name="error_name">Укажите имя</string>

@@ -3,6 +3,7 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +28,23 @@ public class DatePickerFragment extends DialogFragment
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(Objects.requireNonNull(getActivity()), this, year, month, day);
+        /*DatePickerDialog datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getActivity()),
+                android.R.style.Theme_Holo_Light_Dialog,
+                this, year, month, day);
+
+        datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        return datePickerDialog;*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return new DatePickerDialog(Objects.requireNonNull(getActivity()),
+                    android.R.style.Theme_Material_Light_Dialog_Alert,
+                    this, year, month, day);
+        }else {
+            return new DatePickerDialog(Objects.requireNonNull(getActivity()),
+                    this, year, month, day);
+        }
+
     }
 
     @SuppressLint("SetTextI18n")

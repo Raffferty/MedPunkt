@@ -3,6 +3,8 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,6 +12,8 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -52,6 +57,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
@@ -1014,19 +1020,225 @@ public class UserActivity extends AppCompatActivity
             }
         }
 
-        Log.d("mOnLoadFinished", "photoFilePathesToBeDeletedList.size = " + photoFilePathesToBeDeletedList.size());
-
-        for (String trPhoto : photoFilePathesToBeDeletedList) {
-            Log.d("mOnLoadFinished", "trPhoto = " + trPhoto);
-        }
-
         // делаем destroyLoader, чтоб он сам повторно не вызывался
         getLoaderManager().destroyLoader(USER_TR_PHOTOS_LOADER);
+
+        // Запускаем AsyncTask для удаления строк из таблиц users, treatmentPhotos и diseases
+        // а далее, и для удаления файлов
+        new UserActivity.UserAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         //
+    }
+
+    // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
+    // чтоб не было утечки памяти при его работе
+    private static class UserAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Context, Void, Integer> {
+
+        private static final String PREFS_NAME = "PREFS";
+
+        private final WeakReference<UserActivity> userActivityReference;
+        private final ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private int mRowsFromUsersAndTreatmentPhotosDeleted = -1;
+
+        // в конструкторе получаем WeakReference<UserActivity>
+        // и образовываем список ArrayList<String> mPhotoFilePathesListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
+        // это список путей к файлам, которые необходимо будет удалить
+        // тоесть наш mPhotoFilePathesListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
+        UserAndTreatmentPhotosDeletingAsyncTask(UserActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
+            userActivityReference = new WeakReference<>(context);
+            mPhotoFilePathesListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
+        }
+
+        // в onPreExecute получаем  UserActivity userActivity
+        // и если он null, то никакое удаление не происходит
+        // если же userActivity не null,
+        // то в основном треде удаляем строки из таблиц users, treatmentPhotos и diseases в одной транзакции
+        // при этом, получаем (как резульат удаления строк из таблиц users и treatmentPhotos) количество удаленных строк
+        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathesListToBeDeleted
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            UserActivity userActivity = userActivityReference.get();
+            if (userActivity == null) {
+                return;
+            }
+
+            mRowsFromUsersAndTreatmentPhotosDeleted = deleteUserAndDiseaseAndTreatmentPhotosFromDataBase(userActivity);
+        }
+
+        // метод удаления строк из таблиц treatmentPhotos и diseases в одной транзакции
+        // возвращает количество удаленных строк из таблицы treatmentPhotos или -1
+        private int deleteUserAndDiseaseAndTreatmentPhotosFromDataBase(UserActivity userActivity) {
+            // ArrayList для операций по удалению строк из таблиц users, treatmentPhotos и diseases
+            // в одной транзакции
+            ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
+
+            // пишем операцию удаления строк снимков пользователя ИЗ ТАБЛИЦЫ treatmentPhotos
+            String selectionTrPhotos = TreatmentPhotosEntry.COLUMN_U_ID + "=?";
+            String[] selectionArgsTrPhotos = new String[]{String.valueOf(userActivity._idUser)};
+
+            ContentProviderOperation deleteTreatmentPhotosFromDbOperation = ContentProviderOperation
+                    .newDelete(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI)
+                    .withSelection(selectionTrPhotos, selectionArgsTrPhotos)
+                    .build();
+
+            // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
+            deletingFromDbOperations.add(deleteTreatmentPhotosFromDbOperation);
+
+            // пишем операцию удаления строк заболеваний пользователя ИЗ ТАБЛИЦЫ diseases
+            String selectionDiseases = DiseasesEntry.COLUMN_U_ID + "=?";
+            String[] selectionArgsDiseases = new String[]{String.valueOf(userActivity._idUser)};
+
+            ContentProviderOperation deleteDiseaseFromDbOperation = ContentProviderOperation
+                    .newDelete(DiseasesEntry.CONTENT_DISEASES_URI)
+                    .withSelection(selectionDiseases, selectionArgsDiseases)
+                    .build();
+
+            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
+            deletingFromDbOperations.add(deleteDiseaseFromDbOperation);
+
+            // пишем операцию удаления строки пользователя ИЗ ТАБЛИЦЫ users
+            String selectionUser = UsersEntry.U_ID + "=?";
+            String[] selectionArgsUser = new String[]{String.valueOf(userActivity._idUser)};
+
+            ContentProviderOperation deleteUserFromDbOperation = ContentProviderOperation
+                    .newDelete(UsersEntry.CONTENT_USERS_URI)
+                    .withSelection(selectionUser, selectionArgsUser)
+                    .build();
+
+            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
+            deletingFromDbOperations.add(deleteUserFromDbOperation);
+
+
+            // переменная количества удаленных строк из таблицы treatmentPhotos
+            int rowsFromUsersAndTreatmentPhotosDeleted = -1;
+
+            try {
+                // запускаем транзакцию удаления строк из таблиц treatmentPhotos и diseases
+                // и получаем результат
+                ContentProviderResult[] results = userActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
+
+                // если транзакция прошла успешно
+                // results[0] - результат запроса из TreatmentPhotos
+                // results[2] - результат запроса из Users
+                if (results.length==3 && results[0] != null && results[2] != null) {
+                    // записываем в rowsFromUsersAndTreatmentPhotosDeleted
+                    // сумму удаленных строк из аблицы treatmentPhotos и users
+                    rowsFromUsersAndTreatmentPhotosDeleted = results[0].count + results[2].count;
+                }
+            } catch (RemoteException | OperationApplicationException e) {
+                e.printStackTrace();
+                // если транзакция НЕ прошла успешно, то возвращаем -1
+                return rowsFromUsersAndTreatmentPhotosDeleted;
+            }
+
+            // возвращаем количество удаленных строк из аблицы treatmentPhotos
+            return rowsFromUsersAndTreatmentPhotosDeleted;
+        }
+
+        // в doInBackground осуществляем удаление файлов фотографий
+        // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
+        @Override
+        protected Integer doInBackground(Context... contexts) {
+            if (mRowsFromUsersAndTreatmentPhotosDeleted == -1) {
+                // если были ошибки во время удаления строк из таблиц users, treatmentPhotos и diseases
+                // возвращаем -1
+                // и выводим сообщение, что удалить пользователя не удалилось и оставляем все как есть (не удаляем файлы)
+                return -1;
+            } else if (mRowsFromUsersAndTreatmentPhotosDeleted == 0) {
+                // если у пользователя не было фотографий и его по его лечению не было снимков,
+                // то ограничиваемся удалением пользователя из таблиц users и diseases,
+                // без дальнейшего удаления каких либо файлов фото
+                return 1;
+            } else {
+                // если у пользователя были фотографи или были снимки по его лечению,
+                // mRowsFromUsersAndTreatmentPhotosDeleted > 0,
+                // то удаляем соответствующие файлы фотографий
+
+                // в этом блоке ошибки возвращают 0
+                Context mContext = contexts[0];
+
+                if (mContext == null) {
+                    return 0;
+                }
+
+                // получаем SharedPreferences, чтоб писать в файл "PREFS"
+                SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                StringBuilder sb = new StringBuilder();
+
+                for (String fPath : mPhotoFilePathesListToBeDeleted) {
+
+                    File toBeDeletedFile = new File(fPath);
+
+                    if (toBeDeletedFile.exists()) {
+                        if (!toBeDeletedFile.delete()) {
+                            // если файл не удалился,
+                            // то дописываем в sb его путь и ставим запятую,
+                            // чтоб потом по запятой делать split
+                            sb.append(fPath).append(",");
+                        }
+                    }
+                }
+
+                if (sb.length() > 0) {
+                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+
+                    // если из prefs вытянулись пути к ранее не удаленным файлам,
+                    // то цепляем их в конец sb за запятой
+                    if (notDeletedFilesPathes!=null && notDeletedFilesPathes.length()!=0){
+                        sb.append(notDeletedFilesPathes);
+                    }else {
+                        // если в prefs не было путей к ранее не удаленным файлам,
+                        // то убираем с конца sb запятую
+                        sb.deleteCharAt(sb.length() - 1);
+                    }
+
+                    // пишем в поле notDeletedFilesPathes новую строку путей к неудаленным файлам, разделенных запятой
+                    // при этом старая строка в prefs заменится новой строкой
+                    // и выходим с return 0,
+                    // что означает, что были файлы, которые не удалились
+
+                    prefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                    prefsEditor.apply();
+
+                    return 0;
+                }
+            }
+
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+
+            final UserActivity userActivity = userActivityReference.get();
+
+            if (userActivity == null) {
+                return;
+            }
+
+            if (result == -1) {
+                // если заболевание не удалилось из базы и фото не были удалены
+                userActivity.onSavingOrUpdatingOrDeleting = false;
+                Toast.makeText(userActivity, R.string.user_deleting_error, Toast.LENGTH_LONG).show();
+            } else if (result == 0) {
+                // если не было фото пользователя и снимков для удаления
+                Toast.makeText(userActivity, R.string.no_pictures_to_delete, Toast.LENGTH_LONG).show();
+                userActivity.goToDiseasesActivity();
+            } else {
+                // result == 1
+                // заболевание удалилось и снимки удалены (или отсутствуют)
+                Toast.makeText(userActivity, R.string.user_deleted, Toast.LENGTH_LONG).show();
+                userActivity.goToUsersActivity();
+            }
+        }
     }
 
     // класс UserPhotoSavingAsyncTask делаем статическим,
@@ -1055,7 +1267,6 @@ public class UserActivity extends AppCompatActivity
             }
 
             File fileToSave = new File(fileToSavePath);
-            Log.d("mOnLoadFinished", "fileToSave = " + fileToSave);
 
             // перед сохранение удаляем существующий файл,
             // т.к. фото должно быть одно
@@ -1068,13 +1279,13 @@ public class UserActivity extends AppCompatActivity
                 try {
                     // создаем только файл
                     if (fileToSave.createNewFile()) {
-                        Log.d("mOnLoadFinished", "fileToSave.createNewFile()");
+                        Log.d("mOnLoadFinished", "file created");
                     } else {
-                        Log.d("mOnLoadFinished", "fileToSave.createNewFile() = false");
+                        Log.d("mOnLoadFinished", "file NOT created");
                         return null;
                     }
                 } catch (IOException e) {
-                    Log.d("mOnLoadFinished", " fileToSave.exists() IOException = " + e.toString());
+                    e.printStackTrace();
                     return null;
                 }
             }
@@ -1084,13 +1295,13 @@ public class UserActivity extends AppCompatActivity
                 try {
                     // создаем только файл
                     if (fileToSave.createNewFile()) {
-                        Log.d("mOnLoadFinished", "fileToSave.createNewFile()");
+                        Log.d("mOnLoadFinished", "file created");
                     } else {
-                        Log.d("mOnLoadFinished", "fileToSave.createNewFile() = false");
+                        Log.d("mOnLoadFinished", "file NOT created");
                         return null;
                     }
                 } catch (IOException e) {
-                    Log.d("mOnLoadFinished", " fileToSave.exists() IOException = " + e.toString());
+                    e.printStackTrace();
                     return null;
                 }
             }
@@ -1114,7 +1325,7 @@ public class UserActivity extends AppCompatActivity
                 }
 
             } catch (IOException e) {
-                Log.d("mOnLoadFinished", " e.printStackTrace() = " + e.toString());
+                e.printStackTrace();
                 loadedBitmap = null;
                 return null;
             }

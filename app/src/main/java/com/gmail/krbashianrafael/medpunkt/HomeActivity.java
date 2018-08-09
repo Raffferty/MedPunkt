@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // при первой загрузке проверяем есть ли висячие файлы фотографий,
         // которые должны были быть удалены, но не удалились
-        // и пытаемся их снова удалить в doInBackground
+        // и пытаемся их снова удалить в doInBackground класса CleanNotDeletedFilesAsyncTask
         String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
 
         if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
@@ -148,7 +148,8 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
 
-            // если нет висячих файлов, то очищаем поле notDeletedFilesPathes
+            // если после повторной попытки удаления не осталось висячих файлов sb = 0,
+            // то очищаем поле notDeletedFilesPathes
             mPrefsEditor.putString("notDeletedFilesPathes", null);
             mPrefsEditor.apply();
 
@@ -156,9 +157,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean reault) {
-            super.onPostExecute(reault);
-            if (reault) {
+        protected void onPostExecute(Boolean filesDeleted) {
+            super.onPostExecute(filesDeleted);
+            if (filesDeleted) {
                 Log.d("mOnLoadFinished", "Files Re-Deleted");
             } else {
                 Log.d("mOnLoadFinished", "Files NOT Re-Deleted");

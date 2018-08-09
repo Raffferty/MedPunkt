@@ -787,12 +787,12 @@ public class TreatmentActivity extends AppCompatActivity
             ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
 
             // пишем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos
-            String selectionTrPhoto = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
-            String[] selectionArgsTrPhoto = new String[]{String.valueOf(treatmentActivity._idDisease)};
+            String selectionTrPhotos = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
+            String[] selectionArgsTrPhotos = new String[]{String.valueOf(treatmentActivity._idDisease)};
 
             ContentProviderOperation deleteTreatmentPhotosFromDbOperation = ContentProviderOperation
                     .newDelete(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI)
-                    .withSelection(selectionTrPhoto, selectionArgsTrPhoto)
+                    .withSelection(selectionTrPhotos, selectionArgsTrPhotos)
                     .build();
 
             // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
@@ -819,7 +819,7 @@ public class TreatmentActivity extends AppCompatActivity
                 ContentProviderResult[] results = treatmentActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
 
                 // если транзакция прошла успешно
-                if (results[0] != null) {
+                if (results.length==2 && results[0] != null) {
                     // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
                     rowsFromTreatmentPhotosDeleted = results[0].count;
                 }
@@ -845,8 +845,13 @@ public class TreatmentActivity extends AppCompatActivity
             } else if (mRowsFromTreatmentPhotosDeleted == 0) {
                 // если у заболевания не было фотографий,
                 // то ограничиваемся удалением заболевания из таблицы diseases
+                // без дальнейшего удаления каких либо файлов фото
                 return 1;
             } else {
+                // если у заболевания были снимки по лечению,
+                // mRowsFromTreatmentPhotosDeleted > 0,
+                // то удаляем соответствующие файлы фотографий
+
                 // в этом блоке ошибки возвращают 0
                 Context mContext = contexts[0];
 
@@ -857,9 +862,6 @@ public class TreatmentActivity extends AppCompatActivity
                 // получаем SharedPreferences, чтоб писать в файл "PREFS"
                 SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                 final SharedPreferences.Editor prefsEditor = prefs.edit();
-
-                // если mRowsFromTreatmentPhotosDeleted > 0,
-                // то удаляем соответствующие файлы фотографий
 
                 StringBuilder sb = new StringBuilder();
 
@@ -876,22 +878,31 @@ public class TreatmentActivity extends AppCompatActivity
                     }
                 }
 
+                // если есть висячие файлы
                 if (sb.length() > 0) {
-                    // если есть висячие файлов,
-                    // то пишем в поле notDeletedFilesPathes строку путей к этим файлам, разделенных запятой
-                    // и выходим с return 0
-                    sb.deleteCharAt(sb.length() - 1);
+                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+
+                    // если из prefs вытянулись пути к ранее не удаленным файлам,
+                    // то цепляем их в конец sb за запятой
+                    if (notDeletedFilesPathes!=null && notDeletedFilesPathes.length()!=0){
+                        sb.append(notDeletedFilesPathes);
+                    }else {
+                        // если в prefs не было путей к ранее не удаленным файлам,
+                        // то убираем с конца sb запятую
+                        sb.deleteCharAt(sb.length() - 1);
+                    }
+
+                    // пишем в поле notDeletedFilesPathes новую строку путей к неудаленным файлам, разделенных запятой
+                    // при этом старая строка в prefs заменится новой строкой
+                    // и выходим с return 0,
+                    // что означает, что были файлы, которые не удалились
 
                     prefsEditor.putString("notDeletedFilesPathes", sb.toString());
                     prefsEditor.apply();
 
                     return 0;
                 }
-
-                // если нет висячих файлов, то очищаем поле notDeletedFilesPathes
-                // и выходим с return 1
-                prefsEditor.putString("notDeletedFilesPathes", null);
-                prefsEditor.apply();
             }
 
             return 1;
@@ -912,7 +923,8 @@ public class TreatmentActivity extends AppCompatActivity
                 treatmentActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(treatmentActivity, R.string.disease_deleting_error, Toast.LENGTH_LONG).show();
             } else if (result == 0) {
-                Toast.makeText(treatmentActivity, R.string.disease_pictures_not_deleted, Toast.LENGTH_LONG).show();
+                // если не было снимков для удаления
+                Toast.makeText(treatmentActivity, R.string.no_pictures_to_delete, Toast.LENGTH_LONG).show();
                 treatmentActivity.goToDiseasesActivity();
             } else {
                 // result == 1
