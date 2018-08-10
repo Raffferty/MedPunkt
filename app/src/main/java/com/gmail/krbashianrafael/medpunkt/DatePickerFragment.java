@@ -3,7 +3,6 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -24,27 +23,12 @@ public class DatePickerFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
 
-        /*DatePickerDialog datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getActivity()),
-                android.R.style.Theme_Holo_Light_Dialog,
-                this, year, month, day);
-
-        datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        return datePickerDialog;*/
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return new DatePickerDialog(Objects.requireNonNull(getActivity()),
-                    android.R.style.Theme_Material_Light_Dialog_Alert,
-                    this, year, month, day);
-        }else {
-            return new DatePickerDialog(Objects.requireNonNull(getActivity()),
-                    this, year, month, day);
-        }
-
+        return new DatePickerDialog(Objects.requireNonNull(getActivity()),
+                this, mYear, mMonth, mDay);
     }
 
     @SuppressLint("SetTextI18n")
@@ -52,7 +36,8 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(@NonNull DatePicker view, int year, int month, int day) {
         EditText txtDate = Objects.requireNonNull(getActivity()).findViewById(R.id.editText_date);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
-        GregorianCalendar date = new GregorianCalendar(year,month,day);
-        txtDate.setText(simpleDateFormat.format(date.getTime())+" ");
+        GregorianCalendar date = new GregorianCalendar(year, month, day);
+        String formatedDate = simpleDateFormat.format(date.getTime());
+        txtDate.setText(simpleDateFormat.format(formatedDate + " "));
     }
 }

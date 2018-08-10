@@ -19,6 +19,8 @@ allprojects {
     repositories {
         google()
         jcenter()
+        // для календаря с прокруткой
+        maven { url "https://jitpack.io" }
     }
 }
 

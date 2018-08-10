@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,16 +48,24 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.tsongkha.spinnerdatepicker.DatePicker;
+import com.tsongkha.spinnerdatepicker.DatePickerDialog;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class FullscreenPhotoActivity extends AppCompatActivity
-        implements ActivityCompat.OnRequestPermissionsResultCallback {
+        implements ActivityCompat.OnRequestPermissionsResultCallback,
+        DatePickerDialog.OnDateSetListener {
 
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler myHandler = new Handler(Looper.getMainLooper());
@@ -454,8 +463,29 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable);
 
                 // выбираем дату фото
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "datePicker");
+                // в версии Build.VERSION_CODES.N нет календаря с прокруткой
+                // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
+                // слушатель прописываем в нашем же классе .callback(FullscreenPhotoActivity.this)
+                // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+                // используем эту библиотеку для
+                // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    final Calendar c = Calendar.getInstance();
+                    int mYear = c.get(Calendar.YEAR);
+                    int mMonth = c.get(Calendar.MONTH);
+                    int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                    new SpinnerDatePickerDialogBuilder()
+                            .context(FullscreenPhotoActivity.this)
+                            .callback(FullscreenPhotoActivity.this)
+                            .spinnerTheme(R.style.NumberPickerStyle)
+                            .defaultDate(mYear, mMonth, mDay)
+                            .build().show();
+                } else {
+                    // в остальных случаях пользуемся классом DatePickerFragment
+                    DatePickerFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                }
             }
         });
 
@@ -495,6 +525,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
         });
+    }
+
+    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        GregorianCalendar date = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        editTextDateOfTreatmentPhoto.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
     @Override

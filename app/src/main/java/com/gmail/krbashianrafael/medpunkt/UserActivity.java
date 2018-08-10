@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -60,6 +61,9 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.tsongkha.spinnerdatepicker.DatePicker;
+import com.tsongkha.spinnerdatepicker.DatePickerDialog;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.apache.commons.io.FileUtils;
 
@@ -67,12 +71,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class UserActivity extends AppCompatActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        DatePickerDialog.OnDateSetListener {
 
     /**
      * Лоадеров может много (они обрабатываются в case)
@@ -270,8 +279,30 @@ public class UserActivity extends AppCompatActivity
                     focusHolder.requestFocus();
 
                     // выбираем дату ДР
-                    DatePickerFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getSupportFragmentManager(), "datePicker");
+
+                    // в версии Build.VERSION_CODES.N нет календаря с прокруткой
+                    // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
+                    // слушатель прописываем в нашем же классе .callback(UserActivity.this)
+                    // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+                    // используем эту библиотеку для
+                    // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        final Calendar c = Calendar.getInstance();
+                        int mYear = c.get(Calendar.YEAR);
+                        int mMonth = c.get(Calendar.MONTH);
+                        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                        new SpinnerDatePickerDialogBuilder()
+                                .context(UserActivity.this)
+                                .callback(UserActivity.this)
+                                .spinnerTheme(R.style.NumberPickerStyle)
+                                .defaultDate(mYear, mMonth, mDay)
+                                .build().show();
+                    } else {
+                        // в остальных случаях пользуемся классом DatePickerFragment
+                        DatePickerFragment newFragment = new DatePickerFragment();
+                        newFragment.show(getSupportFragmentManager(), "datePicker");
+                    }
                 }
             }
         });
@@ -368,6 +399,15 @@ public class UserActivity extends AppCompatActivity
         } else if (userPhotoUri.equals("No_Photo")) {
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
         }
+    }
+
+    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        GregorianCalendar date = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        editTextDate.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
 
@@ -1002,7 +1042,7 @@ public class UserActivity extends AppCompatActivity
         // ArrayList для путей к файлам фото, которые нужно будет удалить
         ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
 
-        if (!TextUtils.equals(userPhotoUri, "No_Photo")){
+        if (!TextUtils.equals(userPhotoUri, "No_Photo")) {
             photoFilePathesToBeDeletedList.add(userPhotoUri);
         }
 
@@ -1124,7 +1164,7 @@ public class UserActivity extends AppCompatActivity
                 // если транзакция прошла успешно
                 // results[0] - результат запроса из TreatmentPhotos
                 // results[2] - результат запроса из Users
-                if (results.length==3 && results[0] != null && results[2] != null) {
+                if (results.length == 3 && results[0] != null && results[2] != null) {
                     // записываем в rowsFromUsersAndTreatmentPhotosDeleted
                     // сумму удаленных строк из аблицы treatmentPhotos и users
                     rowsFromUsersAndTreatmentPhotosDeleted = results[0].count + results[2].count;
@@ -1191,9 +1231,9 @@ public class UserActivity extends AppCompatActivity
 
                     // если из prefs вытянулись пути к ранее не удаленным файлам,
                     // то цепляем их в конец sb за запятой
-                    if (notDeletedFilesPathes!=null && notDeletedFilesPathes.length()!=0){
+                    if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
                         sb.append(notDeletedFilesPathes);
-                    }else {
+                    } else {
                         // если в prefs не было путей к ранее не удаленным файлам,
                         // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);

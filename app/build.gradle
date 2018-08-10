@@ -41,4 +41,9 @@ dependencies {
 
     // для копирования файлов
     implementation 'org.apache.commons:commons-io:1.3.2'
+
+    // для календаря с прокруткой
+    // библиотека:
+    // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+    implementation 'com.github.drawers:SpinnerDatePicker:1.0.6'
 }
