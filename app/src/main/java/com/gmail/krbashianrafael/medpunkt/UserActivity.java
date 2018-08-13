@@ -106,7 +106,7 @@ public class UserActivity extends AppCompatActivity
     // новый ли пользователь, возможность изменфть пользователя,
     // показывать стрелку обратно, был ли изменен пользователь,
     // в процессе сохранения или нет
-    private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting;
+    private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting, onLoading;
 
     private ActionBar actionBar;
 
@@ -212,6 +212,13 @@ public class UserActivity extends AppCompatActivity
         imagePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (onLoading || onSavingOrUpdatingOrDeleting){
+                    return;
+                }
+
+                onLoading = true;
+
                 // скручиваем клавиатуру
                 hideSoftInput();
 
@@ -287,17 +294,34 @@ public class UserActivity extends AppCompatActivity
                     // используем эту библиотеку для
                     // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        final Calendar c = Calendar.getInstance();
-                        int mYear = c.get(Calendar.YEAR);
-                        int mMonth = c.get(Calendar.MONTH);
-                        int mDay = c.get(Calendar.DAY_OF_MONTH);
+                        String dateInEditTextDate = editTextDate.getText().toString().trim();
 
-                        new SpinnerDatePickerDialogBuilder()
+                        int mYear;
+                        int mMonth;
+                        int mDay;
+
+                        if (dateInEditTextDate.contains("-")) {
+                            String[] mDayMonthYear = dateInEditTextDate.split("-");
+                            mYear = Integer.valueOf(mDayMonthYear[2]);
+                            mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
+                            mDay = Integer.valueOf(mDayMonthYear[0]);
+                        } else {
+                            final Calendar c = Calendar.getInstance();
+                            mYear = c.get(Calendar.YEAR);
+                            mMonth = c.get(Calendar.MONTH);
+                            mDay = c.get(Calendar.DAY_OF_MONTH);
+                        }
+
+                        DatePickerDialog mDatePickerDialog = new SpinnerDatePickerDialogBuilder()
                                 .context(UserActivity.this)
                                 .callback(UserActivity.this)
                                 .spinnerTheme(R.style.NumberPickerStyle)
                                 .defaultDate(mYear, mMonth, mDay)
-                                .build().show();
+                                .build();
+
+
+                        mDatePickerDialog.show();
+
                     } else {
                         // в остальных случаях пользуемся классом DatePickerFragment
                         DatePickerFragment newFragment = new DatePickerFragment();
@@ -424,6 +448,7 @@ public class UserActivity extends AppCompatActivity
             } else {
                 Snackbar.make(mLayout, R.string.permission_was_denied,
                         Snackbar.LENGTH_LONG).show();
+                onLoading = false;
             }
         }
     }
@@ -438,6 +463,7 @@ public class UserActivity extends AppCompatActivity
 
             if (newSelectedImageUri == null) {
                 Toast.makeText(UserActivity.this, R.string.cant_load_photo, Toast.LENGTH_LONG).show();
+                onLoading = false;
             } else {
                 // если грузим фотку в первый раз
                 if (imageUriInView == null) {
@@ -481,6 +507,8 @@ public class UserActivity extends AppCompatActivity
                         loadedBitmap = resource;
                     }
                 });
+
+        onLoading = false;
     }
 
     @Override
@@ -641,7 +669,7 @@ public class UserActivity extends AppCompatActivity
 
     // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(getString(R.string.delete_user_dialog_msg) + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -671,7 +699,9 @@ public class UserActivity extends AppCompatActivity
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        hideSoftInput();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
         builder.setNegativeButton(R.string.no, discardButtonClickListener);

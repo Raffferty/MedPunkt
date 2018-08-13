@@ -48,10 +48,10 @@
     </android.support.design.widget.TextInputLayout>
 
     <FrameLayout
-        android:id="@+id/divider_frame_blue_2"
+        android:id="@+id/divider_frame_green"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorAccentThird"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_disease_name" />
@@ -68,10 +68,10 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider_frame_blue_2" />
+        app:layout_constraintTop_toBottomOf="@+id/divider_frame_green" />
 
     <FrameLayout
-        android:id="@+id/divider_frame_blue_3"
+        android:id="@+id/divider_frame_blue"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:background="@color/colorPrimaryDark"
@@ -87,7 +87,7 @@
         android:background="@drawable/white_drawable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider_frame_blue_3"
+        app:layout_constraintTop_toBottomOf="@+id/divider_frame_blue"
         app:tabGravity="fill"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"

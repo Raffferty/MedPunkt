@@ -470,10 +470,23 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 // используем эту библиотеку для
                 // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    final Calendar c = Calendar.getInstance();
-                    int mYear = c.get(Calendar.YEAR);
-                    int mMonth = c.get(Calendar.MONTH);
-                    int mDay = c.get(Calendar.DAY_OF_MONTH);
+                    String dateInEditTextDate = editTextDateOfTreatmentPhoto.getText().toString().trim();
+
+                    int mYear;
+                    int mMonth;
+                    int mDay;
+
+                    if (dateInEditTextDate.contains("-")) {
+                        String[] mDayMonthYear = dateInEditTextDate.split("-");
+                        mYear = Integer.valueOf(mDayMonthYear[2]);
+                        mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
+                        mDay = Integer.valueOf(mDayMonthYear[0]);
+                    } else {
+                        final Calendar c = Calendar.getInstance();
+                        mYear = c.get(Calendar.YEAR);
+                        mMonth = c.get(Calendar.MONTH);
+                        mDay = c.get(Calendar.DAY_OF_MONTH);
+                    }
 
                     new SpinnerDatePickerDialogBuilder()
                             .context(FullscreenPhotoActivity.this)
@@ -574,9 +587,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         myHandler.postDelayed(mHideRunnable, 300);
     }
 
-    // Диалог "Удалить заболевание или отменить удаление"
+    // Диалог "Удалить фото заболевания или отменить удаление"
     private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(getString(R.string.delete_tr_picture_dialog_msg) + " " + editTextPhotoDescription.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -602,6 +615,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 }
             }
         });
+
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -763,6 +777,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // либо обращаемся к галерее фото
         } else {
 
+            if (onLoading || onSavingOrUpdatingOrDeleting){
+                return;
+            }
+
             onLoading = true;
             // если это новое фото, то сначала делаем hide() перед загрузкой фото
             // а далее будет show()
@@ -804,7 +822,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         DialogInterface.OnClickListener discardButtonClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialog, int i) {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+
                         goToTreatmentActivity();
                     }
                 };
@@ -818,10 +840,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
         hideSoftInput();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
-        builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, discardButtonClickListener);
+
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
                 goBack = true;
@@ -834,7 +858,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
         });
 
-        builder.setPositiveButton(R.string.no, discardButtonClickListener);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

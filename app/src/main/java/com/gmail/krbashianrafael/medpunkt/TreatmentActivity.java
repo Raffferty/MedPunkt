@@ -172,10 +172,23 @@ public class TreatmentActivity extends AppCompatActivity
                 // используем эту библиотеку для
                 // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    final Calendar c = Calendar.getInstance();
-                    int mYear = c.get(Calendar.YEAR);
-                    int mMonth = c.get(Calendar.MONTH);
-                    int mDay = c.get(Calendar.DAY_OF_MONTH);
+                    String dateInEditTextDate = editTextDateOfDisease.getText().toString().trim();
+
+                    int mYear;
+                    int mMonth;
+                    int mDay;
+
+                    if (dateInEditTextDate.contains("-")) {
+                        String[] mDayMonthYear = dateInEditTextDate.split("-");
+                        mYear = Integer.valueOf(mDayMonthYear[2]);
+                        mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
+                        mDay = Integer.valueOf(mDayMonthYear[0]);
+                    } else {
+                        final Calendar c = Calendar.getInstance();
+                        mYear = c.get(Calendar.YEAR);
+                        mMonth = c.get(Calendar.MONTH);
+                        mDay = c.get(Calendar.DAY_OF_MONTH);
+                    }
 
                     new SpinnerDatePickerDialogBuilder()
                             .context(TreatmentActivity.this)
@@ -492,7 +505,7 @@ public class TreatmentActivity extends AppCompatActivity
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
 
         builder.setNegativeButton(R.string.no, discardButtonClickListener);
@@ -514,7 +527,7 @@ public class TreatmentActivity extends AppCompatActivity
 
     // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
         builder.setMessage(getString(R.string.delete_disease_dialog_msg) + " " + editTextDiseaseName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
