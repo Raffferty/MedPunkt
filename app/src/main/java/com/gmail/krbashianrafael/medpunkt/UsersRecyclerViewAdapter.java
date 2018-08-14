@@ -46,12 +46,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         String userName = usersList.get(position).getUserName();
         String userPhotoUri = usersList.get(position).getUserPhotoUri();
 
-        // _diseaseId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
-        // для его дальнейшего использования при onClick на itemView
         ((UserHolder) holder)._userId.setText(String.valueOf(_userId));
-
-        // itemUri прописываем в "невидимое" recycler_photo_item_uri (т.к. размеры этого TextView в нулях)
-        // для его дальнейшего использования при onClick на itemView
         ((UserHolder) holder).userPhotoUri.setText(userPhotoUri);
 
         ((UserHolder) holder).userBirthDate.setText(userBirthDate);
@@ -69,7 +64,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     .into(((UserHolder) holder).userImage);
         } else {
             // если без фото, то пишем "No_Photo"
-            ((UserHolder) holder).userPhotoUri.setText(R.string.no_photo);
+            ((UserHolder) holder).userPhotoUri.setText("No_Photo");
 
             // чистим userImage
             GlideApp.with(mContext).clear(((UserHolder) holder).userImage);

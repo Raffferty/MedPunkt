@@ -25,29 +25,29 @@
         <activity
             android:name=".UsersActivity"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_users"
+            android:label="@string/users_title_activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".UserActivity"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_user"
+            android:label="@string/user_title_activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DiseasesActivity"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_diseases"
+            android:label="@string/diseases_activity_title"
             android:screenOrientation="portrait" />
 
         <activity android:name=".TreatmentActivity"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_treatment"
+            android:label="@string/treatment_title_activity"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".FullscreenPhotoActivity"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
-            android:label="@string/title_activity_fullscreen"
+            android:label="@string/fullscreen_title_activity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
         <provider

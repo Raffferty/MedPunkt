@@ -39,7 +39,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         editTextTreatment = view.findViewById(R.id.editTextTreatment);
 
         fabEditTreatmentDescripton = view.findViewById(R.id.fabEditTreatmentDescripton);
@@ -67,9 +66,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
         newTreaymentActivity = (TreatmentActivity) getActivity();
 
-
         if (newTreaymentActivity != null) {
-
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
             if (newTreaymentActivity.treatmentDescriptionFragment == null) {
                 newTreaymentActivity.initTreatmentDescriptionFragment();

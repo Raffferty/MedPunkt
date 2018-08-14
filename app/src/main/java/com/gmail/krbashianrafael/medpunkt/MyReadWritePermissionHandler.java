@@ -19,7 +19,7 @@ class MyReadWritePermissionHandler {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Snackbar.make(mLayout, R.string.why_need_permission_to_storage,
+            Snackbar.make(mLayout, R.string.permission_to_storage_need,
                     Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -279,11 +279,11 @@ public class TreatmentActivity extends AppCompatActivity
                 if (tab.getPosition() == 0) {
                     // при нажатии на табы формируем внешний вид табов
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
-                            getResources().getString(R.string.description)));
+                            getResources().getString(R.string.treatment_description)));
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
-                            getResources().getString(R.string.pictures)));
+                            getResources().getString(R.string.treatment_pictures)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -295,11 +295,11 @@ public class TreatmentActivity extends AppCompatActivity
                 // при отжатии табов формируем внешний вид табов
                 if (tab.getPosition() == 0) {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
-                            getResources().getString(R.string.description)));
+                            getResources().getString(R.string.treatment_description)));
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
-                            getResources().getString(R.string.pictures)));
+                            getResources().getString(R.string.treatment_pictures)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -353,7 +353,7 @@ public class TreatmentActivity extends AppCompatActivity
         menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
-                getResources().getString(R.string.delete_disease)));
+                getResources().getString(R.string.disease_delete)));
 
         return true;
     }
@@ -506,11 +506,11 @@ public class TreatmentActivity extends AppCompatActivity
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
-        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setMessage(R.string.dialog_msg_unsaved_changes);
 
-        builder.setNegativeButton(R.string.no, discardButtonClickListener);
+        builder.setNegativeButton(R.string.dialog_no, discardButtonClickListener);
 
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 goBack = true;
                 saveDiseaseAndTreatment();
@@ -528,7 +528,7 @@ public class TreatmentActivity extends AppCompatActivity
     // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
-        builder.setMessage(getString(R.string.delete_disease_dialog_msg) + " " + editTextDiseaseName.getText() + "?");
+        builder.setMessage(getString(R.string.disease_delete) + " " + editTextDiseaseName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (onSavingOrUpdatingOrDeleting) {
@@ -567,7 +567,7 @@ public class TreatmentActivity extends AppCompatActivity
         // првоерка названия заболевания
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable_Error);
-            textInputLayoutDiseaseName.setError(getString(R.string.error_disease_name));
+            textInputLayoutDiseaseName.setError(getString(R.string.disease_error_name));
             editTextDiseaseName.startAnimation(scaleAnimation);
             editTextDiseaseName.requestFocus();
 
@@ -578,11 +578,11 @@ public class TreatmentActivity extends AppCompatActivity
         if (TextUtils.equals(dateOfDiseaseToCheck, getString(R.string.disease_date))) {
             if (wrongField) {
                 textInputLayoutDiseaseName.setError(
-                        getString(R.string.error_disease_name) + "\n" +
-                                getString(R.string.error_date_of_disease)
+                        getString(R.string.disease_error_name) + "\n" +
+                                getString(R.string.disease_error_date)
                 );
             } else {
-                textInputLayoutDiseaseName.setError(getString(R.string.error_date_of_disease));
+                textInputLayoutDiseaseName.setError(getString(R.string.disease_error_date));
             }
 
             editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorFab));
@@ -706,10 +706,8 @@ public class TreatmentActivity extends AppCompatActivity
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
             DiseasesActivity.mScrollToEnd = true;
-
-            Toast.makeText(this, "DiseaseAndTreatment Saved To DataBase", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "DiseaseAndTreatment has NOT been Saved To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -726,11 +724,7 @@ public class TreatmentActivity extends AppCompatActivity
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
-            Toast.makeText(this, "DiseaseAndTreatment has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
-
-        } else {
-            // update в Базе был успешным
-            Toast.makeText(this, "DiseaseAndTreatment Updated To DataBase", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -874,6 +868,8 @@ public class TreatmentActivity extends AppCompatActivity
                 if (results.length==2 && results[0] != null) {
                     // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
                     rowsFromTreatmentPhotosDeleted = results[0].count;
+                } else {
+                    return rowsFromTreatmentPhotosDeleted;
                 }
             } catch (RemoteException | OperationApplicationException e) {
                 e.printStackTrace();
@@ -973,15 +969,13 @@ public class TreatmentActivity extends AppCompatActivity
             if (result == -1) {
                 // если заболевание не удалилось из базы и фото не были удалены
                 treatmentActivity.onSavingOrUpdatingOrDeleting = false;
-                Toast.makeText(treatmentActivity, R.string.disease_deleting_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(treatmentActivity, R.string.disease_not_deleted, Toast.LENGTH_LONG).show();
             } else if (result == 0) {
                 // если не было снимков для удаления
-                Toast.makeText(treatmentActivity, R.string.no_pictures_to_delete, Toast.LENGTH_LONG).show();
                 treatmentActivity.goToDiseasesActivity();
             } else {
                 // result == 1
                 // заболевание удалилось и снимки удалены (или отсутствуют)
-                Toast.makeText(treatmentActivity, R.string.disease_deleted, Toast.LENGTH_LONG).show();
                 treatmentActivity.goToDiseasesActivity();
             }
         }

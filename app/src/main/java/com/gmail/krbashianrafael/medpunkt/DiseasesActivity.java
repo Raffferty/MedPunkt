@@ -56,8 +56,6 @@ public class DiseasesActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        boolean newUser = intent.getBooleanExtra("newUser", false);
-
         if (intent.hasExtra("UserName")) {
             textUserName = intent.getStringExtra("UserName");
         }

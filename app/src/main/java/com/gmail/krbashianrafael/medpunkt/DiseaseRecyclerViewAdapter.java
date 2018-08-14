@@ -40,8 +40,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         String diseaseName = diseaseList.get(position).getDiseaseName();
         String treatmentText = diseaseList.get(position).getTreatmentText();
 
-        // _diseaseId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
-        // для его дальнейшего использования при onClick на itemView
         ((DiseaseHolder) holder)._diseaseId.setText(String.valueOf(_diseaseId));
         ((DiseaseHolder) holder)._diseaseUserId.setText(String.valueOf(_diseaseUserId));
 

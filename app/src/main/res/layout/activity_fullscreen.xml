@@ -11,8 +11,8 @@
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:hint="@string/focusholder"
-        android:inputType="none" />
+        android:inputType="none"
+        tools:ignore="LabelFor" />
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -22,9 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
-        android:contentDescription="@string/fullscreen_image_description"
         android:keepScreenOn="true"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/LL_title"
@@ -107,7 +107,7 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="8dp"
-                android:hint="@string/picture_description"
+                android:hint="@string/fullscreen_picture_description"
                 android:textColorHint="@color/colorPrimaryDark"
                 app:hintTextAppearance="@style/Lable">
 
@@ -139,7 +139,7 @@
             android:focusable="false"
             android:gravity="top"
             android:inputType="date"
-            android:text="@string/date_of_treatment_picture"
+            android:text="@string/fullscreen_date_of_picture"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"
             tools:ignore="LabelFor" />

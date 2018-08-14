@@ -11,8 +11,8 @@
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:hint="@string/focusholder"
-        android:inputType="none" />
+        android:inputType="none"
+        tools:ignore="LabelFor" />
 
     <ImageView
         android:id="@+id/image_photo"
@@ -22,12 +22,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:clickable="true"
-        android:contentDescription="@string/user_photo_placeholder"
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorPrimaryLight" />
+        app:srcCompat="@color/colorPrimaryLight"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/no_user_photo"
@@ -38,7 +38,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:drawableBottom="@drawable/ic_add_circle_outline_white_56dp"
-        android:text="@string/set_photo"
+        android:text="@string/user_photo"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/image_photo"
@@ -84,7 +84,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:hint="@string/date_of_birth"
+        android:hint="@string/user_date_of_birth"
         android:textColorHint="@color/colorPrimaryDark"
         app:errorEnabled="true"
         app:hintTextAppearance="@style/Lable"
@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/delete_photo"
+        android:text="@string/user_delete_photo"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

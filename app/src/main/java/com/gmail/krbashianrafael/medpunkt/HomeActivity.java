@@ -101,8 +101,6 @@ public class HomeActivity extends AppCompatActivity {
 
         if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
             new CleanNotDeletedFilesAsyncTask(notDeletedFilesPathes).execute(getApplicationContext());
-        } else {
-            Log.d("mOnLoadFinished", "No files to Re-Delete");
         }
     }
 
@@ -159,9 +157,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean filesDeleted) {
             super.onPostExecute(filesDeleted);
-            if (filesDeleted) {
-                Log.d("mOnLoadFinished", "Files Re-Deleted");
-            } else {
+            if (!filesDeleted) {
                 Log.d("mOnLoadFinished", "Files NOT Re-Deleted");
             }
         }

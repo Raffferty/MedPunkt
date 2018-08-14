@@ -39,12 +39,16 @@ public class DatePickerFragment extends DialogFragment
         int mMonth;
         int mDay;
 
+        // если в поле dateInEditTextDate уже была установленна дата, то
+        // получаем ее и открываем диалог с этой датой
         if (dateInEditTextDate != null && dateInEditTextDate.contains("-")) {
             String[] mDayMonthYear = dateInEditTextDate.split("-");
             mYear = Integer.valueOf(mDayMonthYear[2]);
             mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
             mDay = Integer.valueOf(mDayMonthYear[0]);
         } else {
+            // если в поле dateInEditTextDate не была установлена дата
+            // то открываем диалог с текущей датой
             final Calendar c = Calendar.getInstance();
             mYear = c.get(Calendar.YEAR);
             mMonth = c.get(Calendar.MONTH);
@@ -58,7 +62,6 @@ public class DatePickerFragment extends DialogFragment
     @SuppressLint("SetTextI18n")
     @Override
     public void onDateSet(@NonNull DatePicker view, int year, int month, int day) {
-        //EditText editTextDate = Objects.requireNonNull(getActivity()).findViewById(R.id.editText_date);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         GregorianCalendar date = new GregorianCalendar(year, month, day);
         String formatedDate = simpleDateFormat.format(date.getTime()) + " ";

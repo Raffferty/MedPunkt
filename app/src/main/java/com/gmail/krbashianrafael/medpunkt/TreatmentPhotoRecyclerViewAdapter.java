@@ -42,14 +42,10 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         String itemName = treatmentPhotosList.get(position).getTrPhotoName();
         String itemPhotoUri = treatmentPhotosList.get(position).getTrPhotoUri();
 
-        // _diseaseId прописываем в "невидимое" _treatment_id (т.к. размеры этого TextView в нулях)
-        // для его дальнейшего использования при onClick на itemView
         ((TreatmentPhotoHolder) holder)._trPhotoId.setText(String.valueOf(_trPhotoId));
         ((TreatmentPhotoHolder) holder)._userId.setText(String.valueOf(_userId));
         ((TreatmentPhotoHolder) holder)._diseaseId.setText(String.valueOf(_diseaseId));
 
-        // itemUri прописываем в "невидимое" recycler_photo_item_uri (т.к. размеры этого TextView в нулях)
-        // для его дальнейшего использования при onClick на itemView
         ((TreatmentPhotoHolder) holder).itemUri.setText(itemPhotoUri);
 
         ((TreatmentPhotoHolder) holder).itemDate.setText(itemDate);

@@ -28,7 +28,7 @@
         android:layout_margin="16dp"
         android:drawableBottom="@drawable/ic_add_circle_orange_80dp"
         android:gravity="center"
-        android:text="@string/empty_users_text"
+        android:text="@string/user_title_activity"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@android:color/darker_gray"
         android:visibility="invisible"

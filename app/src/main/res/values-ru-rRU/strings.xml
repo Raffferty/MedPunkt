@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app -->
-    <string name="greeting">The MedPunkt application will help you to remember when and what were your diseases
-        and how you were treated them.
-        \n\n\Welcome!</string>
+    <string name="greeting">Приложение MedPunkt поможет Вам запомнить когда и чем Вы болели и как лечились.
+                            \n\n\Добро пожаловть!</string>
     <string name="show_greeting">Больше не показывать</string>
 
     <string name="menu_save_item">cохранить\u2000</string>
@@ -73,14 +72,4 @@
     <string name="fullscreen_date_of_picture">дата снимка</string>
     <string name="fullscreen_error_date_of_picture">Укажите дату снимка</string>
     <string name="fullscreen_dialog_msg_delete_picture">Удалить снимок</string>
-
-    <!-- эти строки не переводить -->
-    <string name="app_name">MedPunkt</string>
-    <string name="title_activity_home">\tMedPunkt</string>
-    <string name="txt_no_title">No Title</string>
-    <string name="path_to_treatment_photos">/treatment_photos</string>
-    <string name="treatment_photo_nameStart">trImage-</string>
-    <string name="treatment_photo_nameEnd">.jpg</string>
-    <string name="path_to_users_photos">/users_photos/</string>
-    <string name="user_photo_nameEnd">-usrImage.jpg</string>
 </resources>

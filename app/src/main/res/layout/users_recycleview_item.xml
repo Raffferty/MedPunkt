@@ -22,8 +22,8 @@
             android:layout_marginBottom="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
-            android:contentDescription="@string/user_photo_placeholder"
-            android:src="@drawable/ic_camera_alt_gray_24dp" />
+            android:src="@drawable/ic_camera_alt_gray_24dp"
+            tools:ignore="ContentDescription" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,8 +62,8 @@
             android:layout_gravity="center"
             android:layout_marginEnd="12dp"
             android:layout_marginStart="8dp"
-            android:contentDescription="@string/usr_edit_img"
-            android:src="@drawable/ic_info_outline_blue_48dp" />
+            android:src="@drawable/ic_info_outline_blue_48dp"
+            tools:ignore="ContentDescription" />
 
     </FrameLayout>
 

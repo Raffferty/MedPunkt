@@ -103,8 +103,6 @@ public class TreatmentPhotosFragment extends Fragment
                 startActivity(intentToTreatmentPhoto);
             }
         });
-
-
     }
 
     @Override
@@ -173,9 +171,6 @@ public class TreatmentPhotosFragment extends Fragment
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
         }
     }
-
-
-
 
     @NonNull
     @Override

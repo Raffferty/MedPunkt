@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -29,7 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -63,8 +63,8 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 
-public class FullscreenPhotoActivity extends AppCompatActivity
-        implements ActivityCompat.OnRequestPermissionsResultCallback,
+public class FullscreenPhotoActivity extends AppCompatActivity implements
+        ActivityCompat.OnRequestPermissionsResultCallback,
         DatePickerDialog.OnDateSetListener {
 
     private static final int UI_ANIMATION_DELAY = 300;
@@ -229,7 +229,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
             // если не новое фото и не может загрузить
         } else if (!newTreatmentPhoto) {
-            Toast.makeText(this, R.string.cant_load_picture, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.treatment_cant_load_picture, Toast.LENGTH_LONG).show();
         }
 
         // записываем в поля описание и дату пришедшего снимка
@@ -242,7 +242,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         if (textDateOfTreatmentPhoto != null) {
             editTextDateOfTreatmentPhoto.setText(textDateOfTreatmentPhoto);
         } else {
-            textDateOfTreatmentPhoto = getString(R.string.date_of_treatment_picture);
+            textDateOfTreatmentPhoto = getString(R.string.fullscreen_date_of_picture);
         }
 
         // если было нажато добваить новое фото
@@ -250,7 +250,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         if (newTreatmentPhoto) {
             editTreatmentPhoto = true;
 
-            if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
 
                 // убираем UI, кроме SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -476,18 +477,23 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     int mMonth;
                     int mDay;
 
+                    // если в поле dateInEditTextDate уже была установленна дата, то
+                    // получаем ее и открываем диалог с этой датой
                     if (dateInEditTextDate.contains("-")) {
                         String[] mDayMonthYear = dateInEditTextDate.split("-");
                         mYear = Integer.valueOf(mDayMonthYear[2]);
                         mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
                         mDay = Integer.valueOf(mDayMonthYear[0]);
                     } else {
+                        // если в поле dateInEditTextDate не была установлена дата
+                        // то открываем диалог с текущей датой
                         final Calendar c = Calendar.getInstance();
                         mYear = c.get(Calendar.YEAR);
                         mMonth = c.get(Calendar.MONTH);
                         mDay = c.get(Calendar.DAY_OF_MONTH);
                     }
 
+                    // используем стороннюю библиотеку для диалога SpinnerDatePickerDialog
                     new SpinnerDatePickerDialogBuilder()
                             .context(FullscreenPhotoActivity.this)
                             .callback(FullscreenPhotoActivity.this)
@@ -590,7 +596,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // Диалог "Удалить фото заболевания или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
-        builder.setMessage(getString(R.string.delete_tr_picture_dialog_msg) + " " + editTextPhotoDescription.getText() + "?");
+        builder.setMessage(getString(R.string.fullscreen_dialog_msg_delete_picture) + " " + editTextPhotoDescription.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (onSavingOrUpdatingOrDeleting) {
@@ -777,7 +783,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // либо обращаемся к галерее фото
         } else {
 
-            if (onLoading || onSavingOrUpdatingOrDeleting){
+            if (onLoading || onSavingOrUpdatingOrDeleting) {
                 return;
             }
 
@@ -841,11 +847,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         hideSoftInput();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
-        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setMessage(R.string.dialog_msg_unsaved_changes);
 
-        builder.setNegativeButton(R.string.no, discardButtonClickListener);
+        builder.setNegativeButton(R.string.dialog_no, discardButtonClickListener);
 
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
                 goBack = true;
@@ -903,21 +909,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         // првоерка описания фото
         if (TextUtils.isEmpty(photoDescriptionToCheck)) {
             textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable_Error);
-            textInputLayoutPhotoDescription.setError(getString(R.string.error_picture_description));
+            textInputLayoutPhotoDescription.setError(getString(R.string.treatment_error_picture_description));
             editTextPhotoDescription.startAnimation(scaleAnimation);
             editTextPhotoDescription.requestFocus();
             wrongField = true;
         }
 
         // првоерка Даты фото
-        if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.date_of_treatment_picture))) {
+        if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.fullscreen_date_of_picture))) {
             if (wrongField) {
                 textInputLayoutPhotoDescription.setError(
-                        getString(R.string.error_picture_description) + "\n" +
-                                getString(R.string.error_date_of_treatment_picture)
+                        getString(R.string.treatment_error_picture_description) + "\n" +
+                                getString(R.string.fullscreen_error_date_of_picture)
                 );
             } else {
-                textInputLayoutPhotoDescription.setError(getString(R.string.error_date_of_treatment_picture));
+                textInputLayoutPhotoDescription.setError(getString(R.string.fullscreen_error_date_of_picture));
             }
 
             editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorFab));
@@ -982,14 +988,25 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // Получаем путь к файлам для интернал
             String root = getFilesDir().toString();
 
+
+            String pathToTreatmentPhotos = root + getString(R.string.path_to_treatment_photos);
+
             //  /data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos
-            File myDir = new File(root + "/treatment_photos");
-            if (!myDir.mkdirs()) {
-                Log.d("file", "users_photos_dir_Not_created");
+            File myDir = new File(pathToTreatmentPhotos);
+
+            if (!myDir.exists()) {
+                if (!myDir.mkdirs()) {
+                    Toast.makeText(this, R.string.treatment_cant_save_picture, Toast.LENGTH_LONG).show();
+                    return;
+                }
             }
 
             // SystemClock.elapsedRealtime(); для нумерации сохраняемых файлов
-            String destinationFileName = "trImage-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg";
+            String destinationFileName = getString(R.string.treatment_photo_nameStart) +
+                    _idUser + "-" +
+                    _idDisease + "-" + SystemClock.elapsedRealtime() +
+                    getString(R.string.treatment_photo_nameEnd);
+
             File destinationFile = new File(myDir, destinationFileName);
 
             if (newTreatmentPhoto) {
@@ -1011,7 +1028,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                     afterSaveOrUpdate();
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
-                    Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.treatment_cant_save_picture, Toast.LENGTH_LONG).show();
                 }
 
             } else {
@@ -1019,7 +1036,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
                 File oldFile = new File(treatmentPhotoFilePath);
                 if (oldFile.exists()) {
                     if (!oldFile.delete()) {
-                        Toast.makeText(this, R.string.old_picture_not_deleted, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.treatment_old_picture_not_deleted, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -1036,7 +1053,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
-                    Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.treatment_cant_save_picture, Toast.LENGTH_LONG).show();
                 }
 
                 afterSaveOrUpdate();
@@ -1046,7 +1063,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             }
         } else {
             onSavingOrUpdatingOrDeleting = false;
-            Toast.makeText(this, R.string.cant_save_picture, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.treatment_cant_save_picture, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1084,14 +1101,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
             TreatmentPhotosFragment.mScrollToEnd = true;
-
-            Toast.makeText(this, "TreatmentPhoto Saved To DataBase", Toast.LENGTH_LONG).show();
-
             return true;
 
         } else {
-            Toast.makeText(this, "TreatmentPhoto has NOT been Saved To DataBase", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(this, R.string.treatment_cant_save_picture, Toast.LENGTH_LONG).show();
             return false;
         }
     }
@@ -1110,15 +1123,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
-
-            Toast.makeText(this, "TreatmentPhoto has NOT been Updated To DataBase", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(this, R.string.treatment_cant_update_picture, Toast.LENGTH_LONG).show();
             return false;
 
         } else {
-            // update в Базе был успешным
-
-            Toast.makeText(this, "TreatmentPhoto Updated To DataBase", Toast.LENGTH_LONG).show();
 
             return true;
         }
@@ -1128,13 +1136,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
         File toBeDeletedFile = new File(treatmentPhotoFilePath);
         if (toBeDeletedFile.exists()) {
             if (!toBeDeletedFile.delete()) {
-                Toast.makeText(this, R.string.picture_not_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.treatment_picture_not_deleted, Toast.LENGTH_LONG).show();
                 return false;
-            } else {
-                Toast.makeText(this, R.string.picture_deleted, Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(this, R.string.picture_deleted, Toast.LENGTH_LONG).show();
         }
 
         return true;
@@ -1154,10 +1158,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity
 
         if (rowsDeleted == 0) {
             onSavingOrUpdatingOrDeleting = false;
-            Toast.makeText(this, "TreatmentPhoto has NOT been deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "TreatmentPhoto Deleted from DataBase", Toast.LENGTH_LONG).show();
-
             goToTreatmentActivity();
         }
     }
@@ -1230,6 +1231,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity
     // класс TreatmentPhotoCopyAsyncTask (для копирования файла фото) делаем статическим,
     // чтоб не было утечки памяти при его работе
     private static class TreatmentPhotoCopyAsyncTask extends AsyncTask<File, Void, Void> {
+
+        private static final String PREFS_NAME = "PREFS";
+
         // получаем WeakReference на FullscreenPhotoActivity,
         // чтобы GC мог его собрать
         private WeakReference<FullscreenPhotoActivity> fullscreenPhotoActivityReference;
@@ -1248,32 +1252,37 @@ public class FullscreenPhotoActivity extends AppCompatActivity
             try {
                 FileUtils.copyFile(fileOfPhoto, destination);
 
+            } catch (NullPointerException | IOException e) {
+                // если были ошибки во время копирования
+                // то удаляем конечный файл (если он образовался)
                 if (fullscreenPhotoActivity != null) {
                     fullscreenPhotoActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(fullscreenPhotoActivity, R.string.picture_copy, Toast.LENGTH_LONG).show();
+                            Toast.makeText(fullscreenPhotoActivity, R.string.treatment_picture_copy_error, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
 
-            } catch (NullPointerException | IOException e) {
-                // если были ошибки во время копирования
-                // то удаляем конечный файл (если он образовался)
+                // если файл образовался, то удаляем его
                 if (destination.exists()) {
-                    if (!destination.delete()) {
-                        if (fullscreenPhotoActivity != null) {
-                            fullscreenPhotoActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(fullscreenPhotoActivity, R.string.picture_copy_error, Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                    if (!destination.delete() && fullscreenPhotoActivity != null) {
+                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
+                        SharedPreferences prefs = fullscreenPhotoActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                        final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                        // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
+                        String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
+                        String updatedNotDeletedFilesPathes = notDeletedFilesPathes + "," + destination.getPath();
+
+                        // пишем заново в в "PREFS" обновленную строку
+                        prefsEditor.putString("notDeletedFilesPathes", updatedNotDeletedFilesPathes);
+                        prefsEditor.apply();
                     }
                 }
 
-                e.getStackTrace();
+                e.printStackTrace();
 
                 return null;
             }

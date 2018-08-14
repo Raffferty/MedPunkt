@@ -19,7 +19,7 @@
         android:layout_below="@+id/divider_frame"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
-        android:text="@string/txt_what_diseases"
+        android:text="@string/diseases_what_text"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
@@ -32,7 +32,7 @@
         android:layout_margin="16dp"
         android:drawableBottom="@drawable/ic_add_circle_orange_80dp"
         android:gravity="center"
-        android:text="@string/empty_diseases_text"
+        android:text="@string/diseases_empty_text"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@android:color/darker_gray"
         android:visibility="invisible"

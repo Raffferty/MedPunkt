@@ -15,8 +15,8 @@
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:hint="@string/focusholder"
-        android:inputType="none" />
+        android:inputType="none"
+        tools:ignore="LabelFor" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_disease_name"
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
-        android:text="@string/txt_title_treatmen"
+        android:text="@string/treatmen_title_text"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
         android:textColor="@android:color/white"
         android:textSize="20sp"
