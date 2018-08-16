@@ -56,6 +56,8 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_64dp"
-        app:backgroundTint="@color/colorFab" />
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFab"
+        tools:visibility="visible" />
 
 </RelativeLayout>

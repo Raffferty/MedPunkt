@@ -17,7 +17,7 @@
         android:drawableBottom="@drawable/ic_add_a_photo_orang_80dp"
         android:gravity="center"
         android:padding="4dp"
-        android:text="@string/treatment_empty_picture_text"
+        android:text="@string/treatment_empty_image_text"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="@android:color/darker_gray"
         android:visibility="invisible"
@@ -45,8 +45,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_a_photo_white_24dp"
+        android:visibility="invisible"
         app:backgroundTint="@color/colorFab"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

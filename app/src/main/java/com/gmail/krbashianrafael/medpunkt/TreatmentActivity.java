@@ -283,7 +283,7 @@ public class TreatmentActivity extends AppCompatActivity
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
-                            getResources().getString(R.string.treatment_pictures)));
+                            getResources().getString(R.string.treatment_images)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -299,7 +299,7 @@ public class TreatmentActivity extends AppCompatActivity
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
-                            getResources().getString(R.string.treatment_pictures)));
+                            getResources().getString(R.string.treatment_images)));
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),

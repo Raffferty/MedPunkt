@@ -16,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
@@ -33,10 +35,15 @@ public class DiseasesActivity extends AppCompatActivity
 
     private FloatingActionButton fabAddDisease;
 
+    private Animation fabShowAnimation;
+
     // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertDisease
     public static boolean mScrollToEnd = false;
+
+    private RecyclerView recyclerDiseases;
+    private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     /**
      * Identifier for the user data loader
@@ -45,9 +52,6 @@ public class DiseasesActivity extends AppCompatActivity
      * в данном случае private static final int DISEASE_LOADER = 1;
      */
     private static final int DISEASE_LOADER = 1;
-
-    private RecyclerView recyclerDiseases;
-    private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,24 @@ public class DiseasesActivity extends AppCompatActivity
             }
         });
 
+        fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                fabAddDisease.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fabAddDisease.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                fabAddDisease.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         // инициализируем recyclerDiseases
         recyclerDiseases = findViewById(R.id.recycler_diseases);
@@ -147,19 +169,18 @@ public class DiseasesActivity extends AppCompatActivity
 
         // устанавливаем адаптер для RecyclerView
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
-
-        // Инициализируем Loader
-        getLoaderManager().initLoader(DISEASE_LOADER, null, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // для возобновления данных
-        if (diseaseRecyclerViewAdapter!=null){
-            diseaseRecyclerViewAdapter.notifyDataSetChanged();
-        }
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        textViewAddDisease.setVisibility(View.INVISIBLE);
+        fabAddDisease.setVisibility(View.INVISIBLE);
+
+        // Инициализируем Loader
+        getLoaderManager().initLoader(DISEASE_LOADER, null, this);
     }
 
     @Override
@@ -199,9 +220,8 @@ public class DiseasesActivity extends AppCompatActivity
                 DiseasesEntry.COLUMN_DISEASE_DATE,
                 DiseasesEntry.COLUMN_DISEASE_TREATMENT};
 
-
         // выборку заболеванй делаем по _idUser
-        String  selection = DiseasesEntry.COLUMN_U_ID + "=?";
+        String selection = DiseasesEntry.COLUMN_U_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser)};
 
         // This loader will execute the ContentProvider's query method on a background thread
@@ -216,6 +236,7 @@ public class DiseasesActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
@@ -251,20 +272,22 @@ public class DiseasesActivity extends AppCompatActivity
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
             textViewAddDisease.setVisibility(View.VISIBLE);
-            fabAddDisease.setVisibility(View.INVISIBLE);
         } else {
-            textViewAddDisease.setVisibility(View.INVISIBLE);
-            fabAddDisease.setVisibility(View.VISIBLE);
+            fabAddDisease.startAnimation(fabShowAnimation);
         }
 
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
+        // делаем destroyLoader, чтоб он сам повторно не вызывался,
+        // а вызывался при каждом входе в активити
+        getLoaderManager().destroyLoader(DISEASE_LOADER);
+
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент
         // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd  && myData.size() != 0) {
+        if (mScrollToEnd && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(myData.size() - 1);
             mScrollToEnd = false;
         }

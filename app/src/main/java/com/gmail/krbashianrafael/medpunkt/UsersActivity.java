@@ -134,19 +134,20 @@ public class UsersActivity extends AppCompatActivity
         // устанавливаем адаптер для RecyclerView
         recyclerUsers.setAdapter(usersRecyclerViewAdapter);
 
-        // Инициализируем Loader
-        // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
-        getLoaderManager().initLoader(USER_LOADER,null, this);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // для возобновления фото при рестарте
-        if (usersRecyclerViewAdapter!=null){
-            usersRecyclerViewAdapter.notifyDataSetChanged();
-        }
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        fabAddUser.setVisibility(View.INVISIBLE);
+        txtAddUsers.setVisibility(View.INVISIBLE);
+
+        // Инициализируем Loader
+        // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
+        getLoaderManager().initLoader(USER_LOADER,null, this);
     }
 
     @Override
@@ -281,9 +282,7 @@ public class UsersActivity extends AppCompatActivity
         // и fabAddUser.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
             txtAddUsers.setVisibility(View.VISIBLE);
-            fabAddUser.setVisibility(View.INVISIBLE);
         }else {
-            txtAddUsers.setVisibility(View.INVISIBLE);
             fabAddUser.startAnimation(fabShowAnimation);
         }
 
@@ -318,6 +317,10 @@ public class UsersActivity extends AppCompatActivity
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         usersRecyclerViewAdapter.notifyDataSetChanged();
+
+        // делаем destroyLoader, чтоб он сам повторно не вызывался,
+        // а вызывался при каждом входе в активити
+        getLoaderManager().destroyLoader(USER_LOADER);
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент

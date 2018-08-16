@@ -21,8 +21,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     // fabEditTreatmentDescripton
     protected FloatingActionButton fabEditTreatmentDescripton;
 
-
-    // Animation fabHideAnimation
     private Animation fabHideAnimation;
 
     public TreatmentDescriptionFragment() {
@@ -43,21 +41,6 @@ public class TreatmentDescriptionFragment extends Fragment {
 
         fabEditTreatmentDescripton = view.findViewById(R.id.fabEditTreatmentDescripton);
 
-        fabHideAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_hide);
-        fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
     }
 
     @Override
@@ -67,6 +50,46 @@ public class TreatmentDescriptionFragment extends Fragment {
         newTreaymentActivity = (TreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
+
+            Animation fabShowAnimation = AnimationUtils.loadAnimation(newTreaymentActivity, R.anim.fab_show);
+            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                }
+            });
+
+
+            if (!newTreaymentActivity.editDisease) {
+                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+            }
+
+            fabHideAnimation = AnimationUtils.loadAnimation(newTreaymentActivity, R.anim.fab_hide);
+            fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
             if (newTreaymentActivity.treatmentDescriptionFragment == null) {
                 newTreaymentActivity.initTreatmentDescriptionFragment();

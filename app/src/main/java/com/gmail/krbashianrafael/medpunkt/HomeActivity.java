@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
 
         String greetingText = getText(R.string.greeting).toString();
         Spannable spannable = new SpannableString(greetingText);
-        spannable.setSpan(new ForegroundColorSpan(Color.RED), 11, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, 8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         greetingTextView.setText(spannable, TextView.BufferType.SPANNABLE);
 

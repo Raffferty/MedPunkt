@@ -25,7 +25,7 @@
         android:layout_marginTop="2dp"
         android:background="@android:color/white"
         android:hint="@string/disease_name"
-        android:paddingTop="3dp"
+        android:paddingTop="4dp"
         android:textColorHint="@color/colorPrimaryDark"
         app:hintTextAppearance="@style/Lable"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,13 +94,12 @@
         app:tabSelectedTextColor="@color/colorFab"
         app:tabTextColor="@android:color/black" />
 
-
     <EditText
         android:id="@+id/editText_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="2dp"
         android:background="@android:color/white"
         android:drawableEnd="@drawable/ic_date_range_orange_32dp"
         android:focusable="false"

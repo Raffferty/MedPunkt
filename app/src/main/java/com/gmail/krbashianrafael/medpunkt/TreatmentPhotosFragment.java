@@ -18,6 +18,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
@@ -40,6 +42,8 @@ public class TreatmentPhotosFragment extends Fragment
     private TextView txtAddPhotos;
 
     private FloatingActionButton fabAddTreatmentPhotos;
+
+    private Animation fabShowAnimation;
 
     protected RecyclerView recyclerTreatmentPhotos;
 
@@ -103,26 +107,19 @@ public class TreatmentPhotosFragment extends Fragment
                 startActivity(intentToTreatmentPhoto);
             }
         });
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Инициализируем Loader
-        getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        txtAddPhotos.setVisibility(View.INVISIBLE);
+        fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+
         // Инициализируем Loader
         getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
-
-        // для возобновления данных
-        if (treatmentPhotoRecyclerViewAdapter!=null){
-            treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -132,6 +129,24 @@ public class TreatmentPhotosFragment extends Fragment
         newTreaymentActivity = (TreatmentActivity) getActivity();
 
         if (newTreaymentActivity != null) {
+
+            fabShowAnimation = AnimationUtils.loadAnimation(newTreaymentActivity, R.anim.fab_show);
+            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+            });
 
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
             if (newTreaymentActivity.treatmentPhotosFragment == null) {
@@ -202,6 +217,7 @@ public class TreatmentPhotosFragment extends Fragment
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+
         ArrayList<TreatmentPhotoItem> myData = treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList();
         myData.clear();
 
@@ -239,17 +255,17 @@ public class TreatmentPhotosFragment extends Fragment
         // LayoutManager обновляет RecyclerView
         treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался
+        // делаем destroyLoader, чтоб он сам повторно не вызывался,
+        // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TR_PHOTOS_IN_FRAGMENT_LOADER);
 
-        // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
-        // и fabAddDisease.setVisibility(View.INVISIBLE);
+        // если нет фото лечений, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
+        // fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
         if (myData.size() == 0) {
             txtAddPhotos.setVisibility(View.VISIBLE);
-            fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
         } else {
-            txtAddPhotos.setVisibility(View.INVISIBLE);
-            fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+            //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+            fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
         }
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,

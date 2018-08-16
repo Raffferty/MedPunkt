@@ -179,6 +179,7 @@ public class UserActivity extends AppCompatActivity
         textViewNoUserPhoto = findViewById(R.id.no_user_photo);
 
         imagePhoto = findViewById(R.id.image_photo);
+        //imagePhoto.setMaxWidth(400);
 
         if (!userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
@@ -887,7 +888,6 @@ public class UserActivity extends AppCompatActivity
 
             UsersActivity.mScrollToEnd = true;
 
-            int rowsAffected = 0;
 
             // если есть что сохранять в файл фото пользователя loadedBitmap != null
             if (pathToUsersPhoto != null && loadedBitmap != null) {
@@ -896,35 +896,38 @@ public class UserActivity extends AppCompatActivity
                 userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
 
                 // обновляем данные по пути к файлу фото пользовател в базе
-                rowsAffected = insertUserPhotoUriToDataBase(userPhotoUri);
-            }
+                int rowsAffected = insertUserPhotoUriToDataBase(userPhotoUri);
 
-            // если обновление пути к файлу в базе НЕ произошло
-            if (rowsAffected == 0) {
-                userPhotoUri = "No_Photo";
-                onSavingOrUpdatingOrDeleting = false;
-                Toast.makeText(UserActivity.this, R.string.user_cant_save_photo, Toast.LENGTH_LONG).show();
-
-                afterSaveUser();
-
-            } else {
-                // если userPhotoUri обновилось,
-                // сохраняем файл фото (если фото было загружено loadedBitmap != null)
-                // и идем по нормальному сценарию выхода после сохранения нового пользователя
-
-                // сохранение файла фото происходит асинхронно
-                // в UserPhotoSavingAsyncTask
-                // в конструктор передаются actyvity, loadedBitmap, и путь к файлу фото
-                if (loadedBitmap != null) {
-                    new UserPhotoSavingAsyncTask(this, loadedBitmap, userPhotoUri).execute();
-                } else {
-                    // если после указания в базе пути к фото
-                    // по каким-то причинам loadedBitmap == null
-                    // то оставляем в базе путь, т.к. он все равно ничего не вытянет
-                    // по причине отсутствия файла по этому пути
+                // если обновление пути к файлу в базе НЕ произошло
+                if (rowsAffected == 0) {
+                    userPhotoUri = "No_Photo";
                     onSavingOrUpdatingOrDeleting = false;
+                    Toast.makeText(UserActivity.this, R.string.user_cant_save_photo, Toast.LENGTH_LONG).show();
+
                     afterSaveUser();
+
+                } else {
+                    // если userPhotoUri обновилось,
+                    // сохраняем файл фото (если фото было загружено loadedBitmap != null)
+                    // и идем по нормальному сценарию выхода после сохранения нового пользователя
+
+                    // сохранение файла фото происходит асинхронно
+                    // в UserPhotoSavingAsyncTask
+                    // в конструктор передаются actyvity, loadedBitmap, и путь к файлу фото
+                    if (loadedBitmap != null) {
+                        new UserPhotoSavingAsyncTask(this, loadedBitmap, userPhotoUri).execute();
+                    } else {
+                        // если после указания в базе пути к фото
+                        // по каким-то причинам loadedBitmap == null
+                        // то оставляем в базе путь, т.к. он все равно ничего не вытянет
+                        // по причине отсутствия файла по этому пути
+                        onSavingOrUpdatingOrDeleting = false;
+                        afterSaveUser();
+                    }
                 }
+            } else {
+                onSavingOrUpdatingOrDeleting = false;
+                afterSaveUser();
             }
         } else {
             onSavingOrUpdatingOrDeleting = false;

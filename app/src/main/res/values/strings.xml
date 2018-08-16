@@ -1,80 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app -->
-    <string name="greeting">The MedPunkt application will help you to remember when and what were your diseases
-        and how you were treated them.
-        \n\n\Welcome!</string>
-    <string name="show_greeting">Больше не показывать</string>
+    <string name="greeting">MedPunkt
+        \n\nwill help you to remember when and what were you,
+        your relatives’ or your patients’ diseases and what was the treatment.
+        \n\nWelcome!</string>
+    <string name="doctor">I am doctor</string>
+    <string name="show_greeting">Don’t show again</string>
 
-    <string name="menu_save_item">cохранить\u2000</string>
-    <string name="menu_delete_item">Удалить</string>
+    <string name="save">Save\u2000</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="dialog_msg_unsaved_changes">Сохранить изменения?</string>
-    <string name="dialog_yes">Да</string>
-    <string name="dialog_no">Нет</string>
+    <string name="dialog_msg_unsaved_changes">Save changes?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
 
-    <string name="delete">Удалить</string>
-    <string name="cancel">Отменить</string>
-
-    <string name="permission_to_storage_need">Необходим доступ к фотографиям</string>
-    <string name="permission_not_available">Доступа к фотографиям НЕТ!\nЗапрашиваю Доступ к фотографиям</string>
-    <string name="permission_was_denied">В доступе к фотографиям отказано</string>
+    <string name="permission_to_storage_need">Needs access to photos</string>
+    <string name="permission_not_available">NO access to photos!\nRequesting access</string>
+    <string name="permission_was_denied">Access to photos is denied</string>
 
     <!-- users_activity -->
-    <string name="users_title_activity">Пользователи</string>
+    <string name="users_title_activity">Users</string>
+    <string name="patients_title_activity">Patients</string>
 
     <!-- user_activity -->
-    <string name="user_title_activity">Добавить Пользователя</string>
-    <string name="user_photo">Фото</string>
-    <string name="user_delete_photo">Удалить фото</string>
-    <string name="user_name">Имя</string>
-    <string name="user_date_of_birth">Дата рождения</string>
-    <string name="user_error_name">Укажите имя</string>
-    <string name="user_error_date">Укажите дату рождения</string>
-    <string name="user_cant_save">Пользователя не удалось сохранить</string>
-    <string name="user_cant_update">Пользователя не удалось обновить</string>
-    <string name="user_cant_save_photo">Фотографию не удалось сохранить</string>
-    <string name="user_cant_load_photo">Фотографию не удалось загрузить</string>
-    <string name="user_photo_not_deleted">Фотография не удалилась</string>
-    <string name="user_delete">Удалить ползователя</string>
-    <string name="user_not_deleted">Пользователь НЕ удалился</string>
+    <string name="user_title_activity">Add User</string>
+    <string name="user_photo">Photo</string>
+    <string name="user_delete_photo">Delete photo</string>
+    <string name="user_name">Name</string>
+    <string name="user_date_of_birth">Date of Birth</string>
+    <string name="user_error_name">Specify name</string>
+    <string name="user_error_date">Specify date of birth</string>
+    <string name="user_cant_save">User could not be saved</string>
+    <string name="user_cant_update">User could not be updated</string>
+    <string name="user_cant_save_photo">Photo could not be saved</string>
+    <string name="user_cant_load_photo">Photo could not be loaded</string>
+    <string name="user_photo_not_deleted">Photo could not be deleted</string>
+    <string name="user_delete">Delete user</string>
+    <string name="user_not_deleted">User could not be deleted</string>
 
     <!-- diseases_activity -->
-    <string name="diseases_activity_title">Заболевания</string>
-    <string name="diseases_empty_text">Добавить чем болел</string>
-    <string name="diseases_what_text">Чем болел</string>
-    <string name="disease_name">Название заболевания</string>
-    <string name="disease_date">Дата</string>
-    <string name="disease_error_name">Укажите название заболевания</string>
-    <string name="disease_error_date">Укажите дату заболевания</string>
-    <string name="disease_not_deleted">Заболевание НЕ удалилось</string>
-    <string name="disease_delete">Удалить заболевание</string>
+    <string name="diseases_activity_title">Diseases</string>
+    <string name="diseases_empty_text">Add disease</string>
+    <string name="diseases_what_text">Diseases</string>
+    <string name="disease_name">Disease name</string>
+    <string name="disease_date">Disease date</string>
+    <string name="disease_error_name">Specify disease name</string>
+    <string name="disease_error_date">Specify disease date</string>
+    <string name="disease_not_deleted">Disease could not be deleted</string>
+    <string name="disease_delete">Delete disease</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_picture_text">Добавить снимок,\nсвязанный с лечением</string>
-    <string name="treatment_cant_save_picture">Снимок не удалось сохранить</string>
-    <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>
-    <string name="treatment_cant_update">Заболевание и лечение не удалось обновить</string>
-    <string name="treatment_cant_load_picture">Снимок не удалось загрузить</string>
-    <string name="treatment_cant_update_picture">Снимок не удалось обновить</string>
-    <string name="treatment_picture_not_deleted">Снимок не удалился</string>
-    <string name="treatment_picture_copy_error">При копировании снимка возникли ошибки,\nповторите попытку позже</string>
-    <string name="treatment_old_picture_not_deleted">Обновляемый снимок не удалился</string>
-    <string name="treatment_title_activity">Добавить чем болел</string>
-    <string name="treatmen_title_text">Лечение</string>
-    <string name="treatment_description_hint_text">Описание лечения</string>
-    <string name="treatment_description">ОПИСАНИЕ</string>
-    <string name="treatment_pictures">СНИМКИ</string>
-    <string name="treatment_error_picture_description">Укажите краткое описание снимка</string>
+    <string name="treatment_empty_image_text">Add image\nconnected with treatment</string>
+    <string name="treatment_cant_save_image">Image could not be saved</string>
+    <string name="treatment_cant_save">Disease and treatment could not be saved</string>
+    <string name="treatment_cant_update">Disease and treatment could not be updated</string>
+    <string name="treatment_cant_load_image">Image could not be loaded</string>
+    <string name="treatment_cant_update_image">Image could not be updated</string>
+    <string name="treatment_image_not_deleted">Image could not be deleted</string>
+    <string name="treatment_image_copy_error">Errors on image saving,\ntry again later</string>
+    <string name="treatment_old_image_not_deleted">Updated image could not be deleted</string>
+    <string name="treatment_title_activity">Add disease</string>
+    <string name="treatmen_title_text">Treatment</string>
+    <string name="treatment_description_hint_text">Treatment Description</string>
+    <string name="treatment_description">DESCRIPTION</string>
+    <string name="treatment_images">IMAGES</string>
 
     <!-- fullscreen_activity -->
-    <string name="fullscreen_title_activity">Добавить снимок</string>
-    <string name="fullscreen_picture_description">Описание снимка</string>
-    <string name="fullscreen_date_of_picture">дата снимка</string>
-    <string name="fullscreen_error_date_of_picture">Укажите дату снимка</string>
-    <string name="fullscreen_dialog_msg_delete_picture">Удалить снимок</string>
+    <string name="fullscreen_title_activity">Add image</string>
+    <string name="fullscreen_image_description">Image description</string>
+    <string name="fullscreen_date_of_image">Image date</string>
+    <string name="fullscreen_error_date_of_image">Specify image date</string>
+    <string name="fullscreen_error_image_description">Specify image brief description</string>
+    <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
 
-    <!-- эти строки не переводить -->
+    <!-- do not translate -->
     <string name="app_name">MedPunkt</string>
     <string name="title_activity_home">\tMedPunkt</string>
     <string name="txt_no_title">No Title</string>
