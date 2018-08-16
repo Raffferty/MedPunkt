@@ -92,6 +92,8 @@ public class HomeActivity extends AppCompatActivity {
             Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
             intentToUsers.putExtra("iAmDoctor", iAmDoctor);
             startActivity(intentToUsers);
+        }else {
+            UsersActivity.onResumeCounter = 1;
         }
 
         // checkBox.setOnCheckedChangeListener инициализируем после проверки на галочку (вверху)
