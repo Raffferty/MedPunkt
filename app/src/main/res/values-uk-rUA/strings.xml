@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app -->
+    <string name="greeting">MedPunkt
+        \n\n\допоможе Вам запам’ятати коли і чим хворіли Ви, ваші близькі або ваші пацієнти і як лікувалися.
+        \n\n\Ласкаво просимо!</string>
+    <string name="doctor">Я лікар</string>
+    <string name="show_greeting">Більше не показувати</string>
+
+    <string name="save">Зберегти\u2000</string>
+    <string name="delete">Видалити</string>
+    <string name="cancel">Скасувати</string>
+
+    <string name="dialog_msg_unsaved_changes">Зберегти зміни?</string>
+    <string name="dialog_yes">Так</string>
+    <string name="dialog_no">Ні</string>
+
+    <string name="permission_to_storage_need">Необхідний доступ до фотографій</string>
+    <string name="permission_not_available">Доступу до фотографій немає!\nЗапрошую доступ до фотографій</string>
+    <string name="permission_was_denied">У доступі до фотографій відмовлено</string>
+
+    <!-- users/patients activity -->
+    <string name="users_title_activity">Користувачі</string>
+
+    <!-- patient -->
+    <string name="patients_title_activity">Пацієнти</string>
+
+    <!-- user/patient activity -->
+    <string name="user_title_activity">Додати Користувача</string>
+    <string name="user_photo">Фото</string>
+    <string name="user_delete_photo">Видалити фото</string>
+    <string name="user_name">Ім’я</string>
+    <string name="user_date_of_birth">Дата народження</string>
+    <string name="user_error_name">Вкажіть ім’я</string>
+    <string name="user_error_date">Вкажіть дату народження</string>
+    <string name="user_cant_save">Користувача не вдалося зберегти</string>
+    <string name="user_cant_update">Користувача не вдалося оновити</string>
+    <string name="user_cant_save_photo">Фотографію не вдалося зберегти</string>
+    <string name="user_cant_load_photo">Фотографію не вдалося завантажити</string>
+    <string name="user_photo_not_deleted">Фотографію не вдалося видалити</string>
+    <string name="user_delete">Видалити користувача</string>
+    <string name="user_not_deleted">Користувача не вдалося видалити</string>
+
+    <!-- patient -->
+    <string name="patient_title_activity">Додати пацієна</string>
+    <string name="patient_cant_save">Пацієна не вдалося зберегти</string>
+    <string name="patient_cant_update">Пацієна не вдалося оновити</string>
+    <string name="patient_delete">Видалити пацієна</string>
+    <string name="patient_not_deleted">Пацієна не вдалося видалити</string>
+
+    <!-- diseases_activity -->
+    <string name="diseases_activity_title">Захворювання</string>
+    <string name="diseases_empty_text">Додати захворювання</string>
+    <string name="diseases_what_text">Чим хворів</string>
+    <string name="disease_name">Назва захворювання</string>
+    <string name="disease_date">Дата</string>
+    <string name="disease_error_name">Вкажіть назву захворювання</string>
+    <string name="disease_error_date">Вкажіть дату захворювання</string>
+    <string name="disease_not_deleted">Захворювання не вдалося видалити</string>
+    <string name="disease_delete">Видалити захворювання</string>
+
+    <!-- treatment_activity -->
+    <string name="treatment_empty_image_text">Додати знімок,\nпов’язаний з лікуванням</string>
+    <string name="treatment_cant_save_image">Знімок не вдалося зберегти</string>
+    <string name="treatment_cant_save">Захворювання і лікування не вдалося зберегти</string>
+    <string name="treatment_cant_update">Захворювання і лікування не вдалося оновити</string>
+    <string name="treatment_cant_load_image">Знімок не вдалося завантажити</string>
+    <string name="treatment_cant_update_image">Знімок не вдалося оновити</string>
+    <string name="treatment_image_not_deleted">Знімок не вдалося видалити</string>
+    <string name="treatment_image_copy_error">При збереженні знімка виникли помилки,\nспробуйте ще раз пізніше</string>
+    <string name="treatment_old_image_not_deleted">Оновлюваний знімок  не вдалося видалити</string>
+    <string name="treatment_title_activity">Додати захворювання</string>
+    <string name="treatmen_title_text">Лікування</string>
+    <string name="treatment_description_hint_text">Опис лікування</string>
+    <string name="treatment_description">ОПИС</string>
+    <string name="treatment_images">ЗНІМКИ</string>
+    <string name="fullscreen_error_image_description">Вкажіть короткий опис знімка</string>
+
+    <!-- fullscreen_activity -->
+    <string name="fullscreen_title_activity">Додати знімок</string>
+    <string name="fullscreen_image_description">Опис знімка</string>
+    <string name="fullscreen_date_of_image">дата знімка</string>
+    <string name="fullscreen_error_date_of_image">Вкажіть дату знімка</string>
+    <string name="fullscreen_dialog_msg_delete_image">Видалити знімок</string>
+</resources>

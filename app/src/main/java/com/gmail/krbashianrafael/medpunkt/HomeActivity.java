@@ -26,6 +26,7 @@ import java.io.File;
 public class HomeActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PREFS";
+    private boolean iAmDoctor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +47,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        final SharedPreferences.Editor prefsEditor = prefs.edit();
-
         TextView greetingTextView = findViewById(R.id.txt_greeting);
 
         String greetingText = getText(R.string.greeting).toString();
@@ -57,21 +55,48 @@ public class HomeActivity extends AppCompatActivity {
 
         greetingTextView.setText(spannable, TextView.BufferType.SPANNABLE);
 
-        final CheckBox checkBox = findViewById(R.id.checkbox_show_greeting);
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
+
+        iAmDoctor = prefs.getBoolean("iAmDoctor", false);
+        if (iAmDoctor) {
+            checkBoxIamDoctor.setChecked(true);
+        }
+
+        checkBoxIamDoctor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // если отмечено
+                    iAmDoctor = true;
+                    prefsEditor.putBoolean("iAmDoctor", true);
+                    prefsEditor.apply();
+                } else {
+                    iAmDoctor = false;
+                    prefsEditor.putBoolean("iAmDoctor", false);
+                    prefsEditor.apply();
+                }
+            }
+        });
+
+        final CheckBox checkBoxShowGreeting = findViewById(R.id.checkbox_show_greeting);
 
         // при первом заходе проверяем была ли ранее выставлена галочка "Не показывать больше"
         // и если была, то идем в UsersActivity, при этом ставим галочку
         if (!prefs.getBoolean("showGreeting", true)) {
 
-            checkBox.setChecked(true);
+            checkBoxShowGreeting.setChecked(true);
 
             Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
+            intentToUsers.putExtra("iAmDoctor", iAmDoctor);
             startActivity(intentToUsers);
         }
 
         // checkBox.setOnCheckedChangeListener инициализируем после проверки на галочку (вверху)
         // чтоб лишний раз не записывать prefsEditor.putBoolean
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkBoxShowGreeting.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -90,6 +115,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
+                intentToUsers.putExtra("iAmDoctor", iAmDoctor);
                 startActivity(intentToUsers);
             }
         });

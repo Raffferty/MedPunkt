@@ -33,6 +33,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
+        android:id="@+id/checkbox_doctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:buttonTint="@color/colorPrimaryDark"
+        android:text="@string/doctor"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/checkbox_show_greeting"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="lollipop" />
+
+    <CheckBox
         android:id="@+id/checkbox_show_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

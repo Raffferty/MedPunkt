@@ -96,7 +96,7 @@ public class UserActivity extends AppCompatActivity
     // новый ли пользователь, возможность изменфть пользователя,
     // показывать стрелку обратно, был ли изменен пользователь,
     // в процессе сохранения или нет
-    private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting, onLoading;
+    private boolean iAmDoctor, newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting, onLoading;
 
     private ActionBar actionBar;
 
@@ -155,6 +155,7 @@ public class UserActivity extends AppCompatActivity
 
         _idUser = intent.getLongExtra("_idUser", 0);
         newUser = intent.getBooleanExtra("newUser", false);
+        iAmDoctor = intent.getBooleanExtra("iAmDoctor", false);
         editUser = intent.getBooleanExtra("editUser", false);
         textUserName = intent.getStringExtra("UserName");
         textUserBirthDate = intent.getStringExtra("birthDate");
@@ -333,6 +334,9 @@ public class UserActivity extends AppCompatActivity
                 editTextName.setText(textUserName);
             } else {
                 textUserName = "";
+                if (iAmDoctor) {
+                    actionBar.setTitle(R.string.patient_title_activity);
+                }
             }
         }
 
@@ -513,10 +517,12 @@ public class UserActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
 
+        String deletString = iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+
         menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
-                getResources().getString(R.string.user_delete)));
+                deletString));
 
         return true;
     }
@@ -661,8 +667,11 @@ public class UserActivity extends AppCompatActivity
 
     // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
+
+        String deletString = iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
-        builder.setMessage(getString(R.string.user_delete) + " " + editTextName.getText() + "?");
+        builder.setMessage(deletString + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (onSavingOrUpdatingOrDeleting) {
@@ -931,7 +940,7 @@ public class UserActivity extends AppCompatActivity
             }
         } else {
             onSavingOrUpdatingOrDeleting = false;
-            Toast.makeText(UserActivity.this, R.string.user_cant_save, Toast.LENGTH_LONG).show();
+            Toast.makeText(UserActivity.this, iAmDoctor ? R.string.patient_cant_save : R.string.user_cant_save, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -967,7 +976,7 @@ public class UserActivity extends AppCompatActivity
 
         // если update в Базе был НЕ успешным
         if (rowsAffected == 0) {
-            Toast.makeText(UserActivity.this, R.string.user_cant_update, Toast.LENGTH_LONG).show();
+            Toast.makeText(UserActivity.this, iAmDoctor ? R.string.patient_cant_update : R.string.user_cant_update, Toast.LENGTH_LONG).show();
 
             // если обновление было неудачным, то остаемся на месте
             goBack = false;
@@ -1252,7 +1261,7 @@ public class UserActivity extends AppCompatActivity
             if (result == -1) {
                 // если заболевание не удалилось из базы и фото не были удалены
                 userActivity.onSavingOrUpdatingOrDeleting = false;
-                Toast.makeText(userActivity, R.string.user_not_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(userActivity, userActivity.iAmDoctor ? R.string.patient_not_deleted : R.string.user_not_deleted, Toast.LENGTH_LONG).show();
             } else if (result == 0) {
                 // если не было фото пользователя и снимков для удаления
                 userActivity.goToDiseasesActivity();

@@ -36,6 +36,8 @@ public class UsersActivity extends AppCompatActivity
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
 
+    protected boolean iAmDoctor;
+
     // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertUser
@@ -54,10 +56,16 @@ public class UsersActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        Intent intent = getIntent();
+        iAmDoctor = intent.getBooleanExtra("iAmDoctor", false);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
+            if (iAmDoctor){
+                actionBar.setTitle(R.string.patients_title_activity);
+            }
         }
 
         // это видимо, т.к. добавлен фиктивный пользователь
@@ -69,6 +77,7 @@ public class UsersActivity extends AppCompatActivity
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 userIntent.putExtra("userPhotoUri", "No_Photo");
                 userIntent.putExtra("newUser", true);
+                userIntent.putExtra("iAmDoctor", iAmDoctor);
                 startActivity(userIntent);
             }
         });
@@ -92,12 +101,17 @@ public class UsersActivity extends AppCompatActivity
         });
 
         txtAddUsers = findViewById(R.id.txt_empty_users);
+
+        if (iAmDoctor){
+            txtAddUsers.setText(R.string.patient_title_activity);
+        }
         txtAddUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 userIntent.putExtra("userPhotoUri", "No_Photo");
                 userIntent.putExtra("newUser", true);
+                userIntent.putExtra("iAmDoctor", iAmDoctor);
                 startActivity(userIntent);
             }
         });
@@ -133,8 +147,6 @@ public class UsersActivity extends AppCompatActivity
 
         // устанавливаем адаптер для RecyclerView
         recyclerUsers.setAdapter(usersRecyclerViewAdapter);
-
-
     }
 
     @Override

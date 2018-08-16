@@ -4,7 +4,7 @@
     <string name="greeting">MedPunkt
         \n\n\поможет Вам запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.
         \n\n\Добро пожаловать!</string>
-    <string name="doctor">Я доктор</string>
+    <string name="doctor">Я врач</string>
     <string name="show_greeting">Больше не показывать</string>
 
     <string name="save">cохранить\u2000</string>
@@ -19,11 +19,13 @@
     <string name="permission_not_available">Доступа к фотографиям НЕТ!\nЗапрашиваю Доступ к фотографиям</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано</string>
 
-    <!-- users_activity -->
+    <!-- users/patients activity -->
     <string name="users_title_activity">Пользователи</string>
+
+    <!-- patient -->
     <string name="patients_title_activity">Пациенты</string>
 
-    <!-- user_activity -->
+    <!-- user/patient activity -->
     <string name="user_title_activity">Добавить Пользователя</string>
     <string name="user_photo">Фото</string>
     <string name="user_delete_photo">Удалить фото</string>
@@ -38,6 +40,13 @@
     <string name="user_photo_not_deleted">Фотография не удалилась</string>
     <string name="user_delete">Удалить пользователя</string>
     <string name="user_not_deleted">Пользователь НЕ удалился</string>
+
+    <!-- patient -->
+    <string name="patient_title_activity">Добавить Пациента</string>
+    <string name="patient_cant_save">Пациента не удалось сохранить</string>
+    <string name="patient_cant_update">Пациента не удалось обновить</string>
+    <string name="patient_delete">Удалить пациента</string>
+    <string name="patient_not_deleted">Пациент НЕ удалился</string>
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Заболевания</string>
