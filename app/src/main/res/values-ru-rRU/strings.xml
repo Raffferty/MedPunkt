@@ -60,7 +60,7 @@
     <string name="disease_delete">Удалить заболевание</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_image_text">Добавить снимок,\nсвязанный с лечением</string>
+    <string name="treatment_empty_image_text">Добавить снимки,\nсвязанне с лечением\n(назначения, анализы и т.д.)</string>
     <string name="treatment_cant_save_image">Снимок не удалось сохранить</string>
     <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>
     <string name="treatment_cant_update">Заболевание и лечение не удалось обновить</string>

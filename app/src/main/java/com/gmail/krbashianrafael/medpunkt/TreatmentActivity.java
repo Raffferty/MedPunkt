@@ -41,6 +41,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
@@ -83,15 +84,15 @@ public class TreatmentActivity extends AppCompatActivity
     private boolean goBack, newDisease, onSavingOrUpdatingOrDeleting;
     protected boolean editDisease;
 
-    // это временно для отработки в treatmentPhotoRecyclerView пустого листа
-    protected boolean tempNewDisease;
-
     private ActionBar actionBar;
 
     // название заболевания
     private String textDiseaseName = "";
+    private String textUserName = "";
     private String textDateOfDisease = "";
     protected String textTreatment = "";
+
+    protected TextView txtTitleDisease;
 
     // поля названия заболевания, описания лечения и focusHolder
     protected TextInputLayout textInputLayoutDiseaseName;
@@ -129,6 +130,10 @@ public class TreatmentActivity extends AppCompatActivity
             textDateOfDisease = getString(R.string.disease_date);
         }
 
+        if (intent.hasExtra("userName")) {
+            textUserName = intent.getStringExtra("userName");
+        }
+
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
         }
@@ -141,8 +146,11 @@ public class TreatmentActivity extends AppCompatActivity
 
         newDisease = intent.getBooleanExtra("newDisease", false);
 
-        // это временно для отработки в treatmentPhotoRecyclerView пустого листа
-        tempNewDisease = newDisease;
+        txtTitleDisease = findViewById(R.id.txt_title_disease);
+        if (!newDisease){
+            txtTitleDisease.setText(textDiseaseName);
+            txtTitleDisease.setVisibility(View.VISIBLE);
+        }
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
@@ -209,13 +217,13 @@ public class TreatmentActivity extends AppCompatActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
-            actionBar.setElevation(0);
 
-            if (!textDiseaseName.equals("")) {
-                actionBar.setTitle(textDiseaseName);
-                editTextDiseaseName.setText(textDiseaseName);
+            if (!newDisease) {
+                actionBar.setTitle(textUserName);
             }
         }
+
+        editTextDiseaseName.setText(textDiseaseName);
 
         // при OnTouch editTextPhotoDescription убираем ошибку
         editTextDiseaseName.setOnTouchListener(new View.OnTouchListener() {
@@ -428,13 +436,27 @@ public class TreatmentActivity extends AppCompatActivity
                 // скручиваем клавиатуру
                 hideSoftInput();
 
+                if (newDisease) {
+                    actionBar.setTitle(textUserName);
+                }
+
                 if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
+
+                    txtTitleDisease.setVisibility(View.VISIBLE);
 
                     // делаем два листа в адаптере
                     categoryAdapter.setPagesCount(2);
                     viewPager.setAdapter(categoryAdapter);
 
                     editDisease = false;
+
+                    // обновляем OptionsMenu
+                    invalidateOptionsMenu();
+
+                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+
+                    onSavingOrUpdatingOrDeleting = false;
+
                     textInputLayoutDiseaseName.setVisibility(View.GONE);
                     editTextDateOfDisease.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.VISIBLE);
@@ -447,12 +469,8 @@ public class TreatmentActivity extends AppCompatActivity
 
                     focusHolder.requestFocus();
 
-                    // обновляем OptionsMenu
-                    invalidateOptionsMenu();
 
-                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
-                    onSavingOrUpdatingOrDeleting = false;
                 } else {
                     focusHolder.requestFocus();
                     saveDiseaseAndTreatment();
@@ -643,9 +661,8 @@ public class TreatmentActivity extends AppCompatActivity
             categoryAdapter.setPagesCount(2);
             viewPager.setAdapter(categoryAdapter);
 
-            if (actionBar != null) {
-                actionBar.setTitle(textDiseaseName);
-            }
+            txtTitleDisease.setText(textDiseaseName);
+            txtTitleDisease.setVisibility(View.VISIBLE);
 
             editDisease = false;
             textInputLayoutDiseaseName.setVisibility(View.GONE);
@@ -690,6 +707,7 @@ public class TreatmentActivity extends AppCompatActivity
     private void saveDiseaseAndTreatmentToDataBase() {
         ContentValues values = new ContentValues();
         values.put(DiseasesEntry.COLUMN_U_ID, _idUser);
+        values.put(DiseasesEntry.COLUMN_USER_NAME, textUserName);
         values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
@@ -713,6 +731,7 @@ public class TreatmentActivity extends AppCompatActivity
 
     private void updateDiseaseAndTreatmentToDataBase() {
         ContentValues values = new ContentValues();
+        values.put(DiseasesEntry.COLUMN_USER_NAME, textUserName);
         values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);

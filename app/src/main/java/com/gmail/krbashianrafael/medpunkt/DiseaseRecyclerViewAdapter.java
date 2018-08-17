@@ -37,6 +37,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         long _diseaseId = diseaseList.get(position).get_diseaseId();
         long _diseaseUserId = diseaseList.get(position).get_diseaseUserId();
         String diseaseDate = diseaseList.get(position).getDiseaseDate();
+        String userName = diseaseList.get(position).getUserName();
         String diseaseName = diseaseList.get(position).getDiseaseName();
         String treatmentText = diseaseList.get(position).getTreatmentText();
 
@@ -44,6 +45,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((DiseaseHolder) holder)._diseaseUserId.setText(String.valueOf(_diseaseUserId));
 
         ((DiseaseHolder) holder).diseaseDate.setText(diseaseDate);
+        ((DiseaseHolder) holder).userName.setText(userName);
         ((DiseaseHolder) holder).diseaseName.setText(diseaseName);
         ((DiseaseHolder) holder).treatmentText.setText(treatmentText);
     }
@@ -60,6 +62,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView _diseaseId;
         TextView _diseaseUserId;
         TextView diseaseDate;
+        TextView userName;
         TextView diseaseName;
         TextView treatmentText;
 
@@ -71,6 +74,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             _diseaseId = itemView.findViewById(R.id.disease_item_id);
             _diseaseUserId = itemView.findViewById(R.id.disease_item_user_id);
             diseaseDate = itemView.findViewById(R.id.disease_item_date);
+            userName = itemView.findViewById(R.id.disease_item_user_name);
             diseaseName = itemView.findViewById(R.id.disease_item_name);
             treatmentText = itemView.findViewById(R.id.treatment_text);
 
@@ -86,6 +90,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
             treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
             treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
+            treatmentIntent.putExtra("userName", userName.getText());
             treatmentIntent.putExtra("diseaseName", diseaseName.getText());
             treatmentIntent.putExtra("diseaseDate", diseaseDate.getText());
             treatmentIntent.putExtra("textTreatment",treatmentText.getText());

@@ -78,6 +78,7 @@ public class DiseasesActivity extends AppCompatActivity
                 actionBar.setTitle(textUserName);
             } else {
                 actionBar.setTitle(R.string.txt_no_title);
+                textUserName = "";
             }
         }
 
@@ -89,6 +90,7 @@ public class DiseasesActivity extends AppCompatActivity
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
+                treatmentIntent.putExtra("userName", textUserName);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
@@ -104,6 +106,7 @@ public class DiseasesActivity extends AppCompatActivity
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
+                treatmentIntent.putExtra("userName", textUserName);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
@@ -216,6 +219,7 @@ public class DiseasesActivity extends AppCompatActivity
         String[] projection = {
                 DiseasesEntry.DIS_ID,
                 DiseasesEntry.COLUMN_U_ID,
+                DiseasesEntry.COLUMN_USER_NAME,
                 DiseasesEntry.COLUMN_DISEASE_NAME,
                 DiseasesEntry.COLUMN_DISEASE_DATE,
                 DiseasesEntry.COLUMN_DISEASE_TREATMENT};
@@ -252,19 +256,21 @@ public class DiseasesActivity extends AppCompatActivity
                 int disease_idColumnIndex = cursor.getColumnIndex(DiseasesEntry._ID);
                 int diseaseUser_IdColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_U_ID);
                 int disease_nameColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_NAME);
+                int user_nameColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_USER_NAME);
                 int disease_dateColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_DATE);
                 int disease_treatmentColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
 
                 // Read the disease attributes from the Cursor for the current disease
                 long _diseaseId = cursor.getLong(disease_idColumnIndex);
                 long _diseaseUserId = cursor.getLong(diseaseUser_IdColumnIndex);
+                String userName = cursor.getString(user_nameColumnIndex);
                 String diseaseName = cursor.getString(disease_nameColumnIndex);
                 String diseaseDate = cursor.getString(disease_dateColumnIndex);
                 String diseaseTreatment = cursor.getString(disease_treatmentColumnIndex);
 
 
                 // добавляем новый DiseaseItem в ArrayList<DiseaseItem> myData
-                myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, diseaseName, diseaseDate, diseaseTreatment));
+                myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, userName, diseaseName, diseaseDate, diseaseTreatment));
             }
         }
 

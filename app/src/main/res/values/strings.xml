@@ -61,7 +61,7 @@
     <string name="disease_delete">Delete disease</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_image_text">Add image\nconnected with treatment</string>
+    <string name="treatment_empty_image_text">Add images\nconnected with treatment\n(prescriptions, analyzes, etc.)</string>
     <string name="treatment_cant_save_image">Image could not be saved</string>
     <string name="treatment_cant_save">Disease and treatment could not be saved</string>
     <string name="treatment_cant_update">Disease and treatment could not be updated</string>

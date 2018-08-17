@@ -42,11 +42,11 @@
     <string name="user_not_deleted">Користувача не вдалося видалити</string>
 
     <!-- patient -->
-    <string name="patient_title_activity">Додати пацієна</string>
-    <string name="patient_cant_save">Пацієна не вдалося зберегти</string>
-    <string name="patient_cant_update">Пацієна не вдалося оновити</string>
-    <string name="patient_delete">Видалити пацієна</string>
-    <string name="patient_not_deleted">Пацієна не вдалося видалити</string>
+    <string name="patient_title_activity">Додати пацієнта</string>
+    <string name="patient_cant_save">Пацієнта не вдалося зберегти</string>
+    <string name="patient_cant_update">Пацієнта не вдалося оновити</string>
+    <string name="patient_delete">Видалити пацієнта</string>
+    <string name="patient_not_deleted">Пацієнта не вдалося видалити</string>
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Захворювання</string>
@@ -60,7 +60,7 @@
     <string name="disease_delete">Видалити захворювання</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_image_text">Додати знімок,\nпов’язаний з лікуванням</string>
+    <string name="treatment_empty_image_text">Додати знімки,\nпов’язаний з лікуванням\n(призначення, аналізи тощо)</string>
     <string name="treatment_cant_save_image">Знімок не вдалося зберегти</string>
     <string name="treatment_cant_save">Захворювання і лікування не вдалося зберегти</string>
     <string name="treatment_cant_update">Захворювання і лікування не вдалося оновити</string>

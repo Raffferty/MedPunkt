@@ -100,10 +100,11 @@ public class TreatmentDescriptionFragment extends Fragment {
             fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
                     newTreaymentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                     newTreaymentActivity.editTextDiseaseName.setEnabled(true);
+
+                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
                     newTreaymentActivity.editDisease = true;
 
@@ -121,8 +122,10 @@ public class TreatmentDescriptionFragment extends Fragment {
                     editTextTreatment.requestFocus();
                     editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
 
-                    // выбор даты делаем невидимым
+                    // выбор даты делаем видимым
                     newTreaymentActivity.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                    newTreaymentActivity.txtTitleDisease.setVisibility(View.GONE);
                 }
             });
 
