@@ -38,6 +38,9 @@ public class TreatmentDescriptionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         editTextTreatment = view.findViewById(R.id.editTextTreatment);
+        if (HomeActivity.iAmDoctor){
+            editTextTreatment.setHint(R.string.patient_treatment_description_hint_text);
+        }
 
         fabEditTreatmentDescripton = view.findViewById(R.id.fabEditTreatmentDescripton);
 

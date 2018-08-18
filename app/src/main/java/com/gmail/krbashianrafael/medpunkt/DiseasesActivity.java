@@ -7,6 +7,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -29,13 +31,14 @@ public class DiseasesActivity extends AppCompatActivity
 
     private long _idUser = 0;
 
-    private String textUserName;
+    protected static String textUserName;
 
     private TextView textViewAddDisease;
 
     private FloatingActionButton fabAddDisease;
 
     private Animation fabShowAnimation;
+    private Animation fadeInAnimation;
 
     // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
@@ -49,9 +52,9 @@ public class DiseasesActivity extends AppCompatActivity
      * Identifier for the user data loader
      * Лоадеров может много (они обрабатываются в case)
      * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int DISEASE_LOADER = 1;
+     * в данном случае private static final int DISEASES_LOADER = 1;
      */
-    private static final int DISEASE_LOADER = 1;
+    private static final int DISEASES_LOADER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,6 @@ public class DiseasesActivity extends AppCompatActivity
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
-                treatmentIntent.putExtra("userName", textUserName);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
@@ -106,12 +108,13 @@ public class DiseasesActivity extends AppCompatActivity
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
-                treatmentIntent.putExtra("userName", textUserName);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
                 startActivity(treatmentIntent);
             }
         });
+
+        fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
 
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -183,7 +186,7 @@ public class DiseasesActivity extends AppCompatActivity
         fabAddDisease.setVisibility(View.INVISIBLE);
 
         // Инициализируем Loader
-        getLoaderManager().initLoader(DISEASE_LOADER, null, this);
+        getLoaderManager().initLoader(DISEASES_LOADER, null, this);
     }
 
     @Override
@@ -208,7 +211,7 @@ public class DiseasesActivity extends AppCompatActivity
 
     /*
    ниже имплиментация метдов интерфеса LoaderManager.LoaderCallbacks<Cursor>
-   которые будет вызываться при активации getLoaderManager().initLoader(DISEASE_LOADER, null, this);
+   которые будет вызываться при активации getLoaderManager().initLoader(DISEASES_LOADER, null, this);
    */
 
     @Override
@@ -219,7 +222,6 @@ public class DiseasesActivity extends AppCompatActivity
         String[] projection = {
                 DiseasesEntry.DIS_ID,
                 DiseasesEntry.COLUMN_U_ID,
-                DiseasesEntry.COLUMN_USER_NAME,
                 DiseasesEntry.COLUMN_DISEASE_NAME,
                 DiseasesEntry.COLUMN_DISEASE_DATE,
                 DiseasesEntry.COLUMN_DISEASE_TREATMENT};
@@ -256,30 +258,20 @@ public class DiseasesActivity extends AppCompatActivity
                 int disease_idColumnIndex = cursor.getColumnIndex(DiseasesEntry._ID);
                 int diseaseUser_IdColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_U_ID);
                 int disease_nameColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_NAME);
-                int user_nameColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_USER_NAME);
                 int disease_dateColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_DATE);
                 int disease_treatmentColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
 
                 // Read the disease attributes from the Cursor for the current disease
                 long _diseaseId = cursor.getLong(disease_idColumnIndex);
                 long _diseaseUserId = cursor.getLong(diseaseUser_IdColumnIndex);
-                String userName = cursor.getString(user_nameColumnIndex);
                 String diseaseName = cursor.getString(disease_nameColumnIndex);
                 String diseaseDate = cursor.getString(disease_dateColumnIndex);
                 String diseaseTreatment = cursor.getString(disease_treatmentColumnIndex);
 
 
                 // добавляем новый DiseaseItem в ArrayList<DiseaseItem> myData
-                myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, userName, diseaseName, diseaseDate, diseaseTreatment));
+                myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, diseaseName, diseaseDate, diseaseTreatment));
             }
-        }
-
-        // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
-        // и fabAddDisease.setVisibility(View.INVISIBLE);
-        if (myData.size() == 0) {
-            textViewAddDisease.setVisibility(View.VISIBLE);
-        } else {
-            fabAddDisease.startAnimation(fabShowAnimation);
         }
 
         // оповещаем LayoutManager, что произошли изменения
@@ -288,7 +280,22 @@ public class DiseasesActivity extends AppCompatActivity
 
         // делаем destroyLoader, чтоб он сам повторно не вызывался,
         // а вызывался при каждом входе в активити
-        getLoaderManager().destroyLoader(DISEASE_LOADER);
+        getLoaderManager().destroyLoader(DISEASES_LOADER);
+
+        // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
+        // и fabAddDisease.setVisibility(View.INVISIBLE);
+        if (myData.size() == 0) {
+            new Handler(Looper.getMainLooper()).
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            textViewAddDisease.setVisibility(View.VISIBLE);
+                            textViewAddDisease.startAnimation(fadeInAnimation);
+                        }
+                    }, 300);
+        } else {
+            fabAddDisease.startAnimation(fabShowAnimation);
+        }
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент

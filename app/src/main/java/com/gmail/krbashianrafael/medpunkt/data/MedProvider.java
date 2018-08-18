@@ -474,11 +474,6 @@ public class MedProvider extends ContentProvider {
             throw new IllegalArgumentException("disease requires userId");
         }
 
-        String userName = values.getAsString(DiseasesEntry.COLUMN_USER_NAME);
-        if (userName == null) {
-            throw new IllegalArgumentException("user requires a name");
-        }
-
         String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
         if (diseaseName == null) {
             throw new IllegalArgumentException("disease requires a name");
@@ -665,13 +660,6 @@ public class MedProvider extends ContentProvider {
 
         //DiseasesEntry.COLUMN_U_ID) на update подаваться не будет
         // поэтому не проверяем его
-
-        if (values.containsKey(DiseasesEntry.COLUMN_USER_NAME)){
-            String userName = values.getAsString(DiseasesEntry.COLUMN_USER_NAME);
-            if (userName == null) {
-                throw new IllegalArgumentException("user requires a name");
-            }
-        }
 
         if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)){
             String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);

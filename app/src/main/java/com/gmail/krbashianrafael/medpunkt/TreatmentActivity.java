@@ -88,11 +88,10 @@ public class TreatmentActivity extends AppCompatActivity
 
     // название заболевания
     private String textDiseaseName = "";
-    private String textUserName = "";
     private String textDateOfDisease = "";
     protected String textTreatment = "";
 
-    protected TextView txtTitleDisease;
+    protected TextView txtTitleDisease, txtTitleTreatment;
 
     // поля названия заболевания, описания лечения и focusHolder
     protected TextInputLayout textInputLayoutDiseaseName;
@@ -130,10 +129,6 @@ public class TreatmentActivity extends AppCompatActivity
             textDateOfDisease = getString(R.string.disease_date);
         }
 
-        if (intent.hasExtra("userName")) {
-            textUserName = intent.getStringExtra("userName");
-        }
-
         if (intent.hasExtra("diseaseName")) {
             textDiseaseName = intent.getStringExtra("diseaseName");
         }
@@ -150,6 +145,11 @@ public class TreatmentActivity extends AppCompatActivity
         if (!newDisease){
             txtTitleDisease.setText(textDiseaseName);
             txtTitleDisease.setVisibility(View.VISIBLE);
+        }
+
+        txtTitleTreatment = findViewById(R.id.txt_title_treatmen);
+        if (HomeActivity.iAmDoctor){
+            txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
         }
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
@@ -219,7 +219,7 @@ public class TreatmentActivity extends AppCompatActivity
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
 
             if (!newDisease) {
-                actionBar.setTitle(textUserName);
+                actionBar.setTitle(DiseasesActivity.textUserName);
             }
         }
 
@@ -437,7 +437,7 @@ public class TreatmentActivity extends AppCompatActivity
                 hideSoftInput();
 
                 if (newDisease) {
-                    actionBar.setTitle(textUserName);
+                    actionBar.setTitle(DiseasesActivity.textUserName);
                 }
 
                 if (diseaseAndTreatmentHasNotChanged() && !newDisease) {
@@ -707,7 +707,6 @@ public class TreatmentActivity extends AppCompatActivity
     private void saveDiseaseAndTreatmentToDataBase() {
         ContentValues values = new ContentValues();
         values.put(DiseasesEntry.COLUMN_U_ID, _idUser);
-        values.put(DiseasesEntry.COLUMN_USER_NAME, textUserName);
         values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
@@ -731,7 +730,6 @@ public class TreatmentActivity extends AppCompatActivity
 
     private void updateDiseaseAndTreatmentToDataBase() {
         ContentValues values = new ContentValues();
-        values.put(DiseasesEntry.COLUMN_USER_NAME, textUserName);
         values.put(DiseasesEntry.COLUMN_DISEASE_NAME, textDiseaseName);
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);

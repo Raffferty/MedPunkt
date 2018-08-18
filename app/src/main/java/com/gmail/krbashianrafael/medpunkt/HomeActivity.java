@@ -26,7 +26,7 @@ import java.io.File;
 public class HomeActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PREFS";
-    private boolean iAmDoctor = false;
+    protected static boolean iAmDoctor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -194,14 +194,6 @@ public final class MedContract {
          */
         public final static String COLUMN_U_ID = "u_id";
 
-
-        /**
-         * Name of the user.
-         * <p>
-         * Type: TEXT
-         */
-        public final static String COLUMN_USER_NAME = "u_name";
-
         /**
          * Name of the disease.
          * <p>

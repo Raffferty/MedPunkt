@@ -7,6 +7,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -35,6 +37,7 @@ public class UsersActivity extends AppCompatActivity
 
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
+    private Animation fadeInAnimation;
 
     protected boolean iAmDoctor;
 
@@ -49,9 +52,9 @@ public class UsersActivity extends AppCompatActivity
      * Identifier for the user data loader
      * Лоадеров может много (они обрабатываются в case)
      * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int USER_LOADER = 0;
+     * в данном случае private static final int USERS_LOADER = 0;
      */
-    private static final int USER_LOADER = 0;
+    private static final int USERS_LOADER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,8 @@ public class UsersActivity extends AppCompatActivity
                 startActivity(userIntent);
             }
         });
+
+        fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fadein);
 
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -152,7 +157,7 @@ public class UsersActivity extends AppCompatActivity
 
         // Инициализируем Loader
         // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
-        getLoaderManager().initLoader(USER_LOADER, null, this);
+        //getLoaderManager().initLoader(USERS_LOADER, null, this);
     }
 
     @Override
@@ -161,15 +166,15 @@ public class UsersActivity extends AppCompatActivity
 
         onResumeCounter++;
 
-        /*// сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         fabAddUser.setVisibility(View.INVISIBLE);
         txtAddUsers.setVisibility(View.INVISIBLE);
 
         // Инициализируем Loader
         // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
-        getLoaderManager().initLoader(USER_LOADER, null, this);*/
+        getLoaderManager().initLoader(USERS_LOADER, null, this);
 
-        usersRecyclerViewAdapter.notifyDataSetChanged();
+        //usersRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -193,7 +198,7 @@ public class UsersActivity extends AppCompatActivity
 
     /*
    ниже имплиментация метдов интерфеса LoaderManager.LoaderCallbacks<Cursor>
-   которые будет вызываться при активации getLoaderManager().initLoader(USER_LOADER, null, this);
+   которые будет вызываться при активации getLoaderManager().initLoader(USERS_LOADER, null, this);
    --------------------------------------------------------------
 
    public Loader<Cursor> onCreateLoader(int id, Bundle args)
@@ -270,8 +275,8 @@ public class UsersActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
-        fabAddUser.setVisibility(View.INVISIBLE);
-        txtAddUsers.setVisibility(View.INVISIBLE);
+       /* fabAddUser.setVisibility(View.INVISIBLE);
+        txtAddUsers.setVisibility(View.INVISIBLE);*/
 
         // получаем ссылку на данные в usersRecyclerViewAdapter
         // и очищаем ArrayList<UserItem> myData от данных
@@ -303,27 +308,6 @@ public class UsersActivity extends AppCompatActivity
                 // добавляем новый user в ArrayList<UserItem> myData
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
             }
-        }
-
-        // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
-        // и fabAddUser.setVisibility(View.INVISIBLE);
-        int myDataSize = myData.size();
-
-        if (myDataSize == 0) {
-            // если нет пользоватлей, то делаем видимым txtAddUsers
-            txtAddUsers.setVisibility(View.VISIBLE);
-        } else if (myDataSize == 1 && onResumeCounter == 1 && !iAmDoctor) {
-            // если есть только один пользователь,
-            // и влделец приложения НЕ доктор,
-            // то идем сразу к его заболеваниям
-            Intent userDiseasIntent = new Intent(this, DiseasesActivity.class);
-            userDiseasIntent.putExtra("_idUser", myData.get(0).get_userId());
-            userDiseasIntent.putExtra("UserName", myData.get(0).getUserName());
-
-            startActivity(userDiseasIntent);
-        } else {
-            // если больше одного пользователя, то остаемся в окне "Пользователи"
-            fabAddUser.startAnimation(fabShowAnimation);
         }
 
         /*
@@ -360,7 +344,35 @@ public class UsersActivity extends AppCompatActivity
 
         // делаем destroyLoader, чтоб он сам повторно не вызывался,
         // а вызывался при каждом входе в активити
-        //getLoaderManager().destroyLoader(USER_LOADER);
+        getLoaderManager().destroyLoader(USERS_LOADER);
+
+        // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
+        // и fabAddUser.setVisibility(View.INVISIBLE);
+        int myDataSize = myData.size();
+
+        if (myDataSize == 0) {
+            // если нет пользоватлей, то делаем видимым txtAddUsers
+            new Handler(Looper.getMainLooper()).
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtAddUsers.setVisibility(View.VISIBLE);
+                            txtAddUsers.startAnimation(fadeInAnimation);
+                        }
+                    }, 300);
+        } else if (myDataSize == 1 && onResumeCounter == 1 && !iAmDoctor) {
+            // если есть только один пользователь,
+            // и влделец приложения НЕ доктор,
+            // то идем сразу к его заболеваниям
+            Intent userDiseasIntent = new Intent(this, DiseasesActivity.class);
+            userDiseasIntent.putExtra("_idUser", myData.get(0).get_userId());
+            userDiseasIntent.putExtra("UserName", myData.get(0).getUserName());
+
+            startActivity(userDiseasIntent);
+        } else {
+            // если больше одного пользователя, то остаемся в окне "Пользователи"
+            fabAddUser.startAnimation(fabShowAnimation);
+        }
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент

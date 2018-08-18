@@ -36,7 +36,6 @@ public class MedDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_DISEASES_TABLE = "CREATE TABLE " + DiseasesEntry.DISEASES_TABLE_NAME + " ("
                 + DiseasesEntry.DIS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + DiseasesEntry.COLUMN_U_ID + " INTEGER NOT NULL, "
-                + DiseasesEntry.COLUMN_USER_NAME + " TEXT NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_NAME + " TEXT NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_DATE + " TEXT NOT NULL, "
                 + DiseasesEntry.COLUMN_DISEASE_TREATMENT + " TEXT);";

@@ -43,10 +43,13 @@
 
     <!-- patient -->
     <string name="patient_title_activity">Добавить Пациента</string>
+    <string name="patient_name">Имя и Фамилия</string>
     <string name="patient_cant_save">Пациента не удалось сохранить</string>
     <string name="patient_cant_update">Пациента не удалось обновить</string>
     <string name="patient_delete">Удалить пациента</string>
     <string name="patient_not_deleted">Пациент НЕ удалился</string>
+    <string name="patient_treatmen_title_text">Симптоматика и Лечение</string>
+    <string name="patient_treatment_description_hint_text">Описание симтомов и лечения</string>
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Заболевания</string>
@@ -60,7 +63,7 @@
     <string name="disease_delete">Удалить заболевание</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_image_text">Добавить снимки,\nсвязанне с лечением\n(назначения, анализы и т.д.)</string>
+    <string name="treatment_empty_image_text">Добавить снимки,\nсвязанные с лечением\n(назначения, анализы и т.д.)</string>
     <string name="treatment_cant_save_image">Снимок не удалось сохранить</string>
     <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>
     <string name="treatment_cant_update">Заболевание и лечение не удалось обновить</string>

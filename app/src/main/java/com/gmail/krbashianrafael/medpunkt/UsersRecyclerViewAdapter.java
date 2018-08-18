@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         return new UserHolder(mView, mUsersActivity);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         long _userId = usersList.get(position).get_userId();
@@ -54,13 +56,14 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         File imgFile = new File(userPhotoUri);
         if (imgFile.exists()) {
+
             GlideApp.with(mUsersActivity)
                     .load(userPhotoUri)
-                    .override(90,90)
+                    .override(90, 90)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .error(R.drawable.ic_camera_alt_gray_24dp)
-                    .transition(DrawableTransitionOptions.withCrossFade(800))
+                    .transition(DrawableTransitionOptions.withCrossFade(300))
                     .into(((UserHolder) holder).userImage);
         } else {
             // если без фото, то пишем "No_Photo"
@@ -115,11 +118,11 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View view) {
-            if (myUsersActivity==null){
+            if (myUsersActivity == null) {
                 return;
             }
 
-            if (view.getId() == R.id.user_item_edit){
+            if (view.getId() == R.id.user_item_edit) {
                 Intent userEditIntent = new Intent(myUsersActivity, UserActivity.class);
                 userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);

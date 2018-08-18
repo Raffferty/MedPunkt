@@ -202,7 +202,7 @@ public class TreatmentPhotosFragment extends Fragment
                 TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
 
         // выборку заболеванй делаем по _idUser
-        String  selection = TreatmentPhotosEntry.COLUMN_U_ID + "=? AND " + TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
+        String selection = TreatmentPhotosEntry.COLUMN_U_ID + "=? AND " + TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser), String.valueOf(_idDisease)};
 
         // This loader will execute the ContentProvider's query method on a background thread

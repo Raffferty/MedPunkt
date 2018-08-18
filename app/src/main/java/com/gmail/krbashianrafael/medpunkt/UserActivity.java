@@ -253,6 +253,10 @@ public class UserActivity extends AppCompatActivity
         focusHolder = findViewById(R.id.focus_holder);
 
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
+        if (iAmDoctor){
+            textInputLayoutName.setHint(getString(R.string.patient_name));
+        }
+
         editTextName = findViewById(R.id.editText_name);
         editTextName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

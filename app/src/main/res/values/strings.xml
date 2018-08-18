@@ -44,10 +44,13 @@
 
     <!-- patient -->
     <string name="patient_title_activity">Add patient</string>
+    <string name="patient_name">Name and Surname</string>
     <string name="patient_cant_save">Patient could not be saved</string>
     <string name="patient_cant_update">Patient could not be saved</string>
     <string name="patient_delete">Delete patient</string>
     <string name="patient_not_deleted">Patient could not be deleted</string>
+    <string name="patient_treatmen_title_text">Symptomatology and Treatment</string>
+    <string name="patient_treatment_description_hint_text">Symptoms and treatment description</string>
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Diseases</string>
