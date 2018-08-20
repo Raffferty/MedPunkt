@@ -1,6 +1,8 @@
 package com.gmail.krbashianrafael.medpunkt;
 
-public class DiseaseItem {
+import android.support.annotation.NonNull;
+
+public class DiseaseItem implements Comparable<DiseaseItem> {
     private long _diseaseId;
     private long _diseaseUserId;
     private String diseaseName;
@@ -33,5 +35,13 @@ public class DiseaseItem {
 
     public String getTreatmentText() {
         return diseaseTreatment;
+    }
+
+    @Override
+    public int compareTo(@NonNull DiseaseItem o) {
+        if (diseaseName != null && o.diseaseName != null) {
+            return this.diseaseName.compareTo(o.diseaseName);
+        }
+        return 0;
     }
 }

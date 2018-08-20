@@ -1,6 +1,8 @@
 package com.gmail.krbashianrafael.medpunkt;
 
-public class UserItem {
+import android.support.annotation.NonNull;
+
+public class UserItem implements Comparable<UserItem> {
     private long _userId;
     private String userBirthDate;
     private String userName;
@@ -29,5 +31,13 @@ public class UserItem {
 
     public String getUserPhotoUri() {
         return userPhotoUri;
+    }
+
+    @Override
+    public int compareTo(@NonNull UserItem o) {
+        if (userName!=null && o.userName!=null){
+            return this.userName.compareTo(o.userName);
+        }
+        return 0;
     }
 }

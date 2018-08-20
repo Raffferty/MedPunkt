@@ -26,6 +26,7 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class UsersActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -309,6 +310,9 @@ public class UsersActivity extends AppCompatActivity
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
             }
         }
+
+        // делаем сортировку пользователей по именеи
+        Collections.sort(myData);
 
         /*
         public final void notifyDataSetChanged()

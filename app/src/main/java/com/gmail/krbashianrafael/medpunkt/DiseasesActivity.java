@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DiseasesActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -273,6 +274,9 @@ public class DiseasesActivity extends AppCompatActivity
                 myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, diseaseName, diseaseDate, diseaseTreatment));
             }
         }
+
+        // делаем сортировку заболеваний по именеи
+        Collections.sort(myData);
 
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView

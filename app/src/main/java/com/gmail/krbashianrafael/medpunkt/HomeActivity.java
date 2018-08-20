@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -32,6 +33,29 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+
+        // ------------------------------------
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        double yInches= metrics.heightPixels/metrics.ydpi;
+        double xInches= metrics.widthPixels/metrics.xdpi;
+
+        double size = Math.hypot(xInches,yInches);
+
+        Log.d("metrics", "xInches = " + xInches);
+        Log.d("metrics", "yInches = " + yInches);
+        Log.d("metrics", "size = " + size);
+
+        if (xInches>=4 && size>=6){
+            Log.d("metrics", "isTablet");
+        }else {
+            Log.d("metrics", "isPhone");
+        }
+
+        // ------------------------------------
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TreatmentPhotosFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -250,6 +251,9 @@ public class TreatmentPhotosFragment extends Fragment
                 myData.add(new TreatmentPhotoItem(_trPhotoId, _userId, _diseaseId, trPhotoName, trPhotoDate, trPhotoUri));
             }
         }
+
+        // делаем сортировку снимков по дате
+        Collections.sort(myData);
 
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
