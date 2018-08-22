@@ -9,7 +9,7 @@
     android:background="@color/colorPrimaryDark"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    tools:context=".TreatmentActivity">
+    tools:context=".phone.TreatmentActivity">
 
     <EditText
         android:id="@+id/focus_holder"

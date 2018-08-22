@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gmail.krbashianrafael.medpunkt.DiseasesActivity">
+    tools:context="com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity">
 
     <FrameLayout
         android:id="@+id/divider_frame"

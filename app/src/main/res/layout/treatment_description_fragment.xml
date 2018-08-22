@@ -7,7 +7,7 @@
     android:background="@android:color/white">
 
     <!-- это кастомный EditText у которого клавиатура не перекрывает текст -->
-    <com.gmail.krbashianrafael.medpunkt.MyEditText
+    <com.gmail.krbashianrafael.medpunkt.phone.MyEditText
         android:id="@+id/editTextTreatment"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -22,6 +22,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 
@@ -40,7 +43,7 @@ public class UsersActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    protected boolean iAmDoctor;
+    //protected boolean iAmDoctor;
 
     // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
@@ -62,14 +65,11 @@ public class UsersActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
-        Intent intent = getIntent();
-        iAmDoctor = intent.getBooleanExtra("iAmDoctor", false);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
-            if (iAmDoctor) {
+            if (HomeActivity.iAmDoctor) {
                 actionBar.setTitle(R.string.patients_title_activity);
             }
         }
@@ -83,7 +83,7 @@ public class UsersActivity extends AppCompatActivity
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 userIntent.putExtra("userPhotoUri", "No_Photo");
                 userIntent.putExtra("newUser", true);
-                userIntent.putExtra("iAmDoctor", iAmDoctor);
+                userIntent.putExtra("iAmDoctor", HomeActivity.iAmDoctor);
                 startActivity(userIntent);
             }
         });
@@ -110,7 +110,7 @@ public class UsersActivity extends AppCompatActivity
 
         txtAddUsers = findViewById(R.id.txt_empty_users);
 
-        if (iAmDoctor) {
+        if (HomeActivity.iAmDoctor) {
             txtAddUsers.setText(R.string.patient_title_activity);
         }
         txtAddUsers.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +119,7 @@ public class UsersActivity extends AppCompatActivity
                 Intent userIntent = new Intent(UsersActivity.this, UserActivity.class);
                 userIntent.putExtra("userPhotoUri", "No_Photo");
                 userIntent.putExtra("newUser", true);
-                userIntent.putExtra("iAmDoctor", iAmDoctor);
+                userIntent.putExtra("iAmDoctor", HomeActivity.iAmDoctor);
                 startActivity(userIntent);
             }
         });
@@ -364,7 +364,7 @@ public class UsersActivity extends AppCompatActivity
                             txtAddUsers.startAnimation(fadeInAnimation);
                         }
                     }, 300);
-        } else if (myDataSize == 1 && onResumeCounter == 1 && !iAmDoctor) {
+        } else if (myDataSize == 1 && onResumeCounter == 1 && !HomeActivity.iAmDoctor) {
             // если есть только один пользователь,
             // и влделец приложения НЕ доктор,
             // то идем сразу к его заболеваниям

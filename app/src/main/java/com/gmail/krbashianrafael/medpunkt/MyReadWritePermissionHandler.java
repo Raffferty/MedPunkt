@@ -12,7 +12,7 @@ import android.view.View;
  * Вынесен в отдельный класс запрос на ReadWritePermission
  */
 
-class MyReadWritePermissionHandler {
+public class MyReadWritePermissionHandler {
 
     public static void getReadWritePermission(final Activity mActivity, final View mLayout,
                                               final int PERMISSION_WRITE_EXTERNAL_STORAGE) {

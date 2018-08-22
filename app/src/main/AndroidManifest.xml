@@ -13,9 +13,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".HomeActivity"
-            android:windowSoftInputMode="stateHidden"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,39 +23,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UsersActivity"
-            android:windowSoftInputMode="stateHidden"
+            android:name=".phone.UsersActivity"
             android:label="@string/users_title_activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".UserActivity"
-            android:windowSoftInputMode="stateHidden"
+            android:name=".phone.UserActivity"
             android:label="@string/user_title_activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".DiseasesActivity"
-            android:windowSoftInputMode="stateHidden"
+            android:name=".phone.DiseasesActivity"
             android:label="@string/diseases_activity_title"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".TreatmentActivity"
-            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".phone.TreatmentActivity"
             android:label="@string/treatment_title_activity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".FullscreenPhotoActivity"
-            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:label="@string/fullscreen_title_activity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateHidden" />
 
         <provider
             android:name=".data.MedProvider"
             android:authorities="com.gmail.krbashianrafael.medpunkt"
             android:exported="false" />
 
-
+        <activity
+            android:name=".tablet.TabletMainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

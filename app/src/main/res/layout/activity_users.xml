@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gmail.krbashianrafael.medpunkt.UsersActivity">
+    tools:context="com.gmail.krbashianrafael.medpunkt.phone.UsersActivity">
 
     <FrameLayout
         android:id="@+id/divider_frame_green"

@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -22,6 +22,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 
 import java.util.ArrayList;

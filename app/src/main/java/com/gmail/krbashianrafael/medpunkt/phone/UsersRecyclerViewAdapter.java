@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
+import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -126,7 +129,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 Intent userEditIntent = new Intent(myUsersActivity, UserActivity.class);
                 userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);
-                userEditIntent.putExtra("iAmDoctor", myUsersActivity.iAmDoctor);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
                 userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());

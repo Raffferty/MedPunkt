@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
+import com.gmail.krbashianrafael.medpunkt.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

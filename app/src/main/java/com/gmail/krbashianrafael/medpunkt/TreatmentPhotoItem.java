@@ -16,7 +16,7 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
     // путь к фото
     private String trPhotoUri;
 
-    TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String trPhotoName, String trPhotoDate, String trPhotoUri) {
+    public TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String trPhotoName, String trPhotoDate, String trPhotoUri) {
         this._trPhotoId = _trPhotoId;
         this._userId = _userId;
         this._diseaseId = _diseaseId;

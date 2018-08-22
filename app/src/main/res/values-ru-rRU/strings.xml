@@ -2,8 +2,7 @@
 <resources>
     <!-- app -->
     <string name="greeting">MedPunkt
-        \n\n\поможет Вам запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.
-        \n\n\Добро пожаловать!</string>
+        \n\n\поможет Вам запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.</string>
     <string name="doctor">Я врач</string>
     <string name="show_greeting">Больше не показывать</string>
 
@@ -53,8 +52,8 @@
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Заболевания</string>
-    <string name="diseases_empty_text">Добавить чем болел</string>
-    <string name="diseases_what_text">Чем болел</string>
+    <string name="diseases_empty_text">Добавить заболевание</string>
+    <string name="diseases_what_text">Заболевания</string>
     <string name="disease_name">Название заболевания</string>
     <string name="disease_date">Дата</string>
     <string name="disease_error_name">Укажите название заболевания</string>
@@ -72,7 +71,7 @@
     <string name="treatment_image_not_deleted">Снимок не удалился</string>
     <string name="treatment_image_copy_error">При сохранении снимка возникли ошибки,\nповторите попытку позже</string>
     <string name="treatment_old_image_not_deleted">Обновляемый снимок не удалился</string>
-    <string name="treatment_title_activity">Добавить чем болел</string>
+    <string name="treatment_title_activity">Добавить заболевание</string>
     <string name="treatmen_title_text">Лечение</string>
     <string name="treatment_description_hint_text">Описание лечения</string>
     <string name="treatment_description">ОПИСАНИЕ</string>

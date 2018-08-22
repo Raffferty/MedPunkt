@@ -4,6 +4,8 @@ package com.gmail.krbashianrafael.medpunkt;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -21,41 +22,21 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
+
 import java.io.File;
 
 
 public class HomeActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PREFS";
-    protected static boolean iAmDoctor = false;
+    public static boolean iAmDoctor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
-        // ------------------------------------
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        double yInches= metrics.heightPixels/metrics.ydpi;
-        double xInches= metrics.widthPixels/metrics.xdpi;
-
-        double size = Math.hypot(xInches,yInches);
-
-        Log.d("metrics", "xInches = " + xInches);
-        Log.d("metrics", "yInches = " + yInches);
-        Log.d("metrics", "size = " + size);
-
-        if (xInches>=4 && size>=6){
-            Log.d("metrics", "isTablet");
-        }else {
-            Log.d("metrics", "isPhone");
-        }
-
-        // ------------------------------------
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -81,6 +62,35 @@ public class HomeActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        // ------------------------------------
+
+        // узнаем Планшет это или нет
+        boolean isTablet = false;
+
+        if (!prefs.contains("isTablet")) {
+            Configuration configuration = getResources().getConfiguration();
+
+            //The smallest screen size an application will see in normal operation,
+            // corresponding to smallest screen width resource qualifier.
+            int smallestScreenWidthDp = configuration.smallestScreenWidthDp;
+
+            if (smallestScreenWidthDp >= 600) {
+                isTablet = true;
+                prefsEditor.putBoolean("isTablet", true);
+            } else {
+                prefsEditor.putBoolean("isTablet", false);
+            }
+
+            prefsEditor.apply();
+
+        } else {
+            isTablet = prefs.getBoolean("isTablet", false);
+        }
+
+        //Log.d("mMetrics", "isTablet = " + isTablet);
+
+        // ------------------------------------
 
         final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
 
@@ -113,11 +123,20 @@ public class HomeActivity extends AppCompatActivity {
 
             checkBoxShowGreeting.setChecked(true);
 
-            Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
-            intentToUsers.putExtra("iAmDoctor", iAmDoctor);
-            startActivity(intentToUsers);
-        }else {
-            UsersActivity.onResumeCounter = 1;
+            if (!isTablet) {
+                Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
+                startActivity(intentToUsers);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                Intent intentToTablet = new Intent(HomeActivity.this, TabletMainActivity.class);
+                startActivity(intentToTablet);
+            }
+        } else {
+            if (!isTablet) {
+                UsersActivity.onResumeCounter = 1;
+            }else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
         }
 
         // checkBox.setOnCheckedChangeListener инициализируем после проверки на галочку (вверху)
@@ -137,12 +156,17 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         FrameLayout enter = findViewById(R.id.enter);
+        final boolean finalIsTablet = isTablet;
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
-                intentToUsers.putExtra("iAmDoctor", iAmDoctor);
-                startActivity(intentToUsers);
+                if (!finalIsTablet) {
+                    Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
+                    startActivity(intentToUsers);
+                } else {
+                    Intent intentToTalet = new Intent(HomeActivity.this, TabletMainActivity.class);
+                    startActivity(intentToTalet);
+                }
             }
         });
 
