@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -23,11 +24,12 @@ import java.util.ArrayList;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private UsersActivity mUsersActivity;
+    //private UsersActivity mContext;
+    private Context mContext;
     private ArrayList<UserItem> usersList;
 
-    UsersRecyclerViewAdapter(UsersActivity context) {
-        mUsersActivity = context;
+    public UsersRecyclerViewAdapter(Context context) {
+        mContext = context;
 
         this.usersList = new ArrayList<>();
     }
@@ -40,7 +42,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_recycleview_item, parent, false);
-        return new UserHolder(mView, mUsersActivity);
+        return new UserHolder(mView, mContext);
     }
 
     @SuppressLint("SetTextI18n")
@@ -60,7 +62,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         File imgFile = new File(userPhotoUri);
         if (imgFile.exists()) {
 
-            GlideApp.with(mUsersActivity)
+            GlideApp.with(mContext)
                     .load(userPhotoUri)
                     .override(90, 90)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -73,10 +75,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             ((UserHolder) holder).userPhotoUri.setText("No_Photo");
 
             // чистим userImage
-            GlideApp.with(mUsersActivity).clear(((UserHolder) holder).userImage);
+            GlideApp.with(mContext).clear(((UserHolder) holder).userImage);
 
             // ставим в userImage R.drawable.ic_camera_alt_gray_24dp
-            GlideApp.with(mUsersActivity).
+            GlideApp.with(mContext).
                     load(R.drawable.ic_camera_alt_gray_24dp).
                     into(((UserHolder) holder).userImage);
         }
@@ -89,7 +91,8 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        UsersActivity myUsersActivity;
+        //UsersActivity myContext;
+        Context myContext;
 
         TextView _userId;
         TextView userPhotoUri;
@@ -100,10 +103,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         LinearLayout usersItem;
         FrameLayout userEdit;
 
-        UserHolder(View itemView, UsersActivity context) {
+        UserHolder(View itemView, Context context) {
             super(itemView);
 
-            myUsersActivity = context;
+            myContext = context;
 
             _userId = itemView.findViewById(R.id.user_item_id);
             userPhotoUri = itemView.findViewById(R.id.user_item_photo_uri);
@@ -121,26 +124,26 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View view) {
-            if (myUsersActivity == null) {
+            if (myContext == null) {
                 return;
             }
 
             if (view.getId() == R.id.user_item_edit) {
-                Intent userEditIntent = new Intent(myUsersActivity, UserActivity.class);
+                Intent userEditIntent = new Intent(myContext, UserActivity.class);
                 userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
                 userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
-                myUsersActivity.startActivity(userEditIntent);
+                myContext.startActivity(userEditIntent);
 
             } else {
-                Intent userDiseasIntent = new Intent(myUsersActivity, DiseasesActivity.class);
+                Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
                 userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
                 userDiseasIntent.putExtra("UserName", userName.getText());
 
-                myUsersActivity.startActivity(userDiseasIntent);
+                myContext.startActivity(userDiseasIntent);
             }
         }
     }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorFab"
+    android:background="@color/colorPrimaryLight"
     tools:context=".tablet.TabletMainActivity">
 
     <android.support.constraint.Guideline
@@ -28,7 +28,6 @@
         android:layout_marginBottom="2dp"
         android:layout_marginEnd="1dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ver_left_guideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,9 +47,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="2dp"
-        android:layout_marginEnd="2dp"
+        android:layout_marginEnd="1dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ver_right_guideline"
         app:layout_constraintStart_toEndOf="@+id/ver_left_guideline"
@@ -72,7 +70,6 @@
         android:layout_marginBottom="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/ver_right_guideline"

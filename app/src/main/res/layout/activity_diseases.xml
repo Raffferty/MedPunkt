@@ -10,7 +10,7 @@
         android:id="@+id/divider_frame"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorAccentThird" />
+        android:background="@color/white" />
 
     <TextView
         android:id="@+id/txt_diseases"
@@ -24,12 +24,25 @@
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
+    <FrameLayout
+        android:id="@+id/divider_frame_green"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/txt_diseases"
+        android:background="@color/white" />
+
+    <FrameLayout
+        android:id="@+id/divider_frame_blue_1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/divider_frame_green"
+        android:background="@color/colorPrimaryDark" />
+
     <TextView
         android:id="@+id/txt_empty_diseases"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="16dp"
         android:drawableBottom="@drawable/ic_add_circle_orange_80dp"
         android:gravity="center"
         android:text="@string/diseases_empty_text"

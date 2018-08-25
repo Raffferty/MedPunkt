@@ -19,7 +19,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context mContext;
     private ArrayList<DiseaseItem> diseaseList;
 
-    DiseaseRecyclerViewAdapter(Context context) {
+    public DiseaseRecyclerViewAdapter(Context context) {
         mContext = context;
         this.diseaseList = new ArrayList<>();
     }

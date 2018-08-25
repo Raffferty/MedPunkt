@@ -43,8 +43,6 @@ public class UsersActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    //protected boolean iAmDoctor;
-
     // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertUser
@@ -74,8 +72,6 @@ public class UsersActivity extends AppCompatActivity
             }
         }
 
-        // это видимо, т.к. добавлен фиктивный пользователь
-        // сделать видимым, когда будет хоть одно заболевание
         fabAddUser = findViewById(R.id.fabAddUser);
         fabAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,10 +151,6 @@ public class UsersActivity extends AppCompatActivity
 
         // устанавливаем адаптер для RecyclerView
         recyclerUsers.setAdapter(usersRecyclerViewAdapter);
-
-        // Инициализируем Loader
-        // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
-        //getLoaderManager().initLoader(USERS_LOADER, null, this);
     }
 
     @Override
@@ -174,8 +166,6 @@ public class UsersActivity extends AppCompatActivity
         // Инициализируем Loader
         // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
         getLoaderManager().initLoader(USERS_LOADER, null, this);
-
-        //usersRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -275,9 +265,6 @@ public class UsersActivity extends AppCompatActivity
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
-       /* fabAddUser.setVisibility(View.INVISIBLE);
-        txtAddUsers.setVisibility(View.INVISIBLE);*/
 
         // получаем ссылку на данные в usersRecyclerViewAdapter
         // и очищаем ArrayList<UserItem> myData от данных

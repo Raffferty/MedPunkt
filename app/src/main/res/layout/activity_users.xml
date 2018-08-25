@@ -7,11 +7,34 @@
     android:layout_height="match_parent"
     tools:context="com.gmail.krbashianrafael.medpunkt.phone.UsersActivity">
 
+    <!-- этот FrameLayout виден только на планшере -->
+    <FrameLayout
+        android:id="@+id/divider_tablet_frame"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:visibility="gone"/>
+
+    <!-- этот TextView виден только на планшере -->
+    <TextView
+        android:id="@+id/txt_tablet_users"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="center_horizontal"
+        android:text="@string/users_title_activity"
+        android:textAppearance="@style/Widget.AppCompat.Toolbar"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/divider_tablet_frame"
+        android:textSize="20sp"
+        android:visibility="gone"/>
+
     <FrameLayout
         android:id="@+id/divider_frame_green"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorAccentThird" />
+        android:background="@color/white"
+        android:layout_below="@+id/txt_tablet_users"/>
 
     <FrameLayout
         android:id="@+id/divider_frame_blue_1"
@@ -25,7 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="16dp"
         android:drawableBottom="@drawable/ic_add_circle_orange_80dp"
         android:gravity="center"
         android:text="@string/user_title_activity"

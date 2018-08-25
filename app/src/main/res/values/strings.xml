@@ -95,7 +95,4 @@
     <string name="treatment_photo_nameEnd">.jpg</string>
     <string name="path_to_users_photos">/users_photos/</string>
     <string name="user_photo_nameEnd">-usrImage.jpg</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -2,7 +2,7 @@ package com.gmail.krbashianrafael.medpunkt;
 
 import android.support.annotation.NonNull;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
     private long _trPhotoId;
@@ -11,7 +11,7 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
     private String trPhotoName;
     private String trPhotoDate;
 
-    private Date dateToCompare;
+    private Calendar dateToCompare;
 
     // путь к фото
     private String trPhotoUri;
@@ -28,7 +28,7 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
         dateToCompare = getDate(trPhotoDate);
     }
 
-    private Date getDate(String stringTrPhotoDate) {
+    private Calendar getDate(String stringTrPhotoDate) {
         int mYear;
         int mMonth;
         int mDay;
@@ -39,7 +39,12 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
             mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
             mDay = Integer.valueOf(mDayMonthYear[0]);
 
-            return new Date(mYear, mMonth, mDay);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, mYear);
+            cal.set(Calendar.MONTH, mMonth);
+            cal.set(Calendar.DAY_OF_MONTH, mDay);
+
+            return cal;
         }
 
         return null;

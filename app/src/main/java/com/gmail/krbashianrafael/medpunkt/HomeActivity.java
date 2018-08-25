@@ -88,8 +88,6 @@ public class HomeActivity extends AppCompatActivity {
             isTablet = prefs.getBoolean("isTablet", false);
         }
 
-        //Log.d("mMetrics", "isTablet = " + isTablet);
-
         // ------------------------------------
 
         final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
