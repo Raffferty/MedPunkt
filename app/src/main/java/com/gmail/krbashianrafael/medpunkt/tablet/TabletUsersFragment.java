@@ -1,5 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
+import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -67,7 +69,7 @@ public class TabletUsersFragment extends Fragment
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
@@ -92,6 +94,7 @@ public class TabletUsersFragment extends Fragment
             public void onClick(View v) {
                 //
                 fabAddUser.startAnimation(fadeInAnimation);
+                tabletMainActivity.unBlur();
 
             }
         });
@@ -101,7 +104,7 @@ public class TabletUsersFragment extends Fragment
             public void onClick(View v) {
                 //
                 fabAddUser.startAnimation(fabShowAnimation);
-
+                tabletMainActivity.blur();
             }
         });
 
@@ -110,10 +113,26 @@ public class TabletUsersFragment extends Fragment
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            tabletMainActivity = (TabletMainActivity) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        tabletMainActivity = null;
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        tabletMainActivity = (TabletMainActivity) getActivity();
+        if (tabletMainActivity==null){
+            tabletMainActivity = (TabletMainActivity) getActivity();
+        }
 
         fadeInAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fadein);
 
