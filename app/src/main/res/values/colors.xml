@@ -7,6 +7,7 @@
     <color name="colorFab">#ff6f00</color>
 
     <color name="white">#ffffff</color>
+    <color name="paper">#fcfcd4</color>
     <color name="black">#000000</color>
     <color name="my_gray">#c7c7c7</color>
 </resources>

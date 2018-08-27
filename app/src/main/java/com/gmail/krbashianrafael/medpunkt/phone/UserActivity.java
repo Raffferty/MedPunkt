@@ -157,7 +157,7 @@ public class UserActivity extends AppCompatActivity
 
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else {
+        } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
@@ -264,7 +264,7 @@ public class UserActivity extends AppCompatActivity
         focusHolder = findViewById(R.id.focus_holder);
 
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
-        if (HomeActivity.iAmDoctor){
+        if (HomeActivity.iAmDoctor) {
             textInputLayoutName.setHint(getString(R.string.patient_name));
         }
 
@@ -340,20 +340,32 @@ public class UserActivity extends AppCompatActivity
         });
 
         actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
 
-            if (textUserName != null) {
-                actionBar.setTitle(textUserName);
-                editTextName.setText(textUserName);
-            } else {
-                textUserName = "";
-                if (HomeActivity.iAmDoctor) {
-                    actionBar.setTitle(R.string.patient_title_activity);
+        if (!HomeActivity.isTablet) {
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
+
+                if (textUserName != null) {
+                    actionBar.setTitle(textUserName);
+                } else {
+                    if (HomeActivity.iAmDoctor) {
+                        actionBar.setTitle(R.string.patient_title_activity);
+                    }
                 }
             }
+        }else {
+            if (actionBar != null) {
+                actionBar.hide();
+            }
         }
+
+        if (textUserName != null) {
+            editTextName.setText(textUserName);
+        } else {
+            textUserName = "";
+        }
+
 
         if (textUserBirthDate != null) {
             editTextDate.setText(textUserBirthDate);
@@ -530,6 +542,11 @@ public class UserActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (HomeActivity.isTablet) {
+            return false;
+        }
+
         getMenuInflater().inflate(R.menu.menu, menu);
 
         String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);

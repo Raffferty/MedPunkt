@@ -2,7 +2,6 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,11 +40,11 @@ public class TabletMainActivity extends AppCompatActivity {
                     getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
         }
 
-        ActionBar actionBar = getSupportActionBar();
+        /*ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
-        }
+        }*/
 
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
