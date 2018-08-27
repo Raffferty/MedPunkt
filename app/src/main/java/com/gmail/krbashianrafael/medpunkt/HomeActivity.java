@@ -32,6 +32,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PREFS";
     public static boolean iAmDoctor = false;
+    public static boolean isTablet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         // ------------------------------------
 
         // узнаем Планшет это или нет
-        boolean isTablet = false;
+
 
         if (!prefs.contains("isTablet")) {
             Configuration configuration = getResources().getConfiguration();
@@ -162,8 +163,8 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
                     startActivity(intentToUsers);
                 } else {
-                    Intent intentToTalet = new Intent(HomeActivity.this, TabletMainActivity.class);
-                    startActivity(intentToTalet);
+                    Intent intentToTbalet = new Intent(HomeActivity.this, TabletMainActivity.class);
+                    startActivity(intentToTbalet);
                 }
             }
         });

@@ -43,7 +43,7 @@
             android:id="@+id/tablet_users_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.7"/>
+            android:alpha="0.85"/>
 
     </FrameLayout>
 
@@ -69,7 +69,7 @@
             android:id="@+id/tablet_diseases_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.7"/>
+            android:alpha="0.85"/>
 
     </FrameLayout>
 
@@ -95,7 +95,7 @@
             android:id="@+id/tablet_treatment_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.7"/>
+            android:alpha="0.85"/>
 
     </FrameLayout>
 

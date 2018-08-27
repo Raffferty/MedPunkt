@@ -2,6 +2,7 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -29,18 +30,22 @@ import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.phone.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_DISEASES_FRAGMENT;
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
 
 public class TabletUsersFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private TabletMainActivity tabletMainActivity;
 
-    private TextView txtAddUsers;
-    private FloatingActionButton fabAddUser;
+    protected TextView txtAddUsers;
+    protected FloatingActionButton fabAddUser;
     private RecyclerView recyclerUsers;
     private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
@@ -92,19 +97,22 @@ public class TabletUsersFragment extends Fragment
         fabAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                fabAddUser.startAnimation(fadeInAnimation);
-                tabletMainActivity.unBlur();
-
+                Intent userIntent = new Intent(tabletMainActivity, UserActivity.class);
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("newUser", true);
+                userIntent.putExtra("iAmDoctor", HomeActivity.iAmDoctor);
+                startActivity(userIntent);
             }
         });
 
         txtAddUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                fabAddUser.startAnimation(fabShowAnimation);
-                tabletMainActivity.blur();
+                Intent userIntent = new Intent(tabletMainActivity, UserActivity.class);
+                userIntent.putExtra("userPhotoUri", "No_Photo");
+                userIntent.putExtra("newUser", true);
+                userIntent.putExtra("iAmDoctor", HomeActivity.iAmDoctor);
+                startActivity(userIntent);
             }
         });
 
@@ -115,7 +123,7 @@ public class TabletUsersFragment extends Fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             tabletMainActivity = (TabletMainActivity) context;
         }
     }
@@ -130,7 +138,7 @@ public class TabletUsersFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (tabletMainActivity==null){
+        if (tabletMainActivity == null) {
             tabletMainActivity = (TabletMainActivity) getActivity();
         }
 
@@ -270,9 +278,14 @@ public class TabletUsersFragment extends Fragment
                             txtAddUsers.startAnimation(fadeInAnimation);
                         }
                     }, 300);
+
+            tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+            tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+
         } else {
             // если больше одного пользователя, то остаемся в окне "Пользователи"
             fabAddUser.startAnimation(fabShowAnimation);
+            tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
         }
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,

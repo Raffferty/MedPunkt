@@ -4,21 +4,26 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.gmail.krbashianrafael.medpunkt.R;
 
 public class TabletMainActivity extends AppCompatActivity {
 
-    TabletUsersFragment tabletUsersFragment;
-    TabletDiseasesFragment tabletDiseasesFragment;
-    TabletTreatmentFragment tabletTreatmentFragment;
+    private TabletUsersFragment tabletUsersFragment;
+    private TabletDiseasesFragment tabletDiseasesFragment;
+    private TabletTreatmentFragment tabletTreatmentFragment;
 
-    FrameLayout tabletUsersBlurFrame;
-    FrameLayout tabletDiseasesBlurFrame;
-    FrameLayout tableTreatmentBlurFrame;
+    private FrameLayout tabletUsersBlurFrame;
+    private FrameLayout tabletDiseasesBlurFrame;
+    private FrameLayout tableTreatmentBlurFrame;
+
+    protected static final int TABLET_USERS_FRAGMENT = 1;
+    protected static final int TABLET_DISEASES_FRAGMENT = 2;
+    protected static final int TABLET_TREATMENT_FRAGMENT = 3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,41 +71,63 @@ public class TabletMainActivity extends AppCompatActivity {
         }
     }
 
-    public void blur() {
-        if (tabletUsersFragment.getView() != null) {
-            //
-        }
+    public void blur(int fragmentNumber) {
 
-        if (tabletDiseasesFragment.getView() != null && !tabletDiseasesBlurFrame.isClickable()) {
-            tabletDiseasesBlurFrame.setClickable(true);
-            tabletDiseasesBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
-
-            Log.d("clk", "tabletDiseasesBlurFrame.setClickable(true)");
-
-        }
-
-        if (tabletTreatmentFragment.getView() != null && !tableTreatmentBlurFrame.isClickable()) {
-            tableTreatmentBlurFrame.setClickable(true);
-            tableTreatmentBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
-        }
-    }
-
-    public void unBlur() {
-        if (tabletUsersFragment.getView()!=null){
-            //
-        }
-
-        if (tabletDiseasesFragment.getView()!=null && tabletDiseasesBlurFrame.isClickable()){
-            tabletDiseasesBlurFrame.setClickable(false);
-            tabletDiseasesBlurFrame.setBackgroundColor(Color.TRANSPARENT);
-
-            Log.d("clk", "tabletDiseasesBlurFrame.setClickable(false)");
-        }
-
-        if (tabletTreatmentFragment.getView()!=null && tableTreatmentBlurFrame.isClickable()){
-            tableTreatmentBlurFrame.setClickable(false);
-            tableTreatmentBlurFrame.setBackgroundColor(Color.TRANSPARENT);
+        switch (fragmentNumber) {
+            case TABLET_USERS_FRAGMENT:
+                if (!tabletUsersBlurFrame.isClickable()) {
+                    tabletUsersBlurFrame.setClickable(true);
+                    tabletUsersBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                    tabletUsersFragment.txtAddUsers.setVisibility(View.INVISIBLE);
+                    tabletUsersFragment.fabAddUser.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case TABLET_DISEASES_FRAGMENT:
+                if (!tabletDiseasesBlurFrame.isClickable()) {
+                    tabletDiseasesBlurFrame.setClickable(true);
+                    tabletDiseasesBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                    tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
+                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case TABLET_TREATMENT_FRAGMENT:
+                if (!tableTreatmentBlurFrame.isClickable()) {
+                    tableTreatmentBlurFrame.setClickable(true);
+                    tableTreatmentBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                }
+                break;
+            default:
+                break;
         }
     }
 
+    public void unBlur(int fragmentNumber) {
+
+        switch (fragmentNumber) {
+            case TABLET_USERS_FRAGMENT:
+                if (tabletUsersBlurFrame.isClickable()) {
+                    tabletUsersFragment.txtAddUsers.setVisibility(View.VISIBLE);
+                    tabletUsersFragment.fabAddUser.setVisibility(View.VISIBLE);
+                    tabletUsersBlurFrame.setClickable(false);
+                    tabletUsersBlurFrame.setBackgroundColor(Color.TRANSPARENT);
+                }
+                break;
+            case TABLET_DISEASES_FRAGMENT:
+                if (tabletDiseasesBlurFrame.isClickable()) {
+                    tabletDiseasesBlurFrame.setClickable(false);
+                    tabletDiseasesBlurFrame.setBackgroundColor(Color.TRANSPARENT);
+                    tabletDiseasesFragment.textViewAddDisease.setVisibility(View.VISIBLE);
+                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.VISIBLE);
+                }
+                break;
+            case TABLET_TREATMENT_FRAGMENT:
+                if (tableTreatmentBlurFrame.isClickable()) {
+                    tableTreatmentBlurFrame.setClickable(false);
+                    tableTreatmentBlurFrame.setBackgroundColor(Color.TRANSPARENT);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }

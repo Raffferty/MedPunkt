@@ -40,9 +40,9 @@ public class TabletDiseasesFragment extends Fragment
 
     protected static String textUserName;
 
-    private TextView textViewAddDisease;
+    protected TextView textViewAddDisease;
 
-    private FloatingActionButton fabAddDisease;
+    protected FloatingActionButton fabAddDisease;
 
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
