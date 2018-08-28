@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".phone.UserActivity"
+            android:name=".UserActivity"
             android:label="@string/user_title_activity"
             android:windowSoftInputMode="stateHidden" />
         <activity

@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -47,7 +47,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,14 +57,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.gmail.krbashianrafael.medpunkt.GlideApp;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
-import com.gmail.krbashianrafael.medpunkt.MyReadWritePermissionHandler;
-import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
+import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
+import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -115,6 +116,16 @@ public class UserActivity extends AppCompatActivity
 
     // фото пользоватлея
     private ImageView imagePhoto;
+
+    //для планшета:
+
+    // TextView для указания UserTitle
+    private TextView txtTabletUserTitle;
+
+    // FrameLayout для выхода, сохранения и удаления пользователя
+    private FrameLayout tabletFrmBack;
+    private FrameLayout tabletFrmSave;
+    private FrameLayout tabletFrmDelete;
 
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
@@ -264,6 +275,7 @@ public class UserActivity extends AppCompatActivity
         focusHolder = findViewById(R.id.focus_holder);
 
         textInputLayoutName = findViewById(R.id.text_input_layout_name);
+
         if (HomeActivity.iAmDoctor) {
             textInputLayoutName.setHint(getString(R.string.patient_name));
         }
@@ -341,6 +353,7 @@ public class UserActivity extends AppCompatActivity
 
         actionBar = getSupportActionBar();
 
+        // устанавливаме actionBar для телефона
         if (!HomeActivity.isTablet) {
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
@@ -354,10 +367,14 @@ public class UserActivity extends AppCompatActivity
                     }
                 }
             }
-        }else {
+        } else {
+            // для Плншета прячем actionBar
             if (actionBar != null) {
                 actionBar.hide();
             }
+
+            // устанавливаем Views и их слушателей для Плншета
+            initViewsAndSetListenersForTablet();
         }
 
         if (textUserName != null) {
@@ -365,7 +382,6 @@ public class UserActivity extends AppCompatActivity
         } else {
             textUserName = "";
         }
-
 
         if (textUserBirthDate != null) {
             editTextDate.setText(textUserBirthDate);
@@ -430,7 +446,14 @@ public class UserActivity extends AppCompatActivity
                     textDeleteUserPhoto.setVisibility(View.VISIBLE);
                 }
 
-                invalidateOptionsMenu();
+                // если это телефон (не Планшет), то обновляем меню
+                if (!HomeActivity.isTablet) {
+                    invalidateOptionsMenu();
+                } else {
+                    // если это планшет, то показываем "сохранить" и убираем "удалить"
+                    tabletFrmSave.setVisibility(View.VISIBLE);
+                    tabletFrmDelete.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -438,6 +461,12 @@ public class UserActivity extends AppCompatActivity
         // то редактирование запрещено
         // если редактировать можно, но нет фото, то и удалять не нужно
         if (editUser) {
+            if (HomeActivity.isTablet) {
+                // если это планшет, то показываем "сохранить" и убираем "удалить"
+                tabletFrmSave.setVisibility(View.GONE);
+                tabletFrmDelete.setVisibility(View.VISIBLE);
+            }
+
             editTextName.setEnabled(false);
             editTextDate.setEnabled(false);
             imagePhoto.setClickable(false);
@@ -446,6 +475,69 @@ public class UserActivity extends AppCompatActivity
         } else if (userPhotoUri.equals("No_Photo")) {
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
         }
+    }
+
+    // инициализируем Views для Планшета и устанавливаем им OnClickListener
+    private void initViewsAndSetListenersForTablet() {
+        txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
+        if (textUserName != null) {
+            txtTabletUserTitle.setText(textUserName);
+        } else {
+            if (HomeActivity.iAmDoctor) {
+                txtTabletUserTitle.setText(R.string.patient_title_activity);
+            }
+        }
+
+        tabletFrmBack = findViewById(R.id.tablet_frm_back);
+        tabletFrmBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onHomeClick();
+            }
+        });
+
+        tabletFrmSave = findViewById(R.id.tablet_frm_save);
+        tabletFrmSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSaveClick();
+            }
+        });
+
+        tabletFrmDelete = findViewById(R.id.tablet_frm_delete);
+        tabletFrmDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // привязываем PopupMenu к tabletFrmDelete
+                PopupMenu popup = new PopupMenu(UserActivity.this, tabletFrmDelete);
+
+                // создаем PopupMenu
+                popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
+
+                // создаем строку для зацепки к символу "удалить"
+                String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+
+                // убираем не нужные Item
+                popup.getMenu().removeItem(R.id.action_delete);
+                popup.getMenu().removeItem(R.id.action_save);
+
+                // добавление в меню текста с картинкой символа "удалить"
+                popup.getMenu().add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
+                        deletString));
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        onDeleteClick();
+                        return true;
+                    }
+                });
+
+                //showing popup menu
+                popup.show();
+            }
+        });
+
     }
 
     // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
@@ -489,14 +581,17 @@ public class UserActivity extends AppCompatActivity
                 onLoading = false;
             } else {
                 // если грузим фотку в первый раз
-                if (imageUriInView == null) {
+                // или если грузим другую фотку вместо уже загруженной (ту же фотку повторно не грузим)
+                if (imageUriInView == null || !imageUriInView.equals(newSelectedImageUri)) {
                     loadPhotoIntoViewAndGetBitmap(newSelectedImageUri);
-
-                    // если грузим другую фотку вместо уже загруженной (ту же фотку повторно не грузим)
-                } else if (!imageUriInView.equals(newSelectedImageUri)) {
-                    loadPhotoIntoViewAndGetBitmap(newSelectedImageUri);
+                } else {
+                    // если грузим ту же фотку, которую только что грузили
+                    onLoading = false;
                 }
             }
+        } else {
+            // если вернулись не сделав выбор
+            onLoading = false;
         }
     }
 
@@ -543,6 +638,7 @@ public class UserActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        // Планшет идет без меню
         if (HomeActivity.isTablet) {
             return false;
         }
@@ -593,81 +689,103 @@ public class UserActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                // Если не было изменений
-                if (userHasNotChanged()) {
-                    goToUsersActivity();
-                    return true;
-                }
-
-                textInputLayoutName.setError(null);
-                textInputLayoutDate.setError(null);
-
-                // Если были изменения
-                // если выходим без сохранения изменений
-                DialogInterface.OnClickListener discardButtonClickListener =
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                if (dialog != null) {
-                                    dialog.dismiss();
-                                }
-
-                                goToUsersActivity();
-                            }
-                        };
-
-                // если выходим с сохранением изменений
-                showUnsavedChangesDialog(discardButtonClickListener);
-                return true;
+                return onHomeClick();
 
             case R.id.action_save:
-
-                // флаг, чтоб повторный клик не работал,
-                // пока идет сохранения
-                if (onSavingOrUpdatingOrDeleting) {
-                    return true;
-                }
-
-                onSavingOrUpdatingOrDeleting = true;
-
-                if (userHasNotChanged() && !newUser) {
-
-                    hideSoftInput();
-
-                    focusHolder.requestFocus();
-
-                    editUser = true;
-                    editTextName.setEnabled(false);
-                    editTextDate.setEnabled(false);
-                    imagePhoto.setClickable(false);
-                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                    invalidateOptionsMenu();
-
-                    fab.startAnimation(fabShowAnimation);
-
-                    onSavingOrUpdatingOrDeleting = false;
-
-                } else {
-                    saveOrUpdateUser();
-                }
-
-                return true;
+                return onSaveClick();
 
             case R.id.action_delete:
-                // флаг, чтоб клик не работал,
-                // пока идет сохранения
-                if (onSavingOrUpdatingOrDeleting) {
-                    return true;
-                }
-
-                showDeleteConfirmationDialog();
-
-                return true;
+                return onDeleteClick();
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // если было нажато "домой" (обратно)
+    private boolean onHomeClick() {
+        // Если не было изменений
+        if (userHasNotChanged()) {
+            goToUsersActivity();
+            return true;
+        }
+
+        textInputLayoutName.setError(null);
+        textInputLayoutDate.setError(null);
+
+        // Если были изменения
+        // если выходим без сохранения изменений
+        DialogInterface.OnClickListener discardButtonClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+
+                        goToUsersActivity();
+                    }
+                };
+
+        // если выходим с сохранением изменений
+        showUnsavedChangesDialog(discardButtonClickListener);
+
+        return true;
+    }
+
+    // если было нажато "сохранить"
+    private boolean onSaveClick() {
+        // флаг, чтоб повторный клик не работал,
+        // пока идет сохранения
+        if (onSavingOrUpdatingOrDeleting) {
+            return true;
+        }
+
+        onSavingOrUpdatingOrDeleting = true;
+
+        if (userHasNotChanged() && !newUser) {
+
+            hideSoftInput();
+
+            focusHolder.requestFocus();
+
+            editUser = true;
+            editTextName.setEnabled(false);
+            editTextDate.setEnabled(false);
+            imagePhoto.setClickable(false);
+            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+            // если это телефон (а не Планшет), то обновляем меню
+            if (!HomeActivity.isTablet) {
+                invalidateOptionsMenu();
+            } else {
+                // если это Планшет, то делаем видимым "удалить" и невидимым "сохранить"
+                tabletFrmDelete.setVisibility(View.VISIBLE);
+                tabletFrmSave.setVisibility(View.GONE);
+            }
+
+            fab.startAnimation(fabShowAnimation);
+
+            onSavingOrUpdatingOrDeleting = false;
+
+        } else {
+            saveOrUpdateUser();
+        }
+
+        return true;
+    }
+
+    // если было нажато "удалить"
+    private boolean onDeleteClick() {
+        // флаг, чтоб клик не работал,
+        // пока идет сохранения
+        if (onSavingOrUpdatingOrDeleting) {
+            return true;
+        }
+
+        showDeleteConfirmationDialog();
+
+        return true;
     }
 
     @Override
@@ -798,7 +916,11 @@ public class UserActivity extends AppCompatActivity
         textUserName = nameToCheck;
         textUserBirthDate = birthDateToCheck;
 
-        actionBar.setTitle(textUserName);
+        if (!HomeActivity.isTablet) {
+            actionBar.setTitle(textUserName);
+        } else {
+            txtTabletUserTitle.setText(textUserName);
+        }
 
         // когда сохраняем НОВОГО пользователя в базу, вместо пути к фото пишем "No_Photo" на случай,
         // если фото не будет установленно
@@ -849,7 +971,26 @@ public class UserActivity extends AppCompatActivity
         if (goBack) {
             goToUsersActivity();
         } else {
-            goToDiseasesActivity();
+            // если это телефон, то идем в DiseasesActivity
+            if (!HomeActivity.isTablet) {
+                goToDiseasesActivity();
+            } else {
+                // если это планшет, то остаемся на месте
+                editUser = true;
+                newUser = false;
+                userHasChangedPhoto = false;
+
+                tabletFrmDelete.setVisibility(View.VISIBLE);
+                tabletFrmSave.setVisibility(View.GONE);
+
+                fab.startAnimation(fabShowAnimation);
+                editTextName.setEnabled(false);
+                editTextDate.setEnabled(false);
+                imagePhoto.setClickable(false);
+                textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                onSavingOrUpdatingOrDeleting = false;
+            }
         }
     }
 
@@ -861,7 +1002,14 @@ public class UserActivity extends AppCompatActivity
             editUser = true;
             userHasChangedPhoto = false;
 
-            invalidateOptionsMenu();
+            // если это телефон (а не Планшет), то обновляем меню
+            if (!HomeActivity.isTablet) {
+                invalidateOptionsMenu();
+            } else {
+                // если это Планшет, то делаем видимым "удалить" и невидимым "сохранить"
+                tabletFrmDelete.setVisibility(View.VISIBLE);
+                tabletFrmSave.setVisibility(View.GONE);
+            }
 
             fab.startAnimation(fabShowAnimation);
             editTextName.setEnabled(false);

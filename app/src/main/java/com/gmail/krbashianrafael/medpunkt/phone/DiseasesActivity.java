@@ -5,15 +5,12 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -154,7 +151,7 @@ public class DiseasesActivity extends AppCompatActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
 
-        // инизиализируем разделитель для элементов recyclerTreatmentPhotos
+        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
                 recyclerDiseases.getContext(), linearLayoutManager.getOrientation()
         );
@@ -168,7 +165,7 @@ public class DiseasesActivity extends AppCompatActivity
         }
 
         //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerDiseases.addItemDecoration(itemDecoration);
+        recyclerDiseases.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);

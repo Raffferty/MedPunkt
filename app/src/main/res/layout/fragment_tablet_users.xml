@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".tablet.TabletUsersFragment">
 
-    <include layout="@layout/activity_users"/>
+    <include layout="@layout/activity_users" />
 
 </LinearLayout>

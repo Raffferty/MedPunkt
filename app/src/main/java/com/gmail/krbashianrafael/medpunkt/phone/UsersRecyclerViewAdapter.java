@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
 
 import java.io.File;

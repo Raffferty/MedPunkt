@@ -2,7 +2,6 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
@@ -139,7 +137,7 @@ public class TabletDiseasesFragment extends Fragment
                 recyclerDiseases.getContext(), linearLayoutManager.getOrientation()
         );
 
-        //инициализируем Drawable, который будет установлен как разделитель между элементами
+        /*//инициализируем Drawable, который будет установлен как разделитель между элементами
         Drawable divider_blue = ContextCompat.getDrawable(tabletMainActivity, R.drawable.blue_drawable);
 
         //устанавливаем divider_blue как разделитель между элементами
@@ -148,7 +146,7 @@ public class TabletDiseasesFragment extends Fragment
         }
 
         //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerDiseases.addItemDecoration(itemDecoration);
+        recyclerDiseases.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);

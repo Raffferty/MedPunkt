@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,10 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,7 +27,7 @@ import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
-import com.gmail.krbashianrafael.medpunkt.phone.UserActivity;
+import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -166,7 +163,7 @@ public class TabletUsersFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(tabletMainActivity,
                 LinearLayoutManager.VERTICAL, false);
 
-        // инизиализируем разделитель для элементов recyclerTreatmentPhotos
+        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
                 recyclerUsers.getContext(), linearLayoutManager.getOrientation()
         );
@@ -180,7 +177,7 @@ public class TabletUsersFragment extends Fragment
         }
 
         //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerUsers.addItemDecoration(itemDecoration);
+        recyclerUsers.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerUsers.setLayoutManager(linearLayoutManager);

@@ -5,15 +5,12 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -24,6 +21,7 @@ import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
@@ -127,7 +125,7 @@ public class UsersActivity extends AppCompatActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
 
-        // инизиализируем разделитель для элементов recyclerTreatmentPhotos
+        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
                 recyclerUsers.getContext(), linearLayoutManager.getOrientation()
         );
@@ -141,7 +139,7 @@ public class UsersActivity extends AppCompatActivity
         }
 
         //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerUsers.addItemDecoration(itemDecoration);
+        recyclerUsers.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerUsers.setLayoutManager(linearLayoutManager);
