@@ -902,6 +902,7 @@ public class UserActivity extends AppCompatActivity
 
         // если поля имени и др были не верными - выходим
         if (wrongField) {
+            hideSoftInput();
             onSavingOrUpdatingOrDeleting = false;
             return;
         }

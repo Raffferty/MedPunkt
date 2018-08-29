@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
@@ -239,18 +240,41 @@ public class TabletDiseasesFragment extends Fragment
 
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
-        if (myData.size() == 0) {
-            new Handler(Looper.getMainLooper()).
-                    postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            textViewAddDisease.setVisibility(View.VISIBLE);
-                            textViewAddDisease.startAnimation(fadeInAnimation);
-                        }
-                    }, 300);
+        // если это телефон
+        if (!HomeActivity.isTablet) {
+            if (myData.size() == 0) {
+                new Handler(Looper.getMainLooper()).
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                textViewAddDisease.setVisibility(View.VISIBLE);
+                                textViewAddDisease.startAnimation(fadeInAnimation);
+                            }
+                        }, 300);
+            } else {
+                fabAddDisease.startAnimation(fabShowAnimation);
+            }
         } else {
-            fabAddDisease.startAnimation(fabShowAnimation);
+            // если это планшет
+            if (!tabletMainActivity.inBlur) {
+                if (myData.size() == 0) {
+                    new Handler(Looper.getMainLooper()).
+                            postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    textViewAddDisease.setVisibility(View.VISIBLE);
+                                    textViewAddDisease.startAnimation(fadeInAnimation);
+                                }
+                            }, 300);
+                } else {
+                    fabAddDisease.startAnimation(fabShowAnimation);
+                }
+            } else {
+                textViewAddDisease.setVisibility(View.INVISIBLE);
+                fabAddDisease.setVisibility(View.INVISIBLE);
+            }
         }
+
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
         // чтоб увидеть новый вставленный элемент

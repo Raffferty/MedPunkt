@@ -20,14 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
-import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -54,6 +53,9 @@ public class TabletUsersFragment extends Fragment
 
     private static final int TABLET_USERS_LOADER = 1000;
 
+    // шапка, которая видна только на планшете
+    TextView txtTabletUsers;
+
 
     public TabletUsersFragment() {
         // Required empty public constructor
@@ -74,12 +76,12 @@ public class TabletUsersFragment extends Fragment
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
-        FrameLayout dividerTabletFrame = view.findViewById(R.id.divider_tablet_frame);
+        txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
+        //FrameLayout dividerTabletFrame = view.findViewById(R.id.divider_tablet_frame);
 
         // Все это для выравнивания txtAddUsers по центру
         //этот FrameLayout виден только на планшере
-        dividerTabletFrame.setVisibility(View.VISIBLE);
+        //dividerTabletFrame.setVisibility(View.VISIBLE);
         //этот TextView виден только на планшере
         txtTabletUsers.setVisibility(View.VISIBLE);
 
@@ -276,13 +278,37 @@ public class TabletUsersFragment extends Fragment
                         }
                     }, 300);
 
+            tabletMainActivity.inBlur = true;
             tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
 
-        } else {
-            // если больше одного пользователя, то остаемся в окне "Пользователи"
+        } else if (myDataSize == 1){
+            // если один пользователь, то сразу загружаем его заболевания (если они есть)
             fabAddUser.startAnimation(fabShowAnimation);
+
+            tabletMainActivity.inBlur = false;
             tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+
+            txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+            if (HomeActivity.iAmDoctor){
+                txtTabletUsers.setText(R.string.patients_title_activity);
+            }else {
+                txtTabletUsers.setText(R.string.users_title_activity);
+            }
+        } else {
+            // если больше одного пользователя, то предлагаем сдеалть быбор пользоватля для отображения его заболеваний
+            fabAddUser.startAnimation(fabShowAnimation);
+
+            tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+
+            if (HomeActivity.iAmDoctor){
+                txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
+            }else {
+                txtTabletUsers.setText(R.string.tablet_diseases_select_user);
+            }
+
+            txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
         }
 
         // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,

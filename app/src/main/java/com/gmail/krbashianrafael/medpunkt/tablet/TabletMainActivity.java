@@ -2,10 +2,12 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
 
@@ -15,6 +17,9 @@ public class TabletMainActivity extends AppCompatActivity {
     private TabletDiseasesFragment tabletDiseasesFragment;
     private TabletTreatmentFragment tabletTreatmentFragment;
 
+    private TextView tabletUsersTitle;
+    protected TextView tabletDiseasesTitle;
+
     private FrameLayout tabletUsersBlurFrame;
     private FrameLayout tabletDiseasesBlurFrame;
     private FrameLayout tableTreatmentBlurFrame;
@@ -22,6 +27,8 @@ public class TabletMainActivity extends AppCompatActivity {
     protected static final int TABLET_USERS_FRAGMENT = 1;
     protected static final int TABLET_DISEASES_FRAGMENT = 2;
     protected static final int TABLET_TREATMENT_FRAGMENT = 3;
+
+    protected boolean inBlur = false;
 
 
     @Override
@@ -40,11 +47,20 @@ public class TabletMainActivity extends AppCompatActivity {
                     getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
         }
 
-        /*ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
-        }*/
+            actionBar.hide();
+        }
+
+        tabletUsersTitle = findViewById(R.id.tablet_users_title);
+        tabletUsersTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
 
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
@@ -85,8 +101,11 @@ public class TabletMainActivity extends AppCompatActivity {
                 if (!tabletDiseasesBlurFrame.isClickable()) {
                     tabletDiseasesBlurFrame.setClickable(true);
                     tabletDiseasesBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
-                    tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
-                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+
+                    //inBlur = true;
+
+                    /*tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
+                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);*/
                 }
                 break;
             case TABLET_TREATMENT_FRAGMENT:
@@ -115,8 +134,10 @@ public class TabletMainActivity extends AppCompatActivity {
                 if (tabletDiseasesBlurFrame.isClickable()) {
                     tabletDiseasesBlurFrame.setClickable(false);
                     tabletDiseasesBlurFrame.setBackgroundColor(Color.TRANSPARENT);
-                    tabletDiseasesFragment.textViewAddDisease.setVisibility(View.VISIBLE);
-                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.VISIBLE);
+
+                    //inBlur = false;
+                    /*tabletDiseasesFragment.textViewAddDisease.setVisibility(View.VISIBLE);
+                    tabletDiseasesFragment.fabAddDisease.setVisibility(View.VISIBLE);*/
                 }
                 break;
             case TABLET_TREATMENT_FRAGMENT:

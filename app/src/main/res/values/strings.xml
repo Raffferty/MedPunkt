@@ -52,6 +52,8 @@
     <string name="patient_treatment_description_hint_text">Symptoms and treatment description</string>
 
     <!-- diseases_activity -->
+    <string name="tablet_diseases_select_patient">Select the patient</string>
+    <string name="tablet_diseases_select_user">Select the user</string>
     <string name="diseases_activity_title">Diseases</string>
     <string name="diseases_empty_text">Add disease</string>
     <string name="diseases_what_text">Diseases</string>
@@ -87,7 +89,7 @@
     <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
 
     <!-- do not translate -->
-    <string name="app_name">MedPunkt</string>
+    <string name="app_name">\u2000MedPunkt</string>
     <string name="title_activity_home">\tMedPunkt</string>
     <string name="txt_no_title">No Title</string>
     <string name="path_to_treatment_photos">/treatment_photos</string>

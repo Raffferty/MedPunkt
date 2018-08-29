@@ -51,6 +51,8 @@
     <string name="patient_treatment_description_hint_text">Опис симптомів та лікування</string>
 
     <!-- diseases_activity -->
+    <string name="tablet_diseases_select_patient">Оберіть паціента</string>
+    <string name="tablet_diseases_select_user">Оберіть користувача</string>
     <string name="diseases_activity_title">Захворювання</string>
     <string name="diseases_empty_text">Додати захворювання</string>
     <string name="diseases_what_text">Чим хворів</string>

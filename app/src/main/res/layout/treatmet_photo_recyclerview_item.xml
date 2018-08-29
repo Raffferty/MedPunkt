@@ -4,7 +4,7 @@
     android:id="@+id/recycler_treatment_photo_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:drawable/dialog_holo_light_frame"
+    android:background="@drawable/shadow"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 

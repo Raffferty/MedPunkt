@@ -2,7 +2,8 @@
 <resources>
     <!-- app -->
     <string name="greeting">MedPunkt
-        \n\n\поможет Вам запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.</string>
+        \n\n\поможет Вам запомнить когда и чем болели Вы,
+        ваши близкие или ваши пациенты и какое было лечение.</string>
     <string name="doctor">Я врач</string>
     <string name="show_greeting">Больше не показывать</string>
 
@@ -51,6 +52,8 @@
     <string name="patient_treatment_description_hint_text">Описание симтомов и лечения</string>
 
     <!-- diseases_activity -->
+    <string name="tablet_diseases_select_patient">Выберите пациента</string>
+    <string name="tablet_diseases_select_user">Выберите пользователя</string>
     <string name="diseases_activity_title">Заболевания</string>
     <string name="diseases_empty_text">Добавить заболевание</string>
     <string name="diseases_what_text">Заболевания</string>
