@@ -720,11 +720,11 @@ public class TreatmentActivity extends AppCompatActivity
             // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг mScrollToEnd в классе DiseasesActivity в true
+            // здесь устанавливаем флаг mScrollToStart в классе DiseasesActivity в true
             // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
-            DiseasesActivity.mScrollToEnd = true;
+            DiseasesActivity.mScrollToStart = true;
         } else {
             Toast.makeText(this, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }

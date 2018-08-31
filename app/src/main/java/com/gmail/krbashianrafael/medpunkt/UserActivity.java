@@ -122,8 +122,6 @@ public class UserActivity extends AppCompatActivity
     // TextView для указания UserTitle
     private TextView txtTabletUserTitle;
 
-    // FrameLayout для выхода, сохранения и удаления пользователя
-    private FrameLayout tabletFrmBack;
     private FrameLayout tabletFrmSave;
     private FrameLayout tabletFrmDelete;
 
@@ -488,7 +486,7 @@ public class UserActivity extends AppCompatActivity
             }
         }
 
-        tabletFrmBack = findViewById(R.id.tablet_frm_back);
+        FrameLayout tabletFrmBack = findViewById(R.id.tablet_frm_back);
         tabletFrmBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -792,7 +790,8 @@ public class UserActivity extends AppCompatActivity
     public void onBackPressed() {
         if (userHasNotChanged()) {
             super.onBackPressed();
-            finish();
+
+            goToUsersActivity();
             return;
         }
 
@@ -1072,11 +1071,11 @@ public class UserActivity extends AppCompatActivity
             // получаем и присваиваем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг mScrollToEnd в классе UsersActivity в true
+            // здесь устанавливаем флаг mScrollToStart в классе UsersActivity в true
             // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
-            UsersActivity.mScrollToEnd = true;
+            UsersActivity.mScrollToStart = true;
 
 
             // если есть что сохранять в файл фото пользователя loadedBitmap != null

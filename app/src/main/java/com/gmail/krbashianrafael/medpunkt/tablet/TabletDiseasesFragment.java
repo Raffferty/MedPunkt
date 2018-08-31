@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
@@ -37,7 +35,7 @@ public class TabletDiseasesFragment extends Fragment
 
     private long _idUser = 0;
 
-    protected static String textUserName;
+    private String textUserName = "";
 
     protected TextView textViewAddDisease;
 
@@ -46,10 +44,10 @@ public class TabletDiseasesFragment extends Fragment
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    public static boolean mScrollToEnd = false;
+    public static boolean mScrollToStart = false;
 
     private RecyclerView recyclerDiseases;
-    private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
+    protected DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     private static final int TABLET_DISEASES_LOADER = 1001;
 
@@ -99,8 +97,6 @@ public class TabletDiseasesFragment extends Fragment
                 recyclerDiseases.smoothScrollToPosition(0);
             }
         });
-
-
     }
 
     @Override
@@ -133,12 +129,13 @@ public class TabletDiseasesFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(tabletMainActivity,
                 LinearLayoutManager.VERTICAL, false);
 
+        /*
         // инизиализируем разделитель для элементов recyclerTreatmentPhotos
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
                 recyclerDiseases.getContext(), linearLayoutManager.getOrientation()
         );
 
-        /*//инициализируем Drawable, который будет установлен как разделитель между элементами
+        //инициализируем Drawable, который будет установлен как разделитель между элементами
         Drawable divider_blue = ContextCompat.getDrawable(tabletMainActivity, R.drawable.blue_drawable);
 
         //устанавливаем divider_blue как разделитель между элементами
@@ -147,7 +144,8 @@ public class TabletDiseasesFragment extends Fragment
         }
 
         //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerDiseases.addItemDecoration(itemDecoration);*/
+        recyclerDiseases.addItemDecoration(itemDecoration);
+        */
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);
@@ -159,9 +157,7 @@ public class TabletDiseasesFragment extends Fragment
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void initDiseasesLoader() {
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         textViewAddDisease.setVisibility(View.INVISIBLE);
@@ -171,6 +167,34 @@ public class TabletDiseasesFragment extends Fragment
         getLoaderManager().initLoader(TABLET_DISEASES_LOADER, null, this);
     }
 
+    // метод для очистки данных из DiseasesFragment
+    protected void clearDataFromDiseasesFragment(){
+        ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
+        myData.clear();
+
+        _idUser = 0;
+        setTextUserName("");
+
+        diseaseRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public void set_idUser(long _idUser) {
+        this._idUser = _idUser;
+    }
+
+    // сразу устанавливается имя пользователя в tabletDiseasesTitle
+    public void setTextUserName(String textUserName) {
+        this.textUserName = textUserName;
+        tabletMainActivity.tabletDiseasesTitle.setText(this.textUserName);
+    }
+
+    public long get_idUser() {
+        return _idUser;
+    }
+
+    public String getTextUserName() {
+        return textUserName;
+    }
 
     @NonNull
     @Override
@@ -227,6 +251,11 @@ public class TabletDiseasesFragment extends Fragment
             }
         }
 
+        //тест
+        myData.add(new DiseaseItem(1, 1, "XXX", "11.03.2098", "CCC"));
+
+
+
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
 
@@ -241,7 +270,7 @@ public class TabletDiseasesFragment extends Fragment
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         // если это телефон
-        if (!HomeActivity.isTablet) {
+        //if (!HomeActivity.isTablet) {
             if (myData.size() == 0) {
                 new Handler(Looper.getMainLooper()).
                         postDelayed(new Runnable() {
@@ -254,34 +283,10 @@ public class TabletDiseasesFragment extends Fragment
             } else {
                 fabAddDisease.startAnimation(fabShowAnimation);
             }
-        } else {
-            // если это планшет
-            if (!tabletMainActivity.inBlur) {
-                if (myData.size() == 0) {
-                    new Handler(Looper.getMainLooper()).
-                            postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    textViewAddDisease.setVisibility(View.VISIBLE);
-                                    textViewAddDisease.startAnimation(fadeInAnimation);
-                                }
-                            }, 300);
-                } else {
-                    fabAddDisease.startAnimation(fabShowAnimation);
-                }
-            } else {
-                textViewAddDisease.setVisibility(View.INVISIBLE);
-                fabAddDisease.setVisibility(View.INVISIBLE);
-            }
-        }
 
-
-        // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
-        // чтоб увидеть новый вставленный элемент
-        // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd && myData.size() != 0) {
-            recyclerDiseases.smoothScrollToPosition(myData.size() - 1);
-            mScrollToEnd = false;
+        if (mScrollToStart && myData.size() != 0) {
+            recyclerDiseases.smoothScrollToPosition(0);
+            mScrollToStart = false;
         }
     }
 

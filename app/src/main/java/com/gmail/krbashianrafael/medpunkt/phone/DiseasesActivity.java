@@ -40,10 +40,9 @@ public class DiseasesActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    // boolean mScrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
-    // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
+    // boolean mScrollToStart статическая переменная для выставления флага в true после вставки нового элемента в список
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertDisease
-    public static boolean mScrollToEnd = false;
+    public static boolean mScrollToStart = false;
 
     private RecyclerView recyclerDiseases;
     private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
@@ -300,12 +299,11 @@ public class DiseasesActivity extends AppCompatActivity
             fabAddDisease.startAnimation(fabShowAnimation);
         }
 
-        // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
-        // чтоб увидеть новый вставленный элемент
+        // если флаг mScrollToStart выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
         // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd && myData.size() != 0) {
-            recyclerDiseases.smoothScrollToPosition(myData.size() - 1);
-            mScrollToEnd = false;
+        if (mScrollToStart && myData.size() != 0) {
+            recyclerDiseases.smoothScrollToPosition(0);
+            mScrollToStart = false;
         }
 
     }

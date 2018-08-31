@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 public class MedProvider extends ContentProvider {
 
@@ -430,6 +432,11 @@ public class MedProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
+        // Выставляем флаг для загрузки пользователей в планшете после добаления пользователя
+        if (HomeActivity.isTablet) {
+            TabletMainActivity.userInserted = true;
+        }
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
 
@@ -605,15 +612,17 @@ public class MedProvider extends ContentProvider {
 
         // If there are no values to update, then don't try to update the database
         // если ничего не передано для обновления - базу не обновляем и сразу возвращаем ноль (количество обновленных строк)
-        if (values==null || values.size() == 0) {
+        if (values == null || values.size() == 0) {
             return 0;
         }
 
         // If the {@link UsersEntry#COLUMN_USER_NAME} key is present,
         // check that the name value is not null.
         // проверка имени на null
+
+        String userName = null;
         if (values.containsKey(UsersEntry.COLUMN_USER_NAME)) {
-            String userName = values.getAsString(UsersEntry.COLUMN_USER_NAME);
+            userName = values.getAsString(UsersEntry.COLUMN_USER_NAME);
             if (userName == null) {
                 throw new IllegalArgumentException("User requires a name");
             }
@@ -647,6 +656,12 @@ public class MedProvider extends ContentProvider {
             }
         }
 
+        // Выставляем флаг для загрузки пользователей в планшете после обновления пользователя
+        if (HomeActivity.isTablet) {
+            TabletMainActivity.userUpdated = true;
+            TabletMainActivity.userNameAfterUpdate = userName;
+        }
+
         // Returns the number of database rows affected by the update statement
         // обновляем базу, при этом, возвращается колиество обновленных строк
         return rowsUpdated;
@@ -654,14 +669,14 @@ public class MedProvider extends ContentProvider {
 
     private int updateDisease(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
-        if (values==null || values.size() == 0) {
+        if (values == null || values.size() == 0) {
             return 0;
         }
 
         //DiseasesEntry.COLUMN_U_ID) на update подаваться не будет
         // поэтому не проверяем его
 
-        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)){
+        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)) {
             String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
             if (diseaseName == null) {
                 throw new IllegalArgumentException("disease requires a name");
@@ -697,7 +712,7 @@ public class MedProvider extends ContentProvider {
     }
 
     private int updateTreatmentPhoto(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        if (values==null || values.size() == 0) {
+        if (values == null || values.size() == 0) {
             return 0;
         }
 
@@ -705,7 +720,7 @@ public class MedProvider extends ContentProvider {
         //TreatmentPhotosEntry.COLUMN_DIS_ID на update подаваться не будет
         // поэтому не проверяем их
 
-        if (values.containsKey(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME)){
+        if (values.containsKey(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME)) {
             String trPhotoName = values.getAsString(TreatmentPhotosEntry.COLUMN_TR_PHOTO_NAME);
             if (trPhotoName == null) {
                 throw new IllegalArgumentException("disease requires a name");
@@ -831,6 +846,12 @@ public class MedProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
             }
         }
+
+        // Выставляем флаг для загрузки пользователей в планшете после удаления пользователя
+        if (HomeActivity.isTablet) {
+            TabletMainActivity.userDeleted = true;
+        }
+
         // Return the number of rows deleted
         return rowsDeleted;
     }

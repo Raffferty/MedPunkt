@@ -16,12 +16,16 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
+import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.UserItem;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_DISEASES_FRAGMENT;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -31,7 +35,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public UsersRecyclerViewAdapter(Context context) {
         mContext = context;
-
         this.usersList = new ArrayList<>();
     }
 
@@ -129,22 +132,51 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 return;
             }
 
+            long user_id_inEdit = Long.valueOf(_userId.getText().toString());
+
             if (view.getId() == R.id.user_item_edit) {
                 Intent userEditIntent = new Intent(myContext, UserActivity.class);
-                userEditIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+                userEditIntent.putExtra("_idUser", user_id_inEdit);
                 userEditIntent.putExtra("editUser", true);
                 userEditIntent.putExtra("UserName", userName.getText());
                 userEditIntent.putExtra("birthDate", userBirthDate.getText());
                 userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
+                // если это планшет, то получаем user_id_inEdit для контроля над изменениями пользователя
+                if (HomeActivity.isTablet) {
+                    TabletMainActivity.user_IdInEdit = user_id_inEdit;
+                }
+
                 myContext.startActivity(userEditIntent);
 
             } else {
-                Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
-                userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
-                userDiseasIntent.putExtra("UserName", userName.getText());
+                // если это телефон
+                if (!HomeActivity.isTablet) {
+                    Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
+                    userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+                    userDiseasIntent.putExtra("UserName", userName.getText().toString());
 
-                myContext.startActivity(userDiseasIntent);
+                    myContext.startActivity(userDiseasIntent);
+                } else {
+                    //если это планшет
+                    if (myContext instanceof TabletMainActivity) {
+                        TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+
+                        tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
+                        if (HomeActivity.iAmDoctor) {
+                            tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.patients_title_activity);
+                        } else {
+                            tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.users_title_activity);
+                        }
+
+                        tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
+                        tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
+                        tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(myContext.getResources().getColor(R.color.paper));
+                        tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+                        tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+                    }
+                }
+
             }
         }
     }

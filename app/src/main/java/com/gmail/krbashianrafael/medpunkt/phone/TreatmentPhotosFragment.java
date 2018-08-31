@@ -50,10 +50,9 @@ public class TreatmentPhotosFragment extends Fragment
 
     private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
-    // boolean scrollToEnd статическая переменная для выставления флага в true после вставки нового элемента в список
-    // этот флаг необходим для прокрутки списка вниз до последнего элемента, чтоб был виден вставленный элемент
+    // boolean mScrollToStart статическая переменная для выставления флага в true после вставки нового элемента в список
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertTreatmentPhoto
-    public static boolean mScrollToEnd = false;
+    public static boolean mScrollToStart = false;
 
     /**
      * Identifier for the user data loader
@@ -272,12 +271,11 @@ public class TreatmentPhotosFragment extends Fragment
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
         }
 
-        // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
-        // чтоб увидеть новый вставленный элемент
+        // если флаг mScrollToStart выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
         // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd && myData.size() != 0) {
-            recyclerTreatmentPhotos.smoothScrollToPosition(myData.size() - 1);
-            mScrollToEnd = false;
+        if (mScrollToStart && myData.size() != 0) {
+            recyclerTreatmentPhotos.smoothScrollToPosition(0);
+            mScrollToStart = false;
         }
     }
 

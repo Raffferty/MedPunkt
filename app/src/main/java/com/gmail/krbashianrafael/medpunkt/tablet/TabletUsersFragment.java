@@ -40,6 +40,9 @@ public class TabletUsersFragment extends Fragment
 
     private TabletMainActivity tabletMainActivity;
 
+    // шапка, которая видна только на планшете
+    public TextView txtTabletUsers;
+
     protected TextView txtAddUsers;
     protected FloatingActionButton fabAddUser;
     private RecyclerView recyclerUsers;
@@ -49,13 +52,9 @@ public class TabletUsersFragment extends Fragment
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    public static boolean mScrollToEnd = false;
+    public static boolean mScrollToStart = false;
 
     private static final int TABLET_USERS_LOADER = 1000;
-
-    // шапка, которая видна только на планшете
-    TextView txtTabletUsers;
-
 
     public TabletUsersFragment() {
         // Required empty public constructor
@@ -165,22 +164,6 @@ public class TabletUsersFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(tabletMainActivity,
                 LinearLayoutManager.VERTICAL, false);
 
-        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerUsers.getContext(), linearLayoutManager.getOrientation()
-        );
-
-        //инициализируем Drawable, который будет установлен как разделитель между элементами
-        Drawable divider_blue = ContextCompat.getDrawable(tabletMainActivity, R.drawable.blue_drawable);
-
-        //устанавливаем divider_blue как разделитель между элементами
-        if (divider_blue != null) {
-            itemDecoration.setDrawable(divider_blue);
-        }
-
-        //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerUsers.addItemDecoration(itemDecoration);*/
-
         // устанавливаем LayoutManager для RecyclerView
         recyclerUsers.setLayoutManager(linearLayoutManager);
 
@@ -191,16 +174,15 @@ public class TabletUsersFragment extends Fragment
         recyclerUsers.setAdapter(usersRecyclerViewAdapter);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void initUsersLoader() {
+        if (TabletMainActivity.userInserted || TabletMainActivity.userUpdated || TabletMainActivity.userDeleted) {
+            // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+            fabAddUser.setVisibility(View.INVISIBLE);
+            txtAddUsers.setVisibility(View.INVISIBLE);
 
-        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
-        fabAddUser.setVisibility(View.INVISIBLE);
-        txtAddUsers.setVisibility(View.INVISIBLE);
-
-        // Инициализируем Loader
-        getLoaderManager().initLoader(TABLET_USERS_LOADER, null, this);
+            // Инициализируем Loader
+            getLoaderManager().initLoader(TABLET_USERS_LOADER, null, this);
+        }
     }
 
     @NonNull
@@ -263,12 +245,11 @@ public class TabletUsersFragment extends Fragment
         // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TABLET_USERS_LOADER);
 
-        // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
-        // и fabAddUser.setVisibility(View.INVISIBLE);
         int myDataSize = myData.size();
 
         if (myDataSize == 0) {
-            // если нет пользоватлей, то делаем видимым txtAddUsers
+            // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
+            // и fabAddUser.setVisibility(View.INVISIBLE);
             new Handler(Looper.getMainLooper()).
                     postDelayed(new Runnable() {
                         @Override
@@ -278,45 +259,114 @@ public class TabletUsersFragment extends Fragment
                         }
                     }, 300);
 
-            tabletMainActivity.inBlur = true;
+            // делаем blur на TABLET_DISEASES_FRAGMENT и TABLET_TREATMENT_FRAGMENT
             tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
 
-        } else if (myDataSize == 1){
-            // если один пользователь, то сразу загружаем его заболевания (если они есть)
-            fabAddUser.startAnimation(fabShowAnimation);
+            // если нет пользователей, то чистим DiseasesFragment
+            tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
+            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
+            tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
-            tabletMainActivity.inBlur = false;
-            tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+        } else if (myDataSize == 1) {
+            // если один пользователь, то делаем fabShowAnimation
+            fabAddUser.startAnimation(fabShowAnimation);
 
             txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
-            if (HomeActivity.iAmDoctor){
+            if (HomeActivity.iAmDoctor) {
                 txtTabletUsers.setText(R.string.patients_title_activity);
-            }else {
+            } else {
                 txtTabletUsers.setText(R.string.users_title_activity);
             }
-        } else {
-            // если больше одного пользователя, то предлагаем сдеалть быбор пользоватля для отображения его заболеваний
-            fabAddUser.startAnimation(fabShowAnimation);
 
+            // если один пользователь, то сразу загружаем его заболевания
+            Long _userId = myData.get(0).get_userId();
+            String userName = myData.get(0).getUserName();
+
+            // делаем unBlur(TABLET_DISEASES_FRAGMENT)
             tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
-            if (HomeActivity.iAmDoctor){
-                txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
-            }else {
-                txtTabletUsers.setText(R.string.tablet_diseases_select_user);
-            }
+            // готовим tabletDiseasesTitle для рамещения в нем имени пользователя
+            // закрашиваем Background в цвет paper
+            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.paper));
 
-            txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
+            // прописываем туда имя пользоватлея
+            tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName);
+
+            // устанавливаем idUser
+            tabletMainActivity.tabletDiseasesFragment.set_idUser(_userId);
+
+            // иниициализируем Loader заболеваний для загрузки заболеваний
+            tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+
+        } else {
+            // если больше одного пользователя
+            fabAddUser.startAnimation(fabShowAnimation);
+
+            if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
+                //если первый заход и в DiseasesFragment еще не отображаются данные,
+                // то предлагаем сдеалть выбор пользоватля для отображения его заболеваний
+
+                if (HomeActivity.iAmDoctor) {
+                    txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
+                } else {
+                    txtTabletUsers.setText(R.string.tablet_diseases_select_user);
+                }
+
+                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
+
+                tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+
+                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+            } else if (TabletMainActivity.userUpdated &&
+                    TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {
+                // если пользовоатлеь, который был в DiseasesFragment обновился (поменял имя...)
+                // то устанавливаем user_IdInEdit и userNameAfterUpdate в DiseasesFragment
+                // и иниициализируем Loader заболеваний
+
+                tabletMainActivity.tabletDiseasesFragment.set_idUser(TabletMainActivity.user_IdInEdit);
+                tabletMainActivity.tabletDiseasesFragment.setTextUserName(TabletMainActivity.userNameAfterUpdate);
+
+                // иниициализируем Loader заболеваний
+                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+
+            } else if (TabletMainActivity.userDeleted &&
+                    TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {
+                // если пользовоатлеь, который был в DiseasesFragment удалился
+                // то очищаем DiseasesFragment
+                // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
+
+                if (HomeActivity.iAmDoctor) {
+                    txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
+                } else {
+                    txtTabletUsers.setText(R.string.tablet_diseases_select_user);
+                }
+
+                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
+
+                tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+
+                tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
+                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+            }
         }
 
-        // если флаг scrollToEnd выставлен в true, то прокручиваем RecyclerView вниз до конца,
-        // чтоб увидеть новый вставленный элемент
-        // и снова scrollToEnd выставляем в false
-        if (mScrollToEnd && myData.size() != 0) {
-            recyclerUsers.smoothScrollToPosition(myData.size() - 1);
-            mScrollToEnd = false;
+        // после прохождения всех if выставляем флаги в false
+        TabletMainActivity.userInserted = false;
+        TabletMainActivity.userUpdated = false;
+        TabletMainActivity.userDeleted = false;
+
+        // прокручиваем пользователей вверх
+        if (mScrollToStart && myData.size() != 0) {
+            recyclerUsers.smoothScrollToPosition(0);
+            mScrollToStart = false;
         }
     }
 

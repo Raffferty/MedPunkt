@@ -74,10 +74,11 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
         return trPhotoUri;
     }
 
+    // сортировка по дате - новые сверху
     @Override
     public int compareTo(@NonNull TreatmentPhotoItem o) {
         if (dateToCompare != null && o.dateToCompare != null) {
-            return this.dateToCompare.compareTo(o.dateToCompare);
+            return o.dateToCompare.compareTo(this.dateToCompare);
         }
         return 0;
     }

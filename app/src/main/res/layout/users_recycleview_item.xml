@@ -54,16 +54,16 @@
 
     <FrameLayout
         android:id="@+id/user_item_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/circle_back">
 
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginEnd="12dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_info_outline_blue_48dp"
+            android:src="@drawable/ic_info_outline_white_48dp"
             tools:ignore="ContentDescription" />
 
     </FrameLayout>
