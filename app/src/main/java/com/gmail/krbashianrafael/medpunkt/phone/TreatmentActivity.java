@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -114,6 +115,13 @@ public class TreatmentActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (HomeActivity.isTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         setContentView(R.layout.activity_treatment);
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
@@ -144,14 +152,23 @@ public class TreatmentActivity extends AppCompatActivity
         newDisease = intent.getBooleanExtra("newDisease", false);
 
         txtTitleDisease = findViewById(R.id.txt_title_disease);
-        if (!newDisease){
+        if (!newDisease) {
             txtTitleDisease.setText(textDiseaseName);
             txtTitleDisease.setVisibility(View.VISIBLE);
         }
 
-        txtTitleTreatment = findViewById(R.id.txt_title_treatmen);
-        if (HomeActivity.iAmDoctor){
-            txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
+        txtTitleTreatment = findViewById(R.id.txt_title_treatment);
+
+        if (HomeActivity.isTablet) {
+            if (HomeActivity.iAmDoctor) {
+                txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
+            } else {
+                txtTitleTreatment.setText(R.string.treatment_description_hint_text);
+            }
+        } else {
+            if (HomeActivity.iAmDoctor) {
+                txtTitleTreatment.setText(R.string.treatment_description_hint_text);
+            }
         }
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
@@ -278,6 +295,12 @@ public class TreatmentActivity extends AppCompatActivity
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             editTextDateOfDisease.setVisibility(View.GONE);
             focusHolder.requestFocus();
+
+            // если планшет, то оставлем только одину закадку для описания заболевания
+            if (HomeActivity.isTablet) {
+                categoryAdapter.setPagesCount(1);
+                tabLayout.setVisibility(View.GONE);
+            }
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -435,6 +458,9 @@ public class TreatmentActivity extends AppCompatActivity
 
                 onSavingOrUpdatingOrDeleting = true;
 
+                textInputLayoutDiseaseName.setVisibility(View.GONE);
+                editTextDateOfDisease.setVisibility(View.GONE);
+
                 // скручиваем клавиатуру
                 hideSoftInput();
 
@@ -446,9 +472,12 @@ public class TreatmentActivity extends AppCompatActivity
 
                     txtTitleDisease.setVisibility(View.VISIBLE);
 
-                    // делаем два листа в адаптере
-                    categoryAdapter.setPagesCount(2);
-                    viewPager.setAdapter(categoryAdapter);
+                    // делаем два листа в адаптере если это телефон, а не планшет
+                    if (!HomeActivity.isTablet) {
+                        categoryAdapter.setPagesCount(2);
+                        viewPager.setAdapter(categoryAdapter);
+                        tabLayout.setVisibility(View.VISIBLE);
+                    }
 
                     editDisease = false;
 
@@ -459,10 +488,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                     onSavingOrUpdatingOrDeleting = false;
 
-                    textInputLayoutDiseaseName.setVisibility(View.GONE);
-                    editTextDateOfDisease.setVisibility(View.GONE);
-                    tabLayout.setVisibility(View.VISIBLE);
-
                     treatmentDescriptionFragment.editTextTreatment.requestFocus();
                     treatmentDescriptionFragment.editTextTreatment.setSelection(0);
                     treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
@@ -470,7 +495,6 @@ public class TreatmentActivity extends AppCompatActivity
                     treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
                     focusHolder.requestFocus();
-
 
 
                 } else {
@@ -525,7 +549,7 @@ public class TreatmentActivity extends AppCompatActivity
     // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(R.string.dialog_msg_unsaved_changes);
 
         builder.setNegativeButton(R.string.dialog_no, discardButtonClickListener);
@@ -547,7 +571,7 @@ public class TreatmentActivity extends AppCompatActivity
 
     // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setMessage(getString(R.string.disease_delete) + " " + editTextDiseaseName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -659,9 +683,12 @@ public class TreatmentActivity extends AppCompatActivity
 
             onSavingOrUpdatingOrDeleting = false;
 
-            // и формируем UI
-            categoryAdapter.setPagesCount(2);
-            viewPager.setAdapter(categoryAdapter);
+            // делаем два листа в адаптере если это телефон, а не планшет
+            if (!HomeActivity.isTablet) {
+                categoryAdapter.setPagesCount(2);
+                viewPager.setAdapter(categoryAdapter);
+                tabLayout.setVisibility(View.VISIBLE);
+            }
 
             txtTitleDisease.setText(textDiseaseName);
             txtTitleDisease.setVisibility(View.VISIBLE);
@@ -669,7 +696,6 @@ public class TreatmentActivity extends AppCompatActivity
             editDisease = false;
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             editTextDateOfDisease.setVisibility(View.GONE);
-            tabLayout.setVisibility(View.VISIBLE);
 
             treatmentDescriptionFragment.editTextTreatment.setSelection(0);
             treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
@@ -884,7 +910,7 @@ public class TreatmentActivity extends AppCompatActivity
                 ContentProviderResult[] results = treatmentActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
 
                 // если транзакция прошла успешно
-                if (results.length==2 && results[0] != null) {
+                if (results.length == 2 && results[0] != null) {
                     // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
                     rowsFromTreatmentPhotosDeleted = results[0].count;
                 } else {
@@ -952,9 +978,9 @@ public class TreatmentActivity extends AppCompatActivity
 
                     // если из prefs вытянулись пути к ранее не удаленным файлам,
                     // то цепляем их в конец sb за запятой
-                    if (notDeletedFilesPathes!=null && notDeletedFilesPathes.length()!=0){
+                    if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
                         sb.append(notDeletedFilesPathes);
-                    }else {
+                    } else {
                         // если в prefs не было путей к ранее не удаленным файлам,
                         // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);

@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -10,8 +11,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.tsongkha.spinnerdatepicker.DatePicker;
+import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 
-public class TabletMainActivity extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+public class TabletMainActivity extends AppCompatActivity
+implements DatePickerDialog.OnDateSetListener{
 
     // эти поля становятся true в классе MedProvider в соответствующих методах
     public static boolean userInserted = true;
@@ -28,6 +36,7 @@ public class TabletMainActivity extends AppCompatActivity {
 
     public TextView tabletUsersTitle;
     public TextView tabletDiseasesTitle;
+    public TextView tabletTreatmentTitle;
 
     private FrameLayout tabletUsersBlurFrame;
     private FrameLayout tabletDiseasesBlurFrame;
@@ -71,6 +80,7 @@ public class TabletMainActivity extends AppCompatActivity {
         });
 
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
+        tabletTreatmentTitle = findViewById(R.id.tablet_treatment_title);
 
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
@@ -97,7 +107,7 @@ public class TabletMainActivity extends AppCompatActivity {
                     getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
         }
 
-        // загрузаем данные в окно tabletUsersFragment
+        // загружаем данные в окно tabletUsersFragment
         tabletUsersFragment.initUsersLoader();
     }
 
@@ -118,6 +128,14 @@ public class TabletMainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
+    @SuppressLint("SetTextI18n")
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        GregorianCalendar date = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        tabletTreatmentFragment.editTextDateOfDisease.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
     public void blur(int fragmentNumber) {

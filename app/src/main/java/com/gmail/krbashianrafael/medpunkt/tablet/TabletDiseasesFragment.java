@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,14 +25,20 @@ import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
 
 public class TabletDiseasesFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private TabletMainActivity tabletMainActivity;
+
+    // шапка, которая видна только на планшете
+    public TextView txtTabletDiseases;
 
     private long _idUser = 0;
 
@@ -68,12 +75,19 @@ public class TabletDiseasesFragment extends Fragment
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        txtTabletDiseases = view.findViewById(R.id.txt_diseases);
+
         textViewAddDisease = view.findViewById(R.id.txt_empty_diseases);
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                fabAddDisease.startAnimation(fabShowAnimation);
+                Intent treatmentIntent = new Intent(tabletMainActivity, TreatmentActivity.class);
+                treatmentIntent.putExtra("_idUser", _idUser);
+                treatmentIntent.putExtra("newDisease", true);
+                treatmentIntent.putExtra("editDisease", true);
+                treatmentIntent.putExtra("diseaseName", "");
+                treatmentIntent.putExtra("textTreatment", "");
+                startActivity(treatmentIntent);
             }
         });
 
@@ -81,17 +95,21 @@ public class TabletDiseasesFragment extends Fragment
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                fabAddDisease.startAnimation(fadeInAnimation);
+                Intent treatmentIntent = new Intent(tabletMainActivity, TreatmentActivity.class);
+                treatmentIntent.putExtra("_idUser", _idUser);
+                treatmentIntent.putExtra("newDisease", true);
+                treatmentIntent.putExtra("editDisease", true);
+                treatmentIntent.putExtra("diseaseName", "");
+                treatmentIntent.putExtra("textTreatment", "");
+                startActivity(treatmentIntent);
             }
         });
 
         // инициализируем recyclerDiseases
         recyclerDiseases = view.findViewById(R.id.recycler_diseases);
 
-        // при нажатии на "чем болел" список заболеваний прокручивется вверх
-        TextView txtDiseases = view.findViewById(R.id.txt_diseases);
-        txtDiseases.setOnClickListener(new View.OnClickListener() {
+        // при нажатии на "Заболевания" список заболеваний прокручивется вверх
+        txtTabletDiseases.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 recyclerDiseases.smoothScrollToPosition(0);
@@ -129,23 +147,6 @@ public class TabletDiseasesFragment extends Fragment
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(tabletMainActivity,
                 LinearLayoutManager.VERTICAL, false);
 
-        /*
-        // инизиализируем разделитель для элементов recyclerTreatmentPhotos
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerDiseases.getContext(), linearLayoutManager.getOrientation()
-        );
-
-        //инициализируем Drawable, который будет установлен как разделитель между элементами
-        Drawable divider_blue = ContextCompat.getDrawable(tabletMainActivity, R.drawable.blue_drawable);
-
-        //устанавливаем divider_blue как разделитель между элементами
-        if (divider_blue != null) {
-            itemDecoration.setDrawable(divider_blue);
-        }
-
-        //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerDiseases.addItemDecoration(itemDecoration);
-        */
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);
@@ -155,6 +156,16 @@ public class TabletDiseasesFragment extends Fragment
 
         // устанавливаем адаптер для RecyclerView
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // грузим, если выбран пользователь
+        if (_idUser!=0){
+            initDiseasesLoader();
+        }
     }
 
     public void initDiseasesLoader() {
@@ -168,7 +179,7 @@ public class TabletDiseasesFragment extends Fragment
     }
 
     // метод для очистки данных из DiseasesFragment
-    protected void clearDataFromDiseasesFragment(){
+    protected void clearDataFromDiseasesFragment() {
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
@@ -252,9 +263,8 @@ public class TabletDiseasesFragment extends Fragment
         }
 
         //тест
-        myData.add(new DiseaseItem(1, 1, "XXX", "11.03.2098", "CCC"));
-
-
+        //myData.add(new DiseaseItem(1, 1, "Diarrhea", "11-03-2098", "Drink vodka"));
+        //myData.add(new DiseaseItem(1, 1, "YYY", "10-03-2098", "DDD"));
 
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
@@ -267,22 +277,67 @@ public class TabletDiseasesFragment extends Fragment
         // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TABLET_DISEASES_LOADER);
 
+        int myDataSize = myData.size();
+
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
-        // если это телефон
-        //if (!HomeActivity.isTablet) {
-            if (myData.size() == 0) {
-                new Handler(Looper.getMainLooper()).
-                        postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                textViewAddDisease.setVisibility(View.VISIBLE);
-                                textViewAddDisease.startAnimation(fadeInAnimation);
-                            }
-                        }, 300);
-            } else {
-                fabAddDisease.startAnimation(fabShowAnimation);
-            }
+        if (myDataSize == 0) {
+            new Handler(Looper.getMainLooper()).
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            textViewAddDisease.setVisibility(View.VISIBLE);
+                            textViewAddDisease.startAnimation(fadeInAnimation);
+                        }
+                    }, 300);
+
+            tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+
+            // если нет пользователей, то чистим TreatmentFragment
+            tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+            tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+
+
+        } else if (myDataSize == 1) {
+
+            tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
+
+            fabAddDisease.startAnimation(fabShowAnimation);
+
+            tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
+            tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
+            /*Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.
+                    tabLayout.getTabAt(1)).select();*/
+
+            txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+            txtTabletDiseases.setText(R.string.diseases_what_text);
+
+            // если одино заболевание, то сразу загружаем его леченин
+            Long _diseaseId = myData.get(0).get_diseaseId();
+            Long _diseaseUserId = myData.get(0).get_diseaseUserId();
+            String diseaseName = myData.get(0).getDiseaseName();
+            String diseaseDate = myData.get(0).getDiseaseDate();
+            String treatmentText = myData.get(0).getTreatmentText();
+
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.paper));
+            tabletMainActivity.tabletTreatmentFragment.set_idDisease(_diseaseId);
+            tabletMainActivity.tabletTreatmentFragment.set_idUser(_diseaseUserId);
+            tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName);
+            tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate);
+            tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText);
+
+        } else {
+            tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+
+            // если нет пользователей, то чистим TreatmentFragment
+            tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+            tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+
+            fabAddDisease.startAnimation(fabShowAnimation);
+
+        }
 
         if (mScrollToStart && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(0);

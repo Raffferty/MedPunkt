@@ -186,6 +186,90 @@ public class UserActivity extends AppCompatActivity
             userPhotoUri = "No_Photo";
         }
 
+        actionBar = getSupportActionBar();
+
+        // если это телефон устанавливаме actionBar для телефона
+        if (!HomeActivity.isTablet) {
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
+
+                if (textUserName != null) {
+                    actionBar.setTitle(textUserName);
+                } else {
+                    if (HomeActivity.iAmDoctor) {
+                        actionBar.setTitle(R.string.patient_title_activity);
+                    }
+                }
+            }
+        } else {
+            // если это Плншет прячем actionBar
+            // и инициализируем вьюшки, которые относятся к планшету
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+
+            txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
+
+            FrameLayout tabletFrmBack = findViewById(R.id.tablet_frm_back);
+            tabletFrmBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onHomeClick();
+                }
+            });
+
+            tabletFrmSave = findViewById(R.id.tablet_frm_save);
+            tabletFrmSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSaveClick();
+                }
+            });
+
+            tabletFrmDelete = findViewById(R.id.tablet_frm_delete);
+            tabletFrmDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // привязываем PopupMenu к tabletFrmDelete
+                    PopupMenu popup = new PopupMenu(UserActivity.this, tabletFrmDelete);
+
+                    // создаем PopupMenu
+                    popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
+
+                    // создаем строку для зацепки к символу "удалить"
+                    String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+
+                    // убираем не нужные Item
+                    popup.getMenu().removeItem(R.id.action_delete);
+                    popup.getMenu().removeItem(R.id.action_save);
+
+                    // добавление в меню текста с картинкой символа "удалить"
+                    popup.getMenu().add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
+                            deletString));
+
+                    //registering popup with OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            onDeleteClick();
+                            return true;
+                        }
+                    });
+
+                    //showing popup menu
+                    popup.show();
+                }
+            });
+
+            if (textUserName != null) {
+                txtTabletUserTitle.setText(textUserName);
+            } else {
+                if (HomeActivity.iAmDoctor) {
+                    txtTabletUserTitle.setText(R.string.patient_title_activity);
+                }
+            }
+        }
+
         //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/
         if (getFilesDir() != null) {
             pathToUsersPhoto = getFilesDir().toString() + getString(R.string.path_to_users_photos);
@@ -349,32 +433,6 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        actionBar = getSupportActionBar();
-
-        // устанавливаме actionBar для телефона
-        if (!HomeActivity.isTablet) {
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_30dp);
-
-                if (textUserName != null) {
-                    actionBar.setTitle(textUserName);
-                } else {
-                    if (HomeActivity.iAmDoctor) {
-                        actionBar.setTitle(R.string.patient_title_activity);
-                    }
-                }
-            }
-        } else {
-            // для Плншета прячем actionBar
-            if (actionBar != null) {
-                actionBar.hide();
-            }
-
-            // устанавливаем Views и их слушателей для Плншета
-            initViewsAndSetListenersForTablet();
-        }
-
         if (textUserName != null) {
             editTextName.setText(textUserName);
         } else {
@@ -475,69 +533,6 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    // инициализируем Views для Планшета и устанавливаем им OnClickListener
-    private void initViewsAndSetListenersForTablet() {
-        txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
-        if (textUserName != null) {
-            txtTabletUserTitle.setText(textUserName);
-        } else {
-            if (HomeActivity.iAmDoctor) {
-                txtTabletUserTitle.setText(R.string.patient_title_activity);
-            }
-        }
-
-        FrameLayout tabletFrmBack = findViewById(R.id.tablet_frm_back);
-        tabletFrmBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onHomeClick();
-            }
-        });
-
-        tabletFrmSave = findViewById(R.id.tablet_frm_save);
-        tabletFrmSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveClick();
-            }
-        });
-
-        tabletFrmDelete = findViewById(R.id.tablet_frm_delete);
-        tabletFrmDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // привязываем PopupMenu к tabletFrmDelete
-                PopupMenu popup = new PopupMenu(UserActivity.this, tabletFrmDelete);
-
-                // создаем PopupMenu
-                popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
-
-                // создаем строку для зацепки к символу "удалить"
-                String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
-
-                // убираем не нужные Item
-                popup.getMenu().removeItem(R.id.action_delete);
-                popup.getMenu().removeItem(R.id.action_save);
-
-                // добавление в меню текста с картинкой символа "удалить"
-                popup.getMenu().add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
-                        deletString));
-
-                //registering popup with OnMenuItemClickListener
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        onDeleteClick();
-                        return true;
-                    }
-                });
-
-                //showing popup menu
-                popup.show();
-            }
-        });
-
-    }
-
     // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")
     @Override
@@ -546,7 +541,6 @@ public class UserActivity extends AppCompatActivity
         GregorianCalendar date = new GregorianCalendar(year, monthOfYear, dayOfMonth);
         editTextDate.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
-
 
     // результат запроса на загрузку фото
     @Override

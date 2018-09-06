@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import com.gmail.krbashianrafael.medpunkt.FullscreenPhotoActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.TreatmentPhotoItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +33,9 @@ import java.util.Collections;
 public class TreatmentPhotosFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
-    // parent Activity
-    private TreatmentActivity newTreaymentActivity;
+    // Активити в котором может находится этот фрагмент
+    TreatmentActivity mTreaymentActivity;
+    TabletMainActivity mTabletMainActivity;
 
     // id пользователя
     private long _idUser = 0;
@@ -46,7 +50,7 @@ public class TreatmentPhotosFragment extends Fragment
 
     private Animation fabShowAnimation;
 
-    protected RecyclerView recyclerTreatmentPhotos;
+    public RecyclerView recyclerTreatmentPhotos;
 
     private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
@@ -126,11 +130,75 @@ public class TreatmentPhotosFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        newTreaymentActivity = (TreatmentActivity) getActivity();
+        Log.d("treatnmentF", "treatnmentPF onActivityCreated");
 
-        if (newTreaymentActivity != null) {
+        /*if (HomeActivity.isTablet){
+            mTabletMainActivity = (TabletMainActivity) getActivity();
+            doWorkWithTabletMainActivity(mTabletMainActivity);
+        }
+        else {
+            mTreaymentActivity = (TreatmentActivity) getActivity();
+            doWorkWithTreaymentActivity(mTreaymentActivity);
+        }*/
 
-            fabShowAnimation = AnimationUtils.loadAnimation(newTreaymentActivity, R.anim.fab_show);
+        if (getActivity() instanceof TabletMainActivity) {
+            mTabletMainActivity = (TabletMainActivity) getActivity();
+            doWorkWithTabletMainActivity(mTabletMainActivity);
+        } else {
+            mTreaymentActivity = (TreatmentActivity) getActivity();
+            doWorkWithTreaymentActivity(mTreaymentActivity);
+        }
+    }
+
+    private void doWorkWithTabletMainActivity(TabletMainActivity mTabletMainActivity) {
+        if (mTabletMainActivity != null) {
+
+            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
+            if (mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment == null) {
+                mTabletMainActivity.tabletTreatmentFragment.initTreatmentPhotosFragment();
+            }
+
+            fabShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
+            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+            });
+
+            _idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
+            _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;
+
+            // инициализируем linearLayoutManager
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mTabletMainActivity,
+                    LinearLayoutManager.VERTICAL, false);
+
+            // устанавливаем LayoutManager для RecyclerView
+            recyclerTreatmentPhotos.setLayoutManager(linearLayoutManager);
+
+            // инициализируем TreatmentPhotoRecyclerViewAdapter
+            treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(mTabletMainActivity);
+
+            // устанавливаем адаптер для RecyclerView
+            recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
+        }
+
+    }
+
+    private void doWorkWithTreaymentActivity(TreatmentActivity mTreaymentActivity) {
+        if (mTreaymentActivity != null) {
+
+            fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
             fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -149,42 +217,27 @@ public class TreatmentPhotosFragment extends Fragment
             });
 
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
-            if (newTreaymentActivity.treatmentPhotosFragment == null) {
-                newTreaymentActivity.initTreatmentPhotosFragment();
+            if (mTreaymentActivity.treatmentPhotosFragment == null) {
+                mTreaymentActivity.initTreatmentPhotosFragment();
             }
 
-            _idUser = newTreaymentActivity._idUser;
-            _idDisease = newTreaymentActivity._idDisease;
+            _idUser = mTreaymentActivity._idUser;
+            _idDisease = mTreaymentActivity._idDisease;
 
             // инициализируем linearLayoutManager
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(newTreaymentActivity,
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mTreaymentActivity,
                     LinearLayoutManager.VERTICAL, false);
-
-            /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
-            DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                    recyclerTreatmentPhotos.getContext(), linearLayoutManager.getOrientation()
-            );
-
-            //инициализируем Drawable, который будет установлен как разделитель между элементами
-            Drawable divider_blue = ContextCompat.getDrawable(newTreaymentActivity, R.drawable.blue_drawable);
-
-            //устанавливаем divider_blue как разделитель между элементами
-            if (divider_blue != null) {
-                itemDecoration.setDrawable(divider_blue);
-            }
-
-            //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-            recyclerTreatmentPhotos.addItemDecoration(itemDecoration);*/
 
             // устанавливаем LayoutManager для RecyclerView
             recyclerTreatmentPhotos.setLayoutManager(linearLayoutManager);
 
             // инициализируем TreatmentPhotoRecyclerViewAdapter
-            treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(newTreaymentActivity);
+            treatmentPhotoRecyclerViewAdapter = new TreatmentPhotoRecyclerViewAdapter(mTreaymentActivity);
 
             // устанавливаем адаптер для RecyclerView
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
         }
+
     }
 
     @NonNull
@@ -205,9 +258,23 @@ public class TreatmentPhotosFragment extends Fragment
         String selection = TreatmentPhotosEntry.COLUMN_U_ID + "=? AND " + TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser), String.valueOf(_idDisease)};
 
+        Context mContext;
+        /*if (HomeActivity.isTablet) {
+            mContext = mTabletMainActivity;
+        } else {
+            mContext = mTreaymentActivity;
+
+        }*/
+
+        if (getActivity() instanceof TabletMainActivity) {
+            mContext = mTabletMainActivity;
+        } else {
+            mContext = mTreaymentActivity;
+        }
+
         // This loader will execute the ContentProvider's query method on a background thread
         // Loader грузит ВСЕ данные из таблицы users через Provider в diseaseRecyclerViewAdapter и далее в recyclerDiseases
-        return new CursorLoader(newTreaymentActivity,   // Parent activity context
+        return new CursorLoader(mContext,   // Parent activity context
                 TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
                 projection,             // Columns to include in the resulting Cursor
                 selection,                   // selection by TreatmentPhotosEntry.COLUMN_U_ID AND TreatmentPhotosEntry.COLUMN_DIS_ID

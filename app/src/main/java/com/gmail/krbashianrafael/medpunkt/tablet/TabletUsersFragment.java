@@ -265,7 +265,7 @@ public class TabletUsersFragment extends Fragment
 
             // если нет пользователей, то чистим DiseasesFragment
             tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
@@ -320,7 +320,7 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
 
-                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
 
             } else if (TabletMainActivity.userUpdated &&
                     TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {
@@ -352,7 +352,7 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
 
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
                 tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
             }

@@ -17,7 +17,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
 
     private int pagesCount = 2;
 
-    TreatmentAdapter(Context context, FragmentManager fm) {
+    public TreatmentAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
     }
