@@ -116,16 +116,27 @@ public class TreatmentActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // если это планшет, то показываем в LANDSCAPE
+        // и сразу показываем клавиатуру
+        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+            );
         } else {
+            // если это телефон, то показываем в PORTRAIT и скрываем клавиатуру
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
+            getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+            );
         }
 
         setContentView(R.layout.activity_treatment);
-
-        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         Intent intent = getIntent();
 
@@ -160,6 +171,7 @@ public class TreatmentActivity extends AppCompatActivity
         txtTitleTreatment = findViewById(R.id.txt_title_treatment);
 
         if (HomeActivity.isTablet) {
+
             if (HomeActivity.iAmDoctor) {
                 txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
             } else {
@@ -292,14 +304,14 @@ public class TreatmentActivity extends AppCompatActivity
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
         } else {
-            textInputLayoutDiseaseName.setVisibility(View.GONE);
-            editTextDateOfDisease.setVisibility(View.GONE);
-            focusHolder.requestFocus();
-
             // если планшет, то оставлем только одину закадку для описания заболевания
             if (HomeActivity.isTablet) {
                 categoryAdapter.setPagesCount(1);
                 tabLayout.setVisibility(View.GONE);
+            } else {
+                textInputLayoutDiseaseName.setVisibility(View.GONE);
+                editTextDateOfDisease.setVisibility(View.GONE);
+                focusHolder.requestFocus();
             }
         }
 

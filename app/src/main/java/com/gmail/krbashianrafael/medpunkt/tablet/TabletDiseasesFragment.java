@@ -256,15 +256,10 @@ public class TabletDiseasesFragment extends Fragment
                 String diseaseDate = cursor.getString(disease_dateColumnIndex);
                 String diseaseTreatment = cursor.getString(disease_treatmentColumnIndex);
 
-
                 // добавляем новый DiseaseItem в ArrayList<DiseaseItem> myData
                 myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, diseaseName, diseaseDate, diseaseTreatment));
             }
         }
-
-        //тест
-        //myData.add(new DiseaseItem(1, 1, "Diarrhea", "11-03-2098", "Drink vodka"));
-        //myData.add(new DiseaseItem(1, 1, "YYY", "10-03-2098", "DDD"));
 
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
@@ -306,9 +301,6 @@ public class TabletDiseasesFragment extends Fragment
 
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
-
-            /*Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.
-                    tabLayout.getTabAt(1)).select();*/
 
             txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
