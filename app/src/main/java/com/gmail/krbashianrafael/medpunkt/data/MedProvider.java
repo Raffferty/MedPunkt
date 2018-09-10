@@ -510,6 +510,12 @@ public class MedProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
+        // Выставляем флаг для загрузки пользователей в планшете после добаления пользователя
+        if (HomeActivity.isTablet) {
+            TabletMainActivity.diseaseInserted = true;
+        }
+
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
 
@@ -657,6 +663,7 @@ public class MedProvider extends ContentProvider {
         }
 
         // Выставляем флаг для загрузки пользователей в планшете после обновления пользователя
+        // и устанавливаем userNameAfterUpdate
         if (HomeActivity.isTablet) {
             TabletMainActivity.userUpdated = true;
             TabletMainActivity.userNameAfterUpdate = userName;
@@ -676,21 +683,33 @@ public class MedProvider extends ContentProvider {
         //DiseasesEntry.COLUMN_U_ID) на update подаваться не будет
         // поэтому не проверяем его
 
+        String diseaseName = null;
+
         if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)) {
-            String diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
+            diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
             if (diseaseName == null) {
                 throw new IllegalArgumentException("disease requires a name");
             }
         }
 
+        String diseaseDate = null;
+
         if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_DATE)) {
-            String diseaseDate = values.getAsString(DiseasesEntry.COLUMN_DISEASE_DATE);
+            diseaseDate = values.getAsString(DiseasesEntry.COLUMN_DISEASE_DATE);
             if (diseaseDate == null) {
                 throw new IllegalArgumentException("disease requires a registration day");
             }
         }
 
         // DISEASE_TREATMENT не проверяем на null
+        String diseaseTreatment = null;
+
+        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_TREATMENT)) {
+            diseaseTreatment = values.getAsString(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
+            if (diseaseTreatment == null) {
+                diseaseTreatment = "";
+            }
+        }
 
         // открываем базу для записи
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -704,6 +723,15 @@ public class MedProvider extends ContentProvider {
             if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(uri, null);
             }
+        }
+
+        // Выставляем флаг для загрузки пользователей в планшете после обновления пользователя
+        // и устанавливаем userNameAfterUpdate
+        if (HomeActivity.isTablet) {
+            TabletMainActivity.diseaseUpdated = true;
+            TabletMainActivity.diseaseNameAfterUpdate = diseaseName;
+            TabletMainActivity.diseaseDateAfterUpdate = diseaseDate;
+            TabletMainActivity.diseaseTreatmentAfterUpdate = diseaseTreatment;
         }
 
         // Returns the number of database rows affected by the update statement
@@ -850,6 +878,7 @@ public class MedProvider extends ContentProvider {
         // Выставляем флаг для загрузки пользователей в планшете после удаления пользователя
         if (HomeActivity.isTablet) {
             TabletMainActivity.userDeleted = true;
+            TabletMainActivity.diseaseDeleted = true;
         }
 
         // Return the number of rows deleted

@@ -86,7 +86,7 @@ public class TabletTreatmentFragment extends Fragment
     private EditText focusHolder;
 
     // Animation fabShowAnimation
-    private Animation fabShowAnimation;
+    public Animation fabShowAnimation;
 
     public ViewPager viewPager;
 
@@ -243,9 +243,16 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
+                    // и делаем анимацию fab
+                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
+                    // и делаем анимацию fab если txtAddPhotos не видим
+                    if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                        treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+                    }
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -354,7 +361,6 @@ public class TabletTreatmentFragment extends Fragment
 
     public void setTextDateOfDisease(String textDateOfDisease) {
         this.textDateOfDisease = textDateOfDisease;
-
     }
 
     public void setTextTreatment(String textTreatment) {
@@ -368,6 +374,14 @@ public class TabletTreatmentFragment extends Fragment
 
     public void setEditDisease(boolean editDisease) {
         this.editDisease = editDisease;
+    }
+
+    public long get_idDisease() {
+        return _idDisease;
+    }
+
+    public long get_idUser() {
+        return _idUser;
     }
 
     @NonNull

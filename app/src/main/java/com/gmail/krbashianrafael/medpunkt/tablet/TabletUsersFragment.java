@@ -175,6 +175,7 @@ public class TabletUsersFragment extends Fragment
     }
 
     public void initUsersLoader() {
+        // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
         if (TabletMainActivity.userInserted || TabletMainActivity.userUpdated || TabletMainActivity.userDeleted) {
             // сразу INVISIBLE делаем чтоб не было скачков при смене вида
             fabAddUser.setVisibility(View.INVISIBLE);
@@ -260,10 +261,12 @@ public class TabletUsersFragment extends Fragment
                     }, 300);
 
             // делаем blur на TABLET_DISEASES_FRAGMENT и TABLET_TREATMENT_FRAGMENT
-            tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+            tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+
 
             // если нет пользователей, то чистим DiseasesFragment
+            tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
             tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
@@ -318,7 +321,10 @@ public class TabletUsersFragment extends Fragment
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
+
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
                 tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
 
@@ -349,7 +355,10 @@ public class TabletUsersFragment extends Fragment
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
+
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
                 tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));

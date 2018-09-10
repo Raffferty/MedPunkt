@@ -21,14 +21,24 @@ import java.util.Locale;
 public class TabletMainActivity extends AppCompatActivity
 implements DatePickerDialog.OnDateSetListener{
 
-    // эти поля становятся true в классе MedProvider в соответствующих методах
+    // эти поля получают свои значения в классе MedProvider в соответствующих методах
     public static boolean userInserted = true;
     public static boolean userUpdated = true;
     public static boolean userDeleted = true;
     public static String userNameAfterUpdate = "";
 
+    public static boolean diseaseInserted = true;
+    public static boolean diseaseUpdated = true;
+    public static boolean diseaseDeleted = true;
+    public static String diseaseNameAfterUpdate = "";
+    public static String diseaseDateAfterUpdate = "";
+    public static String diseaseTreatmentAfterUpdate = "";
+
     // это поле берется из UsersRecyclerViewAdapter
     public static long user_IdInEdit = 0;
+
+    // это поле берется из DiseaseURecyclerViewAdapter
+    public static long disease_IdInEdit = 0;
 
     public TabletUsersFragment tabletUsersFragment;
     public TabletDiseasesFragment tabletDiseasesFragment;
@@ -54,6 +64,10 @@ implements DatePickerDialog.OnDateSetListener{
         userInserted = true;
         userUpdated = true;
         userDeleted = true;
+
+        diseaseInserted = true;
+        diseaseUpdated = true;
+        diseaseDeleted = true;
 
         if (savedInstanceState == null) {
             tabletUsersFragment = (TabletUsersFragment)

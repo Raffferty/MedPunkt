@@ -163,7 +163,15 @@ public class TabletDiseasesFragment extends Fragment
         super.onResume();
 
         // грузим, если выбран пользователь
-        if (_idUser!=0){
+        /*if (_idUser != 0) {
+            initDiseasesLoader();
+        }*/
+
+        // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
+        if (TabletMainActivity.diseaseInserted ||
+                TabletMainActivity.diseaseUpdated ||
+                TabletMainActivity.diseaseDeleted) {
+
             initDiseasesLoader();
         }
     }
@@ -277,20 +285,33 @@ public class TabletDiseasesFragment extends Fragment
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myDataSize == 0) {
-            new Handler(Looper.getMainLooper()).
-                    postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            textViewAddDisease.setVisibility(View.VISIBLE);
-                            textViewAddDisease.startAnimation(fadeInAnimation);
-                        }
-                    }, 300);
+
+            if (tabletMainActivity.tabletDiseasesFragment.get_idUser() != 0) {
+                new Handler(Looper.getMainLooper()).
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                textViewAddDisease.setVisibility(View.VISIBLE);
+                                textViewAddDisease.startAnimation(fadeInAnimation);
+                            }
+                        }, 300);
+            }
+
+            txtTabletDiseases.setText(R.string.diseases_what_text);
+            txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+            tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
             // если нет пользователей, то чистим TreatmentFragment
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+            tabletMainActivity.tabletTreatmentTitle.setText("");
+
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
+                    fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
 
 
         } else if (myDataSize == 1) {
@@ -320,16 +341,55 @@ public class TabletDiseasesFragment extends Fragment
             tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate);
             tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText);
 
-        } else {
-            tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
+                    fabEditTreatmentDescripton.startAnimation(
+                    tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+            );
 
-            // если нет пользователей, то чистим TreatmentFragment
-            tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
-            tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+        } else {
+
+            if (tabletMainActivity.tabletTreatmentFragment.get_idUser() != get_idUser()) {
+                //если первый заход и в TreatmentFragment еще не отображаются данные,
+                // т.е. tabletMainActivity.tabletTreatmentFragment.get_idUser() = 0
+                // или был выбрарн другой пользователь у которого больше одного заболевания
+                // то предлагаем сдеалть выбор заболевани для отображения в TreatmentFragment
+
+                txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
+
+                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));
+
+                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+                tabletMainActivity.tabletTreatmentTitle.setText("");
+
+                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
+                        fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+
+            } else if (TabletMainActivity.diseaseUpdated &&
+                    TabletMainActivity.disease_IdInEdit ==
+                            tabletMainActivity.tabletTreatmentFragment.get_idDisease()) {
+                // если заболевание, которое было в TreatmentFragment обновилось (поменялось название...)
+                // то устанавливаем обновленные поля
+
+                tabletMainActivity.tabletTreatmentTitle.setText(TabletMainActivity.diseaseNameAfterUpdate);
+                tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(TabletMainActivity.diseaseNameAfterUpdate);
+                tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.diseaseDateAfterUpdate);
+                tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.diseaseTreatmentAfterUpdate);
+            }
 
             fabAddDisease.startAnimation(fabShowAnimation);
 
         }
+
+        // после прохождения всех if выставляем флаги в false
+        TabletMainActivity.diseaseInserted = false;
+        TabletMainActivity.diseaseUpdated = false;
+        TabletMainActivity.diseaseDeleted = false;
 
         if (mScrollToStart && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(0);

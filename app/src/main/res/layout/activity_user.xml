@@ -131,5 +131,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible" />
 
+    <!-- это фреймы которые присутствуют в планшетном виде
+     если их здесь не указать, то в планшетном виде они  будут null
+     -->
+    <FrameLayout
+        android:id="@+id/tablet_frm_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <FrameLayout
+        android:id="@+id/tablet_frm_save"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <FrameLayout
+        android:id="@+id/tablet_frm_delete"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        android:id="@+id/txt_tablet_user_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+
 </android.support.constraint.ConstraintLayout>
 

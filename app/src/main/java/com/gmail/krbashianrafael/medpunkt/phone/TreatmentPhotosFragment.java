@@ -44,9 +44,9 @@ public class TreatmentPhotosFragment extends Fragment
     private long _idDisease = 0;
 
     // TextView добавления фотоснимка лечения
-    private TextView txtAddPhotos;
+    public TextView txtAddPhotos;
 
-    private FloatingActionButton fabAddTreatmentPhotos;
+    public FloatingActionButton fabAddTreatmentPhotos;
 
     private Animation fabShowAnimation;
 
@@ -334,7 +334,6 @@ public class TreatmentPhotosFragment extends Fragment
         if (myData.size() == 0) {
             txtAddPhotos.setVisibility(View.VISIBLE);
         } else {
-            //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
         }
 

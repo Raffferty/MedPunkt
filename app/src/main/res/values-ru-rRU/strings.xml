@@ -2,8 +2,7 @@
 <resources>
     <!-- app -->
     <string name="greeting">MedPunkt
-        \n\n\поможет Вам запомнить когда и чем болели Вы,
-        ваши близкие или ваши пациенты и какое было лечение.</string>
+        \n\n\поможет запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.</string>
     <string name="doctor">Я врач</string>
     <string name="show_greeting">Больше не показывать</string>
 
@@ -65,6 +64,7 @@
     <string name="disease_delete">Удалить заболевание</string>
 
     <!-- treatment_activity -->
+    <string name="tablet_treatment_select_disease">Выберите заболевание</string>
     <string name="treatment_empty_image_text">Добавить снимки,\nсвязанные с лечением\n(назначения, анализы и т.д.)</string>
     <string name="treatment_cant_save_image">Снимок не удалось сохранить</string>
     <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>

@@ -84,8 +84,8 @@ public class TreatmentActivity extends AppCompatActivity
     protected long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    private boolean goBack, newDisease, onSavingOrUpdatingOrDeleting;
-    protected boolean editDisease;
+    private boolean goBack, onSavingOrUpdatingOrDeleting;
+    protected boolean editDisease, newDisease;
 
     private ActionBar actionBar;
 
@@ -121,10 +121,6 @@ public class TreatmentActivity extends AppCompatActivity
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
-                            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-            );
         } else {
             // если это телефон, то показываем в PORTRAIT и скрываем клавиатуру
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -171,7 +167,6 @@ public class TreatmentActivity extends AppCompatActivity
         txtTitleTreatment = findViewById(R.id.txt_title_treatment);
 
         if (HomeActivity.isTablet) {
-
             if (HomeActivity.iAmDoctor) {
                 txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
             } else {
@@ -190,11 +185,20 @@ public class TreatmentActivity extends AppCompatActivity
         if (textDateOfDisease != null) {
             editTextDateOfDisease.setText(textDateOfDisease);
         }
+
         editTextDateOfDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                hideSoftInput();
+
+                if (HomeActivity.isTablet) {
+                    getWindow().setSoftInputMode(
+                            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                                    WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                    );
+                } else {
+                    hideSoftInput();
+                }
 
                 // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutDiseaseName.setError(null);
@@ -303,16 +307,25 @@ public class TreatmentActivity extends AppCompatActivity
             editTextDiseaseName.setSelection(0);
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
+
+            if (HomeActivity.isTablet) {
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+                );
+            }
+
         } else {
             // если планшет, то оставлем только одину закадку для описания заболевания
             if (HomeActivity.isTablet) {
                 categoryAdapter.setPagesCount(1);
                 tabLayout.setVisibility(View.GONE);
-            } else {
-                textInputLayoutDiseaseName.setVisibility(View.GONE);
-                editTextDateOfDisease.setVisibility(View.GONE);
-                focusHolder.requestFocus();
             }
+
+            textInputLayoutDiseaseName.setVisibility(View.GONE);
+            editTextDateOfDisease.setVisibility(View.GONE);
+            focusHolder.requestFocus();
+
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -326,9 +339,17 @@ public class TreatmentActivity extends AppCompatActivity
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
+                    // и делаем анимацию fab
+                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
+
+                    // и делаем анимацию fab если txtAddPhotos не видим
+                    if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                        treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+                    }
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -470,9 +491,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                 onSavingOrUpdatingOrDeleting = true;
 
-                textInputLayoutDiseaseName.setVisibility(View.GONE);
-                editTextDateOfDisease.setVisibility(View.GONE);
-
                 // скручиваем клавиатуру
                 hideSoftInput();
 
@@ -499,6 +517,9 @@ public class TreatmentActivity extends AppCompatActivity
                     treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
                     onSavingOrUpdatingOrDeleting = false;
+
+                    textInputLayoutDiseaseName.setVisibility(View.GONE);
+                    editTextDateOfDisease.setVisibility(View.GONE);
 
                     treatmentDescriptionFragment.editTextTreatment.requestFocus();
                     treatmentDescriptionFragment.editTextTreatment.setSelection(0);

@@ -2,6 +2,7 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ public class TreatmentDescriptionFragment extends Fragment {
     // fabEditTreatmentDescripton
     public FloatingActionButton fabEditTreatmentDescripton;
 
+    private Animation fabShowAnimation;
     private Animation fabHideAnimation;
 
     public TreatmentDescriptionFragment() {
@@ -47,6 +49,7 @@ public class TreatmentDescriptionFragment extends Fragment {
         }
 
         fabEditTreatmentDescripton = view.findViewById(R.id.fabEditTreatmentDescripton);
+
     }
 
 
@@ -78,7 +81,17 @@ public class TreatmentDescriptionFragment extends Fragment {
                 mTabletMainActivity.tabletTreatmentFragment.initTreatmentDescriptionFragment();
             }
 
-            Animation fabShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
+            // если фрагмент в окне TabletMainActivity,
+            // то меняем цвет и иконку fabEditTreatmentDescripton на "информационную"
+            fabEditTreatmentDescripton.setBackgroundTintList(
+                    ColorStateList.valueOf(mTabletMainActivity.getResources().getColor(R.color.colorPrimary))
+            );
+
+            fabEditTreatmentDescripton.setImageDrawable(
+                    mTabletMainActivity.getResources().getDrawable(R.drawable.ic_info_outline_white_48dp)
+            );
+
+            /*fabShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
             fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -114,7 +127,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
-            });
+            });*/
 
             editTextTreatment.setText(mTabletMainActivity.tabletTreatmentFragment.textTreatment);
 
@@ -125,7 +138,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                     Intent treatmentIntent = new Intent(mTabletMainActivity, TreatmentActivity.class);
                     treatmentIntent.putExtra("_idDisease", mTabletMainActivity.tabletTreatmentFragment._idDisease);
                     treatmentIntent.putExtra("_idUser", mTabletMainActivity.tabletTreatmentFragment._idUser);
-                    treatmentIntent.putExtra("editDisease", true);
+                    //treatmentIntent.putExtra("editDisease", true);
                     treatmentIntent.putExtra("diseaseName", mTabletMainActivity.tabletTreatmentFragment.textDiseaseName);
                     treatmentIntent.putExtra("diseaseDate", mTabletMainActivity.tabletTreatmentFragment.textDateOfDisease);
                     treatmentIntent.putExtra("textTreatment", mTabletMainActivity.tabletTreatmentFragment.textTreatment);
@@ -147,7 +160,20 @@ public class TreatmentDescriptionFragment extends Fragment {
     private void doWorkWithTreaymentActivity(final TreatmentActivity mTreaymentActivity) {
         if (mTreaymentActivity != null) {
 
-            Animation fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
+            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
+            if (mTreaymentActivity.treatmentDescriptionFragment == null) {
+                mTreaymentActivity.initTreatmentDescriptionFragment();
+            }
+
+            editTextTreatment.setText(mTreaymentActivity.textTreatment);
+
+            if (HomeActivity.isTablet && !mTreaymentActivity.newDisease) {
+                editTextTreatment.setSelection(mTreaymentActivity.textTreatment.length());
+
+                editTextTreatment.requestFocus();
+            }
+
+            fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
             fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -165,10 +191,6 @@ public class TreatmentDescriptionFragment extends Fragment {
                 }
             });
 
-            if (!mTreaymentActivity.editDisease) {
-                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-            }
-
             fabHideAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_hide);
             fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -185,27 +207,12 @@ public class TreatmentDescriptionFragment extends Fragment {
                 }
             });
 
-            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
-            if (mTreaymentActivity.treatmentDescriptionFragment == null) {
-                mTreaymentActivity.initTreatmentDescriptionFragment();
-            }
-
-            editTextTreatment.setText(mTreaymentActivity.textTreatment);
-
-            if (HomeActivity.isTablet) {
-                editTextTreatment.setSelection(mTreaymentActivity.textTreatment.length());
-
-                editTextTreatment.requestFocus();
-            }
-
             fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     mTreaymentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                     mTreaymentActivity.editTextDiseaseName.setEnabled(true);
-
-                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
                     mTreaymentActivity.editDisease = true;
 
@@ -222,6 +229,8 @@ public class TreatmentDescriptionFragment extends Fragment {
                     editTextTreatment.setCursorVisible(true);
                     editTextTreatment.requestFocus();
                     editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+
+                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
                     // показываем клавиатуру если это планшет
                     if (HomeActivity.isTablet) {
@@ -244,7 +253,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                 editTextTreatment.setFocusableInTouchMode(false);
                 editTextTreatment.setCursorVisible(false);
 
-                fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
             }
         }
     }

@@ -93,17 +93,29 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
 
+                tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
+                tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setText(R.string.diseases_what_text);
+
                 tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                        tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                );
 
                 tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
+                long disease_id_inEdit = Long.valueOf(_diseaseId.getText().toString());
+
                 tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(myContext.getResources().getColor(R.color.paper));
-                tabletMainActivity.tabletTreatmentFragment.set_idDisease(Long.valueOf(_diseaseId.getText().toString()));
+                tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
                 tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
                 tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
                 tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
+
+                TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+
 
             } else {
                 Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);

@@ -38,6 +38,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,6 +123,7 @@ public class UserActivity extends AppCompatActivity
     // TextView для указания UserTitle
     private TextView txtTabletUserTitle;
 
+    private FrameLayout tabletFrmBack;
     private FrameLayout tabletFrmSave;
     private FrameLayout tabletFrmDelete;
 
@@ -205,13 +207,17 @@ public class UserActivity extends AppCompatActivity
         } else {
             // если это Плншет прячем actionBar
             // и инициализируем вьюшки, которые относятся к планшету
+
+            // эти вюшки обязатльно должны присутствовать в телефонном виде,
+            // иначе findViewById вернет null
             if (actionBar != null) {
                 actionBar.hide();
             }
 
             txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
 
-            FrameLayout tabletFrmBack = findViewById(R.id.tablet_frm_back);
+            tabletFrmBack = findViewById(R.id.tablet_frm_back);
+            Log.d("xxx", "tabletFrmBack = " + tabletFrmBack);
             tabletFrmBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
