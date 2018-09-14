@@ -15,6 +15,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,15 +176,12 @@ public class TabletUsersFragment extends Fragment
     }
 
     public void initUsersLoader() {
-        // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
-        if (TabletMainActivity.userInserted || TabletMainActivity.userUpdated || TabletMainActivity.userDeleted) {
-            // сразу INVISIBLE делаем чтоб не было скачков при смене вида
-            fabAddUser.setVisibility(View.INVISIBLE);
-            txtAddUsers.setVisibility(View.INVISIBLE);
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        fabAddUser.setVisibility(View.INVISIBLE);
+        txtAddUsers.setVisibility(View.INVISIBLE);
 
-            // Инициализируем Loader
-            getLoaderManager().initLoader(TABLET_USERS_LOADER, null, this);
-        }
+        // Инициализируем Loader
+        getLoaderManager().initLoader(TABLET_USERS_LOADER, null, this);
     }
 
     @NonNull
@@ -207,6 +205,8 @@ public class TabletUsersFragment extends Fragment
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();
         myData.clear();
+
+        Log.d("yyy", "TuserOnLoadFinished");
 
         if (cursor != null) {
 
@@ -271,6 +271,17 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+
+            // если не осталось пользователей после удаления единственного пользователя, то
+            // загружаем данные в tabletDiseasesFragment с помощю tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+            // т.к. заболеваний у удаленного пользовател нет, то будет очищено окно tabletDiseasesFragment
+            // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
+            // в tabletDiseasesFragment idUser = 0
+
+            // если был первый заход и не было пользователей, то этот медод не вызывается
+            if (TabletMainActivity.userDeleted) {
+                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+            }
 
         } else if (myDataSize == 1) {
             // если один пользователь, то делаем fabShowAnimation
@@ -346,6 +357,9 @@ public class TabletUsersFragment extends Fragment
                 // то очищаем DiseasesFragment
                 // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
+                Log.d("yyy", "TuserDeleted");
+
+
                 if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
                 } else {
@@ -355,15 +369,23 @@ public class TabletUsersFragment extends Fragment
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
-                tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
 
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
+                // в методе tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
+                // происходит tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
                 tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
-                tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+                //tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
+                //tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+
+                // после удаления пользователя и загрузки данных в tabletUsersFragment
+                // загружаем данные в tabletDiseasesFragment с помощю tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+                // т.к. заболеваний у удаленного пользовател нет, то будет очищено окно tabletDiseasesFragment
+                // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
+                // в tabletDiseasesFragment idUser = 0
+                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
             }
         }
 

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
@@ -838,17 +839,33 @@ public class MedProvider extends ContentProvider {
                 To remove all rows and get a count pass "1" as the whereClause.
                  */
                 rowsDeleted = database.delete(UsersEntry.USERS_TABLE_NAME, selection, selectionArgs);
+
+                if (rowsDeleted != 0) {
+                    // Выставляем флаг для загрузки пользователей в планшете после удаления пользователя
+                    if (HomeActivity.isTablet) {
+                        TabletMainActivity.userDeleted = true;
+                        Log.d("yyy","userDeleted");
+                    }
+                }
+
                 break;
             case USER_ID:
                 // Delete a single row given by the ID in the URI
                 selection = UsersEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-
                 rowsDeleted = database.delete(UsersEntry.USERS_TABLE_NAME, selection, selectionArgs);
-
                 break;
             case DISEASES:
                 rowsDeleted = database.delete(DiseasesEntry.DISEASES_TABLE_NAME, selection, selectionArgs);
+
+                if (rowsDeleted != 0) {
+                    // Выставляем флаг для загрузки заболеваний в планшете после удаления заболевания
+                    if (HomeActivity.isTablet) {
+                        TabletMainActivity.diseaseDeleted = true;
+                        Log.d("yyy","diseaseDeleted");
+                    }
+                }
+
                 break;
             case DISEASES_ID:
                 selection = DiseasesEntry._ID + "=?";
@@ -873,12 +890,6 @@ public class MedProvider extends ContentProvider {
             if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(uri, null);
             }
-        }
-
-        // Выставляем флаг для загрузки пользователей в планшете после удаления пользователя
-        if (HomeActivity.isTablet) {
-            TabletMainActivity.userDeleted = true;
-            TabletMainActivity.diseaseDeleted = true;
         }
 
         // Return the number of rows deleted

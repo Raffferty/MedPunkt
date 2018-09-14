@@ -2,7 +2,6 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -83,51 +82,13 @@ public class TreatmentDescriptionFragment extends Fragment {
 
             // если фрагмент в окне TabletMainActivity,
             // то меняем цвет и иконку fabEditTreatmentDescripton на "информационную"
-            fabEditTreatmentDescripton.setBackgroundTintList(
+            /*fabEditTreatmentDescripton.setBackgroundTintList(
                     ColorStateList.valueOf(mTabletMainActivity.getResources().getColor(R.color.colorPrimary))
             );
 
             fabEditTreatmentDescripton.setImageDrawable(
                     mTabletMainActivity.getResources().getDrawable(R.drawable.ic_info_outline_white_48dp)
-            );
-
-            /*fabShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
-            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
-                }
-            });
-
-            if (!mTabletMainActivity.tabletTreatmentFragment.editDisease) {
-                fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-            }
-
-            fabHideAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_hide);
-            fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });*/
+            );*/
 
             editTextTreatment.setText(mTabletMainActivity.tabletTreatmentFragment.textTreatment);
 
@@ -138,7 +99,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                     Intent treatmentIntent = new Intent(mTabletMainActivity, TreatmentActivity.class);
                     treatmentIntent.putExtra("_idDisease", mTabletMainActivity.tabletTreatmentFragment._idDisease);
                     treatmentIntent.putExtra("_idUser", mTabletMainActivity.tabletTreatmentFragment._idUser);
-                    //treatmentIntent.putExtra("editDisease", true);
+                    treatmentIntent.putExtra("editDisease", true);
                     treatmentIntent.putExtra("diseaseName", mTabletMainActivity.tabletTreatmentFragment.textDiseaseName);
                     treatmentIntent.putExtra("diseaseDate", mTabletMainActivity.tabletTreatmentFragment.textDateOfDisease);
                     treatmentIntent.putExtra("textTreatment", mTabletMainActivity.tabletTreatmentFragment.textTreatment);

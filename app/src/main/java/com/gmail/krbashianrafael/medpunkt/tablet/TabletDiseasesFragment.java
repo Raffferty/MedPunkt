@@ -14,6 +14,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,18 +163,13 @@ public class TabletDiseasesFragment extends Fragment
     public void onResume() {
         super.onResume();
 
-        // грузим, если выбран пользователь
-        /*if (_idUser != 0) {
-            initDiseasesLoader();
-        }*/
-
         // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
-        if (TabletMainActivity.diseaseInserted ||
+        /*if (TabletMainActivity.diseaseInserted ||
                 TabletMainActivity.diseaseUpdated ||
                 TabletMainActivity.diseaseDeleted) {
 
             initDiseasesLoader();
-        }
+        }*/
     }
 
     public void initDiseasesLoader() {
@@ -194,7 +190,7 @@ public class TabletDiseasesFragment extends Fragment
         _idUser = 0;
         setTextUserName("");
 
-        diseaseRecyclerViewAdapter.notifyDataSetChanged();
+        //diseaseRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     public void set_idUser(long _idUser) {
@@ -242,6 +238,9 @@ public class TabletDiseasesFragment extends Fragment
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
+        Log.d("yyy", "TdiseaseOnLoadFinished");
+
+
         if (cursor != null) {
 
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
@@ -286,7 +285,9 @@ public class TabletDiseasesFragment extends Fragment
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myDataSize == 0) {
 
-            if (tabletMainActivity.tabletDiseasesFragment.get_idUser() != 0) {
+            Log.d("yyy","Tdisease myDataSize == 0");
+
+            if (_idUser != 0) {
                 new Handler(Looper.getMainLooper()).
                         postDelayed(new Runnable() {
                             @Override
@@ -310,8 +311,13 @@ public class TabletDiseasesFragment extends Fragment
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
 
-            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
-                    fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+            Log.d("xxx", "tabletMainActivity = " + tabletMainActivity);
+            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment = " + tabletMainActivity.tabletTreatmentFragment);
+            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment = " + tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment);
+            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton = " +
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton);
+
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
 
 
         } else if (myDataSize == 1) {
@@ -380,6 +386,31 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(TabletMainActivity.diseaseNameAfterUpdate);
                 tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.diseaseDateAfterUpdate);
                 tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.diseaseTreatmentAfterUpdate);
+
+            } else if (TabletMainActivity.diseaseDeleted &&
+                    TabletMainActivity.disease_IdInEdit ==
+                            tabletMainActivity.tabletTreatmentFragment.get_idDisease()) {
+                // если заболевание, которое было в TreatmentFragment удалилиось
+                // то очищаем TreatmentFragment и предлагаем сдеалть выбор заболевани для отображения в TreatmentFragment
+
+                Log.d("yyy","TdiseaseDeleted");
+
+
+                txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
+
+                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));
+
+                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+                tabletMainActivity.tabletTreatmentTitle.setText("");
+
+                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
+                        fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
 
             fabAddDisease.startAnimation(fabShowAnimation);

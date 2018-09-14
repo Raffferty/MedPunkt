@@ -189,8 +189,6 @@ public class TreatmentActivity extends AppCompatActivity
         editTextDateOfDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 if (HomeActivity.isTablet) {
                     getWindow().setSoftInputMode(
                             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
@@ -316,16 +314,24 @@ public class TreatmentActivity extends AppCompatActivity
             }
 
         } else {
-            // если планшет, то оставлем только одину закадку для описания заболевания
-            if (HomeActivity.isTablet) {
-                categoryAdapter.setPagesCount(1);
-                tabLayout.setVisibility(View.GONE);
-            }
 
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             editTextDateOfDisease.setVisibility(View.GONE);
             focusHolder.requestFocus();
 
+            // если планшет и в режиме редактирования, то оставлем только одину закадку для описания заболевания
+            if (HomeActivity.isTablet && editDisease) {
+                categoryAdapter.setPagesCount(1);
+                tabLayout.setVisibility(View.GONE);
+
+                textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+                );
+            }
         }
 
         viewPager.setAdapter(categoryAdapter);

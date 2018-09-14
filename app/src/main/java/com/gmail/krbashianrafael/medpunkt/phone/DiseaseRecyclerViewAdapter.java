@@ -7,9 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
@@ -69,6 +72,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         TextView diseaseName;
         TextView treatmentText;
 
+        LinearLayout diseasesItem;
+        FrameLayout diseaseEdit;
+
         DiseaseHolder(View itemView, Context context) {
             super(itemView);
 
@@ -80,7 +86,15 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             diseaseName = itemView.findViewById(R.id.disease_item_name);
             treatmentText = itemView.findViewById(R.id.treatment_text);
 
-            itemView.setOnClickListener(this);
+            diseasesItem = itemView.findViewById(R.id.recycler_diseases_item);
+            diseaseEdit = itemView.findViewById(R.id.disease_item_edit);
+
+            if (HomeActivity.isTablet){
+                diseaseEdit.setVisibility(View.VISIBLE);
+                diseaseEdit.setOnClickListener(this);
+            }
+
+            diseasesItem.setOnClickListener(this);
         }
 
         @Override
@@ -89,35 +103,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 return;
             }
 
-            if (myContext instanceof TabletMainActivity) {
+            if (view.getId() == R.id.disease_item_edit) {
 
-                TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
-
-                tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
-                tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setText(R.string.diseases_what_text);
-
-                tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
-
-                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                        tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
-                );
-
-                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
-
-                long disease_id_inEdit = Long.valueOf(_diseaseId.getText().toString());
-
-                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(myContext.getResources().getColor(R.color.paper));
-                tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
-                tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
-                tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
-                tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
-                tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
-
-                TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
-
-
-            } else {
                 Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
                 treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
                 treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
@@ -126,6 +113,46 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
 
                 myContext.startActivity(treatmentIntent);
+
+            } else {
+                if (myContext instanceof TabletMainActivity) {
+
+                    TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+
+                    tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
+                    tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setText(R.string.diseases_what_text);
+
+                    tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
+
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                    );
+
+                    tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
+                    long disease_id_inEdit = Long.valueOf(_diseaseId.getText().toString());
+
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(myContext.getResources().getColor(R.color.paper));
+                    tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
+                    tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
+                    tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
+                    tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
+                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
+
+                    TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+
+
+                } else {
+                    Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
+                    treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+                    treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
+                    treatmentIntent.putExtra("diseaseName", diseaseName.getText().toString());
+                    treatmentIntent.putExtra("diseaseDate", diseaseDate.getText().toString());
+                    treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
+
+                    myContext.startActivity(treatmentIntent);
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,17 +20,19 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class TabletMainActivity extends AppCompatActivity
-implements DatePickerDialog.OnDateSetListener{
+        implements DatePickerDialog.OnDateSetListener {
+
+    private boolean firstLoad = false;
 
     // эти поля получают свои значения в классе MedProvider в соответствующих методах
-    public static boolean userInserted = true;
-    public static boolean userUpdated = true;
-    public static boolean userDeleted = true;
+    public static boolean userInserted = false;
+    public static boolean userUpdated = false;
+    public static boolean userDeleted = false;
     public static String userNameAfterUpdate = "";
 
-    public static boolean diseaseInserted = true;
-    public static boolean diseaseUpdated = true;
-    public static boolean diseaseDeleted = true;
+    public static boolean diseaseInserted = false;
+    public static boolean diseaseUpdated = false;
+    public static boolean diseaseDeleted = false;
     public static String diseaseNameAfterUpdate = "";
     public static String diseaseDateAfterUpdate = "";
     public static String diseaseTreatmentAfterUpdate = "";
@@ -61,24 +64,24 @@ implements DatePickerDialog.OnDateSetListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
 
-        userInserted = true;
+        firstLoad = true;
+
+        /*userInserted = true;
         userUpdated = true;
         userDeleted = true;
 
         diseaseInserted = true;
         diseaseUpdated = true;
-        diseaseDeleted = true;
+        diseaseDeleted = true;*/
 
-        if (savedInstanceState == null) {
-            tabletUsersFragment = (TabletUsersFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
+        tabletUsersFragment = (TabletUsersFragment)
+                getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
 
-            tabletDiseasesFragment = (TabletDiseasesFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_diseases_fragment);
+        tabletDiseasesFragment = (TabletDiseasesFragment)
+                getSupportFragmentManager().findFragmentById(R.id.tablet_diseases_fragment);
 
-            tabletTreatmentFragment = (TabletTreatmentFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
-        }
+        tabletTreatmentFragment = (TabletTreatmentFragment)
+                getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -99,30 +102,38 @@ implements DatePickerDialog.OnDateSetListener{
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
         tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // проверка на null перед началом вызовов методов tabletDiseasesFragment из tabletUsersFragment
-        if (tabletDiseasesFragment == null) {
-            tabletDiseasesFragment = (TabletDiseasesFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_diseases_fragment);
+        boolean usersLoaded = false;
+
+        if (firstLoad || userInserted || userUpdated || userDeleted) {
+
+            Log.d("yyy", "TMainUserLoad");
+
+
+            // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
+            // иначе, загружаем данные в окно tabletUsersFragment
+            tabletUsersFragment.initUsersLoader();
+
+            usersLoaded = true;
         }
 
-        if (tabletUsersFragment == null) {
-            tabletUsersFragment = (TabletUsersFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
+        if (!usersLoaded && (diseaseInserted || diseaseUpdated || diseaseDeleted)) {
+
+            Log.d("yyy", "TMainDiseaseLoad");
+
+            // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
+            // иначе, загружаем данные в окно tabletDiseasesFragment
+            tabletDiseasesFragment.initDiseasesLoader();
         }
 
-        if (tabletTreatmentFragment == null) {
-            tabletTreatmentFragment = (TabletTreatmentFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.tablet_treatment_fragment);
-        }
-
-        // загружаем данные в окно tabletUsersFragment
-        tabletUsersFragment.initUsersLoader();
+        firstLoad = false;
     }
 
     @Override
