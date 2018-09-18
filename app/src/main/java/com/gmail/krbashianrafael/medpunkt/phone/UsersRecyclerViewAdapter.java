@@ -3,6 +3,7 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -132,31 +133,43 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 return;
             }
 
-            long user_id_inEdit = Long.valueOf(_userId.getText().toString());
+            final long user_id_inEdit = Long.valueOf(_userId.getText().toString());
 
+            // если нажали на кружок с буквой i
+            // с небольшим deley 100 мс (для ripple эффекта) открываем UserActivity
             if (view.getId() == R.id.user_item_edit) {
-                Intent userEditIntent = new Intent(myContext, UserActivity.class);
-                userEditIntent.putExtra("_idUser", user_id_inEdit);
-                userEditIntent.putExtra("editUser", true);
-                userEditIntent.putExtra("UserName", userName.getText());
-                userEditIntent.putExtra("birthDate", userBirthDate.getText());
-                userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent userEditIntent = new Intent(myContext, UserActivity.class);
+                        userEditIntent.putExtra("_idUser", user_id_inEdit);
+                        userEditIntent.putExtra("editUser", true);
+                        userEditIntent.putExtra("UserName", userName.getText());
+                        userEditIntent.putExtra("birthDate", userBirthDate.getText());
+                        userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
-                // если это планшет, то получаем user_id_inEdit для контроля над изменениями пользователя
-                if (HomeActivity.isTablet) {
-                    TabletMainActivity.user_IdInEdit = user_id_inEdit;
-                }
+                        // если это планшет, то получаем user_id_inEdit для контроля над изменениями пользователя
+                        if (HomeActivity.isTablet) {
+                            TabletMainActivity.user_IdInEdit = user_id_inEdit;
+                        }
 
-                myContext.startActivity(userEditIntent);
+                        myContext.startActivity(userEditIntent);
+                    }
+                }, 100);
 
             } else {
                 // если это телефон
                 if (!HomeActivity.isTablet) {
-                    Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
-                    userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
-                    userDiseasIntent.putExtra("UserName", userName.getText().toString());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
+                            userDiseasIntent.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+                            userDiseasIntent.putExtra("UserName", userName.getText().toString());
 
-                    myContext.startActivity(userDiseasIntent);
+                            myContext.startActivity(userDiseasIntent);
+                        }
+                    }, 100);
                 } else {
                     //если это планшет
                     if (myContext instanceof TabletMainActivity) {
@@ -176,7 +189,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
                     }
                 }
-
             }
         }
     }

@@ -2,6 +2,7 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -89,7 +90,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             diseasesItem = itemView.findViewById(R.id.recycler_diseases_item);
             diseaseEdit = itemView.findViewById(R.id.disease_item_edit);
 
-            if (HomeActivity.isTablet){
+            if (HomeActivity.isTablet) {
                 diseaseEdit.setVisibility(View.VISIBLE);
                 diseaseEdit.setOnClickListener(this);
             }
@@ -104,16 +105,20 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             if (view.getId() == R.id.disease_item_edit) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
+                        treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+                        treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
+                        treatmentIntent.putExtra("diseaseName", diseaseName.getText().toString());
+                        treatmentIntent.putExtra("diseaseDate", diseaseDate.getText().toString());
+                        treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
 
-                Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
-                treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
-                treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
-                treatmentIntent.putExtra("diseaseName", diseaseName.getText().toString());
-                treatmentIntent.putExtra("diseaseDate", diseaseDate.getText().toString());
-                treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
+                        myContext.startActivity(treatmentIntent);
 
-                myContext.startActivity(treatmentIntent);
-
+                    }
+                }, 100);
             } else {
                 if (myContext instanceof TabletMainActivity) {
 
@@ -141,17 +146,21 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
 
                     TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
-
-
                 } else {
-                    Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
-                    treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
-                    treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
-                    treatmentIntent.putExtra("diseaseName", diseaseName.getText().toString());
-                    treatmentIntent.putExtra("diseaseDate", diseaseDate.getText().toString());
-                    treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent treatmentIntent = new Intent(myContext, TreatmentActivity.class);
+                            treatmentIntent.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+                            treatmentIntent.putExtra("_idUser", Long.valueOf(_diseaseUserId.getText().toString()));
+                            treatmentIntent.putExtra("diseaseName", diseaseName.getText().toString());
+                            treatmentIntent.putExtra("diseaseDate", diseaseDate.getText().toString());
+                            treatmentIntent.putExtra("textTreatment", treatmentText.getText().toString());
 
-                    myContext.startActivity(treatmentIntent);
+                            myContext.startActivity(treatmentIntent);
+
+                        }
+                    }, 100);
                 }
             }
         }

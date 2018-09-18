@@ -2,9 +2,9 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,24 +90,27 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         @Override
         public void onClick(View view) {
-            if (myContext==null) {
+            if (myContext == null) {
                 return;
             }
 
-            SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
 
-            Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
+                    intentToTreatmentPhoto.putExtra("_idTrPhoto", Long.valueOf(_trPhotoId.getText().toString()));
 
-            intentToTreatmentPhoto.putExtra("_idTrPhoto", Long.valueOf(_trPhotoId.getText().toString()));
+                    intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+                    intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
 
-            intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
-            intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+                    intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
+                    intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
+                    intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());
 
-            intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
-            intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
-            intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());
-
-            myContext.startActivity(intentToTreatmentPhoto);
+                    myContext.startActivity(intentToTreatmentPhoto);
+                }
+            }, 100);
         }
     }
 }
