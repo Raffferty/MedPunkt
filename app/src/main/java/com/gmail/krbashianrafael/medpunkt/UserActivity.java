@@ -217,7 +217,6 @@ public class UserActivity extends AppCompatActivity
             txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
 
             tabletFrmBack = findViewById(R.id.tablet_frm_back);
-            Log.d("xxx", "tabletFrmBack = " + tabletFrmBack);
             tabletFrmBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -290,7 +289,6 @@ public class UserActivity extends AppCompatActivity
         textViewNoUserPhoto = findViewById(R.id.no_user_photo);
 
         imagePhoto = findViewById(R.id.image_photo);
-        //imagePhoto.setMaxWidth(400);
 
         if (!userPhotoUri.equals("No_Photo")) {
             // если есть файл фото для загрузки, то грузим
@@ -741,9 +739,16 @@ public class UserActivity extends AppCompatActivity
 
         onSavingOrUpdatingOrDeleting = true;
 
+        // если ничего не менялось
         if (userHasNotChanged() && !newUser) {
 
-            hideSoftInput();
+            // то сразу выходим
+            goToUsersActivity();
+            onSavingOrUpdatingOrDeleting = false;
+            return true;
+
+            // далее если это телефон
+            /*hideSoftInput();
 
             focusHolder.requestFocus();
 
@@ -753,20 +758,14 @@ public class UserActivity extends AppCompatActivity
             imagePhoto.setClickable(false);
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
-            // если это телефон (а не Планшет), то обновляем меню
-            if (!HomeActivity.isTablet) {
-                invalidateOptionsMenu();
-            } else {
-                // если это Планшет, то делаем видимым "удалить" и невидимым "сохранить"
-                tabletFrmDelete.setVisibility(View.VISIBLE);
-                tabletFrmSave.setVisibility(View.GONE);
-            }
+            invalidateOptionsMenu();
 
             fab.startAnimation(fabShowAnimation);
 
-            onSavingOrUpdatingOrDeleting = false;
+            onSavingOrUpdatingOrDeleting = false;*/
 
         } else {
+            // если что-то менялось
             saveOrUpdateUser();
         }
 
@@ -968,15 +967,18 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void afterSaveUser() {
-        if (goBack) {
-            goToUsersActivity();
-        } else {
-            // если это телефон, то идем в DiseasesActivity
-            if (!HomeActivity.isTablet) {
-                goToDiseasesActivity();
+        if (!HomeActivity.isTablet) {
+            // если это телефон
+            if (goBack) {
+                goToUsersActivity();
             } else {
-                // если это планшет, то остаемся на месте
-                editUser = true;
+                goToDiseasesActivity();
+            }
+        } else {
+            // если это планшет, то идем в UsersActivity
+            goToUsersActivity();
+
+                /*editUser = true;
                 newUser = false;
                 userHasChangedPhoto = false;
 
@@ -989,14 +991,16 @@ public class UserActivity extends AppCompatActivity
                 imagePhoto.setClickable(false);
                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
-                onSavingOrUpdatingOrDeleting = false;
-            }
+                onSavingOrUpdatingOrDeleting = false;*/
         }
     }
 
     private void afterUpdateUser() {
+        // идем в UsersActivity
+        goToUsersActivity();
+
         // если была нажата стрелка "обратно" - идем обратно
-        if (goBack) {
+        /*if (goBack) {
             goToUsersActivity();
         } else {
             editUser = true;
@@ -1018,7 +1022,7 @@ public class UserActivity extends AppCompatActivity
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
             onSavingOrUpdatingOrDeleting = false;
-        }
+        }*/
     }
 
     // проверка на изменения пользователя

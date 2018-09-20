@@ -170,21 +170,21 @@ public class TabletMainActivity extends AppCompatActivity
                 if (!tabletUsersBlurFrame.isClickable()) {
 
                     tabletUsersBlurFrame.setClickable(true);
-                    tabletUsersBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                    tabletUsersBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_blue));
                 }
                 break;
             case TABLET_DISEASES_FRAGMENT:
                 if (!tabletDiseasesBlurFrame.isClickable()) {
 
                     tabletDiseasesBlurFrame.setClickable(true);
-                    tabletDiseasesBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                    tabletDiseasesBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_blue));
                 }
                 break;
             case TABLET_TREATMENT_FRAGMENT:
                 if (!tableTreatmentBlurFrame.isClickable()) {
 
                     tableTreatmentBlurFrame.setClickable(true);
-                    tableTreatmentBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_gray));
+                    tableTreatmentBlurFrame.setBackgroundColor(getResources().getColor(R.color.my_blue));
                 }
                 break;
             default:

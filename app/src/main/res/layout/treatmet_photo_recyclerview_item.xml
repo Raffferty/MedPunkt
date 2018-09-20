@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recycler_treatment_photo_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/shadow"
-    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <LinearLayout
+        android:id="@+id/recycler_treatment_photo_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/photo_item_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:drawableBottom="@drawable/ic_camera_alt_blue_24dp"
+            android:layout_marginStart="8dp"
+            android:drawableTop="@drawable/ic_camera_alt_blue_24dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
             android:textColor="@color/colorPrimaryDark"
             tools:text="01.02.2018" />
 
         <TextView
             android:id="@+id/recycler_photo_item_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="@color/colorAccent"
             tools:text="Рентген" />
-
     </LinearLayout>
 
     <TextView

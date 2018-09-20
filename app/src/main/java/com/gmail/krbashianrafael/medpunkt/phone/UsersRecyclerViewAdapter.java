@@ -3,6 +3,7 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -30,13 +32,15 @@ import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLE
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    //private UsersActivity mContext;
     private Context mContext;
     private ArrayList<UserItem> usersList;
 
+    private static long selected_user_id = 0;
+
     public UsersRecyclerViewAdapter(Context context) {
         mContext = context;
-        this.usersList = new ArrayList<>();
+        usersList = new ArrayList<>();
+        selected_user_id = 0;
     }
 
     public ArrayList<UserItem> getUsersList() {
@@ -64,14 +68,29 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         ((UserHolder) holder).userBirthDate.setText(userBirthDate);
         ((UserHolder) holder).userName.setText(userName);
 
+        // если это планшет, то выделенных элемент будет красится в зеленый цвет,
+        // а остальные в TRANSPARENT
+        if (HomeActivity.isTablet) {
+            // если только один элемент пользователя
+            // то его _id и будет selected
+            if (usersList.size() == 1) {
+                selected_user_id = _userId;
+            }
+            if (selected_user_id == _userId) {
+                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.light_green));
+            } else {
+                ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
+            }
+        }
+
         File imgFile = new File(userPhotoUri);
         if (imgFile.exists()) {
-
             GlideApp.with(mContext)
                     .load(userPhotoUri)
-                    .override(90, 90)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+                    .centerCrop()
+                    .signature(new ObjectKey(imgFile.lastModified()))   // signature, чтоб при обновлении фото грузилось из файла, а не из кеша
+                    .override(120, 120)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .error(R.drawable.ic_camera_alt_gray_24dp)
                     .transition(DrawableTransitionOptions.withCrossFade(300))
                     .into(((UserHolder) holder).userImage);
@@ -83,9 +102,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             GlideApp.with(mContext).clear(((UserHolder) holder).userImage);
 
             // ставим в userImage R.drawable.ic_camera_alt_gray_24dp
-            GlideApp.with(mContext).
-                    load(R.drawable.ic_camera_alt_gray_24dp).
-                    into(((UserHolder) holder).userImage);
+            GlideApp.with(mContext)
+                    .load(R.drawable.ic_camera_alt_gray_24dp)
+                    .centerInside()
+                    .into(((UserHolder) holder).userImage);
         }
     }
 
@@ -96,7 +116,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        //UsersActivity myContext;
         Context myContext;
 
         TextView _userId;
@@ -105,6 +124,8 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView userName;
 
         ImageView userImage;
+
+        LinearLayout container;
         LinearLayout usersItem;
         FrameLayout userEdit;
 
@@ -117,9 +138,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             userPhotoUri = itemView.findViewById(R.id.user_item_photo_uri);
             userBirthDate = itemView.findViewById(R.id.recycler_users_item_date);
             userName = itemView.findViewById(R.id.recycler_users_item_name);
-
             userImage = itemView.findViewById(R.id.user_image);
 
+            container = itemView.findViewById(R.id.LLcontainer);
             usersItem = itemView.findViewById(R.id.recycler_users_item);
             userEdit = itemView.findViewById(R.id.user_item_edit);
 
@@ -128,16 +149,20 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         @Override
-        public void onClick(View view) {
+        public void onClick(final View view) {
             if (myContext == null) {
                 return;
             }
 
             final long user_id_inEdit = Long.valueOf(_userId.getText().toString());
 
-            // если нажали на кружок с буквой i
-            // с небольшим deley 100 мс (для ripple эффекта) открываем UserActivity
+            // если нажали на кружок с буквой i (информация по пользователю)
             if (view.getId() == R.id.user_item_edit) {
+
+                // закрашиваем выделенный элемент (i) в голубой
+                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
+
+                // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -155,11 +180,23 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         myContext.startActivity(userEditIntent);
                     }
-                }, 100);
+                }, 250);
+
+                // через 500 мс закрашиваем выделенный элемент (i) в TRANSPARENT
+                // чтоб по возвращении он не был голубым
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }, 500);
 
             } else {
+                // если нажат сам элемент с именем пользователя
                 // если это телефон
                 if (!HomeActivity.isTablet) {
+                    container.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
+
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -169,12 +206,27 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                             myContext.startActivity(userDiseasIntent);
                         }
-                    }, 100);
+                    }, 250);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            container.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                    }, 500);
+
                 } else {
-                    //если это планшет
-                    if (myContext instanceof TabletMainActivity) {
+                    //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
+                    if (selected_user_id != user_id_inEdit) {
                         TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
 
+                        // устанавливаем новое значение для selected_user_id
+                        // и заново отрисовываем все видимые элементы в usersRecyclerView
+                        // чтоб закрасить выделенный элемент
+                        selected_user_id = user_id_inEdit;
+                        tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
+
+                        // далее отрисовываем нужные поля в фрагментах
                         tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
                         if (HomeActivity.iAmDoctor) {
                             tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.patients_title_activity);
@@ -184,7 +236,8 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                         tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
-                        tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(myContext.getResources().getColor(R.color.paper));
+                        tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(myContext.getResources().getColor(R.color.light_green));
+                        DiseaseRecyclerViewAdapter.selected_disease_id = 0;
                         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
                     }

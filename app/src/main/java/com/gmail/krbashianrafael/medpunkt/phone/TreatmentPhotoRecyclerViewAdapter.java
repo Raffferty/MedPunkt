@@ -2,12 +2,14 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.FullscreenPhotoActivity;
@@ -66,6 +68,8 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         Context myContext;
 
+        LinearLayout treatmentPhotoItem;
+
         TextView _trPhotoId;
         TextView _userId;
         TextView _diseaseId;
@@ -85,14 +89,18 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             itemDate = itemView.findViewById(R.id.photo_item_date);
             itemName = itemView.findViewById(R.id.recycler_photo_item_name);
 
-            itemView.setOnClickListener(this);
+            treatmentPhotoItem = itemView.findViewById(R.id.recycler_treatment_photo_item);
+
+            treatmentPhotoItem.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View view) {
+        public void onClick(final View view) {
             if (myContext == null) {
                 return;
             }
+
+            view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -110,7 +118,14 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
                     myContext.startActivity(intentToTreatmentPhoto);
                 }
-            }, 100);
+            }, 250);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                }
+            }, 500);
         }
     }
 }

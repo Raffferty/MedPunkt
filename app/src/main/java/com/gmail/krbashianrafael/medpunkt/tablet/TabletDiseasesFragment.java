@@ -55,7 +55,7 @@ public class TabletDiseasesFragment extends Fragment
     public static boolean mScrollToStart = false;
 
     private RecyclerView recyclerDiseases;
-    protected DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
+    public DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     private static final int TABLET_DISEASES_LOADER = 1001;
 
@@ -157,19 +157,6 @@ public class TabletDiseasesFragment extends Fragment
 
         // устанавливаем адаптер для RecyclerView
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
-        /*if (TabletMainActivity.diseaseInserted ||
-                TabletMainActivity.diseaseUpdated ||
-                TabletMainActivity.diseaseDeleted) {
-
-            initDiseasesLoader();
-        }*/
     }
 
     public void initDiseasesLoader() {
@@ -340,7 +327,7 @@ public class TabletDiseasesFragment extends Fragment
             String diseaseDate = myData.get(0).getDiseaseDate();
             String treatmentText = myData.get(0).getTreatmentText();
 
-            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.paper));
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.light_green));
             tabletMainActivity.tabletTreatmentFragment.set_idDisease(_diseaseId);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(_diseaseUserId);
             tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName);

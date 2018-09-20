@@ -4,19 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/shadow"
-    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <LinearLayout
         android:id="@+id/recycler_diseases_item"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
-        android:background="?selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/disease_item_date"
@@ -32,31 +29,12 @@
             android:id="@+id/disease_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="@color/colorPrimaryDark"
             tools:text="Грипп" />
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/disease_item_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="?selectableItemBackgroundBorderless"
-        tools:visibility="visible">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/circle_back"
-            android:src="@drawable/ic_info_outline_white_48dp"
-            tools:ignore="ContentDescription" />
-
-    </FrameLayout>
 
     <TextView
         android:id="@+id/disease_item_id"

@@ -47,7 +47,7 @@ public class TabletUsersFragment extends Fragment
     protected TextView txtAddUsers;
     protected FloatingActionButton fabAddUser;
     private RecyclerView recyclerUsers;
-    private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
+    public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
@@ -304,7 +304,7 @@ public class TabletUsersFragment extends Fragment
 
             // готовим tabletDiseasesTitle для рамещения в нем имени пользователя
             // закрашиваем Background в цвет paper
-            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.paper));
+            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.light_green));
 
             // прописываем туда имя пользоватлея
             tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName);
