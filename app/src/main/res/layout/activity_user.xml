@@ -64,7 +64,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_photo">
 
-        <android.support.design.widget.TextInputEditText
+        <!-- это кастомный TextInputEditText
+            у которого клавиатура не перекрывает текст
+            и, при сворачивании клавиатуры EditText выходит из фокуса -->
+        <com.gmail.krbashianrafael.medpunkt.phone.MyTextInputEditText
             android:id="@+id/editText_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -268,7 +268,6 @@ public class TabletUsersFragment extends Fragment
             // если нет пользователей, то чистим DiseasesFragment
             tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
@@ -303,9 +302,6 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
             // готовим tabletDiseasesTitle для рамещения в нем имени пользователя
-            // закрашиваем Background в цвет paper
-            tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.light_green));
-
             // прописываем туда имя пользоватлея
             tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName);
 
@@ -337,8 +333,6 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
-                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
-
             } else if (TabletMainActivity.userUpdated &&
                     TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {
                 // если пользовоатлеь, который был в DiseasesFragment обновился (поменял имя...)
@@ -357,9 +351,6 @@ public class TabletUsersFragment extends Fragment
                 // то очищаем DiseasesFragment
                 // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
-                Log.d("yyy", "TuserDeleted");
-
-
                 if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
                 } else {
@@ -376,9 +367,6 @@ public class TabletUsersFragment extends Fragment
                 // в методе tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
                 // происходит tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-                tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
-                //tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
-                //tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
                 // после удаления пользователя и загрузки данных в tabletUsersFragment
                 // загружаем данные в tabletDiseasesFragment с помощю tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();

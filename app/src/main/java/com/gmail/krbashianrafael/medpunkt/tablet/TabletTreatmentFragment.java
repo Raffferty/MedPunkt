@@ -361,6 +361,7 @@ public class TabletTreatmentFragment extends Fragment
 
     public void setTextDateOfDisease(String textDateOfDisease) {
         this.textDateOfDisease = textDateOfDisease;
+        editTextDateOfDisease.setText(textDateOfDisease);
     }
 
     public void setTextTreatment(String textTreatment) {

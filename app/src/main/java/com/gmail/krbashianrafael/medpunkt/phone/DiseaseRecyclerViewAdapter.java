@@ -170,8 +170,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                     tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-
-                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(myContext.getResources().getColor(R.color.light_green));
                     tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
                     tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
                     tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());

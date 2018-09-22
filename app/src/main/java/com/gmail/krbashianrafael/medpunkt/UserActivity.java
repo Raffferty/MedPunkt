@@ -38,7 +38,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -623,6 +622,19 @@ public class UserActivity extends AppCompatActivity
                 });
 
         onLoading = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // если клавиатура была открыта для редактирования имени пользователя или даты, то она снова откроется
+        // если нет - то не откроется
+        if (editTextName.hasFocus() || editTextDate.hasFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        } else {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
     }
 
     @Override

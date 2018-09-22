@@ -13,14 +13,14 @@
         android:layout_height="wrap_content"
         android:background="@color/colorFab"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.32" />
+        app:layout_constraintGuide_percent="0.30" />
 
     <android.support.constraint.Guideline
         android:id="@+id/ver_right_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.60" />
 
     <TextView
         android:id="@+id/tablet_users_title"
@@ -68,14 +68,14 @@
         android:id="@+id/tablet_diseases_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/colorPrimary"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:maxLines="1"
         android:paddingEnd="2dp"
         android:paddingStart="2dp"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
-        android:textColor="@color/colorFab"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
         app:layout_constraintEnd_toEndOf="@+id/tablet_diseases_frame"
@@ -113,14 +113,14 @@
         android:id="@+id/tablet_treatment_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/colorPrimary"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:maxLines="1"
         android:paddingEnd="2dp"
         android:paddingStart="2dp"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
-        android:textColor="@color/colorFab"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_diseases_title"
         app:layout_constraintEnd_toEndOf="@+id/tablet_treatment_frame"

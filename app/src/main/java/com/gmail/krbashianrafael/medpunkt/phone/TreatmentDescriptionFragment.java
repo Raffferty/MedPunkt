@@ -1,8 +1,8 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -80,15 +80,21 @@ public class TreatmentDescriptionFragment extends Fragment {
                 mTabletMainActivity.tabletTreatmentFragment.initTreatmentDescriptionFragment();
             }
 
-            // если фрагмент в окне TabletMainActivity,
-            // то меняем цвет и иконку fabEditTreatmentDescripton на "информационную"
-            /*fabEditTreatmentDescripton.setBackgroundTintList(
-                    ColorStateList.valueOf(mTabletMainActivity.getResources().getColor(R.color.colorPrimary))
-            );
+            fabHideAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_hide);
+            fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
 
-            fabEditTreatmentDescripton.setImageDrawable(
-                    mTabletMainActivity.getResources().getDrawable(R.drawable.ic_info_outline_white_48dp)
-            );*/
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
 
             editTextTreatment.setText(mTabletMainActivity.tabletTreatmentFragment.textTreatment);
 
@@ -96,7 +102,37 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    Intent treatmentIntent = new Intent(mTabletMainActivity, TreatmentActivity.class);
+                    fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
+
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                            mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
+
+                            // на планшете показываем клавиатуру
+                            InputMethodManager imm = (InputMethodManager)
+                                    mTabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                            }
+
+                            mTabletMainActivity.tabletTreatmentFragment.editDisease = true;
+                            mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                            editTextTreatment.setFocusable(true);
+                            editTextTreatment.setFocusableInTouchMode(true);
+                            editTextTreatment.setCursorVisible(true);
+                            editTextTreatment.requestFocus();
+                            editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+
+                            mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+                            mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.GONE);
+                        }
+                    }, 500);
+
+                    /*Intent treatmentIntent = new Intent(mTabletMainActivity, TreatmentActivity.class);
                     treatmentIntent.putExtra("_idDisease", mTabletMainActivity.tabletTreatmentFragment._idDisease);
                     treatmentIntent.putExtra("_idUser", mTabletMainActivity.tabletTreatmentFragment._idUser);
                     treatmentIntent.putExtra("editDisease", true);
@@ -104,7 +140,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                     treatmentIntent.putExtra("diseaseDate", mTabletMainActivity.tabletTreatmentFragment.textDateOfDisease);
                     treatmentIntent.putExtra("textTreatment", mTabletMainActivity.tabletTreatmentFragment.textTreatment);
 
-                    mTabletMainActivity.startActivity(treatmentIntent);
+                    mTabletMainActivity.startActivity(treatmentIntent);*/
                 }
             });
 
@@ -181,8 +217,8 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                     // оставляем только страницу редактирования описания лечения
                     // страницу с фото убираем
-                    mTreaymentActivity.categoryAdapter.setPagesCount(1);
-                    mTreaymentActivity.viewPager.setAdapter(mTreaymentActivity.categoryAdapter);
+                    /*mTreaymentActivity.categoryAdapter.setPagesCount(1);
+                    mTreaymentActivity.viewPager.setAdapter(mTreaymentActivity.categoryAdapter);*/
                     mTreaymentActivity.tabLayout.setVisibility(View.GONE);
 
                     editTextTreatment.setFocusable(true);

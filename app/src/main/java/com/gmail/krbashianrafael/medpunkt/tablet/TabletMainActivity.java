@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -66,14 +69,6 @@ public class TabletMainActivity extends AppCompatActivity
 
         firstLoad = true;
 
-        /*userInserted = true;
-        userUpdated = true;
-        userDeleted = true;
-
-        diseaseInserted = true;
-        diseaseUpdated = true;
-        diseaseDeleted = true;*/
-
         tabletUsersFragment = (TabletUsersFragment)
                 getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
 
@@ -102,13 +97,23 @@ public class TabletMainActivity extends AppCompatActivity
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
         tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // если клавиатура была открыта для редактирования названия заболевания или текста лечения, то она снова откроется
+        // если нет - то не откроется
+        if (tabletTreatmentFragment != null && tabletTreatmentFragment.treatmentDescriptionFragment != null) {
+            if (tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.hasFocus() ||
+                    tabletTreatmentFragment.editTextDiseaseName.hasFocus()) {
+
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            } else {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            }
+        }
 
         boolean usersLoaded = false;
 
@@ -154,6 +159,20 @@ public class TabletMainActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // убираем клавиатуру
+        View viewToHide = this.getCurrentFocus();
+        if (viewToHide != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
+            }
+        }
+    }
+
 
     // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")

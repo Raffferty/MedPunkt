@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- это кастомный EditText у которого клавиатура не перекрывает текст -->
+    <!-- это кастомный EditText у которого клавиатура не перекрывает текст
+     и, при сворачивании клавиатуры EditText выходит из фокуса -->
     <com.gmail.krbashianrafael.medpunkt.phone.MyEditText
         android:id="@+id/editTextTreatment"
         android:layout_width="0dp"

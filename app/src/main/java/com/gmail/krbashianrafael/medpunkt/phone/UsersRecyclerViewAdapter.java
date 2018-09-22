@@ -236,7 +236,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                         tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
-                        tabletMainActivity.tabletDiseasesTitle.setBackgroundColor(myContext.getResources().getColor(R.color.light_green));
                         DiseaseRecyclerViewAdapter.selected_disease_id = 0;
                         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);

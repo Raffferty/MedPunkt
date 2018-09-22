@@ -271,9 +271,6 @@ public class TabletDiseasesFragment extends Fragment
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myDataSize == 0) {
-
-            Log.d("yyy","Tdisease myDataSize == 0");
-
             if (_idUser != 0) {
                 new Handler(Looper.getMainLooper()).
                         postDelayed(new Runnable() {
@@ -292,20 +289,12 @@ public class TabletDiseasesFragment extends Fragment
             tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
             // если нет пользователей, то чистим TreatmentFragment
-            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
             tabletMainActivity.tabletTreatmentTitle.setText("");
 
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
 
-            Log.d("xxx", "tabletMainActivity = " + tabletMainActivity);
-            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment = " + tabletMainActivity.tabletTreatmentFragment);
-            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment = " + tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment);
-            Log.d("xxx", "tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton = " +
-                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton);
-
             tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-
 
         } else if (myDataSize == 1) {
 
@@ -327,7 +316,6 @@ public class TabletDiseasesFragment extends Fragment
             String diseaseDate = myData.get(0).getDiseaseDate();
             String treatmentText = myData.get(0).getTreatmentText();
 
-            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.light_green));
             tabletMainActivity.tabletTreatmentFragment.set_idDisease(_diseaseId);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(_diseaseUserId);
             tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName);
@@ -354,7 +342,6 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
-                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
                 tabletMainActivity.tabletTreatmentTitle.setText("");
 
                 tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
@@ -390,7 +377,6 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
-                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
                 tabletMainActivity.tabletTreatmentTitle.setText("");
 
                 tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
