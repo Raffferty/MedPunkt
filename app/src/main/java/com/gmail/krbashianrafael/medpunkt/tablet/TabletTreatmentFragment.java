@@ -1,7 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -25,7 +24,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -326,13 +324,16 @@ public class TabletTreatmentFragment extends Fragment
     }
 
     private void hideSoftInput() {
-        View viewToHide = tabletMainActivity.getCurrentFocus();
+
+        tabletMainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        /*View viewToHide = tabletMainActivity.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) tabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }
+        }*/
     }
 
     // SpannableString с картикной для элеменов меню

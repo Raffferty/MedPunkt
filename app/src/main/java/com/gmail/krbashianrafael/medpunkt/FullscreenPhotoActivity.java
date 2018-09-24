@@ -37,7 +37,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -585,6 +584,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // если клавиатура была открыта для редактирования названия заболевания, то она снова откроется
+        // если нет - то не откроется
+        if (editTextPhotoDescription.hasFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        } else {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mOrientationListener.disable();
@@ -811,13 +822,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     // метод для скрытия клавиатуры
     private void hideSoftInput() {
-        View viewToHide = FullscreenPhotoActivity.this.getCurrentFocus();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        /*View viewToHide = FullscreenPhotoActivity.this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }
+        }*/
     }
 
     @Override
@@ -891,6 +905,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         myHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                hideSoftInput();
                 finish();
             }
         }, UI_ANIMATION_DELAY);

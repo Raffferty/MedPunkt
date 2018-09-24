@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -179,6 +180,8 @@ public class DiseasesActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         textViewAddDisease.setVisibility(View.INVISIBLE);

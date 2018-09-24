@@ -148,8 +148,24 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
                 if (selected_disease_id != disease_id_inEdit) {
-
                     TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+
+
+                    if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+                        tabletMainActivity.tabletTreatmentCancel.performClick();
+                    } else {
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                                tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                        );
+                    }
+
+                    tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
+                    tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
+                    tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
+                    tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
+                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
+
+                    TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
 
                     // устанавливаем новое значение для selected_disease_id
                     // и заново отрисовываем все видимые элементы в diseaseRecyclerView
@@ -163,20 +179,12 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
 
-                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
-                    );
-
                     tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                     tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-                    tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
-                    tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
-                    tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
-                    tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
-                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
-
-                    TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                    );*/
                 }
             }
         }

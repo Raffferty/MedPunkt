@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
@@ -49,7 +51,8 @@ public class TabletDiseasesFragment extends Fragment
 
     protected FloatingActionButton fabAddDisease;
 
-    private Animation fabShowAnimation;
+    private Animation fabHideAnimation;
+    public Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
     public static boolean mScrollToStart = false;
@@ -96,13 +99,58 @@ public class TabletDiseasesFragment extends Fragment
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent treatmentIntent = new Intent(tabletMainActivity, TreatmentActivity.class);
+
+                TabletMainActivity.newDiseaseAndTreatment = true;
+                TabletMainActivity.diseaseAndTreatmentInEdit = true;
+
+                fabAddDisease.startAnimation(fabHideAnimation);
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabHideAnimation);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                        tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
+
+                        // на планшете показываем клавиатуру
+                        InputMethodManager imm = (InputMethodManager)
+                                tabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        }
+
+                        TabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+                        TabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+                        TabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+
+                        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setText("");
+                        tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setText(getString(R.string.disease_date));
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText("");
+
+                        tabletMainActivity.tabletTreatmentFragment.editDisease = true;
+                        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+
+                        tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+                        //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
+                        tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                        //tabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
+                    }
+                }, 600);
+
+                /*Intent treatmentIntent = new Intent(tabletMainActivity, TreatmentActivity.class);
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
                 treatmentIntent.putExtra("editDisease", true);
                 treatmentIntent.putExtra("diseaseName", "");
                 treatmentIntent.putExtra("textTreatment", "");
-                startActivity(treatmentIntent);
+                startActivity(treatmentIntent);*/
             }
         });
 
@@ -125,6 +173,22 @@ public class TabletDiseasesFragment extends Fragment
         tabletMainActivity = (TabletMainActivity) getActivity();
 
         fadeInAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fadein);
+
+        fabHideAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fab_hide);
+        fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fabAddDisease.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
 
         fabShowAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -367,7 +431,7 @@ public class TabletDiseasesFragment extends Fragment
                 // если заболевание, которое было в TreatmentFragment удалилиось
                 // то очищаем TreatmentFragment и предлагаем сдеалть выбор заболевани для отображения в TreatmentFragment
 
-                Log.d("yyy","TdiseaseDeleted");
+                Log.d("yyy", "TdiseaseDeleted");
 
 
                 txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);

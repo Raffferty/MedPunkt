@@ -503,6 +503,16 @@ public class TreatmentActivity extends AppCompatActivity
                 return true;
             case R.id.action_save:
 
+                // скручиваем клавиатуру (эдесь срабатывает этот метод)
+                // hideSoftInput(); не срабатывает
+                View viewToHide = this.getCurrentFocus();
+                if (viewToHide != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
+                    }
+                }
+
                 // флаг, чтоб повторный клик не работал,
                 // пока идет сохранения
                 if (onSavingOrUpdatingOrDeleting) {
@@ -510,9 +520,6 @@ public class TreatmentActivity extends AppCompatActivity
                 }
 
                 onSavingOrUpdatingOrDeleting = true;
-
-                // скручиваем клавиатуру
-                hideSoftInput();
 
                 if (newDisease) {
                     actionBar.setTitle(DiseasesActivity.textUserName);
@@ -571,6 +578,7 @@ public class TreatmentActivity extends AppCompatActivity
 
             default:
                 super.onOptionsItemSelected(item);
+                hideSoftInput();
                 finish();
                 return true;
         }
@@ -592,6 +600,7 @@ public class TreatmentActivity extends AppCompatActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        hideSoftInput();
                         finish();
                     }
                 };
@@ -776,13 +785,15 @@ public class TreatmentActivity extends AppCompatActivity
     }
 
     private void hideSoftInput() {
-        View viewToHide = this.getCurrentFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        /*View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }
+        }*/
     }
 
     private void saveDiseaseAndTreatmentToDataBase() {

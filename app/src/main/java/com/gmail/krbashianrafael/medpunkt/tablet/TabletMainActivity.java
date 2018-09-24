@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -46,17 +48,20 @@ public class TabletMainActivity extends AppCompatActivity
     // это поле берется из DiseaseURecyclerViewAdapter
     public static long disease_IdInEdit = 0;
 
+
+    public static String tempTextDiseaseName, tempTextTreatment, tempTextDateOfTreatment = "";
+
+    public static boolean diseaseAndTreatmentInEdit = false;
+    public static boolean newDiseaseAndTreatment = false;
+
+
     public TabletUsersFragment tabletUsersFragment;
     public TabletDiseasesFragment tabletDiseasesFragment;
     public TabletTreatmentFragment tabletTreatmentFragment;
 
-    public TextView tabletUsersTitle;
-    public TextView tabletDiseasesTitle;
-    public TextView tabletTreatmentTitle;
-
-    private FrameLayout tabletUsersBlurFrame;
-    private FrameLayout tabletDiseasesBlurFrame;
-    private FrameLayout tableTreatmentBlurFrame;
+    public LinearLayout LLtabletTreatmentCancelOrSave;
+    public TextView tabletUsersTitle, tabletDiseasesTitle, tabletTreatmentTitle, tabletTreatmentCancel, tabletTreatmentSave, tabletTreatmentDelete;
+    private FrameLayout tabletUsersBlurFrame, tabletDiseasesBlurFrame, tableTreatmentBlurFrame;
 
     public static final int TABLET_USERS_FRAGMENT = 1;
     public static final int TABLET_DISEASES_FRAGMENT = 2;
@@ -68,6 +73,8 @@ public class TabletMainActivity extends AppCompatActivity
         setContentView(R.layout.activity_tablet_main);
 
         firstLoad = true;
+        diseaseAndTreatmentInEdit = false;
+        newDiseaseAndTreatment = false;
 
         tabletUsersFragment = (TabletUsersFragment)
                 getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
@@ -93,6 +100,72 @@ public class TabletMainActivity extends AppCompatActivity
 
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
         tabletTreatmentTitle = findViewById(R.id.tablet_treatment_title);
+
+        LLtabletTreatmentCancelOrSave = findViewById(R.id.tablet_treatment_cancel_or_save);
+        tabletTreatmentCancel = findViewById(R.id.tablet_treatment_cancel);
+        tabletTreatmentSave = findViewById(R.id.tablet_treatment_save);
+        tabletTreatmentDelete = findViewById(R.id.tablet_treatment_delete);
+
+        tabletTreatmentCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // скручиваем клавиатуру (эдесь срабатывает этот метод)
+                // hideSoftInput(); не срабатывает
+                View viewToHide = TabletMainActivity.this.getCurrentFocus();
+                if (viewToHide != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
+                    }
+                }
+
+                LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+
+                tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
+                tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
+
+                tabletTreatmentFragment.editDisease = false;
+                tabletTreatmentFragment.editTextDiseaseName.setEnabled(false);
+                tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
+                tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
+                tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+                //tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.requestFocus();
+
+
+                tabletTreatmentFragment.editTextDiseaseName.setText(tempTextDiseaseName);
+                tabletTreatmentFragment.editTextDateOfDisease.setText(tempTextDateOfTreatment);
+                tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText(tempTextTreatment);
+
+
+                tabletDiseasesFragment.fabAddDisease.startAnimation(tabletDiseasesFragment.fabShowAnimation);
+
+                if (!newDiseaseAndTreatment) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabletTreatmentDelete.setVisibility(View.GONE);
+                        }
+                    }, 200);
+                }
+
+                diseaseAndTreatmentInEdit = false;
+                newDiseaseAndTreatment = false;
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                                tabletTreatmentFragment.fabShowAnimation
+                        );
+                    }
+                }, 600);
+
+
+            }
+        });
+
 
         tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);

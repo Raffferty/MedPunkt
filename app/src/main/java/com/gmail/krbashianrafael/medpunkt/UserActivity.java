@@ -45,7 +45,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -630,7 +629,7 @@ public class UserActivity extends AppCompatActivity
 
         // если клавиатура была открыта для редактирования имени пользователя или даты, то она снова откроется
         // если нет - то не откроется
-        if (editTextName.hasFocus() || editTextDate.hasFocus()) {
+        if (editTextName.hasFocus()) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         } else {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -1052,6 +1051,8 @@ public class UserActivity extends AppCompatActivity
         toDiseasesIntent.putExtra("UserName", textUserName);
         startActivity(toDiseasesIntent);
 
+        hideSoftInput();
+
         finish();
     }
 
@@ -1061,13 +1062,16 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void hideSoftInput() {
-        View viewToHide = this.getCurrentFocus();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        /*View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }
+        }*/
     }
 
     private void saveUserToDataBase() {

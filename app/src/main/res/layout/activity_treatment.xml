@@ -57,7 +57,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textPersonName|textCapWords|textMultiLine"
-            android:paddingTop="12dp"
+            android:paddingTop="20dp"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
