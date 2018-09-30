@@ -26,7 +26,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context mContext;
     private ArrayList<DiseaseItem> diseaseList;
 
-    public static long selected_disease_id = 0;
+    static long selected_disease_id = 0;
 
     public DiseaseRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -148,9 +148,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
                 if (selected_disease_id != disease_id_inEdit) {
-                    TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+                    final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
 
-
+                    // если описание заболевание с стадии редактирования,
+                    // то сначала делается Cancel
                     if (TabletMainActivity.diseaseAndTreatmentInEdit) {
                         tabletMainActivity.tabletTreatmentCancel.performClick();
                     } else {
@@ -181,10 +182,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                     tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
-
-                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
-                    );*/
                 }
             }
         }

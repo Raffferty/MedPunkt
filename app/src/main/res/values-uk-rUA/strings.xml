@@ -10,6 +10,10 @@
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
 
+    <string name="tablet_save">ЗБЕРЕГТИ</string>
+    <string name="tablet_delete_disease">ВДАЛИТИ ЗАХВОРЮВАННЯ</string>
+    <string name="tablet_cancel">СКАСУВАТИ</string>
+
     <string name="dialog_msg_unsaved_changes">Зберегти зміни?</string>
     <string name="dialog_yes">Так</string>
     <string name="dialog_no">Ні</string>

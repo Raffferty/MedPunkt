@@ -231,12 +231,15 @@ public class TreatmentActivity extends AppCompatActivity
                         mDay = c.get(Calendar.DAY_OF_MONTH);
                     }
 
-                    new SpinnerDatePickerDialogBuilder()
+                    DatePickerDialog spinnerDatePickerDialog = new SpinnerDatePickerDialogBuilder()
                             .context(TreatmentActivity.this)
                             .callback(TreatmentActivity.this)
                             .spinnerTheme(R.style.NumberPickerStyle)
                             .defaultDate(mYear, mMonth, mDay)
-                            .build().show();
+                            .build();
+
+                    spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
+                    spinnerDatePickerDialog.show();
                 } else {
                     // в остальных случаях пользуемся классом DatePickerFragment
                     DatePickerFragment newFragment = new DatePickerFragment();
@@ -628,6 +631,7 @@ public class TreatmentActivity extends AppCompatActivity
         });
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -657,6 +661,7 @@ public class TreatmentActivity extends AppCompatActivity
         });
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -1079,12 +1084,9 @@ public class TreatmentActivity extends AppCompatActivity
                 // если заболевание не удалилось из базы и фото не были удалены
                 treatmentActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(treatmentActivity, R.string.disease_not_deleted, Toast.LENGTH_LONG).show();
-            } else if (result == 0) {
-                // если не было снимков для удаления
-                treatmentActivity.goToDiseasesActivity();
             } else {
-                // result == 1
-                // заболевание удалилось и снимки удалены (или отсутствуют)
+                // result == 0 или result == 1
+                // если не было снимков для удаления или заболевание удалилось и снимки удалены (или отсутствуют)
                 treatmentActivity.goToDiseasesActivity();
             }
         }

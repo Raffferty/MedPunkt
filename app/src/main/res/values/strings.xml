@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- app -->
     <string name="greeting">MedPunkt
         \n\nhelps you to remember when and what were you,
@@ -10,6 +10,10 @@
     <string name="save">Save\u2000</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+
+    <string name="tablet_save">SAVE</string>
+    <string name="tablet_delete_disease">DELETE DISEASE</string>
+    <string name="tablet_cancel" tools:ignore="ButtonCase">CANCEL</string>
 
     <string name="dialog_msg_unsaved_changes">Save changes?</string>
     <string name="dialog_yes">Yes</string>
@@ -90,12 +94,12 @@
     <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
 
     <!-- do not translate -->
-    <string name="app_name">\u2000MedPunkt</string>
-    <string name="title_activity_home">\tMedPunkt</string>
-    <string name="txt_no_title">No Title</string>
-    <string name="path_to_treatment_photos">/treatment_photos</string>
-    <string name="treatment_photo_nameStart">trImage-</string>
-    <string name="treatment_photo_nameEnd">.jpg</string>
-    <string name="path_to_users_photos">/users_photos/</string>
-    <string name="user_photo_nameEnd">-usrImage.jpg</string>
+    <string name="app_name" translatable="false">\u2000MedPunkt</string>
+    <string name="title_activity_home" translatable="false">\tMedPunkt</string>
+    <string name="txt_no_title" translatable="false">No Title</string>
+    <string name="path_to_treatment_photos" translatable="false">/treatment_photos</string>
+    <string name="treatment_photo_nameStart" translatable="false">trImage-</string>
+    <string name="treatment_photo_nameEnd" translatable="false">.jpg</string>
+    <string name="path_to_users_photos" translatable="false">/users_photos/</string>
+    <string name="user_photo_nameEnd" translatable="false">-usrImage.jpg</string>
 </resources>

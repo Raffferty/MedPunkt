@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/my_blue"
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
     <android.support.constraint.Guideline
@@ -126,7 +127,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:inputType="none"
-                tools:ignore="LabelFor" />
+                tools:ignore="Autofill,LabelFor" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guidelineEnd"

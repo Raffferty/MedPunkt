@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -414,6 +415,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         frm_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                hideSoftInput();
+
                 if (onSavingOrUpdatingOrDeleting) {
                     return;
                 }
@@ -421,9 +425,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 onSavingOrUpdatingOrDeleting = true;
 
                 if (photoAndDescriptionHasNotChanged() && !newTreatmentPhoto) {
-
-                    hideSoftInput();
-
                     editTreatmentPhoto = false;
                     mDescriptionView.setVisibility(View.INVISIBLE);
                     editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
@@ -495,12 +496,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     }
 
                     // используем стороннюю библиотеку для диалога SpinnerDatePickerDialog
-                    new SpinnerDatePickerDialogBuilder()
+                    DatePickerDialog spinnerDatePickerDialog = new SpinnerDatePickerDialogBuilder()
                             .context(FullscreenPhotoActivity.this)
                             .callback(FullscreenPhotoActivity.this)
                             .spinnerTheme(R.style.NumberPickerStyle)
                             .defaultDate(mYear, mMonth, mDay)
-                            .build().show();
+                            .build();
+
+                    spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
+                    spinnerDatePickerDialog.show();
                 } else {
                     // в остальных случаях пользуемся классом DatePickerFragment
                     DatePickerFragment newFragment = new DatePickerFragment();
@@ -637,6 +641,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -823,15 +828,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     // метод для скрытия клавиатуры
     private void hideSoftInput() {
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-        /*View viewToHide = FullscreenPhotoActivity.this.getCurrentFocus();
+        View viewToHide = FullscreenPhotoActivity.this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }*/
+        }
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override
@@ -882,6 +887,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -912,8 +918,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     }
 
     private void saveOrUpdateTreatmentPhoto() {
-
-        hideSoftInput();
 
         // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);

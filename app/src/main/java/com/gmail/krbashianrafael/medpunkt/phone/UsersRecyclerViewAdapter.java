@@ -216,9 +216,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     }, 500);
 
                 } else {
+                    TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
                     //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
+
                     if (selected_user_id != user_id_inEdit) {
-                        TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
 
                         // устанавливаем новое значение для selected_user_id
                         // и заново отрисовываем все видимые элементы в usersRecyclerView
@@ -239,6 +240,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         DiseaseRecyclerViewAdapter.selected_disease_id = 0;
                         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+
+                        /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+                            tabletMainActivity.tabletTreatmentCancel.performClick();
+                        }*/
                     }
                 }
             }

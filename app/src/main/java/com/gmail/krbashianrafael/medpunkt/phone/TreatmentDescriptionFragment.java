@@ -101,7 +101,6 @@ public class TreatmentDescriptionFragment extends Fragment {
             fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     TabletMainActivity.diseaseAndTreatmentInEdit = true;
 
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
@@ -119,6 +118,10 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                             }*/
 
+                            TabletMainActivity.tempTextDiseaseName = mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+                            TabletMainActivity.tempTextDateOfTreatment = mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+                            TabletMainActivity.tempTextTreatment = mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+
                             mTabletMainActivity.tabletTreatmentFragment.editDisease = true;
                             mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
                             editTextTreatment.setFocusable(true);
@@ -132,7 +135,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
                         }
-                    }, 600);
+                    }, 500);
 
                     /*Intent treatmentIntent = new Intent(mTabletMainActivity, TreatmentActivity.class);
                     treatmentIntent.putExtra("_idDisease", mTabletMainActivity.tabletTreatmentFragment._idDisease);

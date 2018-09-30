@@ -420,12 +420,15 @@ public class UserActivity extends AppCompatActivity
                             mDay = c.get(Calendar.DAY_OF_MONTH);
                         }
 
-                        new SpinnerDatePickerDialogBuilder()
+                        DatePickerDialog spinnerDatePickerDialog = new SpinnerDatePickerDialogBuilder()
                                 .context(UserActivity.this)
                                 .callback(UserActivity.this)
                                 .spinnerTheme(R.style.NumberPickerStyle)
                                 .defaultDate(mYear, mMonth, mDay)
-                                .build().show();
+                                .build();
+
+                        spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
+                        spinnerDatePickerDialog.show();
                     } else {
                         // в остальных случаях пользуемся классом DatePickerFragment
                         DatePickerFragment newFragment = new DatePickerFragment();
@@ -853,6 +856,7 @@ public class UserActivity extends AppCompatActivity
         });
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -878,6 +882,7 @@ public class UserActivity extends AppCompatActivity
         });
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
