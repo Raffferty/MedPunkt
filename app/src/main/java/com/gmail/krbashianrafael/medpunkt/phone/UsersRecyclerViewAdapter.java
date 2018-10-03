@@ -77,7 +77,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 selected_user_id = _userId;
             }
             if (selected_user_id == _userId) {
-                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.light_green));
+                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_light_gray));
             } else {
                 ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -160,7 +160,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             if (view.getId() == R.id.user_item_edit) {
 
                 // закрашиваем выделенный элемент (i) в голубой
-                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
+                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
 
                 // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
                 new Handler().postDelayed(new Runnable() {
@@ -195,7 +195,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 // если нажат сам элемент с именем пользователя
                 // если это телефон
                 if (!HomeActivity.isTablet) {
-                    container.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
+                    container.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -228,12 +228,12 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
 
                         // далее отрисовываем нужные поля в фрагментах
-                        tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
-                        if (HomeActivity.iAmDoctor) {
+                        //tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
+                        /*if (HomeActivity.iAmDoctor) {
                             tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.patients_title_activity);
                         } else {
                             tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.users_title_activity);
-                        }
+                        }*/
 
                         tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                         tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
@@ -241,9 +241,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
-                        /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
-                            tabletMainActivity.tabletTreatmentCancel.performClick();
-                        }*/
+                        if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+                            //tabletMainActivity.tabletTreatmentCancel.performClick();
+                            tabletMainActivity.hideElementsOnTabletTreatmentFragment();
+                        }
                     }
                 }
             }

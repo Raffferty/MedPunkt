@@ -15,7 +15,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +76,10 @@ public class TabletUsersFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
+        if (HomeActivity.iAmDoctor) {
+            txtTabletUsers.setText(R.string.patients_title_activity);
+        }
+
         //FrameLayout dividerTabletFrame = view.findViewById(R.id.divider_tablet_frame);
 
         // Все это для выравнивания txtAddUsers по центру
@@ -206,8 +209,6 @@ public class TabletUsersFragment extends Fragment
         ArrayList<UserItem> myData = usersRecyclerViewAdapter.getUsersList();
         myData.clear();
 
-        Log.d("yyy", "TuserOnLoadFinished");
-
         if (cursor != null) {
 
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
@@ -286,13 +287,13 @@ public class TabletUsersFragment extends Fragment
             // если один пользователь, то делаем fabShowAnimation
             fabAddUser.startAnimation(fabShowAnimation);
 
-            txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            //txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
-            if (HomeActivity.iAmDoctor) {
+            /*if (HomeActivity.iAmDoctor) {
                 txtTabletUsers.setText(R.string.patients_title_activity);
             } else {
                 txtTabletUsers.setText(R.string.users_title_activity);
-            }
+            }*/
 
             // если один пользователь, то сразу загружаем его заболевания
             Long _userId = myData.get(0).get_userId();
@@ -319,13 +320,13 @@ public class TabletUsersFragment extends Fragment
                 //если первый заход и в DiseasesFragment еще не отображаются данные,
                 // то предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
-                if (HomeActivity.iAmDoctor) {
+                /*if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
                 } else {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_user);
                 }
 
-                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
+                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
@@ -351,13 +352,13 @@ public class TabletUsersFragment extends Fragment
                 // то очищаем DiseasesFragment
                 // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
-                if (HomeActivity.iAmDoctor) {
+                /*if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
                 } else {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_user);
                 }
 
-                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));
+                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
 

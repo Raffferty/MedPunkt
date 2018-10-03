@@ -138,6 +138,8 @@ public class TabletTreatmentFragment extends Fragment
         if (HomeActivity.iAmDoctor) {
             txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
         }
+        txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
+        txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
 
         textInputLayoutDiseaseName = view.findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = view.findViewById(R.id.editText_disease_name);
@@ -541,11 +543,11 @@ public class TabletTreatmentFragment extends Fragment
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }
 
+        tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
+
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-
-        tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
     }
 
     private void updateDiseaseAndTreatmentToDataBase() {
@@ -564,11 +566,11 @@ public class TabletTreatmentFragment extends Fragment
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
         }
 
+        tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
+
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
-
-        tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
     }
 
     public void initLoaderToDiseaseAndTreatmentPhotos() {
@@ -622,8 +624,8 @@ public class TabletTreatmentFragment extends Fragment
 
         // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
         // а далее, и для удаления файлов
-        new TabletTreatmentFragment.DiseaseAndTreatmentPhotosDeletingAsyncTask(tabletMainActivity, photoFilePathesToBeDeletedList).
-                execute(tabletMainActivity.getApplicationContext());
+        new TabletTreatmentFragment.DiseaseAndTreatmentPhotosDeletingAsyncTask(
+                tabletMainActivity, photoFilePathesToBeDeletedList).execute(tabletMainActivity.getApplicationContext());
     }
 
     @Override

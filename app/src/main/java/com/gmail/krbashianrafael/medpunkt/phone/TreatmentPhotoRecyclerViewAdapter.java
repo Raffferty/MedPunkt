@@ -100,7 +100,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                 return;
             }
 
-            view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
+            view.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
 
             new Handler().postDelayed(new Runnable() {
                 @Override

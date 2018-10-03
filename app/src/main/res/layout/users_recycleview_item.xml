@@ -3,14 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shadow"
-    android:orientation="horizontal">
-
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/LLcontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -25,12 +24,12 @@
 
             <ImageView
                 android:id="@+id/user_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginEnd="2dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_camera_alt_gray_24dp"
                 tools:ignore="ContentDescription" />
@@ -40,16 +39,16 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp">
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
 
                 <TextView
                     android:id="@+id/recycler_users_item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/black"
                     tools:text="Вася" />
 
                 <TextView
@@ -58,11 +57,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                    android:textColor="@color/colorPrimaryDark"
                     tools:text="11.03.1968" />
             </LinearLayout>
         </LinearLayout>
-
 
         <FrameLayout
             android:id="@+id/user_item_edit"
@@ -73,13 +70,18 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_gravity="center"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/circle_back"
                 android:src="@drawable/ic_info_outline_white_48dp"
                 tools:ignore="ContentDescription" />
         </FrameLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/my_gray" />
 
     <TextView
         android:id="@+id/user_item_id"

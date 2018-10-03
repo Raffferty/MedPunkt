@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/my_blue"
+    android:background="@color/my_light_gray"
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
     <android.support.constraint.Guideline
@@ -206,7 +206,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:inputType="textPersonName|textCapWords"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -234,7 +234,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:inputType="date"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

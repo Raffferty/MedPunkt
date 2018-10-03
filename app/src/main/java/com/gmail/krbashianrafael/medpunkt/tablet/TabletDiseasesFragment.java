@@ -13,7 +13,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,9 @@ import java.util.Collections;
 import java.util.Objects;
 
 import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
+import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
 
 public class TabletDiseasesFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -54,6 +56,7 @@ public class TabletDiseasesFragment extends Fragment
     public Animation fadeInAnimation;
 
     public static boolean mScrollToStart = false;
+    public static boolean diseaseSelected = false;
 
     private RecyclerView recyclerDiseases;
     public DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
@@ -78,6 +81,9 @@ public class TabletDiseasesFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         txtTabletDiseases = view.findViewById(R.id.txt_diseases);
+        txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
+        txtTabletDiseases.setTextColor(getResources().getColor(R.color.white));
+
 
         textViewAddDisease = view.findViewById(R.id.txt_empty_diseases);
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
@@ -156,9 +162,9 @@ public class TabletDiseasesFragment extends Fragment
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
 
-                TabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
-                TabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-                TabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+                tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+                tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+                tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(_idUser);
                 tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setText("");
@@ -239,16 +245,6 @@ public class TabletDiseasesFragment extends Fragment
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
     }
 
-    public void initDiseasesLoader() {
-
-        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
-        textViewAddDisease.setVisibility(View.INVISIBLE);
-        fabAddDisease.setVisibility(View.INVISIBLE);
-
-        // Инициализируем Loader
-        getLoaderManager().initLoader(TABLET_DISEASES_LOADER, null, this);
-    }
-
     // метод для очистки данных из DiseasesFragment
     protected void clearDataFromDiseasesFragment() {
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
@@ -278,6 +274,16 @@ public class TabletDiseasesFragment extends Fragment
         return textUserName;
     }
 
+    public void initDiseasesLoader() {
+
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        textViewAddDisease.setVisibility(View.INVISIBLE);
+        fabAddDisease.setVisibility(View.INVISIBLE);
+
+        // Инициализируем Loader
+        getLoaderManager().initLoader(TABLET_DISEASES_LOADER, null, this);
+    }
+
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -305,11 +311,7 @@ public class TabletDiseasesFragment extends Fragment
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
-        Log.d("yyy", "TdiseaseOnLoadFinished");
-
-
         if (cursor != null) {
-
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
@@ -354,8 +356,10 @@ public class TabletDiseasesFragment extends Fragment
 
             TabletMainActivity.diseasesIsEmpty = true;
 
-            txtTabletDiseases.setText(R.string.diseases_what_text);
-            txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            /*txtTabletDiseases.setText(R.string.diseases_what_text);
+            txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));*/
+
+            diseaseSelected = true;
 
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
@@ -389,9 +393,9 @@ public class TabletDiseasesFragment extends Fragment
 
             TabletMainActivity.diseasesIsEmpty = false;
 
-            if (TabletMainActivity.diseaseAndTreatmentInEdit) {
-                tabletMainActivity.tabletTreatmentCancel.performClick();
-            }
+            //if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+            tabletMainActivity.hideElementsOnTabletTreatmentFragment();
+            //}
 
             tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
 
@@ -400,9 +404,10 @@ public class TabletDiseasesFragment extends Fragment
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-            txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            //txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            //txtTabletDiseases.setText(R.string.diseases_what_text);
 
-            txtTabletDiseases.setText(R.string.diseases_what_text);
+            diseaseSelected = true;
 
             // если одино заболевание, то сразу загружаем его леченин
             Long _diseaseId = myData.get(0).get_diseaseId();
@@ -426,19 +431,18 @@ public class TabletDiseasesFragment extends Fragment
 
             TabletMainActivity.diseasesIsEmpty = false;
 
-            if (TabletMainActivity.diseaseAndTreatmentInEdit) {
-                tabletMainActivity.tabletTreatmentCancel.performClick();
-            }
-
             if (tabletMainActivity.tabletTreatmentFragment.get_idUser() != get_idUser()) {
+
                 //если первый заход и в TreatmentFragment еще не отображаются данные,
                 // т.е. tabletMainActivity.tabletTreatmentFragment.get_idUser() = 0
                 // или был выбрарн другой пользователь у которого больше одного заболевания
                 // то предлагаем сдеалть выбор заболевани для отображения в TreatmentFragment
 
-                txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
+                /*txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
 
-                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));
+                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
+
+                diseaseSelected = false;
 
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
@@ -457,44 +461,59 @@ public class TabletDiseasesFragment extends Fragment
                 // если заболевание, которое было в TreatmentFragment обновилось (поменялось название...)
                 // то устанавливаем обновленные поля
 
-                tabletMainActivity.tabletTreatmentTitle.setText(TabletMainActivity.diseaseNameAfterUpdate);
-                tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(TabletMainActivity.diseaseNameAfterUpdate);
-                tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.diseaseDateAfterUpdate);
-                tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.diseaseTreatmentAfterUpdate);
+                if (!diseaseSelected){
+                    tabletMainActivity.tabletTreatmentTitle.setText(TabletMainActivity.diseaseNameAfterUpdate);
+                    tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(TabletMainActivity.diseaseNameAfterUpdate);
+                    tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.diseaseDateAfterUpdate);
+                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.diseaseTreatmentAfterUpdate);
+                }
 
-            } else if (TabletMainActivity.diseaseDeleted &&
+                //tabletMainActivity.hideElementsOnTabletTreatmentFragment();
+
+            } else if (TabletMainActivity.diseaseInserted){
+                tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(TabletMainActivity.tempTextDiseaseName);
+                tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.tempTextDateOfTreatment);
+                tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.tempTextTreatment);
+            }
+
+            /*else if (TabletMainActivity.diseaseDeleted &&
                     TabletMainActivity.disease_IdInEdit ==
                             tabletMainActivity.tabletTreatmentFragment.get_idDisease()) {
                 // если заболевание, которое было в TreatmentFragment удалилиось
                 // то очищаем TreatmentFragment и предлагаем сдеалть выбор заболевани для отображения в TreatmentFragment
 
-                Log.d("yyy", "TdiseaseDeleted");
+                *//*txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
+                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));*//*
 
+                //diseaseSelected = false;
 
-                txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
-
-                txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));
-
-                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
-                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
-
-                tabletMainActivity.tabletTreatmentTitle.setText("");
-
-                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+                //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                *//*tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
-
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
                         fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-            }
+
+
+                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+                tabletMainActivity.tabletTreatmentTitle.setText("");*//*
+            }*/
+
 
             fabAddDisease.startAnimation(fabShowAnimation);
 
         }
 
+        /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+            tabletMainActivity.tabletTreatmentCancel.performClick();
+        }*/
+
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.diseaseInserted = false;
         TabletMainActivity.diseaseUpdated = false;
         TabletMainActivity.diseaseDeleted = false;
+
+        TabletMainActivity.diseaseAndTreatmentInEdit = false;
+
 
         if (mScrollToStart && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(0);
