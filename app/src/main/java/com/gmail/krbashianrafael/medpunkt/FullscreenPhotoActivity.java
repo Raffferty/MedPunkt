@@ -587,7 +587,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
         // если клавиатура была открыта для редактирования названия заболевания, то она снова откроется
@@ -597,7 +597,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         } else {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -836,7 +836,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
         }
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override

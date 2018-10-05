@@ -12,7 +12,7 @@
     <string name="cancel">Cancel</string>
 
     <string name="tablet_save">SAVE</string>
-    <string name="tablet_delete_disease">DELETE DISEASE</string>
+    <string name="tablet_delete_disease">DELETE</string>
     <string name="tablet_cancel" tools:ignore="ButtonCase">CANCEL</string>
 
     <string name="dialog_msg_unsaved_changes">Save changes?</string>

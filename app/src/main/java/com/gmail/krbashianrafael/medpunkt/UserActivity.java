@@ -45,6 +45,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -626,7 +627,7 @@ public class UserActivity extends AppCompatActivity
         onLoading = false;
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
 
@@ -637,7 +638,7 @@ public class UserActivity extends AppCompatActivity
         } else {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -1068,15 +1069,15 @@ public class UserActivity extends AppCompatActivity
 
     private void hideSoftInput() {
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        /*View viewToHide = this.getCurrentFocus();
+        View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }*/
+        }
     }
 
     private void saveUserToDataBase() {

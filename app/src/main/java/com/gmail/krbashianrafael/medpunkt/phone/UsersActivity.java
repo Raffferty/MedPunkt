@@ -1,6 +1,7 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -15,9 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
@@ -156,7 +157,15 @@ public class UsersActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        View viewToHide = this.getCurrentFocus();
+        if (viewToHide != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
+            }
+        }
 
         onResumeCounter++;
 

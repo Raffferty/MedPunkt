@@ -89,6 +89,8 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+                    mTabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
+                    mTabletMainActivity.tabletUsersFragment.fabAddUser.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
@@ -101,15 +103,19 @@ public class TreatmentDescriptionFragment extends Fragment {
             fabEditTreatmentDescripton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TabletMainActivity.diseaseAndTreatmentInEdit = true;
 
+                    TabletMainActivity.diseaseAndTreatmentInEdit = true;
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
+                    mTabletMainActivity.tabletDiseasesFragment.fabAddDisease.startAnimation(fabHideAnimation);
+                    mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
+
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
+
 
                             // на планшете показываем клавиатуру
                             /*InputMethodManager imm = (InputMethodManager)
@@ -134,6 +140,9 @@ public class TreatmentDescriptionFragment extends Fragment {
                             //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
                             mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
+
+                            mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
+                            mTabletMainActivity.verRightGuideline.setGuidelinePercent(0.30f);
                         }
                     }, 500);
 

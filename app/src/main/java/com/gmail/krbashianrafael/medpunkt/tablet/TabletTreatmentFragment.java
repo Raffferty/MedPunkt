@@ -32,7 +32,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
@@ -248,11 +247,11 @@ public class TabletTreatmentFragment extends Fragment
         tabletMainActivity = (TabletMainActivity) getActivity();
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        if (tabletMainActivity != null) {
+        /*if (tabletMainActivity != null) {
             tabletMainActivity.getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        }
+        }*/
 
         categoryAdapter = new TreatmentAdapter(tabletMainActivity, this.getChildFragmentManager());
 
@@ -359,7 +358,7 @@ public class TabletTreatmentFragment extends Fragment
             }
         }
 
-        tabletMainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //tabletMainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     // SpannableString с картикной для элеменов меню
@@ -459,6 +458,9 @@ public class TabletTreatmentFragment extends Fragment
         }
 
         // проверка окончена, начинаем сохранение
+
+        tabletMainActivity.verRightGuideline.setGuidelinePercent(0.60f);
+        tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
         // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
@@ -564,13 +566,17 @@ public class TabletTreatmentFragment extends Fragment
 
         if (rowsAffected == 0) {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
+        }else {
+            //if (!TabletDiseasesFragment.diseaseSelected){
+            tabletMainActivity.tabletTreatmentTitle.setText(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString());
+            //}
         }
 
         tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
 
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
-        treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+        //treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
     }
 
     public void initLoaderToDiseaseAndTreatmentPhotos() {
@@ -817,6 +823,7 @@ public class TabletTreatmentFragment extends Fragment
                 // result == 0 или result == 1
                 // если не было снимков для удаления или заболевание удалилось и снимки удалены (или отсутствуют)
                 mTabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+                mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(mTabletMainActivity.tabletUsersFragment.fabShowAnimation);
             }
 
             mTabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;

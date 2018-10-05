@@ -44,12 +44,12 @@ public class TabletUsersFragment extends Fragment
     public TextView txtTabletUsers;
 
     protected TextView txtAddUsers;
-    protected FloatingActionButton fabAddUser;
+    public FloatingActionButton fabAddUser;
     private RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
     // Animation fabShowAnimation
-    private Animation fabShowAnimation;
+    public Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
     public static boolean mScrollToStart = false;

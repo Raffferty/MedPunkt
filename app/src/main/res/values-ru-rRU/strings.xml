@@ -11,7 +11,7 @@
     <string name="cancel">Отменить</string>
 
     <string name="tablet_save">СОХРАНИТЬ</string>
-    <string name="tablet_delete_disease">УДАЛИТЬ ЗАБОЛЕВАНИЕ</string>
+    <string name="tablet_delete_disease">УДАЛИТЬ</string>
     <string name="tablet_cancel">ОТМЕНИТЬ</string>
 
     <string name="dialog_msg_unsaved_changes">Сохранить изменения?</string>

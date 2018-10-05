@@ -189,14 +189,14 @@ public class TreatmentActivity extends AppCompatActivity
         editTextDateOfDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (HomeActivity.isTablet) {
+                /*if (HomeActivity.isTablet) {
                     getWindow().setSoftInputMode(
                             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                                     WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                     );
-                } else {
-                    hideSoftInput();
-                }
+                } else {*/
+                hideSoftInput();
+                //}
 
                 // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutDiseaseName.setError(null);
@@ -309,12 +309,12 @@ public class TreatmentActivity extends AppCompatActivity
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
 
-            if (HomeActivity.isTablet) {
+            /*if (HomeActivity.isTablet) {
                 getWindow().setSoftInputMode(
                         WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
                 );
-            }
+            }*/
 
         } else {
 
@@ -323,7 +323,7 @@ public class TreatmentActivity extends AppCompatActivity
             focusHolder.requestFocus();
 
             // если планшет и в режиме редактирования, то оставлем только одину закадку для описания заболевания
-            if (HomeActivity.isTablet && editDisease) {
+            /*if (HomeActivity.isTablet && editDisease) {
                 categoryAdapter.setPagesCount(1);
                 tabLayout.setVisibility(View.GONE);
 
@@ -334,7 +334,7 @@ public class TreatmentActivity extends AppCompatActivity
                         WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
                 );
-            }
+            }*/
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -420,7 +420,7 @@ public class TreatmentActivity extends AppCompatActivity
         treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
         // если клавиатура была открыта для редактирования названия заболевания или текста лечения, то она снова откроется
@@ -433,7 +433,7 @@ public class TreatmentActivity extends AppCompatActivity
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -790,15 +790,15 @@ public class TreatmentActivity extends AppCompatActivity
     }
 
     private void hideSoftInput() {
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        /*View viewToHide = this.getCurrentFocus();
+        View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
-        }*/
+        }
     }
 
     private void saveDiseaseAndTreatmentToDataBase() {

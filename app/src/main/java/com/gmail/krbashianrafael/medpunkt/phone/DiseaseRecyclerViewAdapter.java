@@ -206,7 +206,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
-
         }
     }
 
