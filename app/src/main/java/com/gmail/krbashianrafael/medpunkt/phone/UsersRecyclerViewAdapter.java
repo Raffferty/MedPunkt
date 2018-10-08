@@ -77,7 +77,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 selected_user_id = _userId;
             }
             if (selected_user_id == _userId) {
-                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_light_gray));
+                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_gray));
             } else {
                 ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
             }

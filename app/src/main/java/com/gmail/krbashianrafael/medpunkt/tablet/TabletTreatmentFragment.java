@@ -38,6 +38,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,6 +96,8 @@ public class TabletTreatmentFragment extends Fragment
     public TextView txtTitleDisease;
     protected TextView txtTitleTreatment;
 
+    private ImageView imgZoomOutTabletTreatment;
+
     // поля названия заболевания, описания лечения и focusHolder
     public TextInputLayout textInputLayoutDiseaseName;
     public TextInputEditText editTextDiseaseName;
@@ -139,6 +142,9 @@ public class TabletTreatmentFragment extends Fragment
         }
         txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
+
+        /*imgZoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
+        imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);*/
 
         textInputLayoutDiseaseName = view.findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = view.findViewById(R.id.editText_disease_name);
@@ -459,7 +465,7 @@ public class TabletTreatmentFragment extends Fragment
 
         // проверка окончена, начинаем сохранение
 
-        tabletMainActivity.verRightGuideline.setGuidelinePercent(0.60f);
+        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment

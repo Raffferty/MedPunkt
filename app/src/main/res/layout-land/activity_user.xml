@@ -8,14 +8,14 @@
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
     <android.support.constraint.Guideline
-        android:id="@+id/ver_left_guideline"
+        android:id="@+id/ver_2_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.15" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/ver_right_guideline"
+        android:id="@+id/ver_3_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -42,8 +42,8 @@
         android:background="@android:drawable/dialog_holo_light_frame"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/user_frame"
-        app:layout_constraintEnd_toStartOf="@+id/ver_right_guideline"
-        app:layout_constraintStart_toEndOf="@+id/ver_left_guideline">
+        app:layout_constraintEnd_toStartOf="@+id/ver_3_guideline"
+        app:layout_constraintStart_toEndOf="@+id/ver_2_guideline">
 
         <FrameLayout
             android:id="@+id/tablet_frm_back"
@@ -112,8 +112,8 @@
         android:layout_height="0dp"
         android:background="@android:drawable/dialog_holo_light_frame"
         app:layout_constraintBottom_toTopOf="@+id/hor_bottom_guideline"
-        app:layout_constraintEnd_toStartOf="@+id/ver_right_guideline"
-        app:layout_constraintStart_toEndOf="@+id/ver_left_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/ver_3_guideline"
+        app:layout_constraintStart_toEndOf="@+id/ver_2_guideline"
         app:layout_constraintTop_toTopOf="@+id/hor_top_guideline">
 
         <android.support.constraint.ConstraintLayout

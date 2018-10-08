@@ -4,35 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryLight"
+    android:background="@color/my_light_gray"
     tools:context=".tablet.TabletMainActivity">
 
     <android.support.constraint.Guideline
-        android:id="@+id/ver_left_guideline"
+        android:id="@+id/ver_1_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorFab"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.00" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_2_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.30" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/ver_right_guideline"
+        android:id="@+id/ver_3_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.60" />
 
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_4_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.00" />
+
     <TextView
         android:id="@+id/tablet_users_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:drawableStart="@drawable/ic_home_green_30dp"
+        android:layout_marginStart="1dp"
+        android:background="@color/my_dark_gray"
+        android:drawableStart="@drawable/med_rect_30dp"
+        android:gravity="center_vertical"
         android:text="@string/app_name"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/tablet_users_frame"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,14 +55,14 @@
         android:id="@+id/tablet_users_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="0.5dp"
+        android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
+        android:background="@android:drawable/dialog_holo_light_frame"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tablet_diseases_frame"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ver_2_guideline"
+        app:layout_constraintStart_toStartOf="@+id/ver_1_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_users_title">
 
         <fragment
@@ -69,16 +84,14 @@
         android:id="@+id/tablet_diseases_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/my_dark_gray"
         android:ellipsize="end"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:maxLines="1"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         android:textColor="@color/white"
         android:textSize="20sp"
-
-
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
         app:layout_constraintEnd_toStartOf="@+id/tablet_treatment_frame"
         app:layout_constraintStart_toEndOf="@+id/tablet_users_frame"
@@ -88,15 +101,13 @@
         android:id="@+id/tablet_diseases_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="0.5dp"
+        android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="0.5dp"
         android:layout_marginBottom="1dp"
-
-
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ver_right_guideline"
-        app:layout_constraintStart_toStartOf="@+id/ver_left_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/ver_3_guideline"
+        app:layout_constraintStart_toStartOf="@+id/ver_2_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_diseases_title">
 
         <fragment
@@ -119,16 +130,16 @@
         android:id="@+id/tablet_treatment_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/my_dark_gray"
         android:ellipsize="end"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:maxLines="1"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ver_4_guideline"
         app:layout_constraintStart_toStartOf="@+id/tablet_treatment_frame"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -143,7 +154,7 @@
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ver_4_guideline"
         app:layout_constraintStart_toStartOf="@+id/tablet_treatment_frame"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
@@ -199,19 +210,17 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- app:layout_constraintStart_toStartOf="@+id/ver_right_guideline" -->
-
     <FrameLayout
         android:id="@+id/tablet_treatment_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tablet_diseases_frame"
+        app:layout_constraintEnd_toEndOf="@+id/ver_4_guideline"
+        app:layout_constraintStart_toEndOf="@+id/ver_3_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_treatment_title">
 
         <fragment
@@ -226,8 +235,5 @@
             android:layout_height="match_parent"
             android:layout_marginTop="30dp"
             android:alpha="0.85" />
-
     </FrameLayout>
-
-
 </android.support.constraint.ConstraintLayout>

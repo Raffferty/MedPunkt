@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= 25) {
                 actionBar.setIcon(R.drawable.med_round);
             } else {
-                actionBar.setIcon(R.drawable.med_rect);
+                actionBar.setIcon(R.drawable.med_rect_42dp);
             }
         }
 

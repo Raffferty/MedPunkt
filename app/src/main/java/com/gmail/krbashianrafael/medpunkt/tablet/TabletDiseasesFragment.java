@@ -1,12 +1,14 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
@@ -41,6 +44,9 @@ public class TabletDiseasesFragment extends Fragment
     // шапка, которая видна только на планшете
     public TextView txtTabletDiseases;
 
+    private ImageView imgCancelTabletDiseases;
+
+
     private long _idUser = 0;
 
     private String textUserName = "";
@@ -50,8 +56,13 @@ public class TabletDiseasesFragment extends Fragment
     public FloatingActionButton fabAddDisease;
 
     private Animation fabHideAnimation;
-    public Animation fabShowAnimation;
-    public Animation fadeInAnimation;
+    Animation fabShowAnimation;
+    Animation fadeInAnimation;
+
+    private ValueAnimator animVerGuideline_1_from_10_to_0, animVerGuideline_3_from_90_to_100;
+    private ValueAnimator animVerGuideline_2_from_30_to_50;
+    //private ValueAnimator animVerGuideline_3_from_60_to_100;
+    public ValueAnimator animVerGuideline_2_from_50_to_30, animVerGuideline_3_from_100_to_60;
 
     public static boolean mScrollToStart = false;
     public static boolean diseaseSelected = false;
@@ -82,6 +93,9 @@ public class TabletDiseasesFragment extends Fragment
         txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTabletDiseases.setTextColor(getResources().getColor(R.color.white));
 
+        imgCancelTabletDiseases = view.findViewById(R.id.img_cancel_tablet_diseases);
+        imgCancelTabletDiseases.setVisibility(View.VISIBLE);
+
 
         textViewAddDisease = view.findViewById(R.id.txt_empty_diseases);
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +105,7 @@ public class TabletDiseasesFragment extends Fragment
                 textViewAddDisease.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
                 tabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.GONE);
-                tabletMainActivity.verRightGuideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
 
                 /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
                     if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
@@ -195,8 +209,6 @@ public class TabletDiseasesFragment extends Fragment
     }
 
     void onAddDiseaseClicked() {
-
-
         //if (!TabletMainActivity.diseaseAndTreatmentInEdit) {
 
 
@@ -207,8 +219,6 @@ public class TabletDiseasesFragment extends Fragment
         TabletMainActivity.newDiseaseAndTreatment = true;
         TabletMainActivity.diseaseAndTreatmentInEdit = true;
         tabletMainActivity.tabletTreatmentFragment.editDisease = true;
-
-
 
 
         new Handler().postDelayed(new Runnable() {
@@ -233,7 +243,7 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-                tabletMainActivity.verRightGuideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
 
 
                 //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
@@ -264,6 +274,69 @@ public class TabletDiseasesFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
 
         tabletMainActivity = (TabletMainActivity) getActivity();
+
+        animVerGuideline_1_from_10_to_0 = ValueAnimator.ofFloat(0.10f, 0.00f);
+        animVerGuideline_1_from_10_to_0.setDuration(200);
+        animVerGuideline_1_from_10_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_1 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(animatedValue_1);
+            }
+        });
+
+        animVerGuideline_3_from_90_to_100 = ValueAnimator.ofFloat(0.90f, 1.00f);
+        animVerGuideline_3_from_90_to_100.setDuration(200);
+        animVerGuideline_3_from_90_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+            }
+        });
+
+        animVerGuideline_2_from_50_to_30 = ValueAnimator.ofFloat(0.50f, 0.30f);
+        animVerGuideline_2_from_50_to_30.setDuration(200);
+        //animVerGuideline_2_from_50_to_30.setStartDelay(10);
+        animVerGuideline_2_from_50_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+            }
+        });
+
+        animVerGuideline_3_from_100_to_60 = ValueAnimator.ofFloat(1.00f, 0.60f);
+        animVerGuideline_3_from_100_to_60.setDuration(200);
+        animVerGuideline_3_from_100_to_60.setStartDelay(50);
+        animVerGuideline_3_from_100_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+            }
+        });
+
+        animVerGuideline_2_from_30_to_50 = ValueAnimator.ofFloat(0.30f, 0.50f);
+        animVerGuideline_2_from_30_to_50.setDuration(200);
+        animVerGuideline_2_from_30_to_50.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+            }
+        });
+
+        /*animVerGuideline_3_from_60_to_100 = ValueAnimator.ofFloat(0.60f, 1.00f);
+        animVerGuideline_3_from_60_to_100.setDuration(100);
+        animVerGuideline_3_from_60_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+            }
+        });*/
+
 
         fadeInAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fadein);
 
@@ -433,6 +506,30 @@ public class TabletDiseasesFragment extends Fragment
 
             diseaseSelected = false;
 
+            /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
+            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*/
+
+            float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+
+            if (percentVerGuideline_2 == 0.90f) {
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+                animVerGuideline_1_from_10_to_0.start();
+                animVerGuideline_3_from_90_to_100.start();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                    }
+                }, 300);
+
+            } else if (percentVerGuideline_2 == 0.30f) {
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                animVerGuideline_2_from_30_to_50.start();
+            }
+
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
@@ -512,7 +609,6 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.tempTextTreatment);
 
             } else if (tabletMainActivity.tabletTreatmentFragment.get_idUser() != get_idUser()) {
-                Log.d("sasa", "!= get_idUser()");
 
                 diseaseSelected = false;
 
@@ -524,6 +620,69 @@ public class TabletDiseasesFragment extends Fragment
                 /*txtTabletDiseases.setText(R.string.tablet_treatment_select_disease);
 
                 txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
+
+                /*float percentVer_1 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_1_Guideline.getLayoutParams()).guidePercent; //0.10
+                float percentVer_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent; //0.90
+                float percentVer_3 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent; //0.90
+                float percentVer_4 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_4_Guideline.getLayoutParams()).guidePercent; //0.90
+                Log.d("sasa", "percentVer_1 = " + percentVer_1);
+                Log.d("sasa", "percentVer_2 = " + percentVer_2);
+                Log.d("sasa", "percentVer_3 = " + percentVer_3);
+                Log.d("sasa", "percentVer_4 = " + percentVer_4);*/
+
+                /*ValueAnimator animVer_2 = ValueAnimator.ofFloat(0.9f, 0.5f);
+                animVer_2.setDuration(100);
+                //animVer_2.setStartDelay(200);
+                animVer_2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                        float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                        tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                    }
+                });*/
+
+                /*ValueAnimator animVer_4 = ValueAnimator.ofFloat(0.9f, 1.0f);
+                animVer_4.setDuration(200);
+                animVer_4.setStartDelay(200);
+                animVer_4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                        // You can use the animated value in a property that uses the
+                        // same type as the animation. In this case, you can use the
+                        // float value in the translationX property.
+                        float animatedValue_4 = (float) updatedAnimation.getAnimatedValue();
+                        Log.d("sasa", "animatedValue_2 = " + animatedValue_4);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(animatedValue_4);
+                    }
+                });*/
+
+
+                //animVer_2.start();
+                //animVer_4.start();
+
+
+                //tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
+                //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                //tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+
+                float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+
+                if (percentVerGuideline_2 == 0.90f) {
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+                    animVerGuideline_1_from_10_to_0.start();
+                    animVerGuideline_3_from_90_to_100.start();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                        }
+                    }, 300);
+                } else if (percentVerGuideline_2 == 0.30f) {
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                    animVerGuideline_2_from_30_to_50.start();
+                }
 
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
@@ -593,6 +752,10 @@ public class TabletDiseasesFragment extends Fragment
         /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
             tabletMainActivity.tabletTreatmentCancel.performClick();
         }*/
+
+        // убираем тени вокруг tabletUsersFrame
+        tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
 
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.diseaseInserted = false;

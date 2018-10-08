@@ -142,7 +142,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
 
                             mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
-                            mTabletMainActivity.verRightGuideline.setGuidelinePercent(0.30f);
+                            mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
                         }
                     }, 500);
 

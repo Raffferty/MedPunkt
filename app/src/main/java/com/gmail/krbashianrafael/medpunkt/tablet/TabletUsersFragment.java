@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
@@ -42,6 +43,7 @@ public class TabletUsersFragment extends Fragment
 
     // шапка, которая видна только на планшете
     public TextView txtTabletUsers;
+    private ImageView imgCancelTabletUsers;
 
     protected TextView txtAddUsers;
     public FloatingActionButton fabAddUser;
@@ -79,6 +81,14 @@ public class TabletUsersFragment extends Fragment
         if (HomeActivity.iAmDoctor) {
             txtTabletUsers.setText(R.string.patients_title_activity);
         }
+
+        imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
+        imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabletMainActivity.finish();
+            }
+        });
 
         //FrameLayout dividerTabletFrame = view.findViewById(R.id.divider_tablet_frame);
 
@@ -314,6 +324,7 @@ public class TabletUsersFragment extends Fragment
 
         } else {
             // если больше одного пользователя
+
             fabAddUser.startAnimation(fabShowAnimation);
 
             if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
@@ -327,6 +338,11 @@ public class TabletUsersFragment extends Fragment
                 }
 
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
+
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(0);

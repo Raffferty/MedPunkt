@@ -80,12 +80,15 @@ public class TabletMainActivity extends AppCompatActivity
     private FrameLayout tabletUsersBlurFrame;
     public FrameLayout tabletDiseasesBlurFrame;
     private FrameLayout tableTreatmentBlurFrame;
-    public FrameLayout tabletDiseasesFrame;
+    public FrameLayout tabletUsersFrame, tabletDiseasesFrame;
 
 
     public FrameLayout tabletTreatmentDeleteFrame, tabletTreatmentSaveFrame;
 
-    public Guideline verRightGuideline;
+    public Guideline ver_1_Guideline;
+    public Guideline ver_2_Guideline;
+    public Guideline ver_3_Guideline;
+    public Guideline ver_4_Guideline;
 
     // это значения для Blur соответствующих фрагментов
     public static final int TABLET_USERS_FRAGMENT = 1;
@@ -125,18 +128,22 @@ public class TabletMainActivity extends AppCompatActivity
         tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
 
         tabletUsersTitle = findViewById(R.id.tablet_users_title);
-        tabletUsersTitle.setOnClickListener(new View.OnClickListener() {
+        /*tabletUsersTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
-        });
+        });*/
+        tabletUsersFrame = findViewById(R.id.tablet_users_frame);
+
 
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
         tabletDiseasesFrame = findViewById(R.id.tablet_diseases_frame);
 
-        verRightGuideline = findViewById(R.id.ver_right_guideline);
-
+        ver_1_Guideline = findViewById(R.id.ver_1_guideline);
+        ver_2_Guideline = findViewById(R.id.ver_2_guideline);
+        ver_3_Guideline = findViewById(R.id.ver_3_guideline);
+        ver_4_Guideline = findViewById(R.id.ver_4_guideline);
 
         tabletTreatmentTitle = findViewById(R.id.tablet_treatment_title);
 
@@ -334,7 +341,7 @@ public class TabletMainActivity extends AppCompatActivity
 
                     // если подтверждаем удаление заболевания
 
-                    verRightGuideline.setGuidelinePercent(0.60f);
+                    ver_3_Guideline.setGuidelinePercent(0.60f);
 
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;
@@ -400,7 +407,7 @@ public class TabletMainActivity extends AppCompatActivity
 
     public void cancel(boolean newdiseaseSelected) {
 
-        verRightGuideline.setGuidelinePercent(0.60f);
+        ver_3_Guideline.setGuidelinePercent(0.60f);
 
         hideElementsOnTabletTreatmentFragment();
 

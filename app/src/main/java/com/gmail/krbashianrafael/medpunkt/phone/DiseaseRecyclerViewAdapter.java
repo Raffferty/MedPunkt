@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +75,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             if (selected_disease_id == _diseaseId) {
-                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_light_gray));
+                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_gray));
             } else {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -158,6 +159,29 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     tabletMainActivity = (TabletMainActivity) myContext;
 
                     TabletDiseasesFragment.diseaseSelected = true;
+
+                   /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*/
+
+                    float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+
+                    if (percentVerGuideline_2 != 0.30f) {
+                        /*tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);*/
+
+                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
+                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
+
+
+                        /*new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                            }
+                        }, 300);*/
+                    }
 
                     // если описание заболевание с стадии редактирования,
                     // то сначала делается Cancel
