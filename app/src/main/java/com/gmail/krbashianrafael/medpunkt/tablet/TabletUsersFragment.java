@@ -9,12 +9,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -260,6 +262,12 @@ public class TabletUsersFragment extends Fragment
         int myDataSize = myData.size();
 
         if (myDataSize == 0) {
+
+            tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+
             // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
             // и fabAddUser.setVisibility(View.INVISIBLE);
             new Handler(Looper.getMainLooper()).
@@ -297,6 +305,16 @@ public class TabletUsersFragment extends Fragment
             // если один пользователь, то делаем fabShowAnimation
             fabAddUser.startAnimation(fabShowAnimation);
 
+            tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
+
+            tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+            tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
+
+            tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
+            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
+            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
             //txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
             /*if (HomeActivity.iAmDoctor) {
@@ -327,9 +345,11 @@ public class TabletUsersFragment extends Fragment
 
             fabAddUser.startAnimation(fabShowAnimation);
 
+            tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
+
             if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
                 //если первый заход и в DiseasesFragment еще не отображаются данные,
-                // то предлагаем сдеалть выбор пользоватля для отображения его заболеваний
+                // или нажат крестик на DiseasesFragment
 
                 /*if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
@@ -339,10 +359,29 @@ public class TabletUsersFragment extends Fragment
 
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
 
-                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+                if (tabletMainActivity.firstLoad == 1) {
+                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+
+                    tabletMainActivity.firstLoad++;
+
+                } else {
+                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+
+                    float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+
+                    if (percentVerGuideline_2 == 0.30f) {
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
+                    } else if (percentVerGuideline_2 == 0.50f) {
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
+                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
+                    }
+                }
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
@@ -368,6 +407,14 @@ public class TabletUsersFragment extends Fragment
                 // то очищаем DiseasesFragment
                 // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+
+                tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                        getDrawable(android.R.drawable.dialog_holo_light_frame));
+
                 /*if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
                 } else {
@@ -390,7 +437,7 @@ public class TabletUsersFragment extends Fragment
                 // т.к. заболеваний у удаленного пользовател нет, то будет очищено окно tabletDiseasesFragment
                 // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
                 // в tabletDiseasesFragment idUser = 0
-                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+                //tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
             }
         }
 

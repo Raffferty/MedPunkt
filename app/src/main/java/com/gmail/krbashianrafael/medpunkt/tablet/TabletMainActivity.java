@@ -36,7 +36,7 @@ public class TabletMainActivity extends AppCompatActivity
     public TabletDiseasesFragment tabletDiseasesFragment;
     public TabletTreatmentFragment tabletTreatmentFragment;
 
-    private boolean firstLoad = false;
+    public int firstLoad = 0;
 
     // эти поля получают свои значения в классе MedProvider в соответствующих методах
     public static boolean userInserted = false;
@@ -100,7 +100,7 @@ public class TabletMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
 
-        firstLoad = true;
+        firstLoad = 1;
         diseaseAndTreatmentInEdit = false;
         newDiseaseAndTreatment = false;
         treatmentOnSavingOrUpdatingOrDeleting = false;
@@ -166,7 +166,7 @@ public class TabletMainActivity extends AppCompatActivity
                     public void run() {
                         cancel(false);
                     }
-                },500);
+                }, 500);
 
                 /*} else {
 
@@ -217,7 +217,7 @@ public class TabletMainActivity extends AppCompatActivity
                     public void run() {
                         save();
                     }
-                },500);
+                }, 500);
             }
         });
     }
@@ -514,12 +514,13 @@ public class TabletMainActivity extends AppCompatActivity
 
         boolean usersLoaded = false;
 
-        if (firstLoad || userInserted || userUpdated || userDeleted) {
+        if (firstLoad == 1 || userInserted || userUpdated || userDeleted) {
             // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
             // иначе, загружаем данные в окно tabletUsersFragment
             tabletUsersFragment.initUsersLoader();
 
             usersLoaded = true;
+            //firstLoad++;
         }
 
         if (!usersLoaded && (diseaseInserted || diseaseUpdated || diseaseDeleted)) {
@@ -527,8 +528,6 @@ public class TabletMainActivity extends AppCompatActivity
             // иначе, загружаем данные в окно tabletDiseasesFragment
             tabletDiseasesFragment.initDiseasesLoader();
         }
-
-        firstLoad = false;
     }
 
     @Override

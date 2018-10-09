@@ -35,6 +35,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context mContext;
     private ArrayList<UserItem> usersList;
 
+    public static void setSelected_user_id(long selected_user_id) {
+        UsersRecyclerViewAdapter.selected_user_id = selected_user_id;
+    }
+
     private static long selected_user_id = 0;
 
     public UsersRecyclerViewAdapter(Context context) {
@@ -225,6 +229,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         // и заново отрисовываем все видимые элементы в usersRecyclerView
                         // чтоб закрасить выделенный элемент
                         selected_user_id = user_id_inEdit;
+
+                        //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
+
                         tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
 
                         // далее отрисовываем нужные поля в фрагментах
