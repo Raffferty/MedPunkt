@@ -16,7 +16,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -359,29 +358,29 @@ public class TabletUsersFragment extends Fragment
 
                 txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
 
-                if (tabletMainActivity.firstLoad == 1) {
-                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                /*if (tabletMainActivity.firstLoad) {
+                 *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
                     tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*//*
 
-                    tabletMainActivity.firstLoad++;
+                    tabletMainActivity.firstLoad = false;
 
-                } else {
-                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                } else {*/
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
 
-                    float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+                float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
 
-                    if (percentVerGuideline_2 == 0.30f) {
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
-                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
-                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
-                    } else if (percentVerGuideline_2 == 0.50f) {
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
-                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
-                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
-                    }
+                if (percentVerGuideline_2 == 0.30f) {
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
+                } else if (percentVerGuideline_2 == 0.50f) {
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
+                    tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
                 }
+                //}
 
                 tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(0);

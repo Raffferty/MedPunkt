@@ -96,7 +96,7 @@ public class TabletTreatmentFragment extends Fragment
     public TextView txtTitleDisease;
     protected TextView txtTitleTreatment;
 
-    private ImageView imgZoomOutTabletTreatment;
+    public ImageView imgZoomOutTabletTreatment, imgZoomInTabletTreatment;
 
     // поля названия заболевания, описания лечения и focusHolder
     public TextInputLayout textInputLayoutDiseaseName;
@@ -143,8 +143,25 @@ public class TabletTreatmentFragment extends Fragment
         txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
 
-        /*imgZoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
-        imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);*/
+        imgZoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
+        imgZoomOutTabletTreatment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+                imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_30.start();
+            }
+        });
+
+        imgZoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
+        imgZoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+            }
+        });
 
         textInputLayoutDiseaseName = view.findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = view.findViewById(R.id.editText_disease_name);
@@ -465,7 +482,13 @@ public class TabletTreatmentFragment extends Fragment
 
         // проверка окончена, начинаем сохранение
 
-        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+        if (TabletDiseasesFragment.diseaseSelected) {
+            tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+        } else {
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+            tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
+        }
+
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment

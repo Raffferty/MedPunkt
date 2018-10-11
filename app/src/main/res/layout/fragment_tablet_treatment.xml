@@ -40,7 +40,7 @@
             android:id="@+id/text_input_layout_disease_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/white"
             android:hint="@string/disease_name"
             android:paddingTop="4dp"
@@ -91,8 +91,17 @@
             android:id="@+id/img_zoom_out_tablet_treatment"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_zoom_out_map_white_24dp"
-            android:visibility="visible"
+            android:src="@drawable/ic_fullscreen_white_24dp"
+            app:layout_constraintStart_toStartOf="@+id/txt_title_treatment"
+            app:layout_constraintTop_toTopOf="@+id/txt_title_treatment"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/img_zoom_in_tablet_treatment"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_fullscreen_exit_white_24dp"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="@+id/txt_title_treatment"
             app:layout_constraintTop_toTopOf="@+id/txt_title_treatment"
             tools:ignore="ContentDescription" />

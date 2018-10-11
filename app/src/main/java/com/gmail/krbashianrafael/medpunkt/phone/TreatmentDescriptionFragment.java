@@ -116,6 +116,8 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
 
+                            mTabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+
 
                             // на планшете показываем клавиатуру
                             /*InputMethodManager imm = (InputMethodManager)
@@ -142,6 +144,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
 
                             mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
+
                             mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
                         }
                     }, 500);

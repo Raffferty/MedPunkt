@@ -12,11 +12,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,7 +36,7 @@ public class TabletMainActivity extends AppCompatActivity
     public TabletDiseasesFragment tabletDiseasesFragment;
     public TabletTreatmentFragment tabletTreatmentFragment;
 
-    public int firstLoad = 0;
+    public boolean firstLoad = false;
 
     // эти поля получают свои значения в классе MedProvider в соответствующих методах
     public static boolean userInserted = false;
@@ -75,7 +75,7 @@ public class TabletMainActivity extends AppCompatActivity
 
     // LLtabletTreatmentCancelOrSave в себе содержит tabletTreatmentCancel, tabletTreatmentSave
     public LinearLayout LLtabletTreatmentCancelOrSave;
-    public TextView tabletTreatmentCancel, tabletTreatmentSave, tabletTreatmentDelete;
+    public ImageView tabletTreatmentCancel, tabletTreatmentSave, tabletTreatmentDelete;
 
     private FrameLayout tabletUsersBlurFrame;
     public FrameLayout tabletDiseasesBlurFrame;
@@ -100,7 +100,7 @@ public class TabletMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
 
-        firstLoad = 1;
+        firstLoad = true;
         diseaseAndTreatmentInEdit = false;
         newDiseaseAndTreatment = false;
         treatmentOnSavingOrUpdatingOrDeleting = false;
@@ -144,6 +144,11 @@ public class TabletMainActivity extends AppCompatActivity
         ver_2_Guideline = findViewById(R.id.ver_2_guideline);
         ver_3_Guideline = findViewById(R.id.ver_3_guideline);
         ver_4_Guideline = findViewById(R.id.ver_4_guideline);
+
+        ver_1_Guideline.setGuidelinePercent(0.1f);
+        ver_2_Guideline.setGuidelinePercent(0.9f);
+        ver_3_Guideline.setGuidelinePercent(0.9f);
+        ver_4_Guideline.setGuidelinePercent(0.9f);
 
         tabletTreatmentTitle = findViewById(R.id.tablet_treatment_title);
 
@@ -230,34 +235,15 @@ public class TabletMainActivity extends AppCompatActivity
             diseaseDate = "";
         }
 
-
-        Log.d("Changs", "editTextDiseaseName = " + tabletTreatmentFragment.editTextDiseaseName.getText().toString());
-        Log.d("Changs", "tempTextDiseaseName = " + tempTextDiseaseName);
-
-
-        Log.d("Changs", "editTextTreatment = " + tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText());
-        Log.d("Changs", "tempTextTreatment = " + tempTextTreatment);
-
-
-        Log.d("Changs", "editTextDateOfDisease = " + tabletTreatmentFragment.editTextDateOfDisease.getText());
-        Log.d("Changs", "tempTextDateOfTreatment = " + tempTextDateOfTreatment);
-        Log.d("Changs", "diseaseDate = " + diseaseDate);
-
         if (TextUtils.equals(tabletTreatmentFragment.editTextDiseaseName.getText().toString(), "") &&
                 TextUtils.equals(diseaseDate, "") &&
                 TextUtils.equals(tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText(), "")) {
-            Log.d("Changs", "return true");
             return true;
         }
 
-
-        boolean r = TextUtils.equals(tabletTreatmentFragment.editTextDiseaseName.getText().toString(), tempTextDiseaseName) &&
+        return TextUtils.equals(tabletTreatmentFragment.editTextDiseaseName.getText().toString(), tempTextDiseaseName) &&
                 TextUtils.equals(diseaseDate, tempTextDateOfTreatment) &&
                 TextUtils.equals(tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText(), tempTextTreatment);
-
-        Log.d("Changs", "returnX " + r);
-
-        return r;
     }
 
     // Диалог "сохранить или выйти без сохранения"
@@ -341,7 +327,9 @@ public class TabletMainActivity extends AppCompatActivity
 
                     // если подтверждаем удаление заболевания
 
-                    ver_3_Guideline.setGuidelinePercent(0.60f);
+                    ver_3_Guideline.setGuidelinePercent(1.00f);
+
+                    tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;
@@ -407,7 +395,12 @@ public class TabletMainActivity extends AppCompatActivity
 
     public void cancel(boolean newdiseaseSelected) {
 
-        ver_3_Guideline.setGuidelinePercent(0.60f);
+        if (TabletDiseasesFragment.diseaseSelected) {
+            tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+        } else {
+            ver_3_Guideline.setGuidelinePercent(1.00f);
+            tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
+        }
 
         hideElementsOnTabletTreatmentFragment();
 
@@ -444,8 +437,6 @@ public class TabletMainActivity extends AppCompatActivity
         // скручиваем клавиатуру
         hideSoftInput();
 
-        Log.d("sasa", "diseaseSelected = " + TabletDiseasesFragment.diseaseSelected);
-
         if (!TabletDiseasesFragment.diseaseSelected) {
             tabletTreatmentTitle.setText("");
             blur(TABLET_TREATMENT_FRAGMENT);
@@ -474,6 +465,8 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
+
+        tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
     }
 
 
@@ -514,13 +507,13 @@ public class TabletMainActivity extends AppCompatActivity
 
         boolean usersLoaded = false;
 
-        if (firstLoad == 1 || userInserted || userUpdated || userDeleted) {
+        if (firstLoad || userInserted || userUpdated || userDeleted) {
             // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
             // иначе, загружаем данные в окно tabletUsersFragment
             tabletUsersFragment.initUsersLoader();
 
             usersLoaded = true;
-            //firstLoad++;
+            firstLoad = false;
         }
 
         if (!usersLoaded && (diseaseInserted || diseaseUpdated || diseaseDeleted)) {
