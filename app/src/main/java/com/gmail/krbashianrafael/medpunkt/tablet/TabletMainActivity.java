@@ -328,6 +328,7 @@ public class TabletMainActivity extends AppCompatActivity
                     // если подтверждаем удаление заболевания
 
                     ver_3_Guideline.setGuidelinePercent(1.00f);
+                    //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
 
                     tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
@@ -467,6 +468,7 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
         tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+        tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
     }
 
 

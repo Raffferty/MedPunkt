@@ -117,6 +117,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
 
                             mTabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+                            mTabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
 
 
                             // на планшете показываем клавиатуру

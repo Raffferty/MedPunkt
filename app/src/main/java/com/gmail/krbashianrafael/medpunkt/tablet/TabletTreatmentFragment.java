@@ -482,12 +482,12 @@ public class TabletTreatmentFragment extends Fragment
 
         // проверка окончена, начинаем сохранение
 
-        if (TabletDiseasesFragment.diseaseSelected) {
+        /*if (TabletDiseasesFragment.diseaseSelected) {
             tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
         } else {
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
             tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
-        }
+        }*/
 
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
