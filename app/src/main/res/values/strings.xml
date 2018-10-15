@@ -26,10 +26,10 @@
     <!-- users/patients activity -->
     <string name="users_title_activity">Users</string>
 
-    <!-- patient -->
+    <!-- patient_white -->
     <string name="patients_title_activity">Patients</string>
 
-    <!-- user/patient activity -->
+    <!-- user/patient_white activity -->
     <string name="user_title_activity">Add User</string>
     <string name="user_photo">Photo</string>
     <string name="user_delete_photo">Delete photo</string>
@@ -45,7 +45,7 @@
     <string name="user_delete">Delete user</string>
     <string name="user_not_deleted">User could not be deleted</string>
 
-    <!-- patient -->
+    <!-- patient_white -->
     <string name="patient_title_activity">Add patient</string>
     <string name="patient_name">Name and Surname</string>
     <string name="patient_cant_save">Patient could not be saved</string>

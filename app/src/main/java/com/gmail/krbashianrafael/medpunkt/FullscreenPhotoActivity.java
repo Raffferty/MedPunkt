@@ -612,7 +612,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     // Диалог "Удалить фото заболевания или отменить удаление"
     private void showDeleteConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
         builder.setMessage(getString(R.string.fullscreen_dialog_msg_delete_image) + " " + editTextPhotoDescription.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

@@ -174,7 +174,7 @@ public class UsersActivity extends AppCompatActivity
         txtAddUsers.setVisibility(View.INVISIBLE);
 
         // Инициализируем Loader
-        // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_24dp
+        // если НЕТ permission.READ_EXTERNAL_STORAGE, то будет грузиться @drawable/ic_camera_alt_gray_54dp
         getLoaderManager().initLoader(USERS_LOADER, null, this);
     }
 

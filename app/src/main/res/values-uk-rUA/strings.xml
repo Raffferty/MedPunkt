@@ -25,10 +25,10 @@
     <!-- users/patients activity -->
     <string name="users_title_activity">Користувачі</string>
 
-    <!-- patient -->
+    <!-- patient_white -->
     <string name="patients_title_activity">Пацієнти</string>
 
-    <!-- user/patient activity -->
+    <!-- user/patient_white activity -->
     <string name="user_title_activity">Додати Користувача</string>
     <string name="user_photo">Фото</string>
     <string name="user_delete_photo">Видалити фото</string>
@@ -44,7 +44,7 @@
     <string name="user_delete">Видалити користувача</string>
     <string name="user_not_deleted">Користувача не вдалося видалити</string>
 
-    <!-- patient -->
+    <!-- patient_white -->
     <string name="patient_title_activity">Додати пацієнта</string>
     <string name="patient_name">Ім’я та Прізвище</string>
     <string name="patient_cant_save">Пацієнта не вдалося зберегти</string>

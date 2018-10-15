@@ -833,7 +833,7 @@ public class UserActivity extends AppCompatActivity
 
         String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
         builder.setMessage(deletString + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

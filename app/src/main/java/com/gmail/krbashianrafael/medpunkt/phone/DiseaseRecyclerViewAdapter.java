@@ -75,7 +75,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             if (selected_disease_id == _diseaseId) {
-                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_gray));
+                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
             } else {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -130,7 +130,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             if (!HomeActivity.isTablet) {
                 // если нажат элемент с названием заболевания
                 // если это телефон
-                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
+                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
                 new Handler().postDelayed(new Runnable() {
                     @Override

@@ -81,7 +81,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 selected_user_id = _userId;
             }
             if (selected_user_id == _userId) {
-                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_gray));
+                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
             } else {
                 ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -95,7 +95,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     .signature(new ObjectKey(imgFile.lastModified()))   // signature, чтоб при обновлении фото грузилось из файла, а не из кеша
                     .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .error(R.drawable.ic_camera_alt_gray_24dp)
+                    .error(R.drawable.ic_camera_alt_gray_54dp)
                     .transition(DrawableTransitionOptions.withCrossFade(300))
                     .into(((UserHolder) holder).userImage);
         } else {
@@ -105,9 +105,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             // чистим userImage
             GlideApp.with(mContext).clear(((UserHolder) holder).userImage);
 
-            // ставим в userImage R.drawable.ic_camera_alt_gray_24dp
+            // ставим в userImage R.drawable.ic_camera_alt_gray_54dp
             GlideApp.with(mContext)
-                    .load(R.drawable.ic_camera_alt_gray_24dp)
+                    .load(R.drawable.ic_camera_alt_gray_54dp)
                     .centerInside()
                     .into(((UserHolder) holder).userImage);
         }
@@ -164,7 +164,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             if (view.getId() == R.id.user_item_edit) {
 
                 // закрашиваем выделенный элемент (i) в голубой
-                view.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
+                view.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimaryLight));
 
                 // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
                 new Handler().postDelayed(new Runnable() {
@@ -199,7 +199,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 // если нажат сам элемент с именем пользователя
                 // если это телефон
                 if (!HomeActivity.isTablet) {
-                    container.setBackgroundColor(myContext.getResources().getColor(R.color.my_gray));
+                    container.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
                     new Handler().postDelayed(new Runnable() {
                         @Override

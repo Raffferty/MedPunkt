@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:drawableTop="@drawable/ic_local_hotel_blue_24dp"
+            android:drawableTop="@drawable/ic_local_hotel_gray_24dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
             tools:text="01.02.2018" />
 
