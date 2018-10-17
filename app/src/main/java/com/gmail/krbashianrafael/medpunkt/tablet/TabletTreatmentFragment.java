@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -42,6 +43,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
@@ -149,7 +151,9 @@ public class TabletTreatmentFragment extends Fragment
             public void onClick(View v) {
                 imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
                 imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_30.start();
+
+                //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
             }
         });
 
@@ -157,9 +161,35 @@ public class TabletTreatmentFragment extends Fragment
         imgZoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+
+                // код для показа выделенного заболевания
+                if (TabletMainActivity.selectedDisease_id!=0){
+
+                    final ArrayList<DiseaseItem> myData =  tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+
+                    if (myData.size() != 0) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (TabletMainActivity.selectedDisease_id != 0) {
+                                    for (int i = 0; i < myData.size(); i++) {
+                                        if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                            TabletMainActivity.selectedDisease_position = i;
+                                        }
+                                    }
+                                }
+
+                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                            }
+                        }, 500);
+                    }
+                }
+
                 imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
             }
         });
 
@@ -490,6 +520,7 @@ public class TabletTreatmentFragment extends Fragment
         }*/
 
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
+        imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
         // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
@@ -565,11 +596,11 @@ public class TabletTreatmentFragment extends Fragment
             // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг mScrollToStart в классе DiseasesActivity в true
+            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе DiseasesActivity в true
             // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
-            TabletDiseasesFragment.mScrollToStart = true;
+            //TabletDiseasesFragment.scrollToInsertedDiseasePosition = true;
         } else {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }

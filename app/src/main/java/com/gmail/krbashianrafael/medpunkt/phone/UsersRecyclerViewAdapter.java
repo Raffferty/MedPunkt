@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -220,10 +221,32 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     }, 500);
 
                 } else {
-                    TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
-                    //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
+                    final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+                    //если это планшет
+
+                    // код для показа выделенного заболевания
+                    final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+
+                    if (myDiseaseData.size() != 0) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (TabletMainActivity.selectedDisease_id != 0) {
+                                    for (int i = 0; i < myDiseaseData.size(); i++) {
+                                        if (myDiseaseData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                            TabletMainActivity.selectedDisease_position = i;
+                                        }
+                                    }
+                                }
+
+                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                            }
+                        }, 500);
+                    }
 
                     if (selected_user_id != user_id_inEdit) {
+                        //и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
 
                         // устанавливаем новое значение для selected_user_id
                         // и заново отрисовываем все видимые элементы в usersRecyclerView
@@ -244,7 +267,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                         tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                         tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
-                        DiseaseRecyclerViewAdapter.selected_disease_id = 0;
+                        TabletMainActivity.selectedDisease_id = 0;
                         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                         tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 

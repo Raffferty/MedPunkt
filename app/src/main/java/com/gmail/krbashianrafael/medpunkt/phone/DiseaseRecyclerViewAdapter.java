@@ -31,12 +31,12 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context mContext;
     private ArrayList<DiseaseItem> diseaseList;
 
-    static long selected_disease_id = 0;
+    //static long TabletMainActivity.selectedDisease_id = 0;
 
     public DiseaseRecyclerViewAdapter(Context context) {
         mContext = context;
         this.diseaseList = new ArrayList<>();
-        selected_disease_id = 0;
+        //TabletMainActivity.selectedDisease_id = 0;
     }
 
     public ArrayList<DiseaseItem> getDiseaseList() {
@@ -71,11 +71,17 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             // если только один элемент заболевания
             // то его _id и будет selected
             if (diseaseList.size() == 1) {
-                selected_disease_id = _diseaseId;
+                TabletMainActivity.selectedDisease_id = _diseaseId;
+            } else if (TabletMainActivity.insertedDisease_id != 0) {
+                TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
+                TabletMainActivity.insertedDisease_id = 0;
             }
 
-            if (selected_disease_id == _diseaseId) {
+            if (TabletMainActivity.selectedDisease_id == _diseaseId) {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+
+                TabletDiseasesFragment.diseaseSelected = true;
+
             } else {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -155,7 +161,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 }, 500);
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
-                if (selected_disease_id != disease_id_inEdit) {
+                if (TabletMainActivity.selectedDisease_id != disease_id_inEdit) {
                     tabletMainActivity = (TabletMainActivity) myContext;
 
                     TabletDiseasesFragment.diseaseSelected = true;
@@ -219,7 +225,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView
             // чтоб закрасить выделенный элемент
-            selected_disease_id = disease_id_inEdit;
+            TabletMainActivity.selectedDisease_id = disease_id_inEdit;
             tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
             // далее отрисовываем нужные поля в фрагментах

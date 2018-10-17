@@ -24,6 +24,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.UserActivity;
@@ -55,7 +56,7 @@ public class TabletUsersFragment extends Fragment
     public Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    public static boolean mScrollToStart = false;
+    public static boolean scrollToInsertedUserPosition = false;
 
     private static final int TABLET_USERS_LOADER = 1000;
 
@@ -437,6 +438,27 @@ public class TabletUsersFragment extends Fragment
                 // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
                 // в tabletDiseasesFragment idUser = 0
                 //tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+            } else {
+                // код для показа выделенного заболевания
+                final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+
+                if (myDiseaseData.size() != 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (TabletMainActivity.selectedDisease_id != 0) {
+                                for (int i = 0; i < myDiseaseData.size(); i++) {
+                                    if (myDiseaseData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                        TabletMainActivity.selectedDisease_position = i;
+                                    }
+                                }
+                            }
+
+                            tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                        }
+                    }, 500);
+                }
             }
         }
 
@@ -446,9 +468,9 @@ public class TabletUsersFragment extends Fragment
         TabletMainActivity.userDeleted = false;
 
         // прокручиваем пользователей вверх
-        if (mScrollToStart && myData.size() != 0) {
+        if (scrollToInsertedUserPosition && myData.size() != 0) {
             recyclerUsers.smoothScrollToPosition(0);
-            mScrollToStart = false;
+            scrollToInsertedUserPosition = false;
         }
     }
 

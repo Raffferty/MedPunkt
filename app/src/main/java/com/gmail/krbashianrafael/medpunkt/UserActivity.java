@@ -1097,7 +1097,7 @@ public class UserActivity extends AppCompatActivity
             // получаем и присваиваем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг mScrollToStart в классе UsersActivity в true
+            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе UsersActivity в true
             // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 

@@ -20,12 +20,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -45,6 +47,10 @@ public class TabletMainActivity extends AppCompatActivity
     public static String userNameAfterUpdate = "";
 
     public static boolean diseaseInserted = false;
+    public static long insertedDisease_id = 0;
+    public static long selectedDisease_id = 0;
+    public static int selectedDisease_position = 0;
+
     public static boolean diseaseUpdated = false;
     public static boolean diseaseDeleted = false;
     public static String diseaseNameAfterUpdate = "";
@@ -71,7 +77,7 @@ public class TabletMainActivity extends AppCompatActivity
     public static boolean newDiseaseAndTreatment = false;
     public boolean treatmentOnSavingOrUpdatingOrDeleting = false;
 
-    public TextView tabletUsersTitle, tabletDiseasesTitle, tabletTreatmentTitle;
+    public TextView tabletUsersWideTitle, tabletUsersTitle, tabletDiseasesTitle, tabletTreatmentTitle;
 
     // LLtabletTreatmentCancelOrSave в себе содержит tabletTreatmentCancel, tabletTreatmentSave
     public LinearLayout LLtabletTreatmentCancelOrSave;
@@ -127,6 +133,8 @@ public class TabletMainActivity extends AppCompatActivity
         tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
         tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
 
+        tabletUsersWideTitle = findViewById(R.id.tablet_users_wide_title);
+
         tabletUsersTitle = findViewById(R.id.tablet_users_title);
         /*tabletUsersTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +143,6 @@ public class TabletMainActivity extends AppCompatActivity
             }
         });*/
         tabletUsersFrame = findViewById(R.id.tablet_users_frame);
-
 
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
         tabletDiseasesFrame = findViewById(R.id.tablet_diseases_frame);
@@ -328,6 +335,12 @@ public class TabletMainActivity extends AppCompatActivity
 
                     // если подтверждаем удаление заболевания
 
+                    TabletMainActivity.selectedDisease_id = 0;
+
+                    tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletUsersWideTitle.setText("");
+                    tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
                     ver_3_Guideline.setGuidelinePercent(1.00f);
                     //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
 
@@ -397,10 +410,47 @@ public class TabletMainActivity extends AppCompatActivity
 
     public void cancel(boolean newdiseaseSelected) {
 
+        // код для показа выделенного заболевания
+        if (TabletMainActivity.selectedDisease_id != 0) {
+
+            final ArrayList<DiseaseItem> myData = tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+
+            if (myData.size() != 0) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (TabletMainActivity.selectedDisease_id != 0) {
+                            for (int i = 0; i < myData.size(); i++) {
+                                if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                    TabletMainActivity.selectedDisease_position = i;
+                                }
+                            }
+                        }
+
+                        tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                    }
+                }, 500);
+            }
+        }
+
+
         if (TabletDiseasesFragment.diseaseSelected) {
-            tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+            //tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
+            //tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+            tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+
+            //tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+            tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
         } else {
             ver_3_Guideline.setGuidelinePercent(1.00f);
+            tabletUsersWideTitle.setVisibility(View.GONE);
+            tabletUsersWideTitle.setText("");
+            tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+            //tabletDiseasesFragment.animVerGuideline_3_from_0_to_100.start();
             tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
         }
 
@@ -468,8 +518,8 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
-        tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
-        tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+        /*tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+        tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);*/
     }
 
 
@@ -519,10 +569,38 @@ public class TabletMainActivity extends AppCompatActivity
             firstLoad = false;
         }
 
-        if (!usersLoaded && (diseaseInserted || diseaseUpdated || diseaseDeleted)) {
-            // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
-            // иначе, загружаем данные в окно tabletDiseasesFragment
+        if (!usersLoaded) {
             tabletDiseasesFragment.initDiseasesLoader();
+            /*if (diseaseInserted || diseaseUpdated || diseaseDeleted) {
+                // если просто смотрели на карточку заболевания (без изменений), то и грузить не надо
+                // иначе, загружаем данные в окно tabletDiseasesFragment
+                tabletDiseasesFragment.initDiseasesLoader();
+            } else {*/
+                // код для показа выделенного заболевания
+                /*final ArrayList<DiseaseItem> myData = tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+
+                if (myData.size() != 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            int pos = 0;
+
+                            if (TabletMainActivity.selectedDisease_id != 0) {
+                                for (int i = 0; i < myData.size(); i++) {
+                                    if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                        TabletMainActivity.selectedDisease_position = i;
+                                    }
+                                }
+                            }
+
+                            Log.d("xxxx", " Onres TabletMainActivity.selectedDisease_id = " + TabletMainActivity.selectedDisease_id);
+
+                            tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                        }
+                    }, 1000);*/
+                //}
+            //}
+
         }
     }
 

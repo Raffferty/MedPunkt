@@ -73,15 +73,19 @@ public class TabletDiseasesFragment extends Fragment
             animVerGuideline_3_from_90_to_100,
             animVerGuideline_3_from_30_to_60,
             animVerGuideline_3_from_60_to_30,
+            animVerGuideline_3_from_0_to_60,
+            animVerGuideline_3_from_60_to_0,
+            animVerGuideline_3_from_100_to_0,
+            animVerGuideline_3_from_0_to_100,
             animVerGuideline_3_from_90_to_60,
             animVerGuideline_3_from_100_to_30;
 
     public ValueAnimator animVerGuideline_4_from_90_to_100;
 
-    public static boolean mScrollToStart = false;
+    //public static boolean scrollToInsertedDiseasePosition = false;
     public static boolean diseaseSelected = false;
 
-    private RecyclerView recyclerDiseases;
+    public RecyclerView recyclerDiseases;
     public DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     private static final int TABLET_DISEASES_LOADER = 1001;
@@ -290,8 +294,19 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
+                //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
+                //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+
+
+                float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
+
+                if (percentVerGuideline_3 == 0.60f) {
+                    animVerGuideline_3_from_60_to_0.start();
+                } else if (percentVerGuideline_3 == 1.00f) {
+                    animVerGuideline_3_from_100_to_0.start();
+                }
+
 
                 //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
                 tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
@@ -424,6 +439,71 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
         });
+
+        animVerGuideline_3_from_0_to_60 = ValueAnimator.ofFloat(0.00f, 0.60f);
+        animVerGuideline_3_from_0_to_60.setDuration(200);
+        animVerGuideline_3_from_0_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+                if (animatedValue_3 == 0.60f) {
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletMainActivity.tabletUsersWideTitle.setText("");
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.white));
+                }
+            }
+        });
+
+        animVerGuideline_3_from_60_to_0 = ValueAnimator.ofFloat(0.60f, 0.00f);
+        animVerGuideline_3_from_60_to_0.setDuration(200);
+        animVerGuideline_3_from_60_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+                if (animatedValue_3 == 0.00f) {
+                    tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.black));
+                }
+            }
+        });
+
+        animVerGuideline_3_from_100_to_0 = ValueAnimator.ofFloat(1.00f, 0.00f);
+        animVerGuideline_3_from_100_to_0.setDuration(200);
+        animVerGuideline_3_from_100_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+                if (animatedValue_3 == 0.00f) {
+                    tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.black));
+                }
+            }
+        });
+
+        animVerGuideline_3_from_0_to_100 = ValueAnimator.ofFloat(0.00f, 1.00f);
+        animVerGuideline_3_from_0_to_100.setDuration(200);
+        animVerGuideline_3_from_0_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
+                if (animatedValue_3 == 1.00f) {
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletMainActivity.tabletUsersWideTitle.setText("");
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.white));
+                }
+            }
+        });
+
 
         animVerGuideline_3_from_60_to_30 = ValueAnimator.ofFloat(0.60f, 0.30f);
         animVerGuideline_3_from_60_to_30.setDuration(200);
@@ -592,7 +672,7 @@ public class TabletDiseasesFragment extends Fragment
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-        ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
+        final ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
         if (cursor != null) {
@@ -621,6 +701,10 @@ public class TabletDiseasesFragment extends Fragment
             }
         }
 
+        // делаем destroyLoader, чтоб он сам повторно не вызывался,
+        // а вызывался при каждом входе в активити
+        getLoaderManager().destroyLoader(TABLET_DISEASES_LOADER);
+
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
 
@@ -628,11 +712,30 @@ public class TabletDiseasesFragment extends Fragment
         // LayoutManager обновляет RecyclerView
         diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался,
-        // а вызывался при каждом входе в активити
-        getLoaderManager().destroyLoader(TABLET_DISEASES_LOADER);
-
         int myDataSize = myData.size();
+
+
+        //if (scrollToInsertedDiseasePosition && myData.size() != 0) {
+        // код для показа выделенного заболевания
+        if (myData.size() != 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (TabletMainActivity.selectedDisease_id != 0) {
+                        for (int i = 0; i < myData.size(); i++) {
+                            if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                TabletMainActivity.selectedDisease_position = i;
+                            }
+                        }
+                    }
+
+                    recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                }
+            }, 500);
+
+            //scrollToInsertedDiseasePosition = false;
+        }
 
         if (myDataSize == 0) {
             // если у пользователя нет заболеваний
@@ -720,6 +823,9 @@ public class TabletDiseasesFragment extends Fragment
                 // если были открыты только пользователи
                 // и было нажато на пользователя у которого только одно заболевание
 
+                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
                 animVerGuideline_2_from_90_to_30.start();
                 animVerGuideline_3_from_90_to_60.start();
 
@@ -735,6 +841,9 @@ public class TabletDiseasesFragment extends Fragment
                 // если был открыт пользователь, у которого нет заболеваний и
                 // был нажат польлзователь, у которого одно заболевание
 
+                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
 
@@ -749,6 +858,9 @@ public class TabletDiseasesFragment extends Fragment
                 // если у пользователя одно заболевание, которе было открыто для редактирования,
                 // и было нажато "сохранить"
 
+                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
                 animVerGuideline_3_from_30_to_60.start();
 
             } else if (percentVerGuideline_3 == 1.00f) {
@@ -756,13 +868,21 @@ public class TabletDiseasesFragment extends Fragment
                 // при этом одно из них было открыто для удаления и удалилось
                 // в итоге осталось одно заболевание
 
+                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
                 animVerGuideline_3_from_100_to_60.start();
             }
 
             fabAddDisease.startAnimation(fabShowAnimation);
 
+            tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+            tabletMainActivity.tabletUsersWideTitle.setText("");
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
 
             //txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             //txtTabletDiseases.setText(R.string.diseases_what_text);
@@ -795,7 +915,17 @@ public class TabletDiseasesFragment extends Fragment
             if (TabletMainActivity.diseaseInserted) {
                 // если было добавлено заболевание
 
-                if (diseaseSelected) {
+                tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
+                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
+                animVerGuideline_3_from_0_to_60.start();
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
+                tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(tabletMainActivity.tabletTreatmentFragment.textDiseaseName);
+
+                /*if (diseaseSelected) {
                     // и при этом было выделено какое-то заболеванине
                     // то выделенное ранее заболевание остается в поле зрения
 
@@ -803,12 +933,17 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(TabletMainActivity.tempTextDateOfTreatment);
                     tabletMainActivity.tabletTreatmentFragment.setTextTreatment(TabletMainActivity.tempTextTreatment);
 
-                    animVerGuideline_3_from_30_to_60.start();
+                    //animVerGuideline_3_from_30_to_60.start();
+                    animVerGuideline_3_from_0_to_60.start();
 
                 } else {
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletMainActivity.tabletUsersWideTitle.setText("");
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                    tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
                     animVerGuideline_2_from_30_to_50.start();
-                }
+                }*/
 
             } else if (TabletMainActivity.diseaseUpdated) {
                 // если заболевание было обновлено
@@ -817,9 +952,13 @@ public class TabletDiseasesFragment extends Fragment
                         TabletMainActivity.disease_IdInEdit ==
                                 tabletMainActivity.tabletTreatmentFragment.get_idDisease()) {*/
 
-                tabletMainActivity.hideElementsOnTabletTreatmentFragment();
+                //tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
-                animVerGuideline_3_from_30_to_60.start();
+                //animVerGuideline_3_from_30_to_60.start();
+
+                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+
 
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
                         fabEditTreatmentDescripton.startAnimation(
@@ -978,12 +1117,6 @@ public class TabletDiseasesFragment extends Fragment
 
         TabletMainActivity.diseaseAndTreatmentInEdit = false;
         TabletMainActivity.newDiseaseAndTreatment = false;
-
-
-        if (mScrollToStart && myData.size() != 0) {
-            recyclerDiseases.smoothScrollToPosition(0);
-            mScrollToStart = false;
-        }
     }
 
     @Override

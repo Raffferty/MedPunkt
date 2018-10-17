@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -59,8 +60,8 @@ public class TreatmentDescriptionFragment extends Fragment {
         // Активити в котором может находится этот фрагмент
         // TreatmentActivity - если телефорн
         // TabletMainActivity - если планшет
-        TreatmentActivity mTreaymentActivity = null;
-        TabletMainActivity mTabletMainActivity = null;
+        TreatmentActivity mTreaymentActivity;
+        TabletMainActivity mTabletMainActivity;
 
         if (getActivity() instanceof TabletMainActivity) {
             mTabletMainActivity = (TabletMainActivity) getActivity();
@@ -146,7 +147,12 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                             mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
 
-                            mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
+                            //mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
+                            float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
+
+                            if (percentVerGuideline_3!=0.00f){
+                                mTabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+                            }
                         }
                     }, 500);
 

@@ -13,7 +13,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,7 @@ public class TreatmentPhotosFragment extends Fragment
 
     private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
-    // boolean mScrollToStart статическая переменная для выставления флага в true после вставки нового элемента в список
+    // boolean scrollToInsertedUserPosition статическая переменная для выставления флага в true после вставки нового элемента в список
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertTreatmentPhoto
     public static boolean mScrollToStart = false;
 
@@ -130,7 +129,6 @@ public class TreatmentPhotosFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d("treatnmentF", "treatnmentPF onActivityCreated");
 
         /*if (HomeActivity.isTablet){
             mTabletMainActivity = (TabletMainActivity) getActivity();
@@ -337,7 +335,7 @@ public class TreatmentPhotosFragment extends Fragment
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
         }
 
-        // если флаг mScrollToStart выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
+        // если флаг scrollToInsertedUserPosition выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
         // и снова scrollToEnd выставляем в false
         if (mScrollToStart && myData.size() != 0) {
             recyclerTreatmentPhotos.smoothScrollToPosition(0);

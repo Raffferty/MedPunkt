@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
@@ -511,9 +510,11 @@ public class MedProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        // Выставляем флаг для загрузки пользователей в планшете после добаления пользователя
+        // Выставляем флаг для загрузки заболеваний в планшете после добаления заболевания
+        // и сохраняем id вставленного заболевания в поле TabletMainActivity.insertedDisease_id для закраски этого элемента как выделенного
         if (HomeActivity.isTablet) {
             TabletMainActivity.diseaseInserted = true;
+            TabletMainActivity.insertedDisease_id = id;
         }
 
 
@@ -844,7 +845,6 @@ public class MedProvider extends ContentProvider {
                     // Выставляем флаг для загрузки пользователей в планшете после удаления пользователя
                     if (HomeActivity.isTablet) {
                         TabletMainActivity.userDeleted = true;
-                        Log.d("yyy","userDeleted");
                     }
                 }
 
@@ -862,7 +862,6 @@ public class MedProvider extends ContentProvider {
                     // Выставляем флаг для загрузки заболеваний в планшете после удаления заболевания
                     if (HomeActivity.isTablet) {
                         TabletMainActivity.diseaseDeleted = true;
-                        Log.d("yyy","diseaseDeleted");
                     }
                 }
 

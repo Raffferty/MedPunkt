@@ -12,7 +12,7 @@
     <TextView
         android:id="@+id/txt_tablet_users"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="36dp"
         android:background="@color/my_dark_gray"
         android:gravity="center"
         android:text="@string/users_title_activity"
@@ -21,10 +21,11 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <!-- этот ImageView виден только на планшере -->
     <ImageView
         android:id="@+id/img_cancel_tablet_users"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_close_white_24dp"
         tools:ignore="ContentDescription" />
 

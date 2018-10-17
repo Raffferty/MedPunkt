@@ -815,7 +815,7 @@ public class TreatmentActivity extends AppCompatActivity
             // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг mScrollToStart в классе DiseasesActivity в true
+            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе DiseasesActivity в true
             // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 

@@ -43,7 +43,7 @@ public class UsersActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    // boolean mScrollToStart статическая переменная для выставления флага в true после вставки нового элемента в список
+    // boolean scrollToInsertedUserPosition статическая переменная для выставления флага в true после вставки нового элемента в список
     // этот флаг необходим для прокрутки списка вверх до первого элемента
     // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertUser
     public static boolean mScrollToStart = false;
@@ -375,9 +375,9 @@ public class UsersActivity extends AppCompatActivity
             fabAddUser.startAnimation(fabShowAnimation);
         }
 
-        // если флаг mScrollToStart выставлен в true, то прокручиваем RecyclerView вверх в начало,
+        // если флаг scrollToInsertedUserPosition выставлен в true, то прокручиваем RecyclerView вверх в начало,
         // т.к. элементы сортируются по имени пользователя и вставляются по этой сортировке
-        // и снова mScrollToStart выставляем в false
+        // и снова scrollToInsertedUserPosition выставляем в false
         if (mScrollToStart && myData.size() != 0) {
             recyclerUsers.smoothScrollToPosition(0);
             mScrollToStart = false;
