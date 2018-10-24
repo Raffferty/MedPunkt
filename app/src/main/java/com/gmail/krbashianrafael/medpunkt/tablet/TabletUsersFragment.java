@@ -268,6 +268,9 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
+            tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                    getDrawable(R.drawable.shadow));
+
             // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
             // и fabAddUser.setVisibility(View.INVISIBLE);
             new Handler(Looper.getMainLooper()).
@@ -297,9 +300,9 @@ public class TabletUsersFragment extends Fragment
             // в tabletDiseasesFragment idUser = 0
 
             // если был первый заход и не было пользователей, то этот медод не вызывается
-            if (TabletMainActivity.userDeleted) {
+            /*if (TabletMainActivity.userDeleted) {
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-            }
+            }*/
 
         } else if (myDataSize == 1) {
             // если один пользователь, то делаем fabShowAnimation
@@ -368,6 +371,8 @@ public class TabletUsersFragment extends Fragment
                     tabletMainActivity.firstLoad = false;
 
                 } else {*/
+
+
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
 
                 float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
@@ -375,19 +380,32 @@ public class TabletUsersFragment extends Fragment
                 if (percentVerGuideline_2 == 0.30f) {
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
-                    tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
                 } else if (percentVerGuideline_2 == 0.50f) {
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
-                    tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
                 }
                 //}
 
-                tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
+                //tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
 
-                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+
+                /*new Handler(Looper.getMainLooper()).
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                                        getDrawable(R.drawable.shadow));
+                            }
+                        }, 1000);*/
+
 
             } else if (TabletMainActivity.userUpdated &&
                     TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {
@@ -412,8 +430,8 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
-                tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                        getDrawable(android.R.drawable.dialog_holo_light_frame));
+                /*tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                        getDrawable(android.R.drawable.dialog_holo_light_frame));*/
 
                 /*if (HomeActivity.iAmDoctor) {
                     txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
@@ -446,6 +464,8 @@ public class TabletUsersFragment extends Fragment
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+
+                            TabletMainActivity.selectedDisease_position = 0;
 
                             if (TabletMainActivity.selectedDisease_id != 0) {
                                 for (int i = 0; i < myDiseaseData.size(); i++) {

@@ -2,9 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/my_light_gray"
+    android:background="@color/my_gray"
     tools:context=".tablet.TabletMainActivity">
 
     <android.support.constraint.Guideline
@@ -37,7 +38,7 @@
 
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +47,7 @@
     <TextView
         android:id="@+id/tablet_users_wide_title"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:paddingStart="2dp"
@@ -61,7 +62,7 @@
     <TextView
         android:id="@+id/tablet_users_title"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
         android:drawableStart="@drawable/med_rect_30dp"
         android:gravity="center_vertical"
@@ -75,16 +76,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tablet_users_wide_title" />
 
+    <!-- android:background="@android:drawable/dialog_holo_light_frame" -->
     <FrameLayout
         android:id="@+id/tablet_users_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        android:background="@android:drawable/dialog_holo_light_frame"
+        android:background="@drawable/shadow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ver_2_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/ver_2_guideline"
         app:layout_constraintStart_toStartOf="@+id/ver_1_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_users_title">
 
@@ -98,8 +99,7 @@
             android:id="@+id/tablet_users_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="24dp"
-            android:alpha="0.85" />
+            android:layout_marginTop="36dp"/>
 
     </FrameLayout>
 
@@ -143,8 +143,7 @@
             android:id="@+id/tablet_diseases_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
-            android:alpha="0.85" />
+            android:layout_marginTop="36dp"/>
 
     </FrameLayout>
 
@@ -174,8 +173,6 @@
         android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="1dp"
-        android:paddingBottom="1dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
         app:layout_constraintEnd_toEndOf="@+id/ver_4_guideline"
@@ -188,13 +185,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/tablet_treatment_cancel"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_cancel_white_24dp"
-                tools:ignore="ContentDescription" />
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_cancel_white_24dp"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
@@ -203,13 +207,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/tablet_treatment_save"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_check_outline_white_30dp"
-                tools:ignore="ContentDescription" />
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_check_outline_white_30dp"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
@@ -218,13 +229,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/tablet_treatment_delete"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_delete_white_24dp"
-                tools:ignore="ContentDescription" />
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_delete_white_24dp"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
         </FrameLayout>
     </LinearLayout>
 
@@ -232,7 +250,6 @@
         android:id="@+id/tablet_treatment_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -250,7 +267,6 @@
             android:id="@+id/tablet_treatment_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
-            android:alpha="0.85" />
+            android:layout_marginTop="36dp"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

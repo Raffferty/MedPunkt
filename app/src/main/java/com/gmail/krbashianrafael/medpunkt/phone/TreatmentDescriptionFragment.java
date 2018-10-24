@@ -114,7 +114,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                            //mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
 
                             mTabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
@@ -133,25 +133,65 @@ public class TreatmentDescriptionFragment extends Fragment {
                             TabletMainActivity.tempTextTreatment = mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
                             mTabletMainActivity.tabletTreatmentFragment.editDisease = true;
-                            mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
-                            editTextTreatment.setFocusable(true);
-                            editTextTreatment.setFocusableInTouchMode(true);
-                            editTextTreatment.setCursorVisible(true);
+                            //mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                            //editTextTreatment.setFocusable(true);
+                            //editTextTreatment.setFocusableInTouchMode(true);
+                            //editTextTreatment.setCursorVisible(true);
                             editTextTreatment.requestFocus();
                             editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
 
-                            mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+                            //mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
                             //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
-                            mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
-                            mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
-
+                            //mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
+                            mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
 
                             //mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
                             float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
 
                             if (percentVerGuideline_3!=0.00f){
-                                mTabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+                                TabletMainActivity.fromWideView = false;
+
+                                //mTabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+
+                                mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+
+                                mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
+                                mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+                                mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+
+                                /*mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+                                mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
+                                mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
+                            }else {
+                                TabletMainActivity.fromWideView = true;
+
+                                mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
+                                mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+                                mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
                             }
                         }
                     }, 500);

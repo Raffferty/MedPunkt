@@ -224,13 +224,15 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
                     //если это планшет
 
-                    // код для показа выделенного заболевания
+                    // код для показа выделенного заболевания при повторном нажатии на пользователя
                     final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
                     if (myDiseaseData.size() != 0) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+
+                                TabletMainActivity.selectedDisease_position = 0;
 
                                 if (TabletMainActivity.selectedDisease_id != 0) {
                                     for (int i = 0; i < myDiseaseData.size(); i++) {

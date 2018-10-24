@@ -1,7 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_DISEASES_FRAGMENT;
 import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
 
 public class TabletDiseasesFragment extends Fragment
@@ -60,27 +58,35 @@ public class TabletDiseasesFragment extends Fragment
     Animation fabShowAnimation;
     Animation fadeInAnimation;
 
-    public ValueAnimator animVerGuideline_1_from_0_to_10,
-            animVerGuideline_1_from_10_to_0;
+    /*public ValueAnimator
+            animVerGuideline_1_from_0_to_10,
+            animVerGuideline_1_from_10_to_0;*/
 
-    public ValueAnimator animVerGuideline_2_from_30_to_50,
+    /*public ValueAnimator
+            animVerGuideline_2_from_30_to_50,
             animVerGuideline_2_from_50_to_30,
             animVerGuideline_2_from_50_to_90,
             animVerGuideline_2_from_30_to_90,
-            animVerGuideline_2_from_90_to_30;
+            animVerGuideline_2_from_90_to_50,
+            animVerGuideline_2_from_90_to_30,
+            animVerGuideline_2_from_100_to_30,
+            animVerGuideline_2_from_100_to_50;*/
 
-    public ValueAnimator animVerGuideline_3_from_100_to_60,
-            animVerGuideline_3_from_90_to_100,
-            animVerGuideline_3_from_30_to_60,
-            animVerGuideline_3_from_60_to_30,
+    /*public ValueAnimator
             animVerGuideline_3_from_0_to_60,
-            animVerGuideline_3_from_60_to_0,
-            animVerGuideline_3_from_100_to_0,
             animVerGuideline_3_from_0_to_100,
+            animVerGuideline_3_from_30_to_60,
+            animVerGuideline_3_from_60_to_0,
+            animVerGuideline_3_from_60_to_30,
+            animVerGuideline_3_from_90_to_100,
             animVerGuideline_3_from_90_to_60,
-            animVerGuideline_3_from_100_to_30;
+            animVerGuideline_3_from_100_to_0,
+            animVerGuideline_3_from_100_to_30,
+            animVerGuideline_3_from_100_to_60;*/
 
-    public ValueAnimator animVerGuideline_4_from_90_to_100;
+    //public ValueAnimator animVerGuideline_4_from_90_to_100;
+
+    //public TranslateAnimation translate_animation;
 
     //public static boolean scrollToInsertedDiseasePosition = false;
     public static boolean diseaseSelected = false;
@@ -135,12 +141,26 @@ public class TabletDiseasesFragment extends Fragment
 
 
                 tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                        getDrawable(android.R.drawable.dialog_holo_light_frame));
+                        getDrawable(R.drawable.shadow));
 
-                tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
+                //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
 
-                tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
-                tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+                //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
+                //tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
+
+                //tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+
+                float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+
+                if (percentVerGuideline_2 == 0.30f) {
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
+                } else if (percentVerGuideline_2 == 0.50f) {
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
+                }
 
                 clearDataFromDiseasesFragment();
 
@@ -156,8 +176,10 @@ public class TabletDiseasesFragment extends Fragment
             public void onClick(View v) {
 
                 //textViewAddDisease.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
                 tabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.GONE);
+
                 //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
 
                 /*if (TabletMainActivity.diseaseAndTreatmentInEdit) {
@@ -168,7 +190,12 @@ public class TabletDiseasesFragment extends Fragment
                         tabletMainActivity.showUnsavedChangesDialog(null);
                     }
                 } else {*/
-                onAddDiseaseClicked();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onAddDiseaseClicked();
+                    }
+                }, 300);
                 //}
 
 
@@ -195,6 +222,8 @@ public class TabletDiseasesFragment extends Fragment
                     TabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
                     TabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
                     TabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+                }else {
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
                 }
 
                 fabAddDisease.startAnimation(fabHideAnimation);
@@ -227,7 +256,13 @@ public class TabletDiseasesFragment extends Fragment
 
                     }
                 } else {
-                    onAddDiseaseClicked();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAddDiseaseClicked();
+                        }
+                    }, 300);
+
                 }
 
                 /*Intent treatmentIntent = new Intent(tabletMainActivity, TreatmentActivity.class);
@@ -265,70 +300,125 @@ public class TabletDiseasesFragment extends Fragment
         TabletMainActivity.diseaseAndTreatmentInEdit = true;
         tabletMainActivity.tabletTreatmentFragment.editDisease = true;
 
+        TabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+        TabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+        TabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-        new Handler().postDelayed(new Runnable() {
+
+        /*new Handler().postDelayed(new Runnable() {
             @Override
-            public void run() {
+            public void run() {*/
 
-                // на планшете показываем клавиатуру
+        // на планшете показываем клавиатуру
                 /*InputMethodManager imm = (InputMethodManager)
                         tabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }*/
 
-                if (textViewAddDisease.getVisibility() == View.VISIBLE) {
-                    textViewAddDisease.setVisibility(View.INVISIBLE);
-                }
+        if (textViewAddDisease.getVisibility() == View.VISIBLE) {
+            textViewAddDisease.setVisibility(View.INVISIBLE);
+        }
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+        tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
-                tabletMainActivity.tabletTreatmentFragment.set_idUser(_idUser);
-                tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setText("");
-                tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setText(getString(R.string.disease_date));
-                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText("");
+        tabletMainActivity.tabletTreatmentFragment.set_idUser(_idUser);
+        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setText("");
+        tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setText(getString(R.string.disease_date));
+        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText("");
 
-                tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
-                Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
+        tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
+        Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
-                tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
-                tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+        tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
+        tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-                //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
-                //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
-                //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
-
-
-                float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
-
-                if (percentVerGuideline_3 == 0.60f) {
-                    animVerGuideline_3_from_60_to_0.start();
-                } else if (percentVerGuideline_3 == 1.00f) {
-                    animVerGuideline_3_from_100_to_0.start();
-                }
+        //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+        //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
+        //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
 
 
-                //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
+        float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
+
+        if (percentVerGuideline_3 == 0.60f) {
+            //animVerGuideline_3_from_60_to_0.start();
+
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+
+            tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+            tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+            tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+            tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+            tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+            tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+            tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+                    tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
+        } else if (percentVerGuideline_3 == 1.00f) {
+            //animVerGuideline_3_from_100_to_0.start();
+
+            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+
+            tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+            tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+            tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+            //if (diseaseAndTreatmentInEdit) {
                 tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
-                //tabletMainActivity.tabletTreatmentDelete.setVisibility(View.GONE);
-
-
                 tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
 
                 tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
                 tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
-                //tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setEnabled(true);
+
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+            //}
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+                    tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                    tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
+        }
 
-                InputMethodManager imm = (InputMethodManager) tabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.showSoftInput(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName, InputMethodManager.SHOW_IMPLICIT);
-                }
-            }
-        }, 500);
+        //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+                /*tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
+
+
+        //mTabletMainActivity.tabletTreatmentTitle.setVisibility(View.INVISIBLE);
+
+        //tabletMainActivity.tabletTreatmentDelete.setVisibility(View.GONE);
+        //tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setEnabled(true);
+
+                /*tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);*/
+
+        InputMethodManager imm = (InputMethodManager) tabletMainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName, InputMethodManager.SHOW_IMPLICIT);
+        }
+            /*}
+        }, 500);*/
     }
 
     @Override
@@ -337,7 +427,7 @@ public class TabletDiseasesFragment extends Fragment
 
         tabletMainActivity = (TabletMainActivity) getActivity();
 
-        animVerGuideline_1_from_0_to_10 = ValueAnimator.ofFloat(0.00f, 0.10f);
+        /*animVerGuideline_1_from_0_to_10 = ValueAnimator.ofFloat(0.00f, 0.10f);
         animVerGuideline_1_from_0_to_10.setDuration(200);
         animVerGuideline_1_from_0_to_10.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -345,9 +435,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_1 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(animatedValue_1);
             }
-        });
+        });*/
 
-        animVerGuideline_1_from_10_to_0 = ValueAnimator.ofFloat(0.10f, 0.00f);
+        /*animVerGuideline_1_from_10_to_0 = ValueAnimator.ofFloat(0.10f, 0.00f);
         animVerGuideline_1_from_10_to_0.setDuration(200);
         animVerGuideline_1_from_10_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -355,10 +445,10 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_1 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(animatedValue_1);
             }
-        });
+        });*/
 
 
-        animVerGuideline_2_from_30_to_50 = ValueAnimator.ofFloat(0.30f, 0.50f);
+        /*animVerGuideline_2_from_30_to_50 = ValueAnimator.ofFloat(0.30f, 0.50f);
         animVerGuideline_2_from_30_to_50.setDuration(200);
         animVerGuideline_2_from_30_to_50.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -366,39 +456,93 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
             }
-        });
+        });*/
 
-        animVerGuideline_2_from_50_to_30 = ValueAnimator.ofFloat(0.50f, 0.30f);
+        /*animVerGuideline_2_from_50_to_30 = ValueAnimator.ofFloat(0.50f, 0.30f);
         animVerGuideline_2_from_50_to_30.setDuration(200);
         animVerGuideline_2_from_50_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
                 float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                if (animatedValue_2 == 0.30f) {
+                    animVerGuideline_3_from_100_to_60.start();
+                }
             }
-        });
+        });*/
 
-        animVerGuideline_2_from_30_to_90 = ValueAnimator.ofFloat(0.30f, 0.90f);
+        /*animVerGuideline_2_from_30_to_90 = ValueAnimator.ofFloat(0.30f, 0.90f);
         animVerGuideline_2_from_30_to_90.setDuration(200);
         animVerGuideline_2_from_30_to_90.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
                 float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                if (animatedValue_2 == 0.90f) {
+                    tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                            getDrawable(R.drawable.shadow));
+                }
             }
-        });
+        });*/
 
-        animVerGuideline_2_from_50_to_90 = ValueAnimator.ofFloat(0.50f, 0.90f);
+        /*animVerGuideline_2_from_50_to_90 = ValueAnimator.ofFloat(0.50f, 0.90f);
         animVerGuideline_2_from_50_to_90.setDuration(200);
         animVerGuideline_2_from_50_to_90.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
                 float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                if (animatedValue_2 == 0.90f) {
+                    tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                            getDrawable(R.drawable.shadow));
+                }
             }
-        });
+        });*/
 
-        animVerGuideline_2_from_90_to_30 = ValueAnimator.ofFloat(0.90f, 0.30f);
+        /*animVerGuideline_2_from_100_to_30 = ValueAnimator.ofFloat(1.00f, 0.30f);
+        animVerGuideline_2_from_100_to_30.setDuration(200);
+        animVerGuideline_2_from_100_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                if (animatedValue_2 == 0.30f) {
+                    animVerGuideline_3_from_100_to_60.start();
+                }
+            }
+        });*/
+
+        /*translate_animation = new TranslateAnimation(0.00f, 500.00f,
+                0.0f, 0.0f);
+        //  TranslateAnimation(float fromXDelta, float toXDelta, float fromYDelta, float toYDelta)
+        translate_animation.setDuration(700);*/
+
+        /*animVerGuideline_2_from_100_to_50 = ValueAnimator.ofFloat(1.00f, 0.50f);
+        animVerGuideline_2_from_100_to_50.setDuration(400);
+        animVerGuideline_2_from_100_to_50.setInterpolator(null);
+        animVerGuideline_2_from_100_to_50.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+                //Log.d("xxx", "animatedValue_2 = " + animatedValue_2);
+                *//*if (animatedValue_2 <= 0.50f){
+                    animVerGuideline_2_from_100_to_50.cancel();
+                }*//*
+            }
+        });*/
+
+        /*animVerGuideline_2_from_90_to_50 = ValueAnimator.ofFloat(0.90f, 0.50f);
+        animVerGuideline_2_from_90_to_50.setDuration(200);
+        animVerGuideline_2_from_90_to_50.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator updatedAnimation) {
+                float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
+            }
+        });*/
+
+        /*animVerGuideline_2_from_90_to_30 = ValueAnimator.ofFloat(0.90f, 0.30f);
         animVerGuideline_2_from_90_to_30.setDuration(200);
         animVerGuideline_2_from_90_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -406,9 +550,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_2 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(animatedValue_2);
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_90_to_60 = ValueAnimator.ofFloat(0.90f, 0.60f);
+        /*animVerGuideline_3_from_90_to_60 = ValueAnimator.ofFloat(0.90f, 0.60f);
         animVerGuideline_3_from_90_to_60.setDuration(200);
         animVerGuideline_3_from_90_to_60.setStartDelay(50);
         animVerGuideline_3_from_90_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -417,9 +561,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_100_to_60 = ValueAnimator.ofFloat(1.00f, 0.60f);
+        /*animVerGuideline_3_from_100_to_60 = ValueAnimator.ofFloat(1.00f, 0.60f);
         animVerGuideline_3_from_100_to_60.setDuration(200);
         animVerGuideline_3_from_100_to_60.setStartDelay(50);
         animVerGuideline_3_from_100_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -428,9 +572,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_100_to_30 = ValueAnimator.ofFloat(1.00f, 0.30f);
+        /*animVerGuideline_3_from_100_to_30 = ValueAnimator.ofFloat(1.00f, 0.30f);
         animVerGuideline_3_from_100_to_30.setDuration(200);
         animVerGuideline_3_from_100_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -438,26 +582,26 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_0_to_60 = ValueAnimator.ofFloat(0.00f, 0.60f);
-        animVerGuideline_3_from_0_to_60.setDuration(200);
+        /*animVerGuideline_3_from_0_to_60 = ValueAnimator.ofFloat(0.00f, 0.60f);
+        //animVerGuideline_3_from_0_to_60.setDuration(400);
         animVerGuideline_3_from_0_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
-                if (animatedValue_3 == 0.60f) {
+                *//*if (animatedValue_3 == 0.60f) {
                     tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
                     tabletMainActivity.tabletUsersWideTitle.setText("");
                     tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                     //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.white));
-                }
+                }*//*
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_60_to_0 = ValueAnimator.ofFloat(0.60f, 0.00f);
-        animVerGuideline_3_from_60_to_0.setDuration(200);
+        /*animVerGuideline_3_from_60_to_0 = ValueAnimator.ofFloat(0.60f, 0.00f);
+        //animVerGuideline_3_from_60_to_0.setDuration(200);
         animVerGuideline_3_from_60_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
@@ -467,13 +611,23 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
                     tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
                     tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
-                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.black));
+
+                    tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                    tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                    tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
                 }
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_100_to_0 = ValueAnimator.ofFloat(1.00f, 0.00f);
-        animVerGuideline_3_from_100_to_0.setDuration(200);
+        /*animVerGuideline_3_from_100_to_0 = ValueAnimator.ofFloat(1.00f, 0.00f);
+        //animVerGuideline_3_from_100_to_0.setDuration(200);
         animVerGuideline_3_from_100_to_0.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator updatedAnimation) {
@@ -483,12 +637,24 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
                     tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
                     tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
-                    //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.black));
+
+                    if (diseaseAndTreatmentInEdit) {
+                        tabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                        tabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                        tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                        tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+                    }
                 }
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_0_to_100 = ValueAnimator.ofFloat(0.00f, 1.00f);
+        /*animVerGuideline_3_from_0_to_100 = ValueAnimator.ofFloat(0.00f, 1.00f);
         animVerGuideline_3_from_0_to_100.setDuration(200);
         animVerGuideline_3_from_0_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -502,10 +668,10 @@ public class TabletDiseasesFragment extends Fragment
                     //tabletMainActivity.tabletTreatmentTitle.setTextColor(getResources().getColor(R.color.white));
                 }
             }
-        });
+        });*/
 
 
-        animVerGuideline_3_from_60_to_30 = ValueAnimator.ofFloat(0.60f, 0.30f);
+        /*animVerGuideline_3_from_60_to_30 = ValueAnimator.ofFloat(0.60f, 0.30f);
         animVerGuideline_3_from_60_to_30.setDuration(200);
         animVerGuideline_3_from_60_to_30.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -513,9 +679,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
-        animVerGuideline_3_from_30_to_60 = ValueAnimator.ofFloat(0.30f, 0.60f);
+        /*animVerGuideline_3_from_30_to_60 = ValueAnimator.ofFloat(0.30f, 0.60f);
         animVerGuideline_3_from_30_to_60.setDuration(200);
         animVerGuideline_3_from_30_to_60.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -523,10 +689,10 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
 
-        animVerGuideline_3_from_90_to_100 = ValueAnimator.ofFloat(0.90f, 1.00f);
+        /*animVerGuideline_3_from_90_to_100 = ValueAnimator.ofFloat(0.90f, 1.00f);
         animVerGuideline_3_from_90_to_100.setDuration(200);
         animVerGuideline_3_from_90_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -534,9 +700,9 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_3 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(animatedValue_3);
             }
-        });
+        });*/
 
-        animVerGuideline_4_from_90_to_100 = ValueAnimator.ofFloat(0.90f, 1.00f);
+        /*animVerGuideline_4_from_90_to_100 = ValueAnimator.ofFloat(0.90f, 1.00f);
         animVerGuideline_4_from_90_to_100.setDuration(200);
         animVerGuideline_4_from_90_to_100.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -544,7 +710,7 @@ public class TabletDiseasesFragment extends Fragment
                 float animatedValue_4 = (float) updatedAnimation.getAnimatedValue();
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(animatedValue_4);
             }
-        });
+        });*/
 
         /*animVerGuideline_3_from_60_to_100 = ValueAnimator.ofFloat(0.60f, 1.00f);
         animVerGuideline_3_from_60_to_100.setDuration(100);
@@ -722,6 +888,8 @@ public class TabletDiseasesFragment extends Fragment
                 @Override
                 public void run() {
 
+                    TabletMainActivity.selectedDisease_position = 0;
+
                     if (TabletMainActivity.selectedDisease_id != 0) {
                         for (int i = 0; i < myData.size(); i++) {
                             if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
@@ -757,24 +925,60 @@ public class TabletDiseasesFragment extends Fragment
             if (percentVerGuideline_2 == 0.90f) {
                 // если были видны только пользователи и нажимали на пользователя у которого нет заболеваний
 
-                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // убираем тени вокруг tabletUsersFrame
+                        tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+                        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
 
-                animVerGuideline_1_from_10_to_0.start();
-                animVerGuideline_3_from_90_to_100.start();
+                        tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                        tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                    }
+                }, 600);
+
+                //animVerGuideline_1_from_10_to_0.start();
+                //animVerGuideline_3_from_90_to_100.start();
+                //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+
+                /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(1.00f);
+
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        animVerGuideline_2_from_100_to_50.start();
+                    }
+                }, 100);*/
+
+
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
                     }
-                }, 300);
+                //}, 300);*/
 
             } else if (percentVerGuideline_2 == 0.30f) {
                 // если были видны пользователи и у пользователя было одно заболевание, которе удалили
                 // в итоге у пользователя нет заболеваний
 
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-                animVerGuideline_2_from_30_to_50.start();
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                animVerGuideline_2_from_30_to_50.start();*/
             }
 
             tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
@@ -826,16 +1030,57 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                animVerGuideline_2_from_90_to_30.start();
-                animVerGuideline_3_from_90_to_60.start();
+                /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);*/
 
                 new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // убираем тени вокруг tabletUsersFrame
+                        tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+                        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
+
+                        tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                        tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                    }
+                }, 600);
+
+                //animVerGuideline_1_from_10_to_0.start();
+                //animVerGuideline_3_from_90_to_100.start();
+                //animVerGuideline_3_from_100_to_60.start();
+
+               /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(1.00f);
+
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                animVerGuideline_2_from_100_to_30.start();*/
+
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                        animVerGuideline_3_from_100_to_60.start();
+                    }
+                }, 50);*/
+
+                //animVerGuideline_2_from_90_to_30.start();
+                //animVerGuideline_3_from_90_to_60.start();
+
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         animVerGuideline_1_from_10_to_0.start();
                         animVerGuideline_4_from_90_to_100.start();
                     }
-                }, 200);
+                }, 200);*/
 
             } else if (percentVerGuideline_2 == 0.50f) {
                 // если был открыт пользователь, у которого нет заболеваний и
@@ -844,13 +1089,27 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
+                /*new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {*/
+                // убираем тени вокруг tabletUsersFrame
+                        /*tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+                        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);*/
+
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
-                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                    /*}
+                }, 100);*/
 
-                animVerGuideline_2_from_50_to_30.start();
-                animVerGuideline_3_from_100_to_60.start();
+                /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);*/
 
-            } else if (percentVerGuideline_3 == 0.30f) {
+                //animVerGuideline_2_from_50_to_30.start();
+                //animVerGuideline_3_from_100_to_60.start();
+
+            } /*else if (percentVerGuideline_3 == 0.30f) {
                 // если у пользователя не было заболеваний и было нажато добавить заболевание
                 // и было нажато "сохранить"
 
@@ -861,9 +1120,14 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                animVerGuideline_3_from_30_to_60.start();
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
 
-            } else if (percentVerGuideline_3 == 1.00f) {
+                //animVerGuideline_3_from_30_to_60.start();
+
+            }*/ else if (percentVerGuideline_3 == 1.00f) {
                 // если у пользователя было два заболевания,
                 // при этом одно из них было открыто для удаления и удалилось
                 // в итоге осталось одно заболевание
@@ -871,7 +1135,12 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                animVerGuideline_3_from_100_to_60.start();
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                //animVerGuideline_3_from_100_to_60.start();
             }
 
             fabAddDisease.startAnimation(fabShowAnimation);
@@ -919,10 +1188,18 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
-                animVerGuideline_3_from_0_to_60.start();
+
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
+
+                //animVerGuideline_3_from_0_to_60.start();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                tabletMainActivity.tabletUsersWideTitle.setText("");
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+
                 tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(tabletMainActivity.tabletTreatmentFragment.textDiseaseName);
 
                 /*if (diseaseSelected) {
@@ -956,8 +1233,8 @@ public class TabletDiseasesFragment extends Fragment
 
                 //animVerGuideline_3_from_30_to_60.start();
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+                /*tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);*/
 
 
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
@@ -1045,21 +1322,117 @@ public class TabletDiseasesFragment extends Fragment
                     // если было больше одного пользователя и были видны только пользователи
                     // и был нажат пользователь у которого более одного заболевания
 
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // убираем тени вокруг tabletUsersFrame
+                            tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+                            tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
+
+                            tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+                            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                        }
+                    }, 600);
+
+                    //animVerGuideline_1_from_10_to_0.start();
+                    //animVerGuideline_3_from_90_to_100.start();
+
+
+                    //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+
+                    //animVerGuideline_2_from_100_to_50.start();
+
+                    /*Keyframe kf0 = Keyframe.ofFloat(0.0f, 1.00f);
+                    Keyframe kf1 = Keyframe.ofFloat(.10f, .95f);
+                    Keyframe kf2 = Keyframe.ofFloat(.20f, .90f);
+                    Keyframe kf3 = Keyframe.ofFloat(.30f, .85f);
+                    Keyframe kf4 = Keyframe.ofFloat(.40f, .80f);
+                    Keyframe kf5 = Keyframe.ofFloat(.50f, .75f);
+                    Keyframe kf6 = Keyframe.ofFloat(.60f, .70f);
+                    Keyframe kf7 = Keyframe.ofFloat(.70f, .65f);
+                    Keyframe kf8 = Keyframe.ofFloat(.80f, .60f);
+                    Keyframe kf9 = Keyframe.ofFloat(.90f, .55f);
+                    Keyframe kf10 = Keyframe.ofFloat(1.0f, 0.50f);
+                    PropertyValuesHolder pvhRotation = PropertyValuesHolder.ofKeyframe("GuidelinePercent",
+                            kf0, kf1, kf2, kf3, kf4, kf5, kf6, kf7, kf8, kf9, kf10);
+
+                    ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(tabletMainActivity.ver_2_Guideline, pvhRotation);
+
+
+                    animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            Log.d("xxx", "AnimatedFraction = " + animation.getAnimatedFraction() +
+                                    " AnimatedValue = " + animation.getAnimatedValue());
+                        }
+                    });*/
+
+                    /*ObjectAnimator animation = ObjectAnimator.ofFloat(tabletMainActivity.ver_2_Guideline,
+                            "GuidelinePercent", 1.00f, 0.50f);
+                    //animation.setInterpolator(new DecelerateInterpolator());
+                    animation.setDuration(250);
+                    animation.start();*/
+
+
+                   /* AnimatorSet animatorSet = new AnimatorSet();
+                    animatorSet.play(animation).after(animVerGuideline_2_from_50_to_90);
+                    animatorSet.start();*/
+
+
+                    /*new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                    ViewGroup sceneRoot = (ViewGroup) tabletMainActivity.findViewById(R.id.container);
+                    TransitionManager.beginDelayedTransition(sceneRoot);
+                    //tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+
+                    //TransitionManager.beginDelayedTransition(sceneRoot);
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                    //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(1.00f);
+
+                    //TransitionManager.beginDelayedTransition(sceneRoot);
+
+                    //animVerGuideline_3_from_90_to_100.start();
+                    //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+
+                    //TransitionManager.beginDelayedTransition(sceneRoot);
+
+
+                    //tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                    //TransitionManager.beginDelayedTransition(sceneRoot);
+
+
+                        }
+                    }, 500);*/
+
+                    /*//animVerGuideline_1_from_10_to_0.start();
+                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+
+                    //animVerGuideline_3_from_90_to_100.start();
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+
                     tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
-                    animVerGuideline_1_from_10_to_0.start();
-                    animVerGuideline_3_from_90_to_100.start();
+                    //animVerGuideline_2_from_100_to_50.start();
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
                         }
-                    }, 300);
+                    }, 300);*/
                 } else if (percentVerGuideline_2 == 0.30f) {
                     // если программа открылась только с одним пользователем, у которого более одного заболевания
 
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-                    animVerGuideline_2_from_30_to_50.start();
+                    tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                    animVerGuideline_2_from_30_to_50.start();*/
                 }
 
                 tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
@@ -1107,8 +1480,8 @@ public class TabletDiseasesFragment extends Fragment
         }*/
 
         // убираем тени вокруг tabletUsersFrame
-        tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
-        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
+        /*tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+        tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);*/
 
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.diseaseInserted = false;

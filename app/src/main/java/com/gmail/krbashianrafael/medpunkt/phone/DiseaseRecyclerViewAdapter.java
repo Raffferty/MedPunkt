@@ -166,6 +166,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
+                    tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
                    /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
                     tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
@@ -177,14 +179,19 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         /*tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
                         tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);*/
 
-                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
-                        tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
+                        //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
+
+                        //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
+
+                        tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
 
 
                         /*new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
                             }
                         }, 300);*/
                     }

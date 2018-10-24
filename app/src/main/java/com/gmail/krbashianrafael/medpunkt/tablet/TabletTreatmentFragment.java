@@ -153,7 +153,17 @@ public class TabletTreatmentFragment extends Fragment
                 imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+
+                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+
+                tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
+
+
             }
         });
 
@@ -164,14 +174,16 @@ public class TabletTreatmentFragment extends Fragment
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
 
                 // код для показа выделенного заболевания
-                if (TabletMainActivity.selectedDisease_id!=0){
+                if (TabletMainActivity.selectedDisease_id != 0) {
 
-                    final ArrayList<DiseaseItem> myData =  tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+                    final ArrayList<DiseaseItem> myData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
                     if (myData.size() != 0) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+
+                                TabletMainActivity.selectedDisease_position = 0;
 
                                 if (TabletMainActivity.selectedDisease_id != 0) {
                                     for (int i = 0; i < myData.size(); i++) {
@@ -189,7 +201,14 @@ public class TabletTreatmentFragment extends Fragment
 
                 imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+
+                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                tabletMainActivity.tabletUsersWideTitle.setText("");
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                 //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+
             }
         });
 
@@ -520,7 +539,6 @@ public class TabletTreatmentFragment extends Fragment
         }*/
 
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
-        imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
         // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
@@ -547,12 +565,16 @@ public class TabletTreatmentFragment extends Fragment
         } else {*/
         if (TabletMainActivity.newDiseaseAndTreatment) {
 
+            imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
             /*TabletMainActivity.newDiseaseAndTreatment = false;
             TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
 
             // сохранять в базу в отдельном треде
             saveDiseaseAndTreatmentToDataBase();
         } else {
+
+            imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
 
             /*TabletMainActivity.newDiseaseAndTreatment = false;
             TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
@@ -626,7 +648,7 @@ public class TabletTreatmentFragment extends Fragment
 
         if (rowsAffected == 0) {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
-        }else {
+        } else {
             //if (!TabletDiseasesFragment.diseaseSelected){
             tabletMainActivity.tabletTreatmentTitle.setText(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString());
             //}
