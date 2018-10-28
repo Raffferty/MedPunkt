@@ -22,8 +22,8 @@ import java.util.Objects;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    String dateInEditTextDate;
-    EditText editTextDate;
+    private String dateInEditTextDate;
+    private EditText editTextDate;
 
     @Override
     public void onAttach(Context context) {

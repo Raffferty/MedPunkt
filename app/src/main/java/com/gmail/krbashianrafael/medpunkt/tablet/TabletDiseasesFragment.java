@@ -32,24 +32,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
-
 public class TabletDiseasesFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private TabletMainActivity tabletMainActivity;
 
-    // шапка, которая видна только на планшете
-    public TextView txtTabletDiseases;
-
-    public ImageView imgCancelTabletDiseases;
-
 
     private long _idUser = 0;
 
-    private String textUserName = "";
-
-    protected TextView textViewAddDisease;
+    TextView textViewAddDisease;
 
     public FloatingActionButton fabAddDisease;
 
@@ -112,11 +103,12 @@ public class TabletDiseasesFragment extends Fragment
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        txtTabletDiseases = view.findViewById(R.id.txt_diseases);
+        // шапка, которая видна только на планшете
+        TextView txtTabletDiseases = view.findViewById(R.id.txt_diseases);
         txtTabletDiseases.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTabletDiseases.setTextColor(getResources().getColor(R.color.white));
 
-        imgCancelTabletDiseases = view.findViewById(R.id.img_cancel_tablet_diseases);
+        ImageView imgCancelTabletDiseases = view.findViewById(R.id.img_cancel_tablet_diseases);
         imgCancelTabletDiseases.setVisibility(View.VISIBLE);
         imgCancelTabletDiseases.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,7 +242,7 @@ public class TabletDiseasesFragment extends Fragment
 
                 if (tabletMainActivity.diseaseAndTreatmentInEdit) {
                     if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
-                        tabletMainActivity.cancel(false);
+                        tabletMainActivity.cancel();
                         onAddDiseaseClicked();
 
                     } else {
@@ -332,7 +324,7 @@ public class TabletDiseasesFragment extends Fragment
         tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
         Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
-        tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
+        //tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
         tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
         //tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
@@ -778,7 +770,7 @@ public class TabletDiseasesFragment extends Fragment
     }
 
     // метод для очистки данных из DiseasesFragment
-    protected void clearDataFromDiseasesFragment() {
+    void clearDataFromDiseasesFragment() {
         ArrayList<DiseaseItem> myData = diseaseRecyclerViewAdapter.getDiseaseList();
         myData.clear();
 
@@ -794,16 +786,11 @@ public class TabletDiseasesFragment extends Fragment
 
     // сразу устанавливается имя пользователя в tabletDiseasesTitle
     public void setTextUserName(String textUserName) {
-        this.textUserName = textUserName;
-        tabletMainActivity.tabletDiseasesTitle.setText(this.textUserName);
+        tabletMainActivity.tabletDiseasesTitle.setText(textUserName);
     }
 
     public long get_idUser() {
         return _idUser;
-    }
-
-    public String getTextUserName() {
-        return textUserName;
     }
 
     public void initDiseasesLoader() {
@@ -1024,7 +1011,7 @@ public class TabletDiseasesFragment extends Fragment
             tabletMainActivity.hideElementsOnTabletTreatmentFragment();
             //}
 
-            tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
+            //tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
 
             float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
             float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
@@ -1190,7 +1177,7 @@ public class TabletDiseasesFragment extends Fragment
             if (TabletMainActivity.diseaseInserted) {
                 // если было добавлено заболевание
 
-                tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
+                //tabletMainActivity.unBlur(TabletMainActivity.TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
@@ -1494,7 +1481,7 @@ public class TabletDiseasesFragment extends Fragment
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.diseaseInserted = false;
         TabletMainActivity.diseaseUpdated = false;
-        TabletMainActivity.diseaseDeleted = false;
+        //TabletMainActivity.diseaseDeleted = false;
 
         tabletMainActivity.diseaseAndTreatmentInEdit = false;
         tabletMainActivity.newDiseaseAndTreatment = false;

@@ -13,7 +13,7 @@ import com.gmail.krbashianrafael.medpunkt.R;
 
 public class TreatmentAdapter extends FragmentPagerAdapter {
 
-    private Context mContext;
+    private final Context mContext;
 
     private int pagesCount = 2;
 
@@ -60,7 +60,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
         return sb;
     }
 
-    public void setPagesCount(int pagesCount) {
+    void setPagesCount(int pagesCount) {
         this.pagesCount = pagesCount;
     }
 }

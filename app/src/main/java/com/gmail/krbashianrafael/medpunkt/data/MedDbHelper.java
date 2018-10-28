@@ -8,7 +8,7 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 
-public class MedDbHelper extends SQLiteOpenHelper {
+class MedDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "medpunkt.db"; //имя файла Базы данных
 

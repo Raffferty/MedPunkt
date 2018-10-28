@@ -26,7 +26,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     // fabEditTreatmentDescripton
     public FloatingActionButton fabEditTreatmentDescripton;
 
-    public Animation fabShowAnimation;
     public Animation fabHideAnimation;
 
     public TreatmentDescriptionFragment() {
@@ -60,15 +59,15 @@ public class TreatmentDescriptionFragment extends Fragment {
         // Активити в котором может находится этот фрагмент
         // TreatmentActivity - если телефорн
         // TabletMainActivity - если планшет
-        TreatmentActivity mTreaymentActivity;
+        TreatmentActivity mTreatmentActivity;
         TabletMainActivity mTabletMainActivity;
 
         if (getActivity() instanceof TabletMainActivity) {
             mTabletMainActivity = (TabletMainActivity) getActivity();
             doWorkWithTabletMainActivity(mTabletMainActivity);
         } else {
-            mTreaymentActivity = (TreatmentActivity) getActivity();
-            doWorkWithTreaymentActivity(mTreaymentActivity);
+            mTreatmentActivity = (TreatmentActivity) getActivity();
+            doWorkWithTreatmentActivity(mTreatmentActivity);
         }
     }
 
@@ -218,23 +217,23 @@ public class TreatmentDescriptionFragment extends Fragment {
         }
     }
 
-    private void doWorkWithTreaymentActivity(final TreatmentActivity mTreaymentActivity) {
-        if (mTreaymentActivity != null) {
+    private void doWorkWithTreatmentActivity(final TreatmentActivity mTreatmentActivity) {
+        if (mTreatmentActivity != null) {
 
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
-            if (mTreaymentActivity.treatmentDescriptionFragment == null) {
-                mTreaymentActivity.initTreatmentDescriptionFragment();
+            if (mTreatmentActivity.treatmentDescriptionFragment == null) {
+                mTreatmentActivity.initTreatmentDescriptionFragment();
             }
 
-            editTextTreatment.setText(mTreaymentActivity.textTreatment);
+            editTextTreatment.setText(mTreatmentActivity.textTreatment);
 
-            if (HomeActivity.isTablet && !mTreaymentActivity.newDisease) {
-                editTextTreatment.setSelection(mTreaymentActivity.textTreatment.length());
+            if (HomeActivity.isTablet && !mTreatmentActivity.newDisease) {
+                editTextTreatment.setSelection(mTreatmentActivity.textTreatment.length());
 
                 editTextTreatment.requestFocus();
             }
 
-            fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
+            Animation fabShowAnimation = AnimationUtils.loadAnimation(mTreatmentActivity, R.anim.fab_show);
             fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -252,7 +251,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                 }
             });
 
-            fabHideAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_hide);
+            fabHideAnimation = AnimationUtils.loadAnimation(mTreatmentActivity, R.anim.fab_hide);
             fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -272,16 +271,16 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    mTreaymentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
-                    mTreaymentActivity.editTextDiseaseName.setEnabled(true);
+                    mTreatmentActivity.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                    mTreatmentActivity.editTextDiseaseName.setEnabled(true);
 
-                    mTreaymentActivity.editDisease = true;
+                    mTreatmentActivity.editDisease = true;
 
-                    mTreaymentActivity.invalidateOptionsMenu();
+                    mTreatmentActivity.invalidateOptionsMenu();
 
                     // оставляем только страницу редактирования описания лечения
                     // страницу с фото убираем
-                    mTreaymentActivity.tabLayout.setVisibility(View.GONE);
+                    mTreatmentActivity.tabLayout.setVisibility(View.GONE);
 
                     editTextTreatment.setFocusable(true);
                     editTextTreatment.setFocusableInTouchMode(true);
@@ -294,20 +293,20 @@ public class TreatmentDescriptionFragment extends Fragment {
                     // показываем клавиатуру если это планшет
                     if (HomeActivity.isTablet) {
                         InputMethodManager imm = (InputMethodManager)
-                                mTreaymentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                mTreatmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (imm != null) {
                             imm.showSoftInput(editTextTreatment, InputMethodManager.SHOW_IMPLICIT);
                         }
                     }
 
                     // выбор даты делаем видимым
-                    mTreaymentActivity.editTextDateOfDisease.setVisibility(View.VISIBLE);
+                    mTreatmentActivity.editTextDateOfDisease.setVisibility(View.VISIBLE);
 
-                    mTreaymentActivity.txtTitleDisease.setVisibility(View.GONE);
+                    mTreatmentActivity.txtTitleDisease.setVisibility(View.GONE);
                 }
             });
 
-            if (!mTreaymentActivity.editDisease) {
+            if (!mTreatmentActivity.editDisease) {
                 editTextTreatment.setFocusable(false);
                 editTextTreatment.setFocusableInTouchMode(false);
                 editTextTreatment.setCursorVisible(false);

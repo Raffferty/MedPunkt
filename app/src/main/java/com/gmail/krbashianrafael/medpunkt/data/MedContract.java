@@ -50,7 +50,7 @@ public final class MedContract {
      * NullPointerException
      * if uriString is null
      */
-    static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     /**
      * прописываем пути к таблицам
@@ -60,13 +60,13 @@ public final class MedContract {
      * as the ContentProvider hasn't been given any information on what to do with "staff".
      */
     // путь к таблице users
-    public static final String PATH_USERS = "users";
+    static final String PATH_USERS = "users";
 
     // путь к таблице diseases
-    public static final String PATH_DISEASES = "diseases";
+    static final String PATH_DISEASES = "diseases";
 
     // путь к таблице treatmentPhotos
-    public static final String PATH_TREATMENT_PHOTOS = "treatmentPhotos";
+    static final String PATH_TREATMENT_PHOTOS = "treatmentPhotos";
 
     /**
      * Inner class that defines constant values for the users database table.
@@ -104,7 +104,7 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_LIST_TYPE = "vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/users/"
          */
-        public static final String CONTENT_USERS_LIST_TYPE =
+        static final String CONTENT_USERS_LIST_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
 
         /**
@@ -112,11 +112,11 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_ITEM_TYPE = "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/users/"
          */
-        public static final String CONTENT_USERS_ITEM_TYPE =
+        static final String CONTENT_USERS_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
 
         // имя таблицы users
-        public final static String USERS_TABLE_NAME = "users";
+        final static String USERS_TABLE_NAME = "users";
 
         // колонки таблицы users
         /**
@@ -165,7 +165,7 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_LIST_TYPE = "vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/diseases/"
          */
-        public static final String CONTENT_DISEASES_LIST_TYPE =
+        static final String CONTENT_DISEASES_LIST_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DISEASES;
 
         /**
@@ -173,11 +173,11 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_ITEM_TYPE = "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/diseases/"
          */
-        public static final String CONTENT_DISEASES_ITEM_TYPE =
+        static final String CONTENT_DISEASES_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DISEASES;
 
         // имя таблицы users
-        public final static String DISEASES_TABLE_NAME = "diseases";
+        final static String DISEASES_TABLE_NAME = "diseases";
 
         // колонки таблицы diseases
         /**
@@ -231,7 +231,7 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_LIST_TYPE = "vnd.android.cursor.dir/com.gmail.krbashianrafael.medpunkt/treatmentPhotos/"
          */
-        public static final String CONTENT_TREATMENT_PHOTOS_LIST_TYPE =
+        static final String CONTENT_TREATMENT_PHOTOS_LIST_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TREATMENT_PHOTOS;
 
         /**
@@ -239,11 +239,11 @@ public final class MedContract {
          * <p>
          * в итоге получается CONTENT_ITEM_TYPE = "vnd.android.cursor.item/om.gmail.krbashianrafael.medpunkt/treatmentPhotos/"
          */
-        public static final String CONTENT_TREATMENT_PHOTOS_ITEM_TYPE =
+        static final String CONTENT_TREATMENT_PHOTOS_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TREATMENT_PHOTOS;
 
         // имя таблицы treatmentPhotos
-        public final static String TREATMENT_PHOTOS_TABLE_NAME = "treatmentPhotos";
+        final static String TREATMENT_PHOTOS_TABLE_NAME = "treatmentPhotos";
 
         // колонки таблицы treatmentPhotos
         /**

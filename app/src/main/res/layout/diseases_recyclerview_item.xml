@@ -54,7 +54,6 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/disease_item_user_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone" />

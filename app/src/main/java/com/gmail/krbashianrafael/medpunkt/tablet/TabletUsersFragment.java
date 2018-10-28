@@ -35,18 +35,12 @@ import com.gmail.krbashianrafael.medpunkt.phone.UsersRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_DISEASES_FRAGMENT;
-
 public class TabletUsersFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private TabletMainActivity tabletMainActivity;
 
-    // шапка, которая видна только на планшете
-    public TextView txtTabletUsers;
-    private ImageView imgCancelTabletUsers;
-
-    protected TextView txtAddUsers;
+    private TextView txtAddUsers;
     public FloatingActionButton fabAddUser;
     public RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
@@ -62,11 +56,6 @@ public class TabletUsersFragment extends Fragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_tablet_users, container, false);
@@ -79,10 +68,11 @@ public class TabletUsersFragment extends Fragment
         txtAddUsers = view.findViewById(R.id.txt_empty_users);
 
         //этот TextView виден только на планшере
-        txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
+        // шапка, которая видна только на планшете
+        TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
         txtTabletUsers.setVisibility(View.VISIBLE);
 
-        imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
+        ImageView imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -407,7 +397,7 @@ public class TabletUsersFragment extends Fragment
 
                 //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
 
-                tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+                //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
                 tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
                 tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);

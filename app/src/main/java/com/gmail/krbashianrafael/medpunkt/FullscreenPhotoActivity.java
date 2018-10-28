@@ -42,7 +42,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bogdwellers.pinchtozoom.ImageMatrixCorrector;
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -141,7 +140,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     };
 
     // проверка в состоянии зума или нет
-    final boolean[] inZoom = {false};
+    private final boolean[] inZoom = {false};
     // onLoading - в процессе загрузки или нет
     private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, tapped;
     private boolean onLoading, onSavingOrUpdatingOrDeleting;
@@ -782,6 +781,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
             String mLoadedImageFilePath = cursor.getString(0);
             cursor.close();
+            //noinspection UnusedAssignment
             cursor = null;
             return mLoadedImageFilePath;
         }
@@ -790,7 +790,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     }
 
     // в toggle
-    public void toggle() {
+    private void toggle() {
         // либо скрываем-показываем элементы UI
         if (!editTreatmentPhoto) {
             if (mVisible) {
@@ -1191,9 +1191,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             super(context);
         }
 
-        MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
-            super(context, corrector);
-        }
+// --Commented out by Inspection START (28.10.2018 21:50):
+//        MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
+//            super(context, corrector);
+//        }
+// --Commented out by Inspection STOP (28.10.2018 21:50)
 
         // для DoubleTap
         boolean firstTouch = false;
@@ -1257,7 +1259,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         // получаем WeakReference на FullscreenPhotoActivity,
         // чтобы GC мог его собрать
-        private WeakReference<FullscreenPhotoActivity> fullscreenPhotoActivityReference;
+        private final WeakReference<FullscreenPhotoActivity> fullscreenPhotoActivityReference;
 
         TreatmentPhotoCopyAsyncTask(FullscreenPhotoActivity context) {
             fullscreenPhotoActivityReference = new WeakReference<>(context);
@@ -1292,13 +1294,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         SharedPreferences prefs = fullscreenPhotoActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                        // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
-                        String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                        // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                        String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
                         // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
-                        String updatedNotDeletedFilesPathes = notDeletedFilesPathes + "," + destination.getPath();
+                        String updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + destination.getPath();
 
                         // пишем заново в в "PREFS" обновленную строку
-                        prefsEditor.putString("notDeletedFilesPathes", updatedNotDeletedFilesPathes);
+                        prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                         prefsEditor.apply();
                     }
                 }

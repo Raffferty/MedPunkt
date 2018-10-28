@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_light_gray"
-    tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
+    tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity"
+    tools:ignore="Overdraw">
 
     <android.support.constraint.Guideline
         android:id="@+id/ver_2_guideline"

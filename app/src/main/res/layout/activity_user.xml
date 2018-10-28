@@ -7,12 +7,26 @@
     android:layout_height="match_parent"
     tools:context="com.gmail.krbashianrafael.medpunkt.UserActivity">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_2_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_3_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
     <EditText
         android:id="@+id/focus_holder"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:inputType="none"
-        tools:ignore="LabelFor" />
+        tools:ignore="Autofill,LabelFor" />
 
     <ImageView
         android:id="@+id/image_photo"

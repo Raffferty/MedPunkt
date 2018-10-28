@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_gray"
-    tools:context=".tablet.TabletMainActivity">
+    tools:context=".tablet.TabletMainActivity"
+    tools:ignore="Overdraw">
 
     <android.support.constraint.Guideline
         android:id="@+id/ver_1_guideline"
@@ -96,13 +97,6 @@
             android:name="com.gmail.krbashianrafael.medpunkt.tablet.TabletUsersFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <FrameLayout
-            android:id="@+id/tablet_users_blur"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="36dp" />
-
     </FrameLayout>
 
     <TextView
@@ -140,13 +134,6 @@
             android:name="com.gmail.krbashianrafael.medpunkt.tablet.TabletDiseasesFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <FrameLayout
-            android:id="@+id/tablet_diseases_blur"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="36dp" />
-
     </FrameLayout>
 
     <TextView
@@ -263,11 +250,5 @@
             android:name="com.gmail.krbashianrafael.medpunkt.tablet.TabletTreatmentFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <FrameLayout
-            android:id="@+id/tablet_treatment_blur"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="36dp" />
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

@@ -20,16 +20,14 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletDiseasesFragment;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
-
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
 
 public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
-    private ArrayList<DiseaseItem> diseaseList;
+    private final Context mContext;
+    private final ArrayList<DiseaseItem> diseaseList;
 
     //static long TabletMainActivity.selectedDisease_id = 0;
 
@@ -116,16 +114,16 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public static class DiseaseHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        Context myContext;
+        final Context myContext;
         TabletMainActivity tabletMainActivity;
 
-        TextView _diseaseId;
-        TextView _diseaseUserId;
-        TextView diseaseDate;
-        TextView diseaseName;
-        TextView treatmentText;
+        final TextView _diseaseId;
+        final TextView _diseaseUserId;
+        final TextView diseaseDate;
+        final TextView diseaseName;
+        final TextView treatmentText;
 
-        LinearLayout diseasesItem;
+        final LinearLayout diseasesItem;
         //FrameLayout diseaseEdit;
 
         long disease_id_inEdit = 0;
@@ -225,7 +223,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     // то сначала делается Cancel
                     if (tabletMainActivity.diseaseAndTreatmentInEdit) {
                         if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
-                            tabletMainActivity.cancel(false);
+                            tabletMainActivity.cancel();
                             tabletDiseaseSelected();
                         } else {
                             tabletMainActivity.showUnsavedChangesDialog(this);
@@ -252,7 +250,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
             tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-            tabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+            //tabletMainActivity.disease_IdInEdit = disease_id_inEdit;
 
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView
@@ -264,7 +262,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     /*tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
                     tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setText(R.string.diseases_what_text);*/
 
-            tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
+            //tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
 
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);

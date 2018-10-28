@@ -689,7 +689,7 @@ public class MedProvider extends ContentProvider {
         //DiseasesEntry.COLUMN_U_ID) на update подаваться не будет
         // поэтому не проверяем его
 
-        String diseaseName = null;
+        String diseaseName;
 
         if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_NAME)) {
             diseaseName = values.getAsString(DiseasesEntry.COLUMN_DISEASE_NAME);
@@ -698,7 +698,7 @@ public class MedProvider extends ContentProvider {
             }
         }
 
-        String diseaseDate = null;
+        String diseaseDate;
 
         if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_DATE)) {
             diseaseDate = values.getAsString(DiseasesEntry.COLUMN_DISEASE_DATE);
@@ -708,14 +708,6 @@ public class MedProvider extends ContentProvider {
         }
 
         // DISEASE_TREATMENT не проверяем на null
-        String diseaseTreatment = null;
-
-        if (values.containsKey(DiseasesEntry.COLUMN_DISEASE_TREATMENT)) {
-            diseaseTreatment = values.getAsString(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
-            if (diseaseTreatment == null) {
-                diseaseTreatment = "";
-            }
-        }
 
         // открываем базу для записи
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -735,9 +727,9 @@ public class MedProvider extends ContentProvider {
         // и устанавливаем userNameAfterUpdate
         if (HomeActivity.isTablet) {
             TabletMainActivity.diseaseUpdated = true;
-            TabletMainActivity.diseaseNameAfterUpdate = diseaseName;
+            /*TabletMainActivity.diseaseNameAfterUpdate = diseaseName;
             TabletMainActivity.diseaseDateAfterUpdate = diseaseDate;
-            TabletMainActivity.diseaseTreatmentAfterUpdate = diseaseTreatment;
+            TabletMainActivity.diseaseTreatmentAfterUpdate = diseaseTreatment;*/
         }
 
         // Returns the number of database rows affected by the update statement
@@ -862,12 +854,12 @@ public class MedProvider extends ContentProvider {
             case DISEASES:
                 rowsDeleted = database.delete(DiseasesEntry.DISEASES_TABLE_NAME, selection, selectionArgs);
 
-                if (rowsDeleted != 0) {
+                /*if (rowsDeleted != 0) {
                     // Выставляем флаг для загрузки заболеваний в планшете после удаления заболевания
                     if (HomeActivity.isTablet) {
                         TabletMainActivity.diseaseDeleted = true;
                     }
-                }
+                }*/
 
                 break;
             case DISEASES_ID:

@@ -18,17 +18,17 @@ import com.gmail.krbashianrafael.medpunkt.TreatmentPhotoItem;
 
 import java.util.ArrayList;
 
-public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
-    private ArrayList<TreatmentPhotoItem> treatmentPhotosList;
+    private final Context mContext;
+    private final ArrayList<TreatmentPhotoItem> treatmentPhotosList;
 
     TreatmentPhotoRecyclerViewAdapter(Context context) {
         mContext = context;
         this.treatmentPhotosList = new ArrayList<>();
     }
 
-    public ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
+    ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
         return treatmentPhotosList;
     }
 
@@ -64,18 +64,18 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         return treatmentPhotosList.size();
     }
 
-    public static class TreatmentPhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class TreatmentPhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        Context myContext;
+        final Context myContext;
 
-        LinearLayout treatmentPhotoItem;
+        final LinearLayout treatmentPhotoItem;
 
-        TextView _trPhotoId;
-        TextView _userId;
-        TextView _diseaseId;
-        TextView itemUri;
-        TextView itemDate;
-        TextView itemName;
+        final TextView _trPhotoId;
+        final TextView _userId;
+        final TextView _diseaseId;
+        final TextView itemUri;
+        final TextView itemDate;
+        final TextView itemName;
 
         TreatmentPhotoHolder(View itemView, Context context) {
             super(itemView);

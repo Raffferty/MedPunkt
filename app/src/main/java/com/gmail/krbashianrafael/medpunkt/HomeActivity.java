@@ -163,8 +163,8 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intentToUsers = new Intent(HomeActivity.this, UsersActivity.class);
                     startActivity(intentToUsers);
                 } else {
-                    Intent intentToTbalet = new Intent(HomeActivity.this, TabletMainActivity.class);
-                    startActivity(intentToTbalet);
+                    Intent intentToTabalet = new Intent(HomeActivity.this, TabletMainActivity.class);
+                    startActivity(intentToTabalet);
                 }
             }
         });
@@ -172,24 +172,24 @@ public class HomeActivity extends AppCompatActivity {
         // при первой загрузке проверяем есть ли висячие файлы фотографий,
         // которые должны были быть удалены, но не удалились
         // и пытаемся их снова удалить в doInBackground класса CleanNotDeletedFilesAsyncTask
-        String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+        String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
-        if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
-            new CleanNotDeletedFilesAsyncTask(notDeletedFilesPathes).execute(getApplicationContext());
+        if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
+            new CleanNotDeletedFilesAsyncTask(notDeletedFilesPaths).execute(getApplicationContext());
         }
     }
 
     private static class CleanNotDeletedFilesAsyncTask extends AsyncTask<Context, Void, Boolean> {
 
-        private final String mNotDeletedFilesPathes;
+        private final String mNotDeletedFilesPaths;
 
-        CleanNotDeletedFilesAsyncTask(String notDeletedFilesPathes) {
-            mNotDeletedFilesPathes = notDeletedFilesPathes;
+        CleanNotDeletedFilesAsyncTask(String notDeletedFilesPaths) {
+            mNotDeletedFilesPaths = notDeletedFilesPaths;
         }
 
         @Override
         protected Boolean doInBackground(Context... contexts) {
-            if (contexts == null || contexts[0] == null || mNotDeletedFilesPathes == null) {
+            if (contexts == null || contexts[0] == null || mNotDeletedFilesPaths == null) {
                 return false;
             }
 
@@ -199,11 +199,11 @@ public class HomeActivity extends AppCompatActivity {
             SharedPreferences mPrefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             final SharedPreferences.Editor mPrefsEditor = mPrefs.edit();
 
-            String[] splitedFilesPathes = mNotDeletedFilesPathes.split(",");
+            String[] splitedFilesPaths = mNotDeletedFilesPaths.split(",");
 
             StringBuilder sb = new StringBuilder();
 
-            for (String fPath : splitedFilesPathes) {
+            for (String fPath : splitedFilesPaths) {
                 File toBeDeletedFile = new File(fPath);
                 if (toBeDeletedFile.exists()) {
                     if (!toBeDeletedFile.delete()) {
@@ -215,15 +215,15 @@ public class HomeActivity extends AppCompatActivity {
             if (sb.length() > 0) {
                 sb.deleteCharAt(sb.length() - 1);
 
-                mPrefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                mPrefsEditor.putString("notDeletedFilesPaths", sb.toString());
                 mPrefsEditor.apply();
 
                 return false;
             }
 
             // если после повторной попытки удаления не осталось висячих файлов sb = 0,
-            // то очищаем поле notDeletedFilesPathes
-            mPrefsEditor.putString("notDeletedFilesPathes", null);
+            // то очищаем поле notDeletedFilesPaths
+            mPrefsEditor.putString("notDeletedFilesPaths", null);
             mPrefsEditor.apply();
 
             return true;

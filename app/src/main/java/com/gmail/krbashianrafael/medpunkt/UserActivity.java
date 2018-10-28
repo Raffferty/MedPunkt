@@ -122,7 +122,6 @@ public class UserActivity extends AppCompatActivity
     // TextView для указания UserTitle
     private TextView txtTabletUserTitle;
 
-    private FrameLayout tabletFrmBack;
     private FrameLayout tabletFrmSave;
     private FrameLayout tabletFrmDelete;
 
@@ -146,9 +145,6 @@ public class UserActivity extends AppCompatActivity
 
     // Animation fabHideAnimation
     private Animation fabHideAnimation;
-
-    // Animation fabShowAnimation
-    private Animation fabShowAnimation;
 
     // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
@@ -215,7 +211,7 @@ public class UserActivity extends AppCompatActivity
 
             txtTabletUserTitle = findViewById(R.id.txt_tablet_user_title);
 
-            tabletFrmBack = findViewById(R.id.tablet_frm_back);
+            FrameLayout tabletFrmBack = findViewById(R.id.tablet_frm_back);
             tabletFrmBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -242,7 +238,7 @@ public class UserActivity extends AppCompatActivity
                     popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
 
                     // создаем строку для зацепки к символу "удалить"
-                    String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+                    String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
                     // убираем не нужные Item
                     popup.getMenu().removeItem(R.id.action_delete);
@@ -250,7 +246,7 @@ public class UserActivity extends AppCompatActivity
 
                     // добавление в меню текста с картинкой символа "удалить"
                     popup.getMenu().add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
-                            deletString));
+                            deleteString));
 
                     //registering popup with OnMenuItemClickListener
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -469,7 +465,8 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        // Animation fabShowAnimation
+        Animation fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -656,12 +653,12 @@ public class UserActivity extends AppCompatActivity
 
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+        String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
         menu.removeItem(R.id.action_delete);
         // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
-                deletString));
+                deleteString));
 
         return true;
     }
@@ -714,6 +711,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     // если было нажато "домой" (обратно)
+    @SuppressWarnings("SameReturnValue")
     private boolean onHomeClick() {
         // Если не было изменений
         if (userHasNotChanged()) {
@@ -745,6 +743,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     // если было нажато "сохранить"
+    @SuppressWarnings("SameReturnValue")
     private boolean onSaveClick() {
         // флаг, чтоб повторный клик не работал,
         // пока идет сохранения
@@ -788,6 +787,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     // если было нажато "удалить"
+    @SuppressWarnings("SameReturnValue")
     private boolean onDeleteClick() {
         // флаг, чтоб клик не работал,
         // пока идет сохранения
@@ -831,10 +831,10 @@ public class UserActivity extends AppCompatActivity
     // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
 
-        String deletString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
+        String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
-        builder.setMessage(deletString + " " + editTextName.getText() + "?");
+        builder.setMessage(deleteString + " " + editTextName.getText() + "?");
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (onSavingOrUpdatingOrDeleting) {
@@ -958,13 +958,13 @@ public class UserActivity extends AppCompatActivity
                     SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
-                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
                     // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
-                    String updatedNotDeletedFilesPathes = notDeletedFilesPathes + "," + userPhotoUri;
+                    String updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + userPhotoUri;
 
                     // пишем заново в в "PREFS" обновленную строку
-                    prefsEditor.putString("notDeletedFilesPathes", updatedNotDeletedFilesPathes);
+                    prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                     prefsEditor.apply();
                 }
             }
@@ -1123,7 +1123,7 @@ public class UserActivity extends AppCompatActivity
 
                     // сохранение файла фото происходит асинхронно
                     // в UserPhotoSavingAsyncTask
-                    // в конструктор передаются actyvity, loadedBitmap, и путь к файлу фото
+                    // в конструктор передаются activity, loadedBitmap, и путь к файлу фото
                     if (loadedBitmap != null) {
                         new UserPhotoSavingAsyncTask(this, loadedBitmap, userPhotoUri).execute();
                     } else {
@@ -1231,12 +1231,12 @@ public class UserActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // ArrayList для путей к файлам фото, которые нужно будет удалить
-        ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
+        ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
         // если у пользователя есть фото, то
-        // путь к этому фото доабавляем в photoFilePathesToBeDeletedList
+        // путь к этому фото доабавляем в photoFilePathsToBeDeletedList
         if (!TextUtils.equals(userPhotoUri, "No_Photo")) {
-            photoFilePathesToBeDeletedList.add(userPhotoUri);
+            photoFilePathsToBeDeletedList.add(userPhotoUri);
         }
 
         if (cursor != null) {
@@ -1244,12 +1244,12 @@ public class UserActivity extends AppCompatActivity
             cursor.moveToPosition(-1);
 
             // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathesToBeDeletedList
+            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
 
-                photoFilePathesToBeDeletedList.add(trPhotoUri);
+                photoFilePathsToBeDeletedList.add(trPhotoUri);
             }
         }
 
@@ -1258,7 +1258,7 @@ public class UserActivity extends AppCompatActivity
 
         // Запускаем AsyncTask для удаления строк из таблиц users, treatmentPhotos и diseases
         // а далее, и для удаления файлов
-        new UserActivity.UserAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute(getApplicationContext());
+        new UserActivity.UserAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathsToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
@@ -1273,16 +1273,16 @@ public class UserActivity extends AppCompatActivity
         private static final String PREFS_NAME = "PREFS";
 
         private final WeakReference<UserActivity> userActivityReference;
-        private final ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromUsersAndTreatmentPhotosDeleted = -1;
 
         // в конструкторе получаем WeakReference<UserActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathesListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
+        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathsListToBeDeleted
         // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathesListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
-        UserAndTreatmentPhotosDeletingAsyncTask(UserActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
+        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathsListToBeDeleted
+        UserAndTreatmentPhotosDeletingAsyncTask(UserActivity context, ArrayList<String> photoFilePathsListToBeDeleted) {
             userActivityReference = new WeakReference<>(context);
-            mPhotoFilePathesListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
+            mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathsListToBeDeleted);
         }
 
         // в onPreExecute получаем  UserActivity userActivity
@@ -1290,7 +1290,7 @@ public class UserActivity extends AppCompatActivity
         // если же userActivity не null,
         // то в основном треде удаляем строки из таблиц users, treatmentPhotos и diseases в одной транзакции
         // при этом, получаем (как резульат удаления строк из таблиц users и treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathesListToBeDeleted
+        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -1375,7 +1375,7 @@ public class UserActivity extends AppCompatActivity
         }
 
         // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
+        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromUsersAndTreatmentPhotosDeleted == -1) {
@@ -1406,7 +1406,7 @@ public class UserActivity extends AppCompatActivity
 
                 StringBuilder sb = new StringBuilder();
 
-                for (String fPath : mPhotoFilePathesListToBeDeleted) {
+                for (String fPath : mPhotoFilePathsListToBeDeleted) {
 
                     File toBeDeletedFile = new File(fPath);
 
@@ -1421,25 +1421,25 @@ public class UserActivity extends AppCompatActivity
                 }
 
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
-                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
                     // если из prefs вытянулись пути к ранее не удаленным файлам,
                     // то цепляем их в конец sb за запятой
-                    if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
-                        sb.append(notDeletedFilesPathes);
+                    if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
+                        sb.append(notDeletedFilesPaths);
                     } else {
                         // если в prefs не было путей к ранее не удаленным файлам,
                         // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
 
-                    // пишем в поле notDeletedFilesPathes новую строку путей к неудаленным файлам, разделенных запятой
+                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
                     // при этом старая строка в prefs заменится новой строкой
                     // и выходим с return 0,
                     // что означает, что были файлы, которые не удалились
 
-                    prefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                    prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
 
                     return 0;
@@ -1480,9 +1480,9 @@ public class UserActivity extends AppCompatActivity
 
         // получаем WeakReference на объекты,
         // чтобы GC мог их собрать
-        private WeakReference<UserActivity> userActivityReference;
-        private WeakReference<Bitmap> loadedBitmapReference;
-        private WeakReference<String> fileToSavePathReference;
+        private final WeakReference<UserActivity> userActivityReference;
+        private final WeakReference<Bitmap> loadedBitmapReference;
+        private final WeakReference<String> fileToSavePathReference;
 
         UserPhotoSavingAsyncTask(UserActivity context, Bitmap loadedBitmap, String fileToSavePath) {
             userActivityReference = new WeakReference<>(context);
@@ -1558,6 +1558,7 @@ public class UserActivity extends AppCompatActivity
 
             } catch (IOException e) {
                 e.printStackTrace();
+                //noinspection UnusedAssignment
                 loadedBitmap = null;
                 return null;
             }

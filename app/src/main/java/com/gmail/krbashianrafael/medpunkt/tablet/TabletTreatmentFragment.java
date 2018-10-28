@@ -24,7 +24,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -84,20 +83,14 @@ public class TabletTreatmentFragment extends Fragment
     // id заболеввания
     public long _idDisease = 0;
 
-    // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
-    //private boolean goBack, newDisease, onSavingOrUpdatingOrDeleting = false;
-    private boolean newDisease = false;
     public boolean editDisease = false;
-
-    private ActionBar actionBar;
 
     // название заболевания
     public String textDiseaseName = "";
-    public String textDateOfDisease = "";
+    private String textDateOfDisease = "";
     public String textTreatment = "";
 
-    public TextView txtTitleDisease;
-    protected TextView txtTitleTreatment;
+    //public TextView txtTitleDisease;
 
     public ImageView imgZoomOutTabletTreatment, imgZoomInTabletTreatment;
 
@@ -111,8 +104,6 @@ public class TabletTreatmentFragment extends Fragment
     public Animation fabShowAnimation;
 
     public ViewPager viewPager;
-
-    public TreatmentAdapter categoryAdapter;
 
     public TabLayout tabLayout;
 
@@ -139,9 +130,9 @@ public class TabletTreatmentFragment extends Fragment
         frmDividerBlue.setVisibility(View.GONE);
 
         // устанавливаем txtTitleTreatment
-        txtTitleTreatment = view.findViewById(R.id.txt_title_treatment);
+        TextView txtTitleTreatment = view.findViewById(R.id.txt_title_treatment);
         if (HomeActivity.iAmDoctor) {
-            txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
+            txtTitleTreatment.setText(R.string.patient_treatment_title_text);
         }
         txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
@@ -321,16 +312,17 @@ public class TabletTreatmentFragment extends Fragment
         tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setVisibility(View.INVISIBLE);
 
+        /*boolean newDisease = false;
         if (newDisease) {
             editTextDiseaseName.requestFocus();
             editTextDiseaseName.setSelection(0);
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
-        } else {
-            textInputLayoutDiseaseName.setVisibility(View.GONE);
-            editTextDateOfDisease.setVisibility(View.GONE);
-            focusHolder.requestFocus();
-        }
+        } else {*/
+        textInputLayoutDiseaseName.setVisibility(View.GONE);
+        editTextDateOfDisease.setVisibility(View.GONE);
+        focusHolder.requestFocus();
+        //}
     }
 
     @Override
@@ -346,7 +338,7 @@ public class TabletTreatmentFragment extends Fragment
                             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }*/
 
-        categoryAdapter = new TreatmentAdapter(tabletMainActivity, this.getChildFragmentManager());
+        TreatmentAdapter categoryAdapter = new TreatmentAdapter(tabletMainActivity, this.getChildFragmentManager());
 
         viewPager.setAdapter(categoryAdapter);
 
@@ -488,17 +480,17 @@ public class TabletTreatmentFragment extends Fragment
         treatmentDescriptionFragment.editTextTreatment.setText(textTreatment);
     }
 
-    public void setNewDisease(boolean newDisease) {
+    /*public void setNewDisease(boolean newDisease) {
         this.newDisease = newDisease;
-    }
+    }*/
 
-    public void setEditDisease(boolean editDisease) {
+    /*public void setEditDisease(boolean editDisease) {
         this.editDisease = editDisease;
-    }
+    }*/
 
-    public long get_idDisease() {
+    /*public long get_idDisease() {
         return _idDisease;
-    }
+    }*/
 
     public long get_idUser() {
         return _idUser;
@@ -712,19 +704,19 @@ public class TabletTreatmentFragment extends Fragment
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         // ArrayList для путей к файлам фото, которые нужно будет удалить
-        ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
+        ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
         if (cursor != null) {
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
             // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathesToBeDeletedList
+            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(MedContract.TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
 
-                photoFilePathesToBeDeletedList.add(trPhotoUri);
+                photoFilePathsToBeDeletedList.add(trPhotoUri);
             }
         }
 
@@ -734,7 +726,7 @@ public class TabletTreatmentFragment extends Fragment
         // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
         // а далее, и для удаления файлов
         new TabletTreatmentFragment.DiseaseAndTreatmentPhotosDeletingAsyncTask(
-                tabletMainActivity, photoFilePathesToBeDeletedList).execute(tabletMainActivity.getApplicationContext());
+                tabletMainActivity, photoFilePathsToBeDeletedList).execute(tabletMainActivity.getApplicationContext());
     }
 
     @Override
@@ -749,16 +741,16 @@ public class TabletTreatmentFragment extends Fragment
         private static final String PREFS_NAME = "PREFS";
 
         private final WeakReference<TabletMainActivity> asinkTabletMainActivity;
-        private final ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromTreatmentPhotosDeleted = -1;
 
         // в конструкторе получаем WeakReference<TreatmentActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathesListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
+        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
         // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathesListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
+        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
         DiseaseAndTreatmentPhotosDeletingAsyncTask(TabletMainActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
             asinkTabletMainActivity = new WeakReference<>(context);
-            mPhotoFilePathesListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
+            mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
         }
 
         // в onPreExecute получаем  TreatmentActivity treatmentActivity
@@ -766,7 +758,7 @@ public class TabletTreatmentFragment extends Fragment
         // если же treatmentActivity не null,
         // то в основном треде удаляем строки из таблиц treatmentPhotos и diseases в одной транзакции
         // при этом, получаем (как резульат удаления строк из таблицы treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathesListToBeDeleted
+        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -835,7 +827,7 @@ public class TabletTreatmentFragment extends Fragment
         }
 
         // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
+        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromTreatmentPhotosDeleted == -1) {
@@ -866,7 +858,7 @@ public class TabletTreatmentFragment extends Fragment
 
                 StringBuilder sb = new StringBuilder();
 
-                for (String fPath : mPhotoFilePathesListToBeDeleted) {
+                for (String fPath : mPhotoFilePathsListToBeDeleted) {
                     File toBeDeletedFile = new File(fPath);
 
                     if (toBeDeletedFile.exists()) {
@@ -881,25 +873,25 @@ public class TabletTreatmentFragment extends Fragment
 
                 // если есть висячие файлы
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
-                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
                     // если из prefs вытянулись пути к ранее не удаленным файлам,
                     // то цепляем их в конец sb за запятой
-                    if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
-                        sb.append(notDeletedFilesPathes);
+                    if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
+                        sb.append(notDeletedFilesPaths);
                     } else {
                         // если в prefs не было путей к ранее не удаленным файлам,
                         // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
 
-                    // пишем в поле notDeletedFilesPathes новую строку путей к неудаленным файлам, разделенных запятой
+                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
                     // при этом старая строка в prefs заменится новой строкой
                     // и выходим с return 0,
                     // что означает, что были файлы, которые не удалились
 
-                    prefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                    prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
 
                     return 0;

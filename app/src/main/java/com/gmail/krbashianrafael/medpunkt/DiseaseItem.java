@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 import java.util.Calendar;
 
 public class DiseaseItem implements Comparable<DiseaseItem> {
-    private long _diseaseId;
-    private long _diseaseUserId;
-    private String diseaseName;
-    private String diseaseDate;
-    private String diseaseTreatment;
+    private final long _diseaseId;
+    private final long _diseaseUserId;
+    private final String diseaseName;
+    private final String diseaseDate;
+    private final String diseaseTreatment;
 
-    private Calendar dateToCompare;
+    private final Calendar dateToCompare;
 
     public DiseaseItem(long _diseaseId, long _diseaseUserId, String diseaseName, String diseaseDate, String diseaseTreatment) {
         this._diseaseId = _diseaseId;

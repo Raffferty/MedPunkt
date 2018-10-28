@@ -30,12 +30,10 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_DISEASES_FRAGMENT;
-
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
-    private ArrayList<UserItem> usersList;
+    private final Context mContext;
+    private final ArrayList<UserItem> usersList;
 
    /* public static void setSelected_user_id(long selected_user_id) {
         TabletMainActivity.selectedUser_id = selected_user_id;
@@ -122,23 +120,23 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         return usersList.size();
     }
 
-    public static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final Handler myHandler = new Handler(Looper.getMainLooper());
         private final TabletMainActivity tabletMainActivity;
 
-        Context myContext;
+        final Context myContext;
 
-        TextView _userId;
-        TextView userPhotoUri;
-        TextView userBirthDate;
-        TextView userName;
+        final TextView _userId;
+        final TextView userPhotoUri;
+        final TextView userBirthDate;
+        final TextView userName;
 
-        ImageView userImage;
+        final ImageView userImage;
 
-        LinearLayout container;
-        LinearLayout usersItem;
-        FrameLayout userEdit;
+        final LinearLayout container;
+        final LinearLayout usersItem;
+        final FrameLayout userEdit;
 
         UserHolder(View itemView, Context context) {
             super(itemView);
@@ -316,7 +314,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
                 TabletMainActivity.selectedDisease_id = 0;
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-                tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+                //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
                 if (tabletMainActivity.diseaseAndTreatmentInEdit) {
                     //tabletMainActivity.tabletTreatmentCancel.performClick();

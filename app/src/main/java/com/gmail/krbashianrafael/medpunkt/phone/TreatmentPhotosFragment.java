@@ -33,8 +33,8 @@ public class TreatmentPhotosFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     // Активити в котором может находится этот фрагмент
-    TreatmentActivity mTreaymentActivity;
-    TabletMainActivity mTabletMainActivity;
+    private TreatmentActivity mTreatmentActivity;
+    private TabletMainActivity mTabletMainActivity;
 
     // id пользователя
     private long _idUser = 0;
@@ -133,16 +133,16 @@ public class TreatmentPhotosFragment extends Fragment
             doWorkWithTabletMainActivity(mTabletMainActivity);
         }
         else {
-            mTreaymentActivity = (TreatmentActivity) getActivity();
-            doWorkWithTreaymentActivity(mTreaymentActivity);
+            mTreatmentActivity = (TreatmentActivity) getActivity();
+            doWorkWithTreatmentActivity(mTreatmentActivity);
         }*/
 
         if (getActivity() instanceof TabletMainActivity) {
             mTabletMainActivity = (TabletMainActivity) getActivity();
             doWorkWithTabletMainActivity(mTabletMainActivity);
         } else {
-            mTreaymentActivity = (TreatmentActivity) getActivity();
-            doWorkWithTreaymentActivity(mTreaymentActivity);
+            mTreatmentActivity = (TreatmentActivity) getActivity();
+            doWorkWithTreatmentActivity(mTreatmentActivity);
         }
     }
 
@@ -191,7 +191,7 @@ public class TreatmentPhotosFragment extends Fragment
 
     }
 
-    private void doWorkWithTreaymentActivity(TreatmentActivity mTreaymentActivity) {
+    private void doWorkWithTreatmentActivity(TreatmentActivity mTreaymentActivity) {
         if (mTreaymentActivity != null) {
 
             fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
@@ -258,14 +258,14 @@ public class TreatmentPhotosFragment extends Fragment
         /*if (HomeActivity.isTablet) {
             mContext = mTabletMainActivity;
         } else {
-            mContext = mTreaymentActivity;
+            mContext = mTreatmentActivity;
 
         }*/
 
         if (getActivity() instanceof TabletMainActivity) {
             mContext = mTabletMainActivity;
         } else {
-            mContext = mTreaymentActivity;
+            mContext = mTreatmentActivity;
         }
 
         // This loader will execute the ContentProvider's query method on a background thread

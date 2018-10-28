@@ -7,7 +7,6 @@
     tools:context=".tablet.TabletTreatmentFragment">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -80,7 +79,7 @@
             android:layout_height="36dp"
             android:background="@color/my_dark_gray"
             android:gravity="center"
-            android:text="@string/treatmen_title_text"
+            android:text="@string/treatment_title_text"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"

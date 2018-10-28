@@ -2,14 +2,14 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/white"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    tools:context=".phone.TreatmentActivity">
+    tools:context=".phone.TreatmentActivity"
+    tools:ignore="Overdraw">
 
     <EditText
         android:id="@+id/focus_holder"
@@ -83,7 +83,7 @@
         android:layout_height="30dp"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:text="@string/treatmen_title_text"
+        android:text="@string/treatment_title_text"
         android:textAppearance="@style/Widget.AppCompat.Toolbar"
         android:textColor="@android:color/white"
         android:textSize="20sp"
@@ -130,7 +130,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/text_input_layout_disease_name"
-        tools:ignore="LabelFor" />
+        tools:ignore="Autofill,LabelFor" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

@@ -31,7 +31,7 @@ public class DiseasesActivity extends AppCompatActivity
 
     private long _idUser = 0;
 
-    protected static String textUserName;
+    static String textUserName;
 
     private TextView textViewAddDisease;
 

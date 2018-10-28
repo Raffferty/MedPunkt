@@ -10,10 +10,6 @@
     <string name="delete">Удалить</string>
     <string name="cancel">Отменить</string>
 
-    <string name="tablet_save">СОХРАНИТЬ</string>
-    <string name="tablet_delete_disease">УДАЛИТЬ</string>
-    <string name="tablet_cancel">ОТМЕНИТЬ</string>
-
     <string name="dialog_msg_unsaved_changes">Сохранить изменения?</string>
     <string name="dialog_yes">Да</string>
     <string name="dialog_no">Нет</string>
@@ -51,12 +47,10 @@
     <string name="patient_cant_update">Пациента не удалось обновить</string>
     <string name="patient_delete">Удалить пациента</string>
     <string name="patient_not_deleted">Пациент НЕ удалился</string>
-    <string name="patient_treatmen_title_text">Симптоматика и Лечение</string>
+    <string name="patient_treatment_title_text">Симптоматика и Лечение</string>
     <string name="patient_treatment_description_hint_text">Описание симтомов и лечения</string>
 
     <!-- diseases_activity -->
-    <string name="tablet_diseases_select_patient">Выберите пациента</string>
-    <string name="tablet_diseases_select_user">Выберите пользователя</string>
     <string name="diseases_activity_title">Заболевания</string>
     <string name="diseases_empty_text">Добавить заболевание</string>
     <string name="diseases_what_text">Заболевания</string>
@@ -68,7 +62,6 @@
     <string name="disease_delete">Удалить заболевание</string>
 
     <!-- treatment_activity -->
-    <string name="tablet_treatment_select_disease">Выберите заболевание</string>
     <string name="treatment_empty_image_text">Добавить снимки,\nсвязанные с лечением\n(назначения, анализы и т.д.)</string>
     <string name="treatment_cant_save_image">Снимок не удалось сохранить</string>
     <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>
@@ -79,7 +72,7 @@
     <string name="treatment_image_copy_error">При сохранении снимка возникли ошибки,\nповторите попытку позже</string>
     <string name="treatment_old_image_not_deleted">Обновляемый снимок не удалился</string>
     <string name="treatment_title_activity">Добавить заболевание</string>
-    <string name="treatmen_title_text">Лечение</string>
+    <string name="treatment_title_text">Лечение</string>
     <string name="treatment_description_hint_text">Описание лечения</string>
     <string name="treatment_description">ОПИСАНИЕ</string>
     <string name="treatment_images">СНИМКИ</string>

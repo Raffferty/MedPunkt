@@ -10,10 +10,6 @@
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
 
-    <string name="tablet_save">ЗБЕРЕГТИ</string>
-    <string name="tablet_delete_disease">ВДАЛИТИ</string>
-    <string name="tablet_cancel">СКАСУВАТИ</string>
-
     <string name="dialog_msg_unsaved_changes">Зберегти зміни?</string>
     <string name="dialog_yes">Так</string>
     <string name="dialog_no">Ні</string>
@@ -51,12 +47,10 @@
     <string name="patient_cant_update">Пацієнта не вдалося оновити</string>
     <string name="patient_delete">Видалити пацієнта</string>
     <string name="patient_not_deleted">Пацієнта не вдалося видалити</string>
-    <string name="patient_treatmen_title_text">Симптоматика та Лікування</string>
+    <string name="patient_treatment_title_text">Симптоматика та Лікування</string>
     <string name="patient_treatment_description_hint_text">Опис симптомів та лікування</string>
 
     <!-- diseases_activity -->
-    <string name="tablet_diseases_select_patient">Оберіть паціента</string>
-    <string name="tablet_diseases_select_user">Оберіть користувача</string>
     <string name="diseases_activity_title">Захворювання</string>
     <string name="diseases_empty_text">Додати захворювання</string>
     <string name="diseases_what_text">Чим хворів</string>
@@ -68,7 +62,6 @@
     <string name="disease_delete">Видалити захворювання</string>
 
     <!-- treatment_activity -->
-    <string name="tablet_treatment_select_disease">Оберіть захворювання</string>
     <string name="treatment_empty_image_text">Додати знімки,\nпов’язані з лікуванням\n(призначення, аналізи тощо)</string>
     <string name="treatment_cant_save_image">Знімок не вдалося зберегти</string>
     <string name="treatment_cant_save">Захворювання і лікування не вдалося зберегти</string>
@@ -79,7 +72,7 @@
     <string name="treatment_image_copy_error">При збереженні знімка виникли помилки,\nспробуйте ще раз пізніше</string>
     <string name="treatment_old_image_not_deleted">Оновлюваний знімок  не вдалося видалити</string>
     <string name="treatment_title_activity">Додати захворювання</string>
-    <string name="treatmen_title_text">Лікування</string>
+    <string name="treatment_title_text">Лікування</string>
     <string name="treatment_description_hint_text">Опис лікування</string>
     <string name="treatment_description">ОПИС</string>
     <string name="treatment_images">ЗНІМКИ</string>

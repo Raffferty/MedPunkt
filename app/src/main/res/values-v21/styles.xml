@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-
+<resources>
     <!-- это стиль для календаря с прокруткой для Build.VERSION_CODES.N
      который используется сторонней библиотекой
      com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
@@ -8,7 +7,6 @@
      для изменения цвета даты
      <item name="android:textColorPrimary">@color/colorAccent</item>
      -->
-
     <style name="NumberPickerStyle">
         <item name="android:textSize">22sp</item>
         <item name="android:showText">true</item>

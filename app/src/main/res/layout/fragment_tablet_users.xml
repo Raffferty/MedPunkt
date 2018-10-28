@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context=".tablet.TabletUsersFragment">
+    tools:context=".tablet.TabletUsersFragment"
+    tools:ignore="Overdraw">
 
     <include layout="@layout/activity_users" />
 

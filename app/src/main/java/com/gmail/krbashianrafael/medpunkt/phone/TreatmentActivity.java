@@ -74,42 +74,43 @@ public class TreatmentActivity extends AppCompatActivity
     private static final int TR_PHOTOS_LOADER = 22;
 
     // Фрагменты
-    protected TreatmentDescriptionFragment treatmentDescriptionFragment;
-    protected TreatmentPhotosFragment treatmentPhotosFragment;
+    TreatmentDescriptionFragment treatmentDescriptionFragment;
+    TreatmentPhotosFragment treatmentPhotosFragment;
 
     // id пользователя
-    protected long _idUser = 0;
+    long _idUser = 0;
 
     // id заболеввания
-    protected long _idDisease = 0;
+    long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean goBack, onSavingOrUpdatingOrDeleting;
-    protected boolean editDisease, newDisease;
+    boolean editDisease;
+    boolean newDisease;
 
     private ActionBar actionBar;
 
     // название заболевания
     private String textDiseaseName = "";
     private String textDateOfDisease = "";
-    protected String textTreatment = "";
+    String textTreatment = "";
 
-    protected TextView txtTitleDisease, txtTitleTreatment;
+    TextView txtTitleDisease;
 
     // поля названия заболевания, описания лечения и focusHolder
-    protected TextInputLayout textInputLayoutDiseaseName;
-    protected TextInputEditText editTextDiseaseName;
-    protected EditText editTextDateOfDisease;
+    TextInputLayout textInputLayoutDiseaseName;
+    TextInputEditText editTextDiseaseName;
+    EditText editTextDateOfDisease;
     private EditText focusHolder;
 
     // Animation fabShowAnimation
     private Animation fabShowAnimation;
 
-    protected ViewPager viewPager;
+    private ViewPager viewPager;
 
-    protected TreatmentAdapter categoryAdapter;
+    private TreatmentAdapter categoryAdapter;
 
-    protected TabLayout tabLayout;
+    TabLayout tabLayout;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -164,11 +165,11 @@ public class TreatmentActivity extends AppCompatActivity
             txtTitleDisease.setVisibility(View.VISIBLE);
         }
 
-        txtTitleTreatment = findViewById(R.id.txt_title_treatment);
+        TextView txtTitleTreatment = findViewById(R.id.txt_title_treatment);
 
         if (HomeActivity.isTablet) {
             if (HomeActivity.iAmDoctor) {
-                txtTitleTreatment.setText(R.string.patient_treatmen_title_text);
+                txtTitleTreatment.setText(R.string.patient_treatment_title_text);
             } else {
                 txtTitleTreatment.setText(R.string.treatment_description_hint_text);
             }
@@ -412,11 +413,11 @@ public class TreatmentActivity extends AppCompatActivity
 
     // инициализация Фрагментов если они null
     // вызов этого метода и проверка происходит в самих фрагментах
-    protected void initTreatmentDescriptionFragment() {
+    void initTreatmentDescriptionFragment() {
         treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
     }
 
-    protected void initTreatmentPhotosFragment() {
+    void initTreatmentPhotosFragment() {
         treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
     }
 
@@ -874,19 +875,19 @@ public class TreatmentActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // ArrayList для путей к файлам фото, которые нужно будет удалить
-        ArrayList<String> photoFilePathesToBeDeletedList = new ArrayList<>();
+        ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
         if (cursor != null) {
             // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
             // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathesToBeDeletedList
+            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
 
-                photoFilePathesToBeDeletedList.add(trPhotoUri);
+                photoFilePathsToBeDeletedList.add(trPhotoUri);
             }
         }
 
@@ -895,7 +896,7 @@ public class TreatmentActivity extends AppCompatActivity
 
         // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
         // а далее, и для удаления файлов
-        new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathesToBeDeletedList).execute(getApplicationContext());
+        new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathsToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
@@ -910,16 +911,16 @@ public class TreatmentActivity extends AppCompatActivity
         private static final String PREFS_NAME = "PREFS";
 
         private final WeakReference<TreatmentActivity> treatmentActivityReference;
-        private final ArrayList<String> mPhotoFilePathesListToBeDeleted;
+        private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromTreatmentPhotosDeleted = -1;
 
         // в конструкторе получаем WeakReference<TreatmentActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathesListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
+        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
         // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathesListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
-        DiseaseAndTreatmentPhotosDeletingAsyncTask(TreatmentActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
+        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathsListToBeDeleted
+        DiseaseAndTreatmentPhotosDeletingAsyncTask(TreatmentActivity context, ArrayList<String> photoFilePathsListToBeDeleted) {
             treatmentActivityReference = new WeakReference<>(context);
-            mPhotoFilePathesListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
+            mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathsListToBeDeleted);
         }
 
         // в onPreExecute получаем  TreatmentActivity treatmentActivity
@@ -927,7 +928,7 @@ public class TreatmentActivity extends AppCompatActivity
         // если же treatmentActivity не null,
         // то в основном треде удаляем строки из таблиц treatmentPhotos и diseases в одной транзакции
         // при этом, получаем (как резульат удаления строк из таблицы treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathesListToBeDeleted
+        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -996,7 +997,7 @@ public class TreatmentActivity extends AppCompatActivity
         }
 
         // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathesListToBeDeleted
+        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromTreatmentPhotosDeleted == -1) {
@@ -1027,7 +1028,7 @@ public class TreatmentActivity extends AppCompatActivity
 
                 StringBuilder sb = new StringBuilder();
 
-                for (String fPath : mPhotoFilePathesListToBeDeleted) {
+                for (String fPath : mPhotoFilePathsListToBeDeleted) {
                     File toBeDeletedFile = new File(fPath);
 
                     if (toBeDeletedFile.exists()) {
@@ -1042,25 +1043,25 @@ public class TreatmentActivity extends AppCompatActivity
 
                 // если есть висячие файлы
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPathes из prefs пути к ранее не удаленным файлам
-                    String notDeletedFilesPathes = prefs.getString("notDeletedFilesPathes", null);
+                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                    String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
                     // если из prefs вытянулись пути к ранее не удаленным файлам,
                     // то цепляем их в конец sb за запятой
-                    if (notDeletedFilesPathes != null && notDeletedFilesPathes.length() != 0) {
-                        sb.append(notDeletedFilesPathes);
+                    if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
+                        sb.append(notDeletedFilesPaths);
                     } else {
                         // если в prefs не было путей к ранее не удаленным файлам,
                         // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
 
-                    // пишем в поле notDeletedFilesPathes новую строку путей к неудаленным файлам, разделенных запятой
+                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
                     // при этом старая строка в prefs заменится новой строкой
                     // и выходим с return 0,
                     // что означает, что были файлы, которые не удалились
 
-                    prefsEditor.putString("notDeletedFilesPathes", sb.toString());
+                    prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
 
                     return 0;

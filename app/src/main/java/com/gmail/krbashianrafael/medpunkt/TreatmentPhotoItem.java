@@ -5,16 +5,16 @@ import android.support.annotation.NonNull;
 import java.util.Calendar;
 
 public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
-    private long _trPhotoId;
-    private long _userId;
-    private long _diseaseId;
-    private String trPhotoName;
-    private String trPhotoDate;
+    private final long _trPhotoId;
+    private final long _userId;
+    private final long _diseaseId;
+    private final String trPhotoName;
+    private final String trPhotoDate;
 
-    private Calendar dateToCompare;
+    private final Calendar dateToCompare;
 
     // путь к фото
-    private String trPhotoUri;
+    private final String trPhotoUri;
 
     public TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String trPhotoName, String trPhotoDate, String trPhotoUri) {
         this._trPhotoId = _trPhotoId;

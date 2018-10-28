@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- app -->
     <string name="greeting">MedPunkt
         \n\nhelps you to remember when and what were you,
@@ -10,10 +10,6 @@
     <string name="save">Save\u2000</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-
-    <string name="tablet_save">SAVE</string>
-    <string name="tablet_delete_disease">DELETE</string>
-    <string name="tablet_cancel" tools:ignore="ButtonCase">CANCEL</string>
 
     <string name="dialog_msg_unsaved_changes">Save changes?</string>
     <string name="dialog_yes">Yes</string>
@@ -52,12 +48,10 @@
     <string name="patient_cant_update">Patient could not be saved</string>
     <string name="patient_delete">Delete patient</string>
     <string name="patient_not_deleted">Patient could not be deleted</string>
-    <string name="patient_treatmen_title_text">Symptomatology and Treatment</string>
+    <string name="patient_treatment_title_text">Symptomatology and Treatment</string>
     <string name="patient_treatment_description_hint_text">Symptoms and treatment description</string>
 
     <!-- diseases_activity -->
-    <string name="tablet_diseases_select_patient">Select the patient</string>
-    <string name="tablet_diseases_select_user">Select the user</string>
     <string name="diseases_activity_title">Diseases</string>
     <string name="diseases_empty_text">Add disease</string>
     <string name="diseases_what_text">Diseases</string>
@@ -69,7 +63,6 @@
     <string name="disease_delete">Delete disease</string>
 
     <!-- treatment_activity -->
-    <string name="tablet_treatment_select_disease">Select the disease</string>
     <string name="treatment_empty_image_text">Add images\nconnected with treatment\n(prescriptions, analyzes, etc.)</string>
     <string name="treatment_cant_save_image">Image could not be saved</string>
     <string name="treatment_cant_save">Disease and treatment could not be saved</string>
@@ -80,7 +73,7 @@
     <string name="treatment_image_copy_error">Errors on image saving,\ntry again later</string>
     <string name="treatment_old_image_not_deleted">Updated image could not be deleted</string>
     <string name="treatment_title_activity">Add disease</string>
-    <string name="treatmen_title_text">Treatment</string>
+    <string name="treatment_title_text">Treatment</string>
     <string name="treatment_description_hint_text">Treatment Description</string>
     <string name="treatment_description">DESCRIPTION</string>
     <string name="treatment_images">IMAGES</string>
