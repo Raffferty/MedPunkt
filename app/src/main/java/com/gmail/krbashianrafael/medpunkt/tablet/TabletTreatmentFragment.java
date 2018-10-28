@@ -46,6 +46,7 @@ import android.widget.Toast;
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentAdapter;
@@ -173,27 +174,47 @@ public class TabletTreatmentFragment extends Fragment
             public void onClick(View v) {
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
 
-                // код для показа выделенного заболевания
-                if (TabletMainActivity.selectedDisease_id != 0) {
+                // код для показа выделенного пользователя
+                if (TabletMainActivity.selectedUser_id != 0) {
 
-                    final ArrayList<DiseaseItem> myData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+                    final ArrayList<UserItem> myUsersData = tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
 
-                    if (myData.size() != 0) {
+                    if (myUsersData.size() != 0) {
+                        tabletMainActivity.selectedUser_position = 0;
+
+                        for (int i = 0; i < myUsersData.size(); i++) {
+                            if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
+                                tabletMainActivity.selectedUser_position = i;
+                            }
+                        }
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                tabletMainActivity.tabletUsersFragment.recyclerUsers.smoothScrollToPosition(tabletMainActivity.selectedUser_position);
+                            }
+                        }, 250);
+                    }
+                }
 
-                                TabletMainActivity.selectedDisease_position = 0;
+                // код для показа выделенного заболевания
+                if (TabletMainActivity.selectedDisease_id != 0) {
 
-                                if (TabletMainActivity.selectedDisease_id != 0) {
-                                    for (int i = 0; i < myData.size(); i++) {
-                                        if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
-                                            TabletMainActivity.selectedDisease_position = i;
-                                        }
-                                    }
-                                }
+                    final ArrayList<DiseaseItem> myDiseasesData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
-                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                    if (myDiseasesData.size() != 0) {
+                        tabletMainActivity.selectedDisease_position = 0;
+
+                        for (int i = 0; i < myDiseasesData.size(); i++) {
+                            if (myDiseasesData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                tabletMainActivity.selectedDisease_position = i;
+                            }
+                        }
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);
                             }
                         }, 500);
                     }
@@ -207,7 +228,7 @@ public class TabletTreatmentFragment extends Fragment
                 tabletMainActivity.tabletUsersWideTitle.setText("");
                 tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                 //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
 
             }
         });
@@ -563,7 +584,7 @@ public class TabletTreatmentFragment extends Fragment
             goToDiseasesActivity();
 
         } else {*/
-        if (TabletMainActivity.newDiseaseAndTreatment) {
+        if (tabletMainActivity.newDiseaseAndTreatment) {
 
             imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 

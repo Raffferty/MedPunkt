@@ -22,9 +22,9 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 import java.util.ArrayList;
 
 import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.TABLET_TREATMENT_FRAGMENT;
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
-import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
+//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
+//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
+//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
 
 public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -65,28 +65,49 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((DiseaseHolder) holder).diseaseName.setText(diseaseName);
         ((DiseaseHolder) holder).treatmentText.setText(treatmentText);
 
-        // если это планшет, то выделенный элемент будет красится в зеленый цвет,
+        // если это планшет, то выделенный элемент будет окрашен в голубой цвет,
         // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
             // если только один элемент заболевания
             // то его _id и будет selected
             if (diseaseList.size() == 1) {
-                TabletMainActivity.selectedDisease_id = _diseaseId;
-            } else if (TabletMainActivity.insertedDisease_id != 0) {
+                //TabletMainActivity.selectedDisease_id = _diseaseId;
+                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+                TabletDiseasesFragment.diseaseSelected = true;
+
+            } /*else if (TabletMainActivity.insertedDisease_id != 0) {
+                // добавленное заболевание будет сразу выделенным
                 TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
                 TabletMainActivity.insertedDisease_id = 0;
-            }
-
-            if (TabletMainActivity.selectedDisease_id == _diseaseId) {
+            }*/ /*else if (TabletMainActivity.insertedDisease_id == _diseaseId) {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+                TabletDiseasesFragment.diseaseSelected = true;
+                TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
+                //TabletMainActivity.insertedDisease_id = 0;
 
+            }*/ else if (TabletMainActivity.selectedDisease_id == _diseaseId) {
+                // добавленное заболевание будет сразу выделенным
+                // т.к. в MedProvider есть запись TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
+                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
                 TabletDiseasesFragment.diseaseSelected = true;
 
             } else {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
             }
+
         }
+
+
+        /*if (TabletMainActivity.selectedDisease_id == _diseaseId) {
+            ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+
+            TabletDiseasesFragment.diseaseSelected = true;
+
+        } else {
+            ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
+        }*/
     }
+
 
     @Override
     public int getItemCount() {
@@ -113,6 +134,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             super(itemView);
 
             myContext = context;
+
+            if (myContext instanceof TabletMainActivity){
+                tabletMainActivity = (TabletMainActivity) myContext;
+            }
 
             _diseaseId = itemView.findViewById(R.id.disease_item_id);
             _diseaseUserId = itemView.findViewById(R.id.disease_item_user_id);
@@ -162,7 +187,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
                 if (TabletMainActivity.selectedDisease_id != disease_id_inEdit) {
-                    tabletMainActivity = (TabletMainActivity) myContext;
+                    //tabletMainActivity = (TabletMainActivity) myContext;
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
@@ -198,7 +223,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     // если описание заболевание с стадии редактирования,
                     // то сначала делается Cancel
-                    if (TabletMainActivity.diseaseAndTreatmentInEdit) {
+                    if (tabletMainActivity.diseaseAndTreatmentInEdit) {
                         if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
                             tabletMainActivity.cancel(false);
                             tabletDiseaseSelected();
@@ -223,11 +248,11 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
             tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
 
-            tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
-            tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-            tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+            tabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+            tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+            tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-            TabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+            tabletMainActivity.disease_IdInEdit = disease_id_inEdit;
 
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView
@@ -245,6 +270,4 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
         }
     }
-
-
 }

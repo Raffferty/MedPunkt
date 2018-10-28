@@ -3,7 +3,6 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -22,6 +21,7 @@ import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.UserItem;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
@@ -41,18 +41,26 @@ public class TabletMainActivity extends AppCompatActivity
     public boolean firstLoad = false;
 
     // флаг чтоб вернуться к тому виду, в котором был нажат fab редактирования
-    public static boolean fromWideView = false;
+    public boolean fromWideView = false;
 
-    // эти поля получают свои значения в классе MedProvider в соответствующих методах
+    // позиции выделенных элементов
+    public int selectedUser_position = 0;
+    public int selectedDisease_position = 0;
+
+    // эти поля получают свои значения в классе MedProvider в соответствующих методах selectedUser_id
     public static boolean userInserted = false;
+    public static long insertedUser_id = 0;
+    public static long selectedUser_id = 0;
+    public static String userNameAfterInsert = "";
+
     public static boolean userUpdated = false;
-    public static boolean userDeleted = false;
     public static String userNameAfterUpdate = "";
+
+    public static boolean userDeleted = false;
 
     public static boolean diseaseInserted = false;
     public static long insertedDisease_id = 0;
     public static long selectedDisease_id = 0;
-    public static int selectedDisease_position = 0;
 
     public static boolean diseaseUpdated = false;
     public static boolean diseaseDeleted = false;
@@ -62,22 +70,22 @@ public class TabletMainActivity extends AppCompatActivity
 
     // это поле берется из TabletDiseasesFragment.
     // если заболеваний нет, то diseasesIsEmpty = true
-    public static boolean diseasesIsEmpty = false;
+    public boolean diseasesIsEmpty = false;
 
     // это поле берется из UsersRecyclerViewAdapter
-    public static long user_IdInEdit = 0;
+    public long user_IdInEdit = 0;
 
     // это поле берется из DiseaseURecyclerViewAdapter
-    public static long disease_IdInEdit = 0;
+    public long disease_IdInEdit = 0;
 
     // это поля, которые хранят соответствующие значения String перед редактированием,
     // чтоб при нажатии CANCEL вернуть их обратно
-    public static String tempTextDiseaseName, tempTextTreatment, tempTextDateOfTreatment = "";
+    public String tempTextDiseaseName, tempTextTreatment, tempTextDateOfTreatment = "";
 
     // эти поля устанавливаются в TabletDiseasesFragment и TreatmentDescriptionFragment
     // при нажатии на fab добавления заболевания или при нажатии на fab редактирования заболевания
-    public static boolean diseaseAndTreatmentInEdit = false;
-    public static boolean newDiseaseAndTreatment = false;
+    public boolean diseaseAndTreatmentInEdit = false;
+    public boolean newDiseaseAndTreatment = false;
     public boolean treatmentOnSavingOrUpdatingOrDeleting = false;
 
     public TextView tabletUsersWideTitle, tabletUsersTitle, tabletDiseasesTitle, tabletTreatmentTitle;
@@ -86,11 +94,10 @@ public class TabletMainActivity extends AppCompatActivity
     public LinearLayout LLtabletTreatmentCancelOrSave;
     public FrameLayout tabletTreatmentCancel, tabletTreatmentSave, tabletTreatmentDelete;
 
-    private FrameLayout tabletUsersBlurFrame;
+    //private FrameLayout tabletUsersBlurFrame;
     public FrameLayout tabletDiseasesBlurFrame;
-    private FrameLayout tableTreatmentBlurFrame;
+    //private FrameLayout tableTreatmentBlurFrame;
     public FrameLayout tabletUsersFrame, tabletDiseasesFrame;
-
 
     public FrameLayout tabletTreatmentDeleteFrame, tabletTreatmentSaveFrame;
 
@@ -111,13 +118,32 @@ public class TabletMainActivity extends AppCompatActivity
 
         firstLoad = true;
         fromWideView = false;
-        diseaseAndTreatmentInEdit = false;
-        newDiseaseAndTreatment = false;
-        treatmentOnSavingOrUpdatingOrDeleting = false;
-
+        userInserted = false;
+        insertedUser_id = 0;
+        selectedUser_id = 0;
+        selectedUser_position = 0;
+        userNameAfterInsert = "";
+        userUpdated = false;
+        userNameAfterUpdate = "";
+        userDeleted = false;
+        diseaseInserted = false;
+        insertedDisease_id = 0;
+        selectedDisease_id = 0;
+        selectedDisease_position = 0;
+        diseaseUpdated = false;
+        diseaseDeleted = false;
+        diseaseNameAfterUpdate = "";
+        diseaseDateAfterUpdate = "";
+        diseaseTreatmentAfterUpdate = "";
+        diseasesIsEmpty = false;
+        user_IdInEdit = 0;
+        disease_IdInEdit = 0;
         tempTextDiseaseName = "";
         tempTextTreatment = "";
         tempTextDateOfTreatment = "";
+        diseaseAndTreatmentInEdit = false;
+        newDiseaseAndTreatment = false;
+        treatmentOnSavingOrUpdatingOrDeleting = false;
 
         tabletUsersFragment = (TabletUsersFragment)
                 getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
@@ -133,9 +159,9 @@ public class TabletMainActivity extends AppCompatActivity
             actionBar.hide();
         }
 
-        tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
-        tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
-        tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
+        //tabletUsersBlurFrame = findViewById(R.id.tablet_users_blur);
+        //tabletDiseasesBlurFrame = findViewById(R.id.tablet_diseases_blur);
+        //tableTreatmentBlurFrame = findViewById(R.id.tablet_treatment_blur);
 
         tabletUsersWideTitle = findViewById(R.id.tablet_users_wide_title);
 
@@ -353,7 +379,7 @@ public class TabletMainActivity extends AppCompatActivity
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;
 
-                    blur(TABLET_TREATMENT_FRAGMENT);
+                    //blur(TABLET_TREATMENT_FRAGMENT);
 
                     LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
                     tabletTreatmentDelete.setVisibility(View.GONE);
@@ -414,32 +440,51 @@ public class TabletMainActivity extends AppCompatActivity
 
     public void cancel(boolean newdiseaseSelected) {
 
-        // код для показа выделенного заболевания
-        if (TabletMainActivity.selectedDisease_id != 0) {
+        // код для показа выделенного пользователя
+        if (TabletMainActivity.selectedUser_id != 0) {
+            final ArrayList<UserItem> myUsersData = tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
 
-            final ArrayList<DiseaseItem> myData = tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+            if (myUsersData.size() != 0) {
 
-            if (myData.size() != 0) {
+                selectedUser_position = 0;
+
+                for (int i = 0; i < myUsersData.size(); i++) {
+                    if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
+                        selectedUser_position = i;
+                    }
+                }
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        tabletUsersFragment.recyclerUsers.smoothScrollToPosition(selectedUser_position);
+                    }
+                }, 250);
+            }
+        }
 
-                        TabletMainActivity.selectedDisease_position = 0;
+        // код для показа выделенного заболевания
+        if (TabletMainActivity.selectedDisease_id != 0) {
+            final ArrayList<DiseaseItem> myDiseasesData = tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
-                        if (TabletMainActivity.selectedDisease_id != 0) {
-                            for (int i = 0; i < myData.size(); i++) {
-                                if (myData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
-                                    TabletMainActivity.selectedDisease_position = i;
-                                }
-                            }
-                        }
+            if (myDiseasesData.size() != 0) {
 
-                        tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
+                selectedDisease_position = 0;
+
+                for (int i = 0; i < myDiseasesData.size(); i++) {
+                    if (myDiseasesData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                        selectedDisease_position = i;
+                    }
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(selectedDisease_position);
                     }
                 }, 500);
             }
         }
-
 
         /*if (TabletDiseasesFragment.diseaseSelected) {
             //tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
@@ -477,6 +522,11 @@ public class TabletMainActivity extends AppCompatActivity
                 tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+                tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                        tabletTreatmentFragment.fabShowAnimation
+                );
+
             } else {
                 // если добавляли новое заболевание при невыделенном другом заболевании
                 ver_3_Guideline.setGuidelinePercent(1.00f);
@@ -485,6 +535,8 @@ public class TabletMainActivity extends AppCompatActivity
                 tabletUsersWideTitle.setVisibility(View.GONE);
                 tabletUsersWideTitle.setText("");
                 tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
         } else if (!fromWideView) {
             //tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
@@ -494,14 +546,22 @@ public class TabletMainActivity extends AppCompatActivity
             tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
             tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+            tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                    tabletTreatmentFragment.fabShowAnimation
+            );
         } else {
             tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+
+            tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                    tabletTreatmentFragment.fabShowAnimation
+            );
         }
 
         hideElementsOnTabletTreatmentFragment();
 
         if (diseasesIsEmpty) {
-            blur(TABLET_TREATMENT_FRAGMENT);
+            //blur(TABLET_TREATMENT_FRAGMENT);
             tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
             tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
 
@@ -554,11 +614,12 @@ public class TabletMainActivity extends AppCompatActivity
         } else {
             tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
+            /*tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                    tabletTreatmentFragment.fabShowAnimation
+            );*/
         }
 
-        tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                tabletTreatmentFragment.fabShowAnimation
-        );
 
         LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
         tabletTreatmentDelete.setVisibility(View.GONE);
@@ -627,6 +688,31 @@ public class TabletMainActivity extends AppCompatActivity
 
             if (percentVer_2 != 0.90f) {
                 tabletDiseasesFragment.initDiseasesLoader();
+            }
+
+            // код для показа выделенного пользователя
+
+            final ArrayList<UserItem> myUsersData = tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
+
+            if (myUsersData.size() != 0) {
+
+                selectedUser_position = 0;
+
+                if (TabletMainActivity.selectedUser_id != 0) {
+
+                    for (int i = 0; i < myUsersData.size(); i++) {
+                        if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
+                            selectedUser_position = i;
+                        }
+                    }
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletUsersFragment.recyclerUsers.smoothScrollToPosition(selectedUser_position);
+                    }
+                }, 500);
             }
 
             /*if (diseaseInserted || diseaseUpdated || diseaseDeleted) {
@@ -703,7 +789,7 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.editTextDateOfDisease.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
-    public void blur(int fragmentNumber) {
+    /*public void blur(int fragmentNumber) {
 
         switch (fragmentNumber) {
             case TABLET_USERS_FRAGMENT:
@@ -730,11 +816,11 @@ public class TabletMainActivity extends AppCompatActivity
             default:
                 break;
         }
-    }
+    }*/
 
     public void unBlur(int fragmentNumber) {
 
-        switch (fragmentNumber) {
+        /*switch (fragmentNumber) {
             case TABLET_USERS_FRAGMENT:
                 if (tabletUsersBlurFrame.isClickable()) {
 
@@ -758,6 +844,6 @@ public class TabletMainActivity extends AppCompatActivity
                 break;
             default:
                 break;
-        }
+        }*/
     }
 }

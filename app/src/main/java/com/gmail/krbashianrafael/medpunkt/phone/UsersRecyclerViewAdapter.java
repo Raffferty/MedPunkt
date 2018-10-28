@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,16 +37,16 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context mContext;
     private ArrayList<UserItem> usersList;
 
-    public static void setSelected_user_id(long selected_user_id) {
-        UsersRecyclerViewAdapter.selected_user_id = selected_user_id;
-    }
+   /* public static void setSelected_user_id(long selected_user_id) {
+        TabletMainActivity.selectedUser_id = selected_user_id;
+    }*/
 
-    private static long selected_user_id = 0;
+    //private static long selected_user_id = 0;
 
     public UsersRecyclerViewAdapter(Context context) {
         mContext = context;
         usersList = new ArrayList<>();
-        selected_user_id = 0;
+        //selected_user_id = 0;
     }
 
     public ArrayList<UserItem> getUsersList() {
@@ -73,15 +74,17 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         ((UserHolder) holder).userBirthDate.setText(userBirthDate);
         ((UserHolder) holder).userName.setText(userName);
 
-        // если это планшет, то выделенных элемент будет красится в зеленый цвет,
+        // если это планшет, то выделенных элемент будет окрашен в голубой цвет,
         // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
             // если только один элемент пользователя
             // то его _id и будет selected
-            if (usersList.size() == 1) {
-                selected_user_id = _userId;
-            }
-            if (selected_user_id == _userId) {
+            /*if (usersList.size() == 1) {
+                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+            } else */
+            if (TabletMainActivity.selectedUser_id == _userId) {
+                // добавленное заболевание будет сразу выделенным,
+                // т.к. в MedProvider есть запись TabletMainActivity.selectedUser_id = TabletMainActivity.insertedUser_id;
                 ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
             } else {
                 ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
@@ -121,6 +124,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private final Handler myHandler = new Handler(Looper.getMainLooper());
+        private final TabletMainActivity tabletMainActivity;
+
         Context myContext;
 
         TextView _userId;
@@ -138,6 +144,12 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
 
             myContext = context;
+
+            if (myContext instanceof TabletMainActivity) {
+                tabletMainActivity = (TabletMainActivity) myContext;
+            } else {
+                tabletMainActivity = null;
+            }
 
             _userId = itemView.findViewById(R.id.user_item_id);
             userPhotoUri = itemView.findViewById(R.id.user_item_photo_uri);
@@ -167,34 +179,61 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 // закрашиваем выделенный элемент (i) в голубой
                 view.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimaryLight));
 
-                // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent userEditIntent = new Intent(myContext, UserActivity.class);
-                        userEditIntent.putExtra("_idUser", user_id_inEdit);
-                        userEditIntent.putExtra("editUser", true);
-                        userEditIntent.putExtra("UserName", userName.getText());
-                        userEditIntent.putExtra("birthDate", userBirthDate.getText());
-                        userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
+                if (!HomeActivity.isTablet) {
+                    // если это телефон
 
-                        // если это планшет, то получаем user_id_inEdit для контроля над изменениями пользователя
-                        if (HomeActivity.isTablet) {
-                            TabletMainActivity.user_IdInEdit = user_id_inEdit;
+                    // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
+                    myHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent userEditIntent = new Intent(myContext, UserActivity.class);
+                            userEditIntent.putExtra("_idUser", user_id_inEdit);
+                            userEditIntent.putExtra("editUser", true);
+                            userEditIntent.putExtra("UserName", userName.getText());
+                            userEditIntent.putExtra("birthDate", userBirthDate.getText());
+                            userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
+
+                            myContext.startActivity(userEditIntent);
                         }
+                    }, 250);
 
-                        myContext.startActivity(userEditIntent);
-                    }
-                }, 250);
+                    // через 500 мс закрашиваем выделенный элемент (i) в TRANSPARENT
+                    // чтоб по возвращении он не был голубым
+                    myHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                    }, 500);
 
-                // через 500 мс закрашиваем выделенный элемент (i) в TRANSPARENT
-                // чтоб по возвращении он не был голубым
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setBackgroundColor(Color.TRANSPARENT);
-                    }
-                }, 500);
+
+                } else {
+                    // если это планшет
+                    //final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
+
+                    //открываем UserActivity для просмотра/изменения данных пользователя
+
+                    Intent userEditIntent = new Intent(myContext, UserActivity.class);
+                    userEditIntent.putExtra("_idUser", user_id_inEdit);
+                    userEditIntent.putExtra("editUser", true);
+                    userEditIntent.putExtra("UserName", userName.getText());
+                    userEditIntent.putExtra("birthDate", userBirthDate.getText());
+                    userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
+
+                    // получаем user_id_inEdit для контроля над изменениями пользователя
+                    tabletMainActivity.user_IdInEdit = user_id_inEdit;
+
+                    tabletMainActivity.startActivity(userEditIntent);
+
+                    // загружаем данные этотго пользователя, чтоб при возвращении он был выделеным
+                    myHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabletUserSelected(user_id_inEdit);
+                            view.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                    }, 1000);
+                }
 
             } else {
                 // если нажат сам элемент с именем пользователя
@@ -202,7 +241,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 if (!HomeActivity.isTablet) {
                     container.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
-                    new Handler().postDelayed(new Runnable() {
+                    myHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Intent userDiseasIntent = new Intent(myContext, DiseasesActivity.class);
@@ -213,7 +252,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }, 250);
 
-                    new Handler().postDelayed(new Runnable() {
+                    myHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             container.setBackgroundColor(Color.TRANSPARENT);
@@ -221,63 +260,67 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     }, 500);
 
                 } else {
-                    final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
                     //если это планшет
+                    tabletUserSelected(user_id_inEdit);
+                }
+            }
+        }
 
-                    // код для показа выделенного заболевания при повторном нажатии на пользователя
-                    final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+        private void tabletUserSelected(long user_id_inEdit) {
+            //final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
 
-                    if (myDiseaseData.size() != 0) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
+            // код для показа выделенного заболевания при повторном нажатии на пользователя
+            final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
-                                TabletMainActivity.selectedDisease_position = 0;
+            if (myDiseaseData.size() != 0) {
+                tabletMainActivity.selectedDisease_position = 0;
 
-                                if (TabletMainActivity.selectedDisease_id != 0) {
-                                    for (int i = 0; i < myDiseaseData.size(); i++) {
-                                        if (myDiseaseData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
-                                            TabletMainActivity.selectedDisease_position = i;
-                                        }
-                                    }
-                                }
+                if (TabletMainActivity.selectedDisease_id != 0) {
 
-                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(TabletMainActivity.selectedDisease_position);
-                            }
-                        }, 500);
+                    for (int i = 0; i < myDiseaseData.size(); i++) {
+                        if (myDiseaseData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                            tabletMainActivity.selectedDisease_position = i;
+                        }
                     }
+                }
 
-                    if (selected_user_id != user_id_inEdit) {
-                        //и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);
+                    }
+                }, 500);
+            }
 
-                        // устанавливаем новое значение для selected_user_id
-                        // и заново отрисовываем все видимые элементы в usersRecyclerView
-                        // чтоб закрасить выделенный элемент
-                        selected_user_id = user_id_inEdit;
+            if (TabletMainActivity.selectedUser_id != user_id_inEdit) {
+                //и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
 
-                        //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
+                // устанавливаем новое значение для selected_user_id
+                // и заново отрисовываем все видимые элементы в usersRecyclerView
+                // чтоб закрасить выделенный элемент
+                TabletMainActivity.selectedUser_id = user_id_inEdit;
 
-                        tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
+                //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
 
-                        // далее отрисовываем нужные поля в фрагментах
-                        //tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
+                tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
+
+                // далее отрисовываем нужные поля в фрагментах
+                //tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
                         /*if (HomeActivity.iAmDoctor) {
                             tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.patients_title_activity);
                         } else {
                             tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.users_title_activity);
                         }*/
 
-                        tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
-                        tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
-                        TabletMainActivity.selectedDisease_id = 0;
-                        tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-                        tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
+                tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
+                tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
+                TabletMainActivity.selectedDisease_id = 0;
+                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+                tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
-                        if (TabletMainActivity.diseaseAndTreatmentInEdit) {
-                            //tabletMainActivity.tabletTreatmentCancel.performClick();
-                            tabletMainActivity.hideElementsOnTabletTreatmentFragment();
-                        }
-                    }
+                if (tabletMainActivity.diseaseAndTreatmentInEdit) {
+                    //tabletMainActivity.tabletTreatmentCancel.performClick();
+                    tabletMainActivity.hideElementsOnTabletTreatmentFragment();
                 }
             }
         }

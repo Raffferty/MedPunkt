@@ -53,8 +53,6 @@ public class TreatmentPhotosFragment extends Fragment
 
     private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
-    // boolean scrollToInsertedUserPosition статическая переменная для выставления флага в true после вставки нового элемента в список
-    // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertTreatmentPhoto
     public static boolean mScrollToStart = false;
 
     /**
@@ -335,8 +333,6 @@ public class TreatmentPhotosFragment extends Fragment
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
         }
 
-        // если флаг scrollToInsertedUserPosition выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
-        // и снова scrollToEnd выставляем в false
         if (mScrollToStart && myData.size() != 0) {
             recyclerTreatmentPhotos.smoothScrollToPosition(0);
             mScrollToStart = false;

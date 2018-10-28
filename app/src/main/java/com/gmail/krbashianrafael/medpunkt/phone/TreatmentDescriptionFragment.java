@@ -105,7 +105,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    TabletMainActivity.diseaseAndTreatmentInEdit = true;
+                    mTabletMainActivity.diseaseAndTreatmentInEdit = true;
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
                     mTabletMainActivity.tabletDiseasesFragment.fabAddDisease.startAnimation(fabHideAnimation);
                     mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
@@ -128,9 +128,9 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                             }*/
 
-                            TabletMainActivity.tempTextDiseaseName = mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
-                            TabletMainActivity.tempTextDateOfTreatment = mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-                            TabletMainActivity.tempTextTreatment = mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+                            mTabletMainActivity.tempTextDiseaseName = mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+                            mTabletMainActivity.tempTextDateOfTreatment = mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
+                            mTabletMainActivity.tempTextTreatment = mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
                             mTabletMainActivity.tabletTreatmentFragment.editDisease = true;
                             //mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
@@ -150,7 +150,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
 
                             if (percentVerGuideline_3!=0.00f){
-                                TabletMainActivity.fromWideView = false;
+                                mTabletMainActivity.fromWideView = false;
 
                                 //mTabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
 
@@ -176,7 +176,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
                                 mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
                             }else {
-                                TabletMainActivity.fromWideView = true;
+                                mTabletMainActivity.fromWideView = true;
 
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);

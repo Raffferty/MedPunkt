@@ -18,9 +18,9 @@
         android:id="@+id/image_photo"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@android:drawable/dialog_holo_light_frame"
         android:clickable="true"
         android:focusable="true"
@@ -34,10 +34,10 @@
         android:id="@+id/no_user_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:drawableBottom="@drawable/ic_add_circle_outline_white_56dp"
         android:text="@string/user_photo"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
@@ -53,9 +53,9 @@
         android:id="@+id/text_input_layout_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
         android:hint="@string/user_name"
         android:textColorHint="@color/colorPrimaryDark"
         app:errorEnabled="true"
@@ -73,7 +73,8 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:inputType="textPersonName|textCapWords"
+            android:inputType="textPersonName|textCapWords|textMultiLine"
+            android:maxLines="3"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,9 +86,9 @@
         android:id="@+id/text_input_layout_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:hint="@string/user_date_of_birth"
         android:textColorHint="@color/colorPrimaryDark"
         app:errorEnabled="true"
@@ -114,8 +115,8 @@
         android:id="@+id/text_delete_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/user_delete_photo"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
@@ -140,22 +141,22 @@
     <FrameLayout
         android:id="@+id/tablet_frm_back"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
     <FrameLayout
         android:id="@+id/tablet_frm_save"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
     <FrameLayout
         android:id="@+id/tablet_frm_delete"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
     <TextView
         android:id="@+id/txt_tablet_user_title"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>

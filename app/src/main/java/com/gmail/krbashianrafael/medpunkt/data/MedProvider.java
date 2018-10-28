@@ -435,6 +435,9 @@ public class MedProvider extends ContentProvider {
         // Выставляем флаг для загрузки пользователей в планшете после добаления пользователя
         if (HomeActivity.isTablet) {
             TabletMainActivity.userInserted = true;
+            TabletMainActivity.insertedUser_id = id;
+            TabletMainActivity.selectedUser_id = TabletMainActivity.insertedUser_id;
+            TabletMainActivity.userNameAfterInsert = userName;
         }
 
         // Once we know the ID of the new row in the table,
@@ -515,6 +518,7 @@ public class MedProvider extends ContentProvider {
         if (HomeActivity.isTablet) {
             TabletMainActivity.diseaseInserted = true;
             TabletMainActivity.insertedDisease_id = id;
+            TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
         }
 
 

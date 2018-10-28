@@ -49,9 +49,11 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
+        android:ellipsize="end"
         android:gravity="center"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:textColor="@color/white"
         android:textSize="22sp"
         android:visibility="gone"
@@ -99,7 +101,7 @@
             android:id="@+id/tablet_users_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="36dp"/>
+            android:layout_marginTop="36dp" />
 
     </FrameLayout>
 
@@ -111,8 +113,8 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:textColor="@color/white"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
@@ -143,10 +145,9 @@
             android:id="@+id/tablet_diseases_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="36dp"/>
+            android:layout_marginTop="36dp" />
 
     </FrameLayout>
-
 
     <TextView
         android:id="@+id/tablet_treatment_title"
@@ -156,8 +157,8 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:textColor="@color/white"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/tablet_users_title"
@@ -267,6 +268,6 @@
             android:id="@+id/tablet_treatment_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="36dp"/>
+            android:layout_marginTop="36dp" />
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

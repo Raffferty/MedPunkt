@@ -40,8 +40,6 @@ public class DiseasesActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    // boolean scrollToInsertedUserPosition статическая переменная для выставления флага в true после вставки нового элемента в список
-    // переменная статическая, т.к. будет меняться из класса MedProvider в методе insertDisease
     public static boolean mScrollToStart = false;
 
     private RecyclerView recyclerDiseases;
@@ -301,8 +299,6 @@ public class DiseasesActivity extends AppCompatActivity
             fabAddDisease.startAnimation(fabShowAnimation);
         }
 
-        // если флаг scrollToInsertedUserPosition выставлен в true, то прокручиваем RecyclerView вверх до первого элемента,
-        // и снова scrollToEnd выставляем в false
         if (mScrollToStart && myData.size() != 0) {
             recyclerDiseases.smoothScrollToPosition(0);
             mScrollToStart = false;
