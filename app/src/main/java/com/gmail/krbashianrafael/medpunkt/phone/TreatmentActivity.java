@@ -45,7 +45,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
@@ -167,17 +167,19 @@ public class TreatmentActivity extends AppCompatActivity
 
         TextView txtTitleTreatment = findViewById(R.id.txt_title_treatment);
 
-        if (HomeActivity.isTablet) {
-            if (HomeActivity.iAmDoctor) {
-                txtTitleTreatment.setText(R.string.patient_treatment_title_text);
-            } else {
-                txtTitleTreatment.setText(R.string.treatment_description_hint_text);
-            }
+        //if (HomeActivity.isTablet) {
+
+        if (HomeActivity.iAmDoctor) {
+            txtTitleTreatment.setText(R.string.patient_treatment_title_text);
         } else {
+            txtTitleTreatment.setText(R.string.treatment_description_hint_text);
+        }
+
+        /*} else {
             if (HomeActivity.iAmDoctor) {
                 txtTitleTreatment.setText(R.string.treatment_description_hint_text);
             }
-        }
+        }*/
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);

@@ -24,13 +24,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.UserActivity;
-import com.gmail.krbashianrafael.medpunkt.UserItem;
+import com.gmail.krbashianrafael.medpunkt.shared.UserActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
-import com.gmail.krbashianrafael.medpunkt.phone.UsersRecyclerViewAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;

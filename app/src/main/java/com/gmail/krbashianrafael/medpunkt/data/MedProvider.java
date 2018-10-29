@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;

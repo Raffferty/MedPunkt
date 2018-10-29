@@ -19,10 +19,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.UserItem;
-import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseRecyclerViewAdapter;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 

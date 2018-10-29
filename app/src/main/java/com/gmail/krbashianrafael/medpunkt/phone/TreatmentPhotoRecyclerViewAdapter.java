@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.FullscreenPhotoActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.FullscreenPhotoActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.TreatmentPhotoItem;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotoItem;
 
 import java.util.ArrayList;
 

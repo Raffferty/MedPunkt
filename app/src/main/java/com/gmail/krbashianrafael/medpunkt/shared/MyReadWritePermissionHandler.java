@@ -1,10 +1,12 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.Manifest;
 import android.app.Activity;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
+
+import com.gmail.krbashianrafael.medpunkt.R;
 
 /**
  * Created by raf on 17.03.2018.

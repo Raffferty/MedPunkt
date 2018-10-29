@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -57,6 +57,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
+import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
@@ -292,7 +294,7 @@ public class UserActivity extends AppCompatActivity
             File imgFile = new File(userPhotoUri);
 
             if (imgFile.exists()) {
-                GlideApp.with(this)
+                com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
                         .load(userPhotoUri)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
@@ -591,7 +593,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void loadPhotoIntoViewAndGetBitmap(Uri newSelectedImageUri) {
-        GlideApp.with(this)
+        com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
                 .load(newSelectedImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)

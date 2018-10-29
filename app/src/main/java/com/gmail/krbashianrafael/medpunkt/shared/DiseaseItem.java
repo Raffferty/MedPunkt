@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.support.annotation.NonNull;
 

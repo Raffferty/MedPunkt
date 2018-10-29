@@ -23,10 +23,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
-import com.gmail.krbashianrafael.medpunkt.phone.DiseaseRecyclerViewAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -42,10 +42,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.UserItem;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentAdapter;

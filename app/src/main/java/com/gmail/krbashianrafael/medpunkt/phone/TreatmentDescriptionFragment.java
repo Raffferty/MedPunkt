@@ -14,7 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 

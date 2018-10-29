@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -46,6 +46,8 @@ import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
+import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentPhotosFragment;
@@ -217,7 +219,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             hide();
 
             // грузим фото в imagePhoto
-            GlideApp.with(this)
+            com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
                     .load(treatmentPhotoFilePath)
                     .dontTransform()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

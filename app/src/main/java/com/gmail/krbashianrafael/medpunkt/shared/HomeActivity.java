@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 
 import android.content.Context;
@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 

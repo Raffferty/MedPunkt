@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletDiseasesFragment;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;

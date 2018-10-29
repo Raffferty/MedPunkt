@@ -21,12 +21,13 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.UserActivity;
-import com.gmail.krbashianrafael.medpunkt.UserItem;
+import com.gmail.krbashianrafael.medpunkt.shared.UserActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;

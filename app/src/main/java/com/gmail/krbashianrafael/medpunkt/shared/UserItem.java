@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.support.annotation.NonNull;
 
@@ -21,7 +21,7 @@ public class UserItem implements Comparable<UserItem> {
         return _userId;
     }
 
-    public String getUserBirthDate() {
+    String getUserBirthDate() {
         return userBirthDate;
     }
 
@@ -29,7 +29,7 @@ public class UserItem implements Comparable<UserItem> {
         return userName;
     }
 
-    public String getUserPhotoUri() {
+    String getUserPhotoUri() {
         return userPhotoUri;
     }
 

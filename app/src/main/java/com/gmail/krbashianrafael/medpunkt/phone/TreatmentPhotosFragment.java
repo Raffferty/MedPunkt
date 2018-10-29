@@ -20,9 +20,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.FullscreenPhotoActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.FullscreenPhotoActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.TreatmentPhotoItem;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotoItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 

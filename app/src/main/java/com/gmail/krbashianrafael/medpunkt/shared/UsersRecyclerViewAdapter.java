@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,13 +19,10 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.signature.ObjectKey;
-import com.gmail.krbashianrafael.medpunkt.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.GlideApp;
-import com.gmail.krbashianrafael.medpunkt.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.UserActivity;
-import com.gmail.krbashianrafael.medpunkt.UserItem;
+import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
 
 import java.io.File;
 import java.util.ArrayList;
