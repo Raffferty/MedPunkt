@@ -49,8 +49,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
-import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentPhotosFragment;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -135,7 +133,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         @Override
         public void run() {
             // вызывает toggle() при исполнении условий (вызывается с задержкой 400 мс)
-            if (!tapped && !inZoom[0] && !landscape && !onLoading) {
+            if (!tapped && !inZoom[0] && !onLoading) {
+
+                // если это телеон, то в режиме landscape не вызываем toggle();
+                if (!HomeActivity.isTablet && landscape) {
+                    return;
+                }
+
                 toggle();
             }
         }
@@ -190,8 +194,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen);
 
-        int myScreenOrientation = getResources().getConfiguration().orientation;
-
         Intent intent = getIntent();
 
         _idTrPhoto = intent.getLongExtra("_idTrPhoto", 0);
@@ -205,6 +207,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         textDateOfTreatmentPhoto = intent.getStringExtra("textDateOfTreatmentPhoto");
 
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
+
+        // если это планшет, то ориентация все время LANDSCAPE
+        if (HomeActivity.isTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (newTreatmentPhoto) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
+        // получаем ориентацию экрана
+        int myScreenOrientation = getResources().getConfiguration().orientation;
 
         // инициализируем все View
         findViewsById();
@@ -754,16 +766,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     onLoading = false;
                 }
             }
-        }
-        // если отказались выбирать фото (нашажали "обратно")
-        // если хотели создать новое фото - идем обратно
-        // если приходили из уже существующего фото - остаемся с onLoading = false;
-        else {
+        } else {
+            // если отказались выбирать фото (нашажали "обратно")
+            // если хотели создать новое фото - идем обратно
+            // если приходили из уже существующего фото - остаемся с onLoading = false;
+
             onLoading = false;
 
             if (newTreatmentPhoto) {
                 goToTreatmentActivity();
             }
+        }
+
+        // если это не планшет, то после загрузки нового фото ставим экран на SCREEN_ORIENTATION_SENSOR
+        if (!HomeActivity.isTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
     }
 
@@ -793,6 +810,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     // в toggle
     private void toggle() {
+
+        // если это не планшет, а телефон, то в ORIENTATION_LANDSCAPE) только просмотр
+        if (!HomeActivity.isTablet &&
+                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return;
+        }
+
         // либо скрываем-показываем элементы UI
         if (!editTreatmentPhoto) {
             if (mVisible) {
@@ -805,6 +829,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
             if (onLoading || onSavingOrUpdatingOrDeleting) {
                 return;
+            }
+
+            // если это не планшет, то перед загрузкой нового фото ставим экран в PORTRAIT
+            if (!HomeActivity.isTablet) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
             onLoading = true;
@@ -957,11 +986,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
 
-            // если не все поля заполнены и сохранение происходит в LANDSCAPE (а это возможно только после свайпа сверху при фулскриин)
+            // если это телефон и не все поля заполнены и сохранение происходит в LANDSCAPE
+            // (а это возможно только после свайпа сверху при фулскриин и нажатии "идти обратно",
+            // после чего предлагается сохранить изменения)
             // то выставляем экран в PORTRAIT, чтоб можно было увидеть незаполненные поля
             // и включаем mOrientationListener, который будет мониторить повор экрана и
             // при углах между 315 и 45 вернет возможность реагирования на сенсор при повороте на LANDSCAPE
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (!HomeActivity.isTablet && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
                 mOrientationListener.enable();
@@ -1193,11 +1224,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             super(context);
         }
 
-// --Commented out by Inspection START (28.10.2018 21:50):
+// этот конструктор не используется
 //        MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
 //            super(context, corrector);
 //        }
-// --Commented out by Inspection STOP (28.10.2018 21:50)
 
         // для DoubleTap
         boolean firstTouch = false;

@@ -19,13 +19,14 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
-import com.gmail.krbashianrafael.medpunkt.GlideApp;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -289,6 +290,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             if (TabletMainActivity.selectedUser_id != user_id_inEdit) {
                 //и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
+
+                // ставим на таб "описание"
+                Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
                 // устанавливаем новое значение для selected_user_id
                 // и заново отрисовываем все видимые элементы в usersRecyclerView

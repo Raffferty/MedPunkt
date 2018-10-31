@@ -13,14 +13,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
-import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletDiseasesFragment;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
 //import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
@@ -134,7 +133,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             myContext = context;
 
-            if (myContext instanceof TabletMainActivity){
+            if (myContext instanceof TabletMainActivity) {
                 tabletMainActivity = (TabletMainActivity) myContext;
             }
 
@@ -190,6 +189,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
+                    // ставим на таб "описание"
+                    Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
+
                     tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                    /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
@@ -222,20 +224,20 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     // если описание заболевание с стадии редактирования,
                     // то сначала делается Cancel
-                    if (tabletMainActivity.diseaseAndTreatmentInEdit) {
+                    /*if (tabletMainActivity.diseaseAndTreatmentInEdit) {
                         if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
                             tabletMainActivity.cancel();
                             tabletDiseaseSelected();
                         } else {
                             tabletMainActivity.showUnsavedChangesDialog(this);
                         }
-                    } else {
-                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                                tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
-                        );
+                    } else {*/
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                    );
 
-                        tabletDiseaseSelected();
-                    }
+                    tabletDiseaseSelected();
+                    //}
                 }
             }
         }
@@ -246,6 +248,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
             tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
             tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
+
+            // грузим снимки этого заболевания
+            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.initTreatmentPhotosLoader();
 
             tabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();

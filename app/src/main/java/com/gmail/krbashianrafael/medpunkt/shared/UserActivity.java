@@ -63,7 +63,6 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
-import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.tsongkha.spinnerdatepicker.DatePicker;

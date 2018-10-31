@@ -47,10 +47,10 @@ import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
-import com.gmail.krbashianrafael.medpunkt.phone.DatePickerFragment;
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentAdapter;
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentDescriptionFragment;
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentPhotosFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -102,6 +102,7 @@ public class TabletTreatmentFragment extends Fragment
 
     // Animation fabShowAnimation
     public Animation fabShowAnimation;
+    public Animation fabHideAnimation;
 
     public ViewPager viewPager;
 
@@ -352,16 +353,29 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
-                    // и делаем анимацию fab
-                    treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+                    //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                    //treatmentPhotosFragment.fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+                    //}
+
+                    // и делаем анимацию fabShowAnimation
+                    // если заболевание не в состоянии добавления или редактирования
+                    if (!tabletMainActivity.newDiseaseAndTreatment) {
+                        treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
+                    }
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
+
+                    //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+
                     // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
                     }
+
+                    // загружаем связынные с лечением снимки
+                    //treatmentPhotosFragment.initTreatmentPhotosLoader();
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -375,9 +389,15 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
                             getResources().getString(R.string.treatment_description)));
 
+                    //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
                             getResources().getString(R.string.treatment_images)));
+
+                    //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                    //treatmentPhotosFragment.fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+                    //}
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -414,12 +434,28 @@ public class TabletTreatmentFragment extends Fragment
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        fabHideAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fab_hide);
+        fabHideAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
             }
         });
     }

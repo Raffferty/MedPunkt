@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,7 +14,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.MyEditText;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 

@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -60,7 +60,7 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
         return sb;
     }
 
-    void setPagesCount(int pagesCount) {
+    public void setPagesCount(int pagesCount) {
         this.pagesCount = pagesCount;
     }
 }

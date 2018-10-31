@@ -9,7 +9,7 @@
 
     <!-- это кастомный EditText у которого клавиатура не перекрывает текст
      и, при сворачивании клавиатуры EditText выходит из фокуса -->
-    <com.gmail.krbashianrafael.medpunkt.phone.MyEditText
+    <com.gmail.krbashianrafael.medpunkt.MyEditText
         android:id="@+id/editTextTreatment"
         android:layout_width="0dp"
         android:layout_height="0dp"

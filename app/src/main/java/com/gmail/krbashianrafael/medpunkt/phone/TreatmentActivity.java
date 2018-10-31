@@ -45,11 +45,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -74,33 +78,33 @@ public class TreatmentActivity extends AppCompatActivity
     private static final int TR_PHOTOS_LOADER = 22;
 
     // Фрагменты
-    TreatmentDescriptionFragment treatmentDescriptionFragment;
-    TreatmentPhotosFragment treatmentPhotosFragment;
+    public TreatmentDescriptionFragment treatmentDescriptionFragment;
+    public TreatmentPhotosFragment treatmentPhotosFragment;
 
     // id пользователя
-    long _idUser = 0;
+    public long _idUser = 0;
 
     // id заболеввания
-    long _idDisease = 0;
+    public long _idDisease = 0;
 
     // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean goBack, onSavingOrUpdatingOrDeleting;
-    boolean editDisease;
-    boolean newDisease;
+    public boolean editDisease;
+    public boolean newDisease;
 
     private ActionBar actionBar;
 
     // название заболевания
     private String textDiseaseName = "";
     private String textDateOfDisease = "";
-    String textTreatment = "";
+    public String textTreatment = "";
 
-    TextView txtTitleDisease;
+    public TextView txtTitleDisease;
 
     // поля названия заболевания, описания лечения и focusHolder
-    TextInputLayout textInputLayoutDiseaseName;
-    TextInputEditText editTextDiseaseName;
-    EditText editTextDateOfDisease;
+    public TextInputLayout textInputLayoutDiseaseName;
+    public TextInputEditText editTextDiseaseName;
+    public EditText editTextDateOfDisease;
     private EditText focusHolder;
 
     // Animation fabShowAnimation
@@ -110,7 +114,7 @@ public class TreatmentActivity extends AppCompatActivity
 
     private TreatmentAdapter categoryAdapter;
 
-    TabLayout tabLayout;
+    public TabLayout tabLayout;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -415,11 +419,11 @@ public class TreatmentActivity extends AppCompatActivity
 
     // инициализация Фрагментов если они null
     // вызов этого метода и проверка происходит в самих фрагментах
-    void initTreatmentDescriptionFragment() {
+    public void initTreatmentDescriptionFragment() {
         treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
     }
 
-    void initTreatmentPhotosFragment() {
+    public void initTreatmentPhotosFragment() {
         treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
     }
 

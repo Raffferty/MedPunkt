@@ -81,7 +81,7 @@
         <!-- это кастомный TextInputEditText
             у которого клавиатура не перекрывает текст
             и, при сворачивании клавиатуры EditText выходит из фокуса -->
-        <com.gmail.krbashianrafael.medpunkt.phone.MyTextInputEditText
+        <com.gmail.krbashianrafael.medpunkt.MyTextInputEditText
             android:id="@+id/editText_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

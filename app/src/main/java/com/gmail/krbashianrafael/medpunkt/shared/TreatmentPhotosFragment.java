@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 
 import android.content.Context;
@@ -20,10 +20,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.shared.FullscreenPhotoActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotoItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
@@ -123,6 +122,23 @@ public class TreatmentPhotosFragment extends Fragment
         getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
     }
 
+    // этот метод вызывается только в планшетном виде
+    // при нажатии на закладку "Снимки" в TabletTreatmentFragment
+    public void initTreatmentPhotosLoader(){
+
+        //Log.d("2222", "initTreatmentPhotosLoader");
+
+        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
+        txtAddPhotos.setVisibility(View.INVISIBLE);
+        fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
+
+        _idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
+        _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;
+
+        // Инициализируем Loader
+        getLoaderManager().initLoader(TR_PHOTOS_IN_FRAGMENT_LOADER, null, this);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -146,7 +162,7 @@ public class TreatmentPhotosFragment extends Fragment
         }
     }
 
-    private void doWorkWithTabletMainActivity(TabletMainActivity mTabletMainActivity) {
+    private void doWorkWithTabletMainActivity(final TabletMainActivity mTabletMainActivity) {
         if (mTabletMainActivity != null) {
 
             // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
@@ -172,8 +188,8 @@ public class TreatmentPhotosFragment extends Fragment
                 }
             });
 
-            _idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
-            _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;
+            /*_idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
+            _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;*/
 
             // инициализируем linearLayoutManager
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mTabletMainActivity,
@@ -191,7 +207,7 @@ public class TreatmentPhotosFragment extends Fragment
 
     }
 
-    private void doWorkWithTreatmentActivity(TreatmentActivity mTreaymentActivity) {
+    private void doWorkWithTreatmentActivity(final TreatmentActivity mTreaymentActivity) {
         if (mTreaymentActivity != null) {
 
             fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
@@ -324,6 +340,8 @@ public class TreatmentPhotosFragment extends Fragment
         // делаем destroyLoader, чтоб он сам повторно не вызывался,
         // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TR_PHOTOS_IN_FRAGMENT_LOADER);
+
+        //Log.d("2222", "myData.size() =" + myData.size());
 
         // если нет фото лечений, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
         // fabAddTreatmentPhotos.setVisibility(View.VISIBLE);

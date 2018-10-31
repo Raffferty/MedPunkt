@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt;
 
 import android.content.Context;
 import android.util.AttributeSet;

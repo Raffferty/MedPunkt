@@ -1,4 +1,4 @@
-package com.gmail.krbashianrafael.medpunkt.phone;
+package com.gmail.krbashianrafael.medpunkt.shared;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;

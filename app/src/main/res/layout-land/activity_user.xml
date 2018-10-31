@@ -202,7 +202,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/guidelineEnd">
 
-                <com.gmail.krbashianrafael.medpunkt.phone.MyTextInputEditText
+                <com.gmail.krbashianrafael.medpunkt.MyTextInputEditText
                     android:id="@+id/editText_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -615,16 +615,16 @@ public class TabletMainActivity extends AppCompatActivity
             );
         }*/
 
-        if (newDiseaseAndTreatment || diseaseAndTreatmentInEdit) {
-            tabletUsersFragment.fabAddUser.startAnimation(tabletUsersFragment.fabShowAnimation);
-        } else {
-            tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
-            tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+        //if (newDiseaseAndTreatment || diseaseAndTreatmentInEdit) {
+        tabletUsersFragment.fabAddUser.startAnimation(tabletUsersFragment.fabShowAnimation);
+        //} else {
+        tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
+        tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
             /*tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
                     tabletTreatmentFragment.fabShowAnimation
             );*/
-        }
+        //}
 
 
         LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
