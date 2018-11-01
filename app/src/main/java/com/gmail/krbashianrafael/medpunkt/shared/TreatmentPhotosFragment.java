@@ -334,6 +334,8 @@ public class TreatmentPhotosFragment extends Fragment
         // делаем сортировку снимков по дате
         Collections.sort(myData);
 
+        recyclerTreatmentPhotos.setVisibility(View.VISIBLE);
+
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
@@ -347,6 +349,7 @@ public class TreatmentPhotosFragment extends Fragment
         // если нет фото лечений, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
         // fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
         if (myData.size() == 0) {
+            recyclerTreatmentPhotos.setVisibility(View.INVISIBLE);
             txtAddPhotos.setVisibility(View.VISIBLE);
         } else {
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);

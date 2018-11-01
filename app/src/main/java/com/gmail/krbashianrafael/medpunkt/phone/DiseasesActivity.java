@@ -277,6 +277,8 @@ public class DiseasesActivity extends AppCompatActivity
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
 
+        recyclerDiseases.setVisibility(View.VISIBLE);
+
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         diseaseRecyclerViewAdapter.notifyDataSetChanged();
@@ -288,6 +290,9 @@ public class DiseasesActivity extends AppCompatActivity
         // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
         // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
+
+            recyclerDiseases.setVisibility(View.INVISIBLE);
+
             new Handler(Looper.getMainLooper()).
                     postDelayed(new Runnable() {
                         @Override

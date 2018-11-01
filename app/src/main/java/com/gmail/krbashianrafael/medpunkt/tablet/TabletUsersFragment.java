@@ -259,6 +259,8 @@ public class TabletUsersFragment extends Fragment
         // делаем сортировку пользователей по именеи
         Collections.sort(myData);
 
+        recyclerUsers.setVisibility(View.VISIBLE);
+
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         usersRecyclerViewAdapter.notifyDataSetChanged();
@@ -294,6 +296,8 @@ public class TabletUsersFragment extends Fragment
         }
 
         if (myDataSize == 0) {
+
+            recyclerUsers.setVisibility(View.INVISIBLE);
 
             tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
             tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);

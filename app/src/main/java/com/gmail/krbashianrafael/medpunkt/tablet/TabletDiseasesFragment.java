@@ -913,6 +913,8 @@ public class TabletDiseasesFragment extends Fragment
         // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
 
+        recyclerDiseases.setVisibility(View.VISIBLE);
+
         // оповещаем LayoutManager, что произошли изменения
         // LayoutManager обновляет RecyclerView
         diseaseRecyclerViewAdapter.notifyDataSetChanged();
@@ -948,6 +950,8 @@ public class TabletDiseasesFragment extends Fragment
 
         if (myDataSize == 0) {
             // если у пользователя нет заболеваний
+
+            recyclerDiseases.setVisibility(View.INVISIBLE);
 
             tabletMainActivity.diseasesIsEmpty = true;
 

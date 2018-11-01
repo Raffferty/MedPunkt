@@ -309,6 +309,8 @@ public class UsersActivity extends AppCompatActivity
         // делаем сортировку пользователей по именеи
         Collections.sort(myData);
 
+        recyclerUsers.setVisibility(View.VISIBLE);
+
         /*
         public final void notifyDataSetChanged()
         Notify any registered observers that the data set has changed.
@@ -350,6 +352,9 @@ public class UsersActivity extends AppCompatActivity
         int myDataSize = myData.size();
 
         if (myDataSize == 0) {
+
+            recyclerUsers.setVisibility(View.INVISIBLE);
+
             // если нет пользоватлей, то делаем видимым txtAddUsers
             new Handler(Looper.getMainLooper()).
                     postDelayed(new Runnable() {
