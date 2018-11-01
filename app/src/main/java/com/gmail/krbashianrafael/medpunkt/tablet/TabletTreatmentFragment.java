@@ -680,6 +680,9 @@ public class TabletTreatmentFragment extends Fragment
 
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
+        // здесь обновляются _idUser и _idDisease в treatmentPhotosFragment
+        treatmentPhotosFragment.initTreatmentPhotosLoader();
+
         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
     }
 

@@ -124,14 +124,14 @@ public class TreatmentPhotosFragment extends Fragment
 
     // этот метод вызывается только в планшетном виде
     // при нажатии на закладку "Снимки" в TabletTreatmentFragment
+    // при сохранении нового заболевания пользователя
     public void initTreatmentPhotosLoader(){
-
-        //Log.d("2222", "initTreatmentPhotosLoader");
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         txtAddPhotos.setVisibility(View.INVISIBLE);
         fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
 
+        // берем _idUser и _idDisease из tabletTreatmentFragment
         _idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
         _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;
 
@@ -188,6 +188,7 @@ public class TreatmentPhotosFragment extends Fragment
                 }
             });
 
+            // инициализация этих полей для планшета происходит в методе initTreatmentPhotosLoader()
             /*_idUser = mTabletMainActivity.tabletTreatmentFragment._idUser;
             _idDisease = mTabletMainActivity.tabletTreatmentFragment._idDisease;*/
 
