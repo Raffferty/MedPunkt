@@ -12,6 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
+import com.bogdwellers.pinchtozoom.ImageViewerCorrector;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -58,6 +60,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -230,10 +233,33 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             // скрываем UI
             hide();
 
+            // получаем размеры экрана
+            /*Display display = getWindowManager(). getDefaultDisplay();
+            Point size = new Point();
+            display. getSize(size);
+            int displayWidth = size. x;
+            int displayheight = size. y;*/
+
+            // получаем размеры снимка из файла
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(new File(URI.create(treatmentPhotoFilePath).getPath()).getAbsolutePath(), options);
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+
+            //Log. d("AAAAA", "displayWidth = " + displayWidth);
+            //Log. d("AAAAA", "imgWidth = " + imageWidth);
+
+            //Log. d("AAAAA", "displayheight = " + displayheight);
+            //Log. d("AAAAA", "imgheight = " + imageHeight);
+
             // грузим фото в imagePhoto
-            com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
+            // здесь .override(imageWidth, imageHeight), чтоб Glide оптимизировал картинку и зумминг работал нормально
+            // при этом .dontTransform() убираем
+            GlideApp.with(this)
                     .load(treatmentPhotoFilePath)
-                    .dontTransform()
+                    //.dontTransform()
+                    .override(imageWidth, imageHeight)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .error(R.drawable.error_camera_alt_gray_128dp)
@@ -747,13 +773,32 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         show();
                     }
 
-                    // получаем путь к загруженному фото
+                    // получаем путь на девайсе к загруженному фото
                     loadedImageFilePath = getLoadedImageFilePath(this, newSelectedImageUri);
 
+                    /*Log. d("AAAAA", "newSelectedImageUri = " + newSelectedImageUri);
+                    Log. d("AAAAA", "loadedImageFilePath = " + loadedImageFilePath);*/
+
+                    // получаем размеры снимка из файла
+                    // loadedImageFilePath.replace(" ", "%20") меняет текстовый пробел в пути файла на HTML пробел
+                    // иначе выскочит ошибка в URI.create
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(new File(URI.create(loadedImageFilePath.replace(" ", "%20")).getPath()).getAbsolutePath(), options);
+                    int imageHeight = options.outHeight;
+                    int imageWidth = options.outWidth;
+
+                    //Log. d("AAAAA", "loadedImageFilePath.replace = " + loadedImageFilePath);
+                    //Log. d("AAAAA", "imgWidth = " + imageWidth);
+                    //Log. d("AAAAA", "imgheight = " + imageHeight);
+
                     // грузим картинку в imagePhoto
+                    // здесь .override(imageWidth, imageHeight), чтоб Glide оптимизировал картинку и зумминг работал нормально
+                    // при этом .dontTransform() убираем
                     GlideApp.with(this)
                             .load(newSelectedImageUri)
-                            .dontTransform()
+                            //.dontTransform()
+                            .override(imageWidth, imageHeight)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .error(R.drawable.error_camera_alt_gray_128dp)
@@ -831,7 +876,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 return;
             }
 
-            // если это не планшет, то перед загрузкой нового фото ставим экран в PORTRAIT
+            // если это телефон (а не планшет), то перед загрузкой нового фото ставим экран в PORTRAIT
             if (!HomeActivity.isTablet) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
@@ -1222,12 +1267,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         MyImageMatrixTouchHandler(Context context) {
             super(context);
+            //setDoubleTapZoomFactor(2f); // здесь устанавливаем кратность увеличение при DoubleTap, по умолчанию = 2,5
+            ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
+            //Log.d("AAAA", "crr.getMaxScale() = " + crr.getMaxScale());
+            crr.setMaxScale(5f); // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
         }
 
-// этот конструктор не используется
-//        MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
-//            super(context, corrector);
-//        }
+        // этот конструктор не используется
+        /*MyImageMatrixTouchHandler(Context context, ImageMatrixCorrector corrector) {
+            super(context, corrector);
+        }*/
 
         // для DoubleTap
         boolean firstTouch = false;
@@ -1235,6 +1284,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         @Override
         public boolean onTouch(final View view, final MotionEvent event) {
+
+            /*Log. d("AAAAA", "imagePhoto.getWidth()" + imagePhoto.getWidth());
+            Log. d("AAAAA", "imagePhoto.getHeight() = " + imagePhoto.getHeight());*/
+
+            //Log.d("SSSS", "getImageMatrixCorrector() = " + getImageMatrixCorrector());
+            ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
+            //Log.d("SSSS", "crr = " + crr);
+            //Log.d("SSSS", "crr.getMaxScale() = " + crr.getMaxScale());
+            //Log.d("SSSS", "crr.getMaxScale() = " + crr.isMaxScaleRelative());
+            //crr.setMaxScaleRelative(true);
+            //crr.setMaxScale(8f);
+
+
+
+
 
             view.performClick();
 

@@ -293,7 +293,7 @@ public class UserActivity extends AppCompatActivity
             File imgFile = new File(userPhotoUri);
 
             if (imgFile.exists()) {
-                com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
+                GlideApp.with(this)
                         .load(userPhotoUri)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
@@ -592,7 +592,7 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void loadPhotoIntoViewAndGetBitmap(Uri newSelectedImageUri) {
-        com.gmail.krbashianrafael.medpunkt.GlideApp.with(this)
+        GlideApp.with(this)
                 .load(newSelectedImageUri)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
