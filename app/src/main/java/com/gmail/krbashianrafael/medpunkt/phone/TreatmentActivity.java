@@ -427,21 +427,6 @@ public class TreatmentActivity extends AppCompatActivity
         treatmentPhotosFragment = (TreatmentPhotosFragment) getSupportFragmentManager().getFragments().get(1);
     }
 
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        // если клавиатура была открыта для редактирования названия заболевания или текста лечения, то она снова откроется
-        // если нет - то не откроется
-        if (treatmentDescriptionFragment != null) {
-            if (treatmentDescriptionFragment.editTextTreatment.hasFocus() || editTextDiseaseName.hasFocus()) {
-
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            } else {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            }
-        }
-    }*/
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);

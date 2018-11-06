@@ -12,7 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,6 +31,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -60,7 +61,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -116,13 +116,13 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     };
 
-    private final Runnable mHideRunnable = new Runnable() {
+    /*private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
             // скрывает UI
             hide();
         }
-    };
+    };*/
 
     private final Runnable mtapedRunnable = new Runnable() {
         @Override
@@ -191,6 +191,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     // OrientationEventListener реагирует на угол наклона телефона
     private OrientationEventListener mOrientationListener;
 
+    // размеры экрана для вставки снимка
+    private int displayWidth = 0;
+    private int displayheight = 0;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,52 +225,107 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // получаем ориентацию экрана
         int myScreenOrientation = getResources().getConfiguration().orientation;
 
+        // получаем размеры экрана
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        // если это телефон с шириной экрана меньше 1000
+        // то снимки будут загружаться на базу увеличенную вдвое, чтоб не терялось качество при зумме
+        if (!HomeActivity.isTablet && size.x < 1000) {
+            displayWidth = size.x * 2;
+            displayheight = size.y * 2;
+        } else {
+            // в остальных случаях (телефон и планшет)
+            // size.x - 1 и size.y - 1, чтоб снимок не залипал по краям imagePhoto при зумме
+            displayWidth = size.x - 1;
+            displayheight = size.y - 1;
+        }
+
+
         // инициализируем все View
         findViewsById();
 
         // устанавливаем слушатели
         setMyListeners();
 
+        // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
+        if (myScreenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // если это телефон и в горизонтальном положении, то делаем hide();
+            if (!HomeActivity.isTablet) {
+                hide();
+            } else {
+                if (!newTreatmentPhoto) {
+                    // если это планшет (планшет только в горизантальном) и не устанавливается новое фото
+                    fab.startAnimation(fabShowAnimation);
+                } else {
+                    show();
+                }
+            }
+
+            landscape = true;
+
+        } else if (!newTreatmentPhoto) {
+            // если это телефон (т.к. толлько телефон может быть в вертикальном положении)
+            fab.startAnimation(fabShowAnimation);
+        }
+
         // если пришел путь к сохраненному ранее фото, то грузим фото
         if (!newTreatmentPhoto && treatmentPhotoFilePath != null && new File(treatmentPhotoFilePath).exists()) {
 
             // скрываем UI
-            hide();
+            //hide();
 
-            // получаем размеры экрана
-            /*Display display = getWindowManager(). getDefaultDisplay();
-            Point size = new Point();
-            display. getSize(size);
-            int displayWidth = size. x;
-            int displayheight = size. y;*/
+            //imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            // получаем размеры снимка из файла
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(new File(URI.create(treatmentPhotoFilePath).getPath()).getAbsolutePath(), options);
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
 
-            //Log. d("AAAAA", "displayWidth = " + displayWidth);
-            //Log. d("AAAAA", "imgWidth = " + imageWidth);
+            //if (HomeActivity.isTablet) {
+                /*Log.d("AAAAA", "displayWidth = " + displayWidth);
+                Log.d("AAAAA", "displayheight = " + displayheight);*/
 
-            //Log. d("AAAAA", "displayheight = " + displayheight);
-            //Log. d("AAAAA", "imgheight = " + imageHeight);
 
-            // грузим фото в imagePhoto
-            // здесь .override(imageWidth, imageHeight), чтоб Glide оптимизировал картинку и зумминг работал нормально
-            // при этом .dontTransform() убираем
-            GlideApp.with(this)
-                    .load(treatmentPhotoFilePath)
-                    //.dontTransform()
-                    .override(imageWidth, imageHeight)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .error(R.drawable.error_camera_alt_gray_128dp)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imagePhoto);
+                // получаем размеры снимка из файла
+                // здесь Uri.encode НЕ надо делать, т.к. мы знаем, что путь к файлу без спец символов
+                /*BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(new File(URI.create(treatmentPhotoFilePath).getPath()).getAbsolutePath(), options);
+                int imageHeight = options.outHeight;
+                int imageWidth = options.outWidth;*/
+
+                // грузим картинку в imagePhoto
+                // в случае, если это планшет
+                // здесь .override(displayWidth, displayheight),
+                // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
+                // при этом .dontTransform() убираем
+                GlideApp.with(this)
+                        .load(treatmentPhotoFilePath)
+                        //.dontTransform()
+                        //.override(imageWidth, imageHeight)
+                        .override(displayWidth, displayheight)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.error_camera_alt_gray_128dp)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imagePhoto);
+            /*} else {
+                // грузим картинку в imagePhoto
+                // для телефона грузим .override(displayWidth * 2, displayheight * 2)
+                GlideApp.with(this)
+                        .load(treatmentPhotoFilePath)
+                        //.dontTransform()
+                        .override(displayWidth * 2, displayheight * 2)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.error_camera_alt_gray_128dp)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imagePhoto);
+            }*/
 
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            // скрываем UI
+            //hide();
+            //delayedHide();
 
             // если не новое фото и не может загрузить
         } else if (!newTreatmentPhoto) {
@@ -322,7 +381,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 // т.к. это новое фото, то сначала делаем hide() перед загрузкой фото
                 // а после загрузки фото show()
-                hide();
+                //hide();
 
                 // запрашиваем картинку
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -336,11 +395,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
             frm_save.setVisibility(View.GONE);
 
-            // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
+            /*// если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
             if (myScreenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                hide();
+                // если это телефон, то делаем hide();
+                if (!HomeActivity.isTablet) {
+                    hide();
+                }
+
                 landscape = true;
-            }
+            }*/
         }
     }
 
@@ -599,17 +662,24 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         editTextDateOfTreatmentPhoto.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
-    @Override
+    /*@Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (!editTreatmentPhoto) {
+        *//*if (!editTreatmentPhoto) {
             delayedHide();
-        }
-    }
+            //hide();
+        }*//*
+    }*/
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        // изменение оринтации только для телефона
+        if (HomeActivity.isTablet) {
+            return;
+        }
 
         // при поворотах скрываем клавиатуру
         hideSoftInput();
@@ -636,6 +706,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         } else {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
+
+        if (!editTreatmentPhoto) {
+            delayedHide();
+        }
+
+        Log.d("AAAAA", "imagePhoto Width = " + imagePhoto.getWidth());
+        Log.d("AAAAA", "imagePhoto height = " + imagePhoto.getHeight());
+
     }*/
 
     @Override
@@ -644,10 +722,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         mOrientationListener.disable();
     }
 
-    private void delayedHide() {
+    /*private void delayedHide() {
         myHandler.removeCallbacks(mHideRunnable);
-        myHandler.postDelayed(mHideRunnable, 300);
-    }
+        myHandler.postDelayed(mHideRunnable, 0);
+    }*/
+
 
     // Диалог "Удалить фото заболевания или отменить удаление"
     private void showDeleteConfirmationDialog() {
@@ -694,7 +773,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
-        myHandler.removeCallbacks(mShowPart2Runnable);
+        myHandler.removeCallbacks(mHidePart2Runnable);
         myHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
@@ -707,7 +786,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
-        myHandler.removeCallbacks(mHidePart2Runnable);
+        myHandler.removeCallbacks(mShowPart2Runnable);
         myHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
@@ -752,7 +831,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             imagePhoto.setEnabled(true);
 
             // показываем UI
-            show();
+            /*if (HomeActivity.isTablet) {
+                show();
+            }*/
 
             Uri newSelectedImageUri = data.getData();
 
@@ -769,46 +850,85 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                     // если это новое фото, то сначала делали hide() перед загрузкой фото
                     // а после загрузки фото show()
-                    if (newTreatmentPhoto && !landscape) {
+                    /*if (newTreatmentPhoto && !landscape) {
                         show();
-                    }
+                    }*/
 
                     // получаем путь на девайсе к загруженному фото
                     loadedImageFilePath = getLoadedImageFilePath(this, newSelectedImageUri);
 
-                    /*Log. d("AAAAA", "newSelectedImageUri = " + newSelectedImageUri);
-                    Log. d("AAAAA", "loadedImageFilePath = " + loadedImageFilePath);*/
+                    /*Log.d("AAAAA", "displayWidth = " + displayWidth);
+                    Log.d("AAAAA", "displayheight = " + displayheight);*/
 
-                    // получаем размеры снимка из файла
-                    // loadedImageFilePath.replace(" ", "%20") меняет текстовый пробел в пути файла на HTML пробел
-                    // иначе выскочит ошибка в URI.create
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(new File(URI.create(loadedImageFilePath.replace(" ", "%20")).getPath()).getAbsolutePath(), options);
-                    int imageHeight = options.outHeight;
-                    int imageWidth = options.outWidth;
+                    //f (HomeActivity.isTablet) {
+                        // в случае, если это планшет
 
-                    //Log. d("AAAAA", "loadedImageFilePath.replace = " + loadedImageFilePath);
-                    //Log. d("AAAAA", "imgWidth = " + imageWidth);
-                    //Log. d("AAAAA", "imgheight = " + imageHeight);
+                        /*String encodedLoadedImageFilePath = Uri.encode(loadedImageFilePath);
 
-                    // грузим картинку в imagePhoto
-                    // здесь .override(imageWidth, imageHeight), чтоб Glide оптимизировал картинку и зумминг работал нормально
-                    // при этом .dontTransform() убираем
-                    GlideApp.with(this)
-                            .load(newSelectedImageUri)
-                            //.dontTransform()
-                            .override(imageWidth, imageHeight)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .error(R.drawable.error_camera_alt_gray_128dp)
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .into(imagePhoto);
+                        // получаем размеры снимка из файла
+                        // loadedImageFilePath.replace(" ", "%20") меняет текстовый пробел в пути файла на HTML пробел
+                        // иначе выскочит ошибка в URI.create
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeFile(
+                                //new File(URI.create(loadedImageFilePath).getPath()).getAbsolutePath(),
+                                //new File(URI.create(loadedImageFilePath.replace(" ", "%20")).getPath()).getAbsolutePath(),
+                                new File(URI.create(encodedLoadedImageFilePath).getPath()).getAbsolutePath(),
+                                options
+                        );
+
+                        int imageWidth = options.outWidth;
+                        int imageHeight = options.outHeight;
+
+                        Log.d("AAAAA", "imgWidth = " + imageWidth);
+                        Log.d("AAAAA", "imgheight = " + imageHeight);*/
+
+                        // получаем размеры экрана
+
+                        /*Display display = getWindowManager().getDefaultDisplay();
+                        Point size = new Point();
+                        display.getSize(size);
+                        int displayWidth = size.x;
+                        int displayheight = size.y;
+
+                        Log.d("AAAAA", "displayWidth = " + displayWidth);
+                        Log.d("AAAAA", "displayheight = " + displayheight);
+
+                        Log.d("AAAAA", "imagePhoto Width = " + imagePhoto.getWidth());
+                        Log.d("AAAAA", "imagePhoto height = " + imagePhoto.getHeight());*/
+
+                        // грузим картинку в imagePhoto
+                        // здесь .override(idisplayWidth - 1, displayheight - 1),
+                        // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
+                        // при этом .dontTransform() убираем
+                        GlideApp.with(this)
+                                .load(newSelectedImageUri)
+                                //.dontTransform()
+                                //.override(imageWidth, imageHeight)
+                                .override(displayWidth, displayheight)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .error(R.drawable.error_camera_alt_gray_128dp)
+                                .transition(DrawableTransitionOptions.withCrossFade())
+                                .into(imagePhoto);
+                    /*} else {
+                        // для телефона грузим .override(displayWidth * 2, displayheight * 2)
+                        GlideApp.with(this)
+                                .load(newSelectedImageUri)
+                                //.dontTransform()
+                                .override(displayWidth * 2, displayheight * 2)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .error(R.drawable.error_camera_alt_gray_128dp)
+                                .transition(DrawableTransitionOptions.withCrossFade())
+                                .into(imagePhoto);
+                    }*/
 
                     imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     treatmentPhotoHasChanged = true;
                     imageUriInView = newSelectedImageUri;
                     onLoading = false;
+
                 }
             }
         } else {
@@ -884,9 +1004,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             onLoading = true;
             // если это новое фото, то сначала делаем hide() перед загрузкой фото
             // а далее будет show()
-            if (newTreatmentPhoto) {
+            /*if (newTreatmentPhoto) {
                 hide();
-            }
+            }*/
 
             // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -976,18 +1096,25 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     private void goToTreatmentActivity() {
 
-        hideSoftInput();
-
         // это, перед выходом, показывают сверху статус бар,
         // чтоб при открывании предыдущего окна не было белой полосы сверху
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
-        // а это закрывает текущее окно после небольшой задержки
+        if (imagePhoto.getSystemUiVisibility() == 0) {
+            // если не видны системные флаги, то сначала показываем status bar, потом выходим
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        }
+
+        hideSoftInput();
+
+        // а это закрывает текущее окно после задержки в 300мс
         myHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                hideSoftInput();
                 finish();
             }
         }, UI_ANIMATION_DELAY);
@@ -1270,7 +1397,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             //setDoubleTapZoomFactor(2f); // здесь устанавливаем кратность увеличение при DoubleTap, по умолчанию = 2,5
             ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
             //Log.d("AAAA", "crr.getMaxScale() = " + crr.getMaxScale());
-            crr.setMaxScale(5f); // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
+            crr.setMaxScale(20f); // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
         }
 
         // этот конструктор не используется
@@ -1295,9 +1422,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             //Log.d("SSSS", "crr.getMaxScale() = " + crr.isMaxScaleRelative());
             //crr.setMaxScaleRelative(true);
             //crr.setMaxScale(8f);
-
-
-
 
 
             view.performClick();
