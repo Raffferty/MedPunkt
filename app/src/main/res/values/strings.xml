@@ -85,6 +85,7 @@
     <string name="fullscreen_error_date_of_image">Specify image date</string>
     <string name="fullscreen_error_image_description">Specify image brief description</string>
     <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
+    <string name="image_loading_error">Image Loading Error</string>
 
     <!-- do not translate -->
     <string name="app_name" translatable="false">\u2000MedPunkt</string>
@@ -95,4 +96,5 @@
     <string name="treatment_photo_nameEnd" translatable="false">.jpg</string>
     <string name="path_to_users_photos" translatable="false">/users_photos/</string>
     <string name="user_photo_nameEnd" translatable="false">-usrImage.jpg</string>
+
 </resources>

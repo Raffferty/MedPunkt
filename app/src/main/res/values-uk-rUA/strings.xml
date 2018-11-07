@@ -84,4 +84,5 @@
     <string name="fullscreen_date_of_image">дата знімка</string>
     <string name="fullscreen_error_date_of_image">Вкажіть дату знімка</string>
     <string name="fullscreen_dialog_msg_delete_image">Видалити знімок</string>
+    <string name="image_loading_error">Помилка Завантаження Зображення</string>
 </resources>

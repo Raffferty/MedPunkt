@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -42,13 +44,18 @@ import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.bogdwellers.pinchtozoom.ImageViewerCorrector;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
@@ -182,6 +189,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     // ImageView
     private ImageView imagePhoto;
 
+    // TextView для ошибок при загрузке снимка
+    private TextView txtErr;
+
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
 
@@ -284,29 +294,54 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 Log.d("AAAAA", "displayheight = " + displayheight);*/
 
 
-                // получаем размеры снимка из файла
-                // здесь Uri.encode НЕ надо делать, т.к. мы знаем, что путь к файлу без спец символов
+            // получаем размеры снимка из файла
+            // здесь Uri.encode НЕ надо делать, т.к. мы знаем, что путь к файлу без спец символов
                 /*BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(new File(URI.create(treatmentPhotoFilePath).getPath()).getAbsolutePath(), options);
                 int imageHeight = options.outHeight;
                 int imageWidth = options.outWidth;*/
 
-                // грузим картинку в imagePhoto
-                // в случае, если это планшет
-                // здесь .override(displayWidth, displayheight),
-                // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
-                // при этом .dontTransform() убираем
-                GlideApp.with(this)
-                        .load(treatmentPhotoFilePath)
-                        //.dontTransform()
-                        //.override(imageWidth, imageHeight)
-                        .override(displayWidth, displayheight)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .error(R.drawable.error_camera_alt_gray_128dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imagePhoto);
+            // грузим картинку в imagePhoto
+            // в случае, если это планшет
+            // здесь .override(displayWidth, displayheight),
+            // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
+            // при этом .dontTransform() убираем
+            GlideApp.with(this)
+                    .load(treatmentPhotoFilePath)
+                    //.dontTransform()
+                    //.override(imageWidth, imageHeight)
+                    .override(displayWidth, displayheight)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.error_camera_alt_gray_128dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imagePhoto);
+
+            /*final TextView txtErr = findViewById(R.id.err_view);
+
+
+            GlideApp.with(this)
+                    .load(R.drawable.error_camera_alt_gray_128dp)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            //on load failed
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //on load success
+                            txtErr.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+                    })
+                    .override(displayWidth, displayheight)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imagePhoto);*/
+
             /*} else {
                 // грузим картинку в imagePhoto
                 // для телефона грузим .override(displayWidth * 2, displayheight * 2)
@@ -418,6 +453,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         editTextDateOfTreatmentPhoto = findViewById(R.id.editText_date);
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
+        txtErr = findViewById(R.id.err_view);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
         editTextPhotoDescription = findViewById(R.id.editText_photo_description);
         fab = findViewById(R.id.fabEditTreatmentPhoto);
@@ -486,7 +522,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         frm_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (photoAndDescriptionHasNotChanged()) {
+                if (photoAndDescriptionHasNotChanged() || txtErr.getVisibility() == View.VISIBLE) {
                     goToTreatmentActivity();
                 } else {
                     // Если были изменения
@@ -677,7 +713,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         super.onConfigurationChanged(newConfig);
 
         // изменение оринтации только для телефона
-        if (HomeActivity.isTablet) {
+        if (HomeActivity.isTablet || txtErr.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -848,6 +884,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     // чистим imagePhoto
                     Glide.with(this).clear(imagePhoto);
 
+
                     // если это новое фото, то сначала делали hide() перед загрузкой фото
                     // а после загрузки фото show()
                     /*if (newTreatmentPhoto && !landscape) {
@@ -861,7 +898,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     Log.d("AAAAA", "displayheight = " + displayheight);*/
 
                     //f (HomeActivity.isTablet) {
-                        // в случае, если это планшет
+                    // в случае, если это планшет
 
                         /*String encodedLoadedImageFilePath = Uri.encode(loadedImageFilePath);
 
@@ -883,7 +920,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         Log.d("AAAAA", "imgWidth = " + imageWidth);
                         Log.d("AAAAA", "imgheight = " + imageHeight);*/
 
-                        // получаем размеры экрана
+                    // получаем размеры экрана
 
                         /*Display display = getWindowManager().getDefaultDisplay();
                         Point size = new Point();
@@ -897,20 +934,104 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         Log.d("AAAAA", "imagePhoto Width = " + imagePhoto.getWidth());
                         Log.d("AAAAA", "imagePhoto height = " + imagePhoto.getHeight());*/
 
-                        // грузим картинку в imagePhoto
-                        // здесь .override(idisplayWidth - 1, displayheight - 1),
-                        // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
-                        // при этом .dontTransform() убираем
-                        GlideApp.with(this)
-                                .load(newSelectedImageUri)
-                                //.dontTransform()
-                                //.override(imageWidth, imageHeight)
-                                .override(displayWidth, displayheight)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .skipMemoryCache(true)
-                                .error(R.drawable.error_camera_alt_gray_128dp)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imagePhoto);
+
+                    // грузим картинку в imagePhoto
+                    // здесь .override(idisplayWidth - 1, displayheight - 1),
+                    // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
+                    // при этом .dontTransform() убираем
+                    // если во время загрузки возникла ошибка,
+                    // то оставляем возможность либо выйти без сохранения, либо заново загрузить снимок (этот или любой другой)
+                    GlideApp.with(this)
+                            .load(newSelectedImageUri)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    //on load failed
+
+                                    txtErr.setVisibility(View.VISIBLE);
+
+                                    frm_save.setVisibility(View.INVISIBLE);
+                                    LL_title.startAnimation(LL_title_showAnimation);
+
+                                    mDescriptionView.setVisibility(View.INVISIBLE);
+                                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+
+                                    if (!HomeActivity.isTablet) {
+                                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                                        landscape = false;
+                                    }
+
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    //on load success
+
+                                    if (txtErr.getVisibility() == View.VISIBLE) {
+
+                                        txtErr.setVisibility(View.GONE);
+                                        frm_save.setVisibility(View.VISIBLE);
+
+                                        mDescriptionView.setVisibility(View.VISIBLE);
+                                        editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
+                                    }
+
+                                    if (!HomeActivity.isTablet) {
+                                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+
+                                        mOrientationListener.enable();
+                                    }
+
+                                    return false;
+                                }
+                            })
+                            //.dontTransform()
+                            //.override(imageWidth, imageHeight)
+                            .override(displayWidth, displayheight)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .error(R.color.my_dark_gray)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(imagePhoto);
+
+                    //final TextView txtErr = findViewById(R.id.err_view);
+
+                    /*if (txtErr.getVisibility() == View.VISIBLE) {
+
+                        txtErr.setVisibility(View.GONE);
+                        frm_save.setVisibility(View.VISIBLE);
+
+                        mDescriptionView.setVisibility(View.VISIBLE);
+                        editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
+                    }
+
+                    GlideApp.with(this)
+                            .load(newSelectedImageUri)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    //on load failed
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    //on load success
+                                    txtErr.setVisibility(View.VISIBLE);
+                                    frm_save.setVisibility(View.INVISIBLE);
+
+                                    mDescriptionView.setVisibility(View.INVISIBLE);
+                                    editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
+
+                                    return false;
+                                }
+                            })
+                            .override(displayWidth, displayheight)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(imagePhoto);*/
+
                     /*} else {
                         // для телефона грузим .override(displayWidth * 2, displayheight * 2)
                         GlideApp.with(this)
@@ -1002,6 +1123,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
 
             onLoading = true;
+
+            /*if (txtErr.getVisibility() == View.VISIBLE) {
+
+                txtErr.setVisibility(View.GONE);
+                frm_save.setVisibility(View.VISIBLE);
+
+                mDescriptionView.setVisibility(View.VISIBLE);
+                editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
+            }*/
+
             // если это новое фото, то сначала делаем hide() перед загрузкой фото
             // а далее будет show()
             /*if (newTreatmentPhoto) {
@@ -1037,7 +1168,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (photoAndDescriptionHasNotChanged()) {
+        if (photoAndDescriptionHasNotChanged() || txtErr.getVisibility() == View.VISIBLE) {
             goToTreatmentActivity();
             return;
         }

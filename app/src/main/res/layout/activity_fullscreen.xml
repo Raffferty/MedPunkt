@@ -18,8 +18,10 @@
         android:id="@+id/fullscreen_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:keepScreenOn="true"
         android:scaleType="fitCenter"
+        tools:background="@color/my_dark_gray"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
@@ -85,6 +87,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
+
+        <TextView
+            android:id="@+id/err_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@drawable/ic_visibility_off_white_128dp"
+            android:gravity="center_horizontal"
+            android:text="@string/image_loading_error"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/fullscreen_content_description"
