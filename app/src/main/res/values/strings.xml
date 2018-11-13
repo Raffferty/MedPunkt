@@ -85,7 +85,7 @@
     <string name="fullscreen_error_date_of_image">Specify image date</string>
     <string name="fullscreen_error_image_description">Specify image brief description</string>
     <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
-    <string name="image_loading_error">Image Loading Error</string>
+    <string name="image_loading_error">Image loading error</string>
 
     <!-- do not translate -->
     <string name="app_name" translatable="false">\u2000MedPunkt</string>

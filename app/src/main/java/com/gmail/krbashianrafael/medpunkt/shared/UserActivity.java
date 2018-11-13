@@ -53,9 +53,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -128,6 +132,10 @@ public class UserActivity extends AppCompatActivity
 
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
+
+
+    // TextView на случай, если ошибка загрузки фото
+    private TextView txtErr;
 
     // TextView удаления фото, при нажатии удаляется фото
     private TextView textDeleteUserPhoto;
@@ -284,6 +292,8 @@ public class UserActivity extends AppCompatActivity
 
         textViewNoUserPhoto = findViewById(R.id.no_user_photo);
 
+        txtErr = findViewById(R.id.user_photo_err_view);
+
         imagePhoto = findViewById(R.id.image_photo);
 
         if (!userPhotoUri.equals("No_Photo")) {
@@ -295,9 +305,30 @@ public class UserActivity extends AppCompatActivity
             if (imgFile.exists()) {
                 GlideApp.with(this)
                         .load(userPhotoUri)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                //on load failed
+                                txtErr.setVisibility(View.VISIBLE);
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                //on load success
+                                if (txtErr.getVisibility() == View.VISIBLE) {
+
+                                    txtErr.setVisibility(View.GONE);
+                                }
+
+                                return false;
+                            }
+                        })
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
-                        .error(R.drawable.error_camera_alt_gray_128dp)
+                        //.error(R.drawable.error_camera_alt_gray_128dp)
+                        .error(R.color.my_dark_gray)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imagePhoto);
             }
@@ -501,7 +532,24 @@ public class UserActivity extends AppCompatActivity
                 editUser = false;
 
                 if (userPhotoUri.equals("No_Photo")) {
+
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
+                } else if (txtErr.getVisibility() == View.VISIBLE) {
+
+                    GlideApp.with(imagePhoto).clear(imagePhoto);
+
+                    txtErr.setVisibility(View.GONE);
+
+                    imagePhoto.setImageResource(R.color.colorPrimaryLight);
+                    imageUriInView = null;
+                    loadedBitmap = null;
+                    textViewNoUserPhoto.setVisibility(View.VISIBLE);
+                    textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+                    userHasChangedPhoto = true;
+                    //userPhotoUri = "No_Photo";
+                    userSetNoPhotoUri = "Set_No_Photo";
+
                 } else {
                     textDeleteUserPhoto.setVisibility(View.VISIBLE);
                 }
@@ -591,16 +639,73 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    private void loadPhotoIntoViewAndGetBitmap(Uri newSelectedImageUri) {
+    private void loadPhotoIntoViewAndGetBitmap(final Uri newSelectedImageUri) {
         GlideApp.with(this)
                 .load(newSelectedImageUri)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        //on load failed
+
+                        txtErr.setVisibility(View.VISIBLE);
+
+                        userPhotoUri = "No_Photo";
+                        userSetNoPhotoUri = "Set_No_Photo";
+                        imageUriInView = null;
+                        userHasChangedPhoto = true;
+                        textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+                        textViewNoUserPhoto.setVisibility(View.GONE);
+
+                        loadedBitmap = null;
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        //on load success
+
+                        userSetNoPhotoUri = "";
+
+                        if (txtErr.getVisibility() == View.VISIBLE) {
+
+                            txtErr.setVisibility(View.GONE);
+
+                        }
+
+                        if (pathToUsersPhoto != null && _idUser != 0) {
+                            userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
+                        }
+
+                        imageUriInView = newSelectedImageUri;
+                        userHasChangedPhoto = true;
+                        textDeleteUserPhoto.setVisibility(View.VISIBLE);
+                        textViewNoUserPhoto.setVisibility(View.GONE);
+
+                        loadedBitmap = null;
+
+                        GlideApp.with(UserActivity.this)
+                                .asBitmap()
+                                .load(imageUriInView)
+                                .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        // здесь получаем Bitmap
+                                        loadedBitmap = resource;
+                                    }
+                                });
+
+                        return false;
+                    }
+                })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .error(R.drawable.error_camera_alt_gray_128dp)
+                //.error(R.drawable.error_camera_alt_gray_128dp)
+                .error(R.color.my_dark_gray)
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(imagePhoto);
 
-        if (pathToUsersPhoto != null && _idUser != 0) {
+        /*if (pathToUsersPhoto != null && _idUser != 0) {
             userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
         }
 
@@ -620,7 +725,7 @@ public class UserActivity extends AppCompatActivity
                         // здесь получаем Bitmap
                         loadedBitmap = resource;
                     }
-                });
+                });*/
 
         onLoading = false;
     }
@@ -951,11 +1056,13 @@ public class UserActivity extends AppCompatActivity
             File fileToDelete = new File(pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd));
 
             if (fileToDelete.exists()) {
+
                 if (!fileToDelete.delete()) {
+
                     // если файл не удалился
                     Toast.makeText(this, R.string.user_photo_not_deleted, Toast.LENGTH_LONG).show();
 
-                    // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
+                    // получаем SharedPreferences, чтоб вписать путь к неудаленному файлу в "PREFS"
                     SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     final SharedPreferences.Editor prefsEditor = prefs.edit();
 

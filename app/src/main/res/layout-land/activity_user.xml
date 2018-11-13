@@ -187,6 +187,23 @@
 
             </TextView>
 
+            <TextView
+                android:id="@+id/user_photo_err_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/ic_camera_alt_holo_light_gray_108dp"
+                android:gravity="center_horizontal"
+                android:text="@string/image_loading_error"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textColor="@color/holo_light_gray"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/image_photo"
+                app:layout_constraintEnd_toEndOf="@+id/image_photo"
+                app:layout_constraintStart_toStartOf="@+id/image_photo"
+                app:layout_constraintTop_toTopOf="@+id/image_photo"
+                tools:visibility="visible" />
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/text_input_layout_name"
                 android:layout_width="0dp"

@@ -302,19 +302,74 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 int imageHeight = options.outHeight;
                 int imageWidth = options.outWidth;*/
 
+            /*Log.d("AAAAA", "treatmentPhotoFilePath = " + treatmentPhotoFilePath);
+
+            // trImage-2-3-115442903.jpg это белая собачка из папки Медпункта
+            // тестируем ошибку при загрузке фото
+            if (treatmentPhotoFilePath.endsWith("trImage-2-3-115442903.jpg")) {
+                treatmentPhotoFilePath = "";
+            }
+
+            Log.d("AAAAA", "test treatmentPhotoFilePath = " + treatmentPhotoFilePath);*/
+
             // грузим картинку в imagePhoto
             // в случае, если это планшет
             // здесь .override(displayWidth, displayheight),
             // чтоб не было залипания по краям imagePhoto (т.к. imagePhoto FullScreen) и зумминг работал нормально
             // при этом .dontTransform() убираем
+
+
             GlideApp.with(this)
                     .load(treatmentPhotoFilePath)
                     //.dontTransform()
                     //.override(imageWidth, imageHeight)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            //on load failed
+
+                            txtErr.setVisibility(View.VISIBLE);
+
+                            /*frm_save.setVisibility(View.INVISIBLE);
+                            LL_title.startAnimation(LL_title_showAnimation);
+
+                            mDescriptionView.setVisibility(View.INVISIBLE);
+                            editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);*/
+
+                            if (!HomeActivity.isTablet) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                                landscape = false;
+                            }
+
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //on load success
+
+                            if (txtErr.getVisibility() == View.VISIBLE) {
+
+                                txtErr.setVisibility(View.GONE);
+                                /*frm_save.setVisibility(View.VISIBLE);
+
+                                mDescriptionView.setVisibility(View.VISIBLE);
+                                editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);*/
+                            }
+
+                            if (!HomeActivity.isTablet) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+
+                                mOrientationListener.enable();
+                            }
+
+                            return false;
+                        }
+                    })
                     .override(displayWidth, displayheight)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
-                    .error(R.drawable.error_camera_alt_gray_128dp)
+                    .error(R.color.my_dark_gray)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imagePhoto);
 
@@ -453,7 +508,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         editTextDateOfTreatmentPhoto = findViewById(R.id.editText_date);
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
-        txtErr = findViewById(R.id.err_view);
+        txtErr = findViewById(R.id.treatment_photo_err_view);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
         editTextPhotoDescription = findViewById(R.id.editText_photo_description);
         fab = findViewById(R.id.fabEditTreatmentPhoto);
@@ -934,6 +989,16 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         Log.d("AAAAA", "imagePhoto Width = " + imagePhoto.getWidth());
                         Log.d("AAAAA", "imagePhoto height = " + imagePhoto.getHeight());*/
 
+                    /*Log.d("AAAAA", "loadedImageFilePath = " + loadedImageFilePath);
+                    Log.d("AAAAA", "newSelectedImageUri = " + newSelectedImageUri);
+
+                    // DSC_0001.JPG это кот из галереи
+                    // // тестируем ошибку при загрузке фото
+                    if (loadedImageFilePath.endsWith("DSC_0001.JPG")) {
+                        newSelectedImageUri = Uri.parse("");
+                    }
+
+                    Log.d("AAAAA", "test newSelectedImageUri = " + newSelectedImageUri);*/
 
                     // грузим картинку в imagePhoto
                     // здесь .override(idisplayWidth - 1, displayheight - 1),

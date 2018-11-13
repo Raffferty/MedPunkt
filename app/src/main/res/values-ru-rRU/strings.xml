@@ -36,7 +36,7 @@
     <string name="user_cant_update">Пользователя не удалось обновить</string>
     <string name="user_cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="user_cant_load_photo">Фотографию не удалось загрузить</string>
-    <string name="user_photo_not_deleted">Фотография не удалилась</string>
+    <string name="user_photo_not_deleted">Фотографию не удалось удалить</string>
     <string name="user_delete">Удалить пользователя</string>
     <string name="user_not_deleted">Пользователь НЕ удалился</string>
 
@@ -84,5 +84,5 @@
     <string name="fullscreen_date_of_image">дата снимка</string>
     <string name="fullscreen_error_date_of_image">Укажите дату снимка</string>
     <string name="fullscreen_dialog_msg_delete_image">Удалить снимок</string>
-    <string name="image_loading_error">Ошибка Загрузки Изображения</string>
+    <string name="image_loading_error">Ошибка загрузки изображения</string>
 </resources>
