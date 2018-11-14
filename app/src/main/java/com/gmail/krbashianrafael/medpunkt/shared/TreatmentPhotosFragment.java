@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Guideline;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -43,6 +46,10 @@ public class TreatmentPhotosFragment extends Fragment
 
     // TextView добавления фотоснимка лечения
     public TextView txtAddPhotos;
+
+    public Guideline verGuideline;
+
+    public FloatingActionButton fabToFullScreen;
 
     public FloatingActionButton fabAddTreatmentPhotos;
 
@@ -78,6 +85,8 @@ public class TreatmentPhotosFragment extends Fragment
 
         recyclerTreatmentPhotos = view.findViewById(R.id.recycler_treatment_photos);
 
+        verGuideline = view.findViewById(R.id.ver_guideline);
+
         txtAddPhotos = view.findViewById(R.id.txt_empty_photos);
         txtAddPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +101,8 @@ public class TreatmentPhotosFragment extends Fragment
                 startActivity(intentToTreatmentPhoto);
             }
         });
+
+        fabToFullScreen = view.findViewById(R.id.fab_to_full_screen);
 
         fabAddTreatmentPhotos = view.findViewById(R.id.fabAddTreatmentPhotos);
         fabAddTreatmentPhotos.setOnClickListener(new View.OnClickListener() {
@@ -346,13 +357,43 @@ public class TreatmentPhotosFragment extends Fragment
 
         //Log.d("2222", "myData.size() =" + myData.size());
 
-        // если нет фото лечений, то делаем txtAddPhotos.setVisibility(View.VISIBLE);
-        // fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+        // если нет фото лечения
         if (myData.size() == 0) {
             recyclerTreatmentPhotos.setVisibility(View.INVISIBLE);
             txtAddPhotos.setVisibility(View.VISIBLE);
+
+            // если в расширенном варианте окна на планшете
+            if (HomeActivity.isTablet &&
+                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {
+
+                fabToFullScreen.setVisibility(View.INVISIBLE);
+                verGuideline.setGuidelinePercent(1.0f);
+
+                // ширину табов делаем одинаковыми
+                LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.getChildAt(0)).getChildAt(1));
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                layoutParams.weight = 1.00f;
+                layout.setLayoutParams(layoutParams);
+            }
+
         } else {
+            // если есть фото лечения
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+
+            // если в расширенном варианте окна на планшете
+            if (HomeActivity.isTablet &&
+                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {
+
+                verGuideline.setGuidelinePercent(0.4f);
+                fabToFullScreen.setVisibility(View.VISIBLE);
+                fabToFullScreen.startAnimation(fabShowAnimation);
+
+                // это расширяет таб "снимки"
+                LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.getChildAt(0)).getChildAt(1));
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                layoutParams.weight = 1.50f;
+                layout.setLayoutParams(layoutParams);
+            }
         }
 
         if (mScrollToStart && myData.size() != 0) {

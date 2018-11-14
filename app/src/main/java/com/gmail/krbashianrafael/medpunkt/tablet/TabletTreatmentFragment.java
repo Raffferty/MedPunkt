@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -39,18 +40,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentAdapter;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -108,6 +110,7 @@ public class TabletTreatmentFragment extends Fragment
 
     public TabLayout tabLayout;
 
+
     public TabletTreatmentFragment() {
         // Required empty public constructor
     }
@@ -138,6 +141,7 @@ public class TabletTreatmentFragment extends Fragment
         txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
 
+
         imgZoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
         imgZoomOutTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +160,19 @@ public class TabletTreatmentFragment extends Fragment
 
                 //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
 
+                // если есть фото лечения есть, то в расширенном виде формируем вид окна
+                if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
 
+                    treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
+                    treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
+                    treatmentPhotosFragment.fabToFullScreen.startAnimation(fabShowAnimation);
+
+                    // это расширяет таб "снимки"
+                    LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                    layoutParams.weight = 1.50f;//0.67
+                    layout.setLayoutParams(layoutParams);
+                }
             }
         });
 
@@ -165,6 +181,15 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onClick(View v) {
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+
+                treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
+                treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
+
+                // ширину табов делаем одинаковыми
+                LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                layoutParams.weight = 1.00f;
+                layout.setLayoutParams(layoutParams);
 
                 // код для показа выделенного пользователя
                 if (TabletMainActivity.selectedUser_id != 0) {
@@ -372,6 +397,12 @@ public class TabletTreatmentFragment extends Fragment
                     // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+
+                        // показываем fabToFullScreen, если находимся в расширенном варианте окна
+                        if (((ConstraintLayout.LayoutParams) treatmentPhotosFragment.verGuideline.getLayoutParams()).guidePercent != 1.00f) {
+                            treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
+                            treatmentPhotosFragment.fabToFullScreen.startAnimation(fabShowAnimation);
+                        }
                     }
 
                     // загружаем связынные с лечением снимки
