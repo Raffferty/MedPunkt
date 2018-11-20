@@ -192,7 +192,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     // ставим на таб "описание"
                     Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
-                    tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                    /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
                     tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
@@ -242,7 +242,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }
 
-        public void tabletDiseaseSelected() {
+        void tabletDiseaseSelected() {
             tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
             tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());

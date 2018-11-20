@@ -38,6 +38,7 @@
     <string name="user_cant_save_photo">Photo could not be saved</string>
     <string name="user_cant_load_photo">Photo could not be loaded</string>
     <string name="user_photo_not_deleted">Photo could not be deleted</string>
+    <string name="user_updated_photo_not_deleted">Updated photo could not be deleted</string>
     <string name="user_delete">Delete user</string>
     <string name="user_not_deleted">User could not be deleted</string>
 
@@ -45,7 +46,7 @@
     <string name="patient_title_activity">Add patient</string>
     <string name="patient_name">Name and Surname</string>
     <string name="patient_cant_save">Patient could not be saved</string>
-    <string name="patient_cant_update">Patient could not be saved</string>
+    <string name="patient_cant_update">Patient could not be updated</string>
     <string name="patient_delete">Delete patient</string>
     <string name="patient_not_deleted">Patient could not be deleted</string>
     <string name="patient_treatment_title_text">Symptomatology and Treatment</string>

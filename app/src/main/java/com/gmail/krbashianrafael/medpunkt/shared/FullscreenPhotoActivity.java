@@ -78,6 +78,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         DatePickerDialog.OnDateSetListener {
 
+    private static final String PREFS_NAME = "PREFS";
+
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler myHandler = new Handler(Looper.getMainLooper());
 
@@ -225,6 +227,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
+        // editTreatmentPhoto приходит только из планшета из WideView
+        //editTreatmentPhoto = intent.getBooleanExtra("editTreatmentPhoto", false);
+
         // если это планшет, то ориентация все время LANDSCAPE
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -320,7 +325,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
 
             GlideApp.with(this)
-                    .load(treatmentPhotoFilePath)
+                    .load(new File(treatmentPhotoFilePath))
                     //.dontTransform()
                     //.override(imageWidth, imageHeight)
                     .listener(new RequestListener<Drawable>() {
@@ -328,7 +333,32 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             //on load failed
 
+                            // чтоб файл освободился (для удаления),
+                            // высвобождаем imagePhoto
+                            /*myHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Glide.with(FullscreenPhotoActivity.this).clear(imagePhoto);
+                                    //Glide.get(FullscreenPhotoActivity.this).clearMemory();
+
+                                    *//*GlideApp.with(FullscreenPhotoActivity.this).
+                                            load(R.drawable.eda).into(imagePhoto);*//*
+
+                                    imagePhoto.setImageResource(R.color.my_dark_gray);
+                                    txtErr.setVisibility(View.VISIBLE);
+                                }
+                            });*/
+
+                            //imagePhoto.setImageResource(R.color.my_dark_gray);
                             txtErr.setVisibility(View.VISIBLE);
+
+                            /*new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Glide.get(FullscreenPhotoActivity.this).clearDiskCache();
+                                }
+                            }).start();*/
+
 
                             /*frm_save.setVisibility(View.INVISIBLE);
                             LL_title.startAnimation(LL_title_showAnimation);
@@ -438,6 +468,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // если было нажато добваить новое фото
         // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
         if (newTreatmentPhoto) {
+
             editTreatmentPhoto = true;
 
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this,
@@ -456,6 +487,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 // Запрашиваем разрешение на чтение и запись фото
                 MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
+
             } else {
                 // устанавливаем вид в зависимости от ориентации экрана при первом вхождении
                 if (myScreenOrientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -479,7 +511,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
             }
 
-            // если открывется уже существующее фото
         } else {
             mDescriptionView.setVisibility(View.INVISIBLE);
             editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
@@ -831,14 +862,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 onSavingOrUpdatingOrDeleting = true;
 
-                if (deleteTreatmentPhoto()) {
+                deleteTreatmentPhoto();
+
+                //deleteTreatmentPhotoFromDataBase();
+
+                /*if (deleteTreatmentPhoto()) {
                     deleteTreatmentPhotoFromDataBase();
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
                     Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
-                }
+                }*/
             }
         });
+
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 if (dialog != null) {
@@ -937,7 +973,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 } else {
                     // чистим imagePhoto
-                    Glide.with(this).clear(imagePhoto);
+                    Glide.with(FullscreenPhotoActivity.this).clear(imagePhoto);
 
 
                     // если это новое фото, то сначала делали hide() перед загрузкой фото
@@ -1386,7 +1422,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             imageUriInView = null;
 
         } else {
-            // хотя, новое фото без фото быть не должно
             if (newTreatmentPhoto) {
                 saveTreatmentPhotoToDataBase();
                 newTreatmentPhoto = false;
@@ -1423,7 +1458,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 }
             }
 
-            // SystemClock.elapsedRealtime(); для нумерации сохраняемых файлов
+            // для нумерации сохраняемых файлов берем время SystemClock.elapsedRealtime();
             String destinationFileName = getString(R.string.treatment_photo_nameStart) +
                     _idUser + "-" +
                     _idDisease + "-" + SystemClock.elapsedRealtime() +
@@ -1440,30 +1475,55 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 // и даем новому файлу имя
                 // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
                 if (saveTreatmentPhotoToDataBase()) {
+                    // копируем fileOfPhoto в destinationFile
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
 
-                    // после сохранения выставляем флаги = false
-                    newTreatmentPhoto = false;
+                    // после сохранения в TreatmentPhotoCopyAsyncTask выставляем флаги = false
+                    /*newTreatmentPhoto = false;
                     treatmentPhotoHasChanged = false;
                     onSavingOrUpdatingOrDeleting = false;
 
-                    afterSaveOrUpdate();
+                    afterSaveOrUpdate();*/
                 } else {
                     onSavingOrUpdatingOrDeleting = false;
                     Toast.makeText(this, R.string.treatment_cant_save_image, Toast.LENGTH_LONG).show();
                 }
 
             } else {
-                // если фотография обновляется, то сначала удаляем старую фотографию
+                // если фотография обновляется,
+                // то сначала удаляем старую фотографию
                 File oldFile = new File(treatmentPhotoFilePath);
                 if (oldFile.exists()) {
                     if (!oldFile.delete()) {
                         Toast.makeText(this, R.string.treatment_old_image_not_deleted, Toast.LENGTH_LONG).show();
+
+                        // если файл не удалился, то
+                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
+                        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                        final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                        String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
+                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
+
+                        String updatedNotDeletedFilesPaths;
+                        if (notDeletedFilesPaths == null) {
+                            updatedNotDeletedFilesPaths = oldFile.getPath();
+                        } else {
+                            updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + oldFile.getPath();
+                        }
+
+                        // пишем заново в в "PREFS" обновленную строку
+                        prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
+                        prefsEditor.apply();
                     }
                 }
 
+                // после удаления старого файла
+                // присваиваем новый путь обновляемому снимку
                 treatmentPhotoFilePath = destinationFile.toString();
 
+                // обновляем путь к файлу в базе
                 if (updateTreatmentPhotoToDataBase()) {
                     // если в Базу сохранилось удачно,
                     // то копируем файл снимка в TreatmentPhotoCopyAsyncTask в отдельном потоке
@@ -1471,19 +1531,30 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
 
+                    /// после сохранения в TreatmentPhotoCopyAsyncTask выставляем флаги = false
+                    /*newTreatmentPhoto = false;
+                    treatmentPhotoHasChanged = false;
                     onSavingOrUpdatingOrDeleting = false;
+
+                    afterSaveOrUpdate();*/
 
                 } else {
-                    onSavingOrUpdatingOrDeleting = false;
+                    // если путь к обновленному файлу в базу не сохранился
                     Toast.makeText(this, R.string.treatment_cant_save_image, Toast.LENGTH_LONG).show();
+
+                    // выставляем флаги false
+                    treatmentPhotoHasChanged = false;
+                    onSavingOrUpdatingOrDeleting = false;
+                    afterSaveOrUpdate();
                 }
 
-                afterSaveOrUpdate();
-
-                // после сохранения выставляем флаг treatmentPhotoHasChanged = false
-                treatmentPhotoHasChanged = false;
+                // после сохранения выставляем флаги false
+                /*treatmentPhotoHasChanged = false;
+                onSavingOrUpdatingOrDeleting = false;
+                afterSaveOrUpdate();*/
             }
         } else {
+            // если снимок не загрузился
             onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(this, R.string.treatment_cant_save_image, Toast.LENGTH_LONG).show();
         }
@@ -1554,16 +1625,36 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean deleteTreatmentPhoto() {
+    private void deleteTreatmentPhoto() {
         File toBeDeletedFile = new File(treatmentPhotoFilePath);
+
         if (toBeDeletedFile.exists()) {
             if (!toBeDeletedFile.delete()) {
+                // если файл не удалился
                 Toast.makeText(this, R.string.treatment_image_not_deleted, Toast.LENGTH_LONG).show();
-                return false;
+
+                // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
+                // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
+
+                String updatedNotDeletedFilesPaths;
+                if (notDeletedFilesPaths == null) {
+                    updatedNotDeletedFilesPaths = toBeDeletedFile.getPath();
+                } else {
+                    updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + toBeDeletedFile.getPath();
+                }
+
+                // пишем заново в в "PREFS" обновленную строку
+                prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
+                prefsEditor.apply();
             }
         }
 
-        return true;
+        deleteTreatmentPhotoFromDataBase();
     }
 
     private void deleteTreatmentPhotoFromDataBase() {
@@ -1580,6 +1671,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         if (rowsDeleted == 0) {
             onSavingOrUpdatingOrDeleting = false;
+            Toast.makeText(FullscreenPhotoActivity.this, "TreatmentPhoto has NOT been Deleted from DataBase", Toast.LENGTH_LONG).show();
         } else {
             goToTreatmentActivity();
         }
@@ -1612,7 +1704,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             Log. d("AAAAA", "imagePhoto.getHeight() = " + imagePhoto.getHeight());*/
 
             //Log.d("SSSS", "getImageMatrixCorrector() = " + getImageMatrixCorrector());
-            ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
+            //ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
             //Log.d("SSSS", "crr = " + crr);
             //Log.d("SSSS", "crr.getMaxScale() = " + crr.getMaxScale());
             //Log.d("SSSS", "crr.getMaxScale() = " + crr.isMaxScaleRelative());
@@ -1671,7 +1763,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     // чтоб не было утечки памяти при его работе
     private static class TreatmentPhotoCopyAsyncTask extends AsyncTask<File, Void, Void> {
 
-        private static final String PREFS_NAME = "PREFS";
+        //private static final String PREFS_NAME = "PREFS";
 
         // получаем WeakReference на FullscreenPhotoActivity,
         // чтобы GC мог его собрать
@@ -1692,8 +1784,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 FileUtils.copyFile(fileOfPhoto, destination);
 
             } catch (NullPointerException | IOException e) {
-                // если были ошибки во время копирования
-                // то удаляем конечный файл (если он образовался)
+                // если при копировании возникли ошибки, но файл образовался, то удаляем его
                 if (fullscreenPhotoActivity != null) {
                     fullscreenPhotoActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -1703,17 +1794,23 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     });
                 }
 
-                // если файл образовался, то удаляем его
+
                 if (destination.exists()) {
                     if (!destination.delete() && fullscreenPhotoActivity != null) {
                         // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
                         SharedPreferences prefs = fullscreenPhotoActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                        // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
                         // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
-                        String updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + destination.getPath();
+
+                        String updatedNotDeletedFilesPaths;
+                        if (notDeletedFilesPaths == null) {
+                            updatedNotDeletedFilesPaths = destination.getPath();
+                        } else {
+                            updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + destination.getPath();
+                        }
 
                         // пишем заново в в "PREFS" обновленную строку
                         prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
@@ -1721,11 +1818,25 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     }
                 }
 
-                e.printStackTrace();
+                //e.printStackTrace();
 
                 return null;
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            final FullscreenPhotoActivity fullscreenPhotoActivity = fullscreenPhotoActivityReference.get();
+
+            // после сохранения в TreatmentPhotoCopyAsyncTask выставляем флаги = false
+            fullscreenPhotoActivity.newTreatmentPhoto = false;
+            fullscreenPhotoActivity.treatmentPhotoHasChanged = false;
+            fullscreenPhotoActivity.onSavingOrUpdatingOrDeleting = false;
+
+            fullscreenPhotoActivity.afterSaveOrUpdate();
         }
     }
 }

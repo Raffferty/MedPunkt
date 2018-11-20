@@ -23,7 +23,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -53,6 +56,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
@@ -88,6 +92,8 @@ public class UserActivity extends AppCompatActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback,
         LoaderManager.LoaderCallbacks<Cursor>,
         DatePickerDialog.OnDateSetListener {
+
+    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     private static final String PREFS_NAME = "PREFS";
 
@@ -142,6 +148,8 @@ public class UserActivity extends AppCompatActivity
 
     // путь к сохраненному фото
     private String userPhotoUri, userSetNoPhotoUri = "";
+
+    //private String olduserPhotoUri;
 
     // id пользователя
     private long _idUser = 0;
@@ -309,7 +317,15 @@ public class UserActivity extends AppCompatActivity
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 //on load failed
-                                txtErr.setVisibility(View.VISIBLE);
+                                myHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.with(UserActivity.this).clear(imagePhoto);
+
+                                        imagePhoto.setImageResource(R.color.my_dark_gray);
+                                        txtErr.setVisibility(View.VISIBLE);
+                                    }
+                                });
 
                                 return false;
                             }
@@ -328,7 +344,7 @@ public class UserActivity extends AppCompatActivity
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         //.error(R.drawable.error_camera_alt_gray_128dp)
-                        .error(R.color.my_dark_gray)
+                        //.error(R.color.my_dark_gray)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imagePhoto);
             }
@@ -649,7 +665,8 @@ public class UserActivity extends AppCompatActivity
 
                         txtErr.setVisibility(View.VISIBLE);
 
-                        userPhotoUri = "No_Photo";
+                        //olduserPhotoUri = userPhotoUri;
+                        //userPhotoUri = "No_Photo";
                         userSetNoPhotoUri = "Set_No_Photo";
                         imageUriInView = null;
                         userHasChangedPhoto = true;
@@ -673,9 +690,9 @@ public class UserActivity extends AppCompatActivity
 
                         }
 
-                        if (pathToUsersPhoto != null && _idUser != 0) {
+                        /*if (pathToUsersPhoto != null && _idUser != 0) {
                             userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
-                        }
+                        }*/
 
                         imageUriInView = newSelectedImageUri;
                         userHasChangedPhoto = true;
@@ -1050,10 +1067,12 @@ public class UserActivity extends AppCompatActivity
         // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу в папку под номером _id пользователя
 
         // если фото было удалено нажатием на "удалить фото", то удалить фото (если оно есть)
-        if (userSetNoPhotoUri.equals("Set_No_Photo") && pathToUsersPhoto != null) {
+        //if (userSetNoPhotoUri.equals("Set_No_Photo") && pathToUsersPhoto != null) {
+        if (userSetNoPhotoUri.equals("Set_No_Photo") && !userPhotoUri.equals("No_Photo")) {
 
             // формируем путь к папке фото юзера
-            File fileToDelete = new File(pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd));
+            //File fileToDelete = new File(pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd));
+            File fileToDelete = new File(userPhotoUri);
 
             if (fileToDelete.exists()) {
 
@@ -1211,7 +1230,8 @@ public class UserActivity extends AppCompatActivity
             if (pathToUsersPhoto != null && loadedBitmap != null) {
                 // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
                 // userPhotoUri = /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1-usrImage.jpg
-                userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
+                //userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
+                userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
 
                 // обновляем данные по пути к файлу фото пользовател в базе
                 int rowsAffected = insertUserPhotoUriToDataBase(userPhotoUri);
@@ -1233,7 +1253,9 @@ public class UserActivity extends AppCompatActivity
                     // в UserPhotoSavingAsyncTask
                     // в конструктор передаются activity, loadedBitmap, и путь к файлу фото
                     if (loadedBitmap != null) {
-                        new UserPhotoSavingAsyncTask(this, loadedBitmap, userPhotoUri).execute();
+
+                        new UserPhotoSavingAsyncTask(this, loadedBitmap, null, userPhotoUri).execute();
+
                     } else {
                         // если после указания в базе пути к фото
                         // по каким-то причинам loadedBitmap == null
@@ -1267,10 +1289,23 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void updateUserToDataBase() {
+        String userOldPhotoUri = null;
 
         if (pathToUsersPhoto != null && loadedBitmap != null) {
-            userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
+            // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
+            // userPhotoUri = /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1-usrImage.jpg
+            //userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
+
+            userOldPhotoUri = userPhotoUri;
+
+            userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
+
+        } else {
+            userPhotoUri = "No_Photo";
         }
+
+        //Log.d("ASAS", "userOldPhotoUri = " + userOldPhotoUri);
+        //Log.d("ASAS", "userPhotoUri = " + userPhotoUri);
 
         ContentValues values = new ContentValues();
         values.put(MedContract.UsersEntry.COLUMN_USER_NAME, textUserName);
@@ -1288,6 +1323,7 @@ public class UserActivity extends AppCompatActivity
             Toast.makeText(UserActivity.this, HomeActivity.iAmDoctor ? R.string.patient_cant_update : R.string.user_cant_update, Toast.LENGTH_LONG).show();
 
             // если обновление было неудачным, то остаемся на месте
+            userOldPhotoUri = null;
             goBack = false;
             afterUpdateUser();
 
@@ -1296,11 +1332,12 @@ public class UserActivity extends AppCompatActivity
             // если была загрузенна новое фото loadedBitmap != null,
             // то в отдельном потоке сохраняем фото в файл в папку юзера
             if (loadedBitmap != null) {
-                new UserPhotoSavingAsyncTask(this, loadedBitmap, userPhotoUri).execute();
+                new UserPhotoSavingAsyncTask(this, loadedBitmap, userOldPhotoUri, userPhotoUri).execute();
             } else {
                 // если новое фото не было загружено,
                 // то обновление в базе уже было и больше ничего делать не надо
 
+                userOldPhotoUri = null;
                 afterUpdateUser();
             }
         }
@@ -1568,15 +1605,16 @@ public class UserActivity extends AppCompatActivity
             }
 
             if (result == -1) {
-                // если заболевание не удалилось из базы и фото не были удалены
+                // если пользователь не удалился из базы и фото не были удалены
                 userActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(userActivity, HomeActivity.iAmDoctor ? R.string.patient_not_deleted : R.string.user_not_deleted, Toast.LENGTH_LONG).show();
             } else if (result == 0) {
-                // если не было фото пользователя и снимков для удаления
-                userActivity.goToDiseasesActivity();
+                // если были ошибки при удалении файлов
+                Toast.makeText(userActivity, R.string.treatment_image_not_deleted, Toast.LENGTH_LONG).show();
+                userActivity.goToUsersActivity();
             } else {
                 // result == 1
-                // заболевание удалилось и снимки удалены (или отсутствуют)
+                // пользователь удалился и снимки удалены (или отсутствуют)
                 userActivity.goToUsersActivity();
             }
         }
@@ -1590,17 +1628,61 @@ public class UserActivity extends AppCompatActivity
         // чтобы GC мог их собрать
         private final WeakReference<UserActivity> userActivityReference;
         private final WeakReference<Bitmap> loadedBitmapReference;
+        private final WeakReference<String> oldFileToDeletePathReference;
         private final WeakReference<String> fileToSavePathReference;
 
-        UserPhotoSavingAsyncTask(UserActivity context, Bitmap loadedBitmap, String fileToSavePath) {
+        UserPhotoSavingAsyncTask(UserActivity context, Bitmap loadedBitmap, String oldFileToDeletePath, String fileToSavePath) {
             userActivityReference = new WeakReference<>(context);
             loadedBitmapReference = new WeakReference<>(loadedBitmap);
+            oldFileToDeletePathReference = new WeakReference<>(oldFileToDeletePath);
             fileToSavePathReference = new WeakReference<>(fileToSavePath);
         }
 
         // в Background делаем сохранение Bitmap в File
         @Override
         protected File doInBackground(Void... params) {
+
+            // перед сохранением нового файла фотографии удаляем существующий файл старой фотографии (если он существует)
+            String oldFileToDeletePath = oldFileToDeletePathReference.get();
+
+            if (oldFileToDeletePath != null) {
+                File oldFile = new File(oldFileToDeletePath);
+                if (oldFile.exists()) {
+                    if (!oldFile.delete()) {
+                        final UserActivity userActivity = userActivityReference.get();
+
+                        userActivity.myHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(userActivity, R.string.user_updated_photo_not_deleted, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                        // если файл не удалился, то
+                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
+                        SharedPreferences prefs = userActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                        final SharedPreferences.Editor prefsEditor = prefs.edit();
+
+                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                        String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
+                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
+
+                        String updatedNotDeletedFilesPaths;
+                        if (notDeletedFilesPaths == null) {
+                            updatedNotDeletedFilesPaths = oldFile.getPath();
+                        } else {
+                            updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + oldFile.getPath();
+                        }
+
+                        // пишем заново в в "PREFS" обновленную строку
+                        prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
+                        prefsEditor.apply();
+                    }
+                }
+            }
+
+
+            // сохраняем новую фотографию
             String fileToSavePath = fileToSavePathReference.get();
 
             if (fileToSavePath == null) {
@@ -1608,12 +1690,6 @@ public class UserActivity extends AppCompatActivity
             }
 
             File fileToSave = new File(fileToSavePath);
-
-            // перед сохранение удаляем существующий файл,
-            // т.к. фото должно быть одно
-            if (fileToSave.exists() && !fileToSave.delete()) {
-                return null;
-            }
 
             // если папка для файла существует
             if (fileToSave.getParentFile().exists()) {
@@ -1640,30 +1716,28 @@ public class UserActivity extends AppCompatActivity
                     }
                 } else {
                     // если папки не было и она не создалась
-                    if (!fileToSave.getParentFile().exists()) {
-                        return null;
-                    }
+                    //if (!fileToSave.getParentFile().exists()) {
+                    return null;
+                    //}
                 }
             }
 
             // В созданный файл пишем loadedBitmap
-            Bitmap loadedBitmap;
+            Bitmap loadedBitmap = loadedBitmapReference.get();
+            if (loadedBitmap == null) {
+                return null;
+            }
+
             // The try-with-resources Statement JDK 8
             try (FileOutputStream outputStream = new FileOutputStream(fileToSave)) {
                 // получаем из WeakReference<Bitmap> loadedBitmap
                 // и проверяем его на null, т.к. GC мог его собрать
                 // если таокое произошло, то файл не сохраняяем
-
-                loadedBitmap = loadedBitmapReference.get();
-                if (loadedBitmap != null) {
-                    loadedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                    outputStream.flush();
-                    outputStream.close();
-                } else {
-                    outputStream.close();
-                    return null;
-                }
-
+                //loadedBitmap = loadedBitmapReference.get();
+                //if (loadedBitmap != null) {
+                loadedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+                loadedBitmap = null;
             } catch (IOException e) {
                 e.printStackTrace();
                 //noinspection UnusedAssignment
@@ -1684,7 +1758,7 @@ public class UserActivity extends AppCompatActivity
             }
 
             // обнуляем loadedBitmap
-            userActivity.loadedBitmap = null;
+            //userActivity.loadedBitmap = null;
 
             if (savedFile == null) {
                 Toast.makeText(userActivity, R.string.user_cant_save_photo, Toast.LENGTH_LONG).show();

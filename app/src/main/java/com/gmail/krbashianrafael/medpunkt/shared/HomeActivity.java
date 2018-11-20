@@ -175,6 +175,8 @@ public class HomeActivity extends AppCompatActivity {
         // и пытаемся их снова удалить в doInBackground класса CleanNotDeletedFilesAsyncTask
         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
+        //Log.d("XZX", "notDeletedFilesPaths = " + notDeletedFilesPaths);
+
         if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
             new CleanNotDeletedFilesAsyncTask(notDeletedFilesPaths).execute(getApplicationContext());
         }
@@ -190,6 +192,9 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Context... contexts) {
+
+
+
             if (contexts == null || contexts[0] == null || mNotDeletedFilesPaths == null) {
                 return false;
             }
@@ -205,10 +210,15 @@ public class HomeActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
 
             for (String fPath : splitedFilesPaths) {
+
+                //Log.d("XZX", "to delete fPath = " + fPath);
+
                 File toBeDeletedFile = new File(fPath);
                 if (toBeDeletedFile.exists()) {
                     if (!toBeDeletedFile.delete()) {
                         sb.append(fPath).append(",");
+
+                        //Log.d("XZX", "Not deleted fPath = " + fPath);
                     }
                 }
             }

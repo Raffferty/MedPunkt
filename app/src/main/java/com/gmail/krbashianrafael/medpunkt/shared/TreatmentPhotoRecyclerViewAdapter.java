@@ -3,8 +3,11 @@ package com.gmail.krbashianrafael.medpunkt.shared;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +15,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.gmail.krbashianrafael.medpunkt.GlideApp;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
 
-public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
     private final ArrayList<TreatmentPhotoItem> treatmentPhotosList;
@@ -26,7 +38,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         this.treatmentPhotosList = new ArrayList<>();
     }
 
-    public ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
+    ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
         return treatmentPhotosList;
     }
 
@@ -64,7 +76,10 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     static class TreatmentPhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private final Handler myHandler = new Handler(Looper.getMainLooper());
+
         final Context myContext;
+        private final TabletMainActivity tabletMainActivity;
 
         final LinearLayout treatmentPhotoItem;
 
@@ -79,6 +94,12 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             super(itemView);
 
             myContext = context;
+
+            if (myContext instanceof TabletMainActivity) {
+                tabletMainActivity = (TabletMainActivity) myContext;
+            } else {
+                tabletMainActivity = null;
+            }
 
             _trPhotoId = itemView.findViewById(R.id.tr_photo_id);
             _userId = itemView.findViewById(R.id.user_id);
@@ -100,30 +121,118 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
+            // если это планшет и в расширенном виде
+            if (HomeActivity.isTablet && tabletMainActivity != null && tabletMainActivity.inWideView) {
+                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                        imgWideView.setImageResource(R.drawable.eda);*/
 
-                    intentToTreatmentPhoto.putExtra("_idTrPhoto", Long.valueOf(_trPhotoId.getText().toString()));
+                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                        _idTrPhoto = Long.valueOf(_trPhotoId.getText().toString());
 
-                    intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
-                    intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                        treatmentPhotoFilePath = itemUri.getText().toString();
 
-                    intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
-                    intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
-                    intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());
+                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                        textDateOfTreatmentPhoto = itemDate.getText().toString();
 
-                    myContext.startActivity(intentToTreatmentPhoto);
-                }
-            }, 250);
+                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                        textPhotoDescription = itemName.getText().toString();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                }
-            }, 500);
+                /*Log.d("XZX", "item _userId = " + _userId.getText().toString());
+                Log.d("XZX", "item _idDisease = " + _diseaseId.getText().toString());
+                Log.d("XZX", "item _idTrPhoto = " + _trPhotoId.getText().toString());
+                Log.d("XZX", "item treatmentPhotoFilePath = " + itemUri.getText().toString());
+                Log.d("XZX", "item textDateOfTreatmentPhoto = " + itemDate.getText().toString());
+                Log.d("XZX", "item textPhotoDescription = " + itemName.getText().toString());*/
+
+                GlideApp.with(tabletMainActivity)
+                        .load(itemUri.getText())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                //on load failed
+                                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setVisibility(View.INVISIBLE);*/
+
+                                // чтоб файл освободился (для удаления),
+                                // высвобождаем imagePhoto
+                                myHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.with(tabletMainActivity).
+                                                clear(tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                                        imgWideView);
+
+                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                                imgWideView.setImageResource(R.color.my_dark_gray);
+
+                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                                widePhotoErrView.setVisibility(View.VISIBLE);
+
+                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                                fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
+                                    }
+                                });
+
+                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                //on load success
+
+                                if (tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        widePhotoErrView.getVisibility() == View.VISIBLE) {
+
+                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            widePhotoErrView.setVisibility(View.GONE);
+
+                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
+                                }
+
+                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
+
+                                return false;
+                            }
+                        })
+                        //.override(displayWidth, displayheight)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        //.error(R.color.my_dark_gray)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(
+                                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        imgWideView
+                        );
+
+            } else {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intentToTreatmentPhoto = new Intent(myContext, FullscreenPhotoActivity.class);
+
+                        intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_userId.getText().toString()));
+                        intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_diseaseId.getText().toString()));
+
+                        intentToTreatmentPhoto.putExtra("_idTrPhoto", Long.valueOf(_trPhotoId.getText().toString()));
+                        intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", itemUri.getText());
+                        intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", itemDate.getText());
+                        intentToTreatmentPhoto.putExtra("textPhotoDescription", itemName.getText());
+
+                        myContext.startActivity(intentToTreatmentPhoto);
+                    }
+                }, 250);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }, 500);
+            }
         }
     }
 }

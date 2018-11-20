@@ -334,7 +334,7 @@ public class TabletDiseasesFragment extends Fragment
             textViewAddDisease.setVisibility(View.INVISIBLE);
         }*/
 
-        tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+        tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
         tabletMainActivity.tabletTreatmentFragment.set_idUser(_idUser);
         tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setText("");
@@ -1074,8 +1074,8 @@ public class TabletDiseasesFragment extends Fragment
                 // если были открыты только пользователи
                 // и было нажато на пользователя у которого только одно заболевание
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
@@ -1133,8 +1133,8 @@ public class TabletDiseasesFragment extends Fragment
                 // если был открыт пользователь, у которого нет заболеваний и
                 // был нажат польлзователь, у которого одно заболевание
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 /*new Handler().postDelayed(new Runnable() {
                     @Override
@@ -1164,8 +1164,8 @@ public class TabletDiseasesFragment extends Fragment
                 // если у пользователя одно заболевание, которе было открыто для редактирования,
                 // и было нажато "сохранить"
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
@@ -1179,8 +1179,8 @@ public class TabletDiseasesFragment extends Fragment
                 // при этом одно из них было открыто для удаления и удалилось
                 // в итоге осталось одно заболевание
 
-                tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.30f);
@@ -1272,7 +1272,7 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
                     tabletMainActivity.tabletUsersWideTitle.setText("");
                     tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                    tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                    tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
                     animVerGuideline_2_from_30_to_50.start();
                 }*/
 
@@ -1287,8 +1287,8 @@ public class TabletDiseasesFragment extends Fragment
 
                 //animVerGuideline_3_from_30_to_60.start();
 
-                /*tabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);*/
+                /*tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.VISIBLE);
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.INVISIBLE);*/
 
 
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.

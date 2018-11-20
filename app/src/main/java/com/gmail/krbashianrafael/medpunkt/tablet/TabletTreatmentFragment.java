@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -94,7 +93,7 @@ public class TabletTreatmentFragment extends Fragment
 
     //public TextView txtTitleDisease;
 
-    public ImageView imgZoomOutTabletTreatment, imgZoomInTabletTreatment;
+    public ImageView zoomOutTabletTreatment, zoomInTabletTreatment;
 
     // поля названия заболевания, описания лечения и focusHolder
     public TextInputLayout textInputLayoutDiseaseName;
@@ -104,7 +103,7 @@ public class TabletTreatmentFragment extends Fragment
 
     // Animation fabShowAnimation
     public Animation fabShowAnimation;
-    public Animation fabHideAnimation;
+    private Animation fabHideAnimation;
 
     public ViewPager viewPager;
 
@@ -142,12 +141,15 @@ public class TabletTreatmentFragment extends Fragment
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
 
 
-        imgZoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
-        imgZoomOutTabletTreatment.setOnClickListener(new View.OnClickListener() {
+        zoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
+        zoomOutTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
-                imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+
+                tabletMainActivity.inWideView = true;
+
+                zoomInTabletTreatment.setVisibility(View.VISIBLE);
+                zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
 
@@ -176,11 +178,13 @@ public class TabletTreatmentFragment extends Fragment
             }
         });
 
-        imgZoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
-        imgZoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
+        zoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
+        zoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+
+                tabletMainActivity.inWideView = false;
 
                 treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
                 treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
@@ -237,8 +241,8 @@ public class TabletTreatmentFragment extends Fragment
                     }
                 }
 
-                imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
                 tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
@@ -399,7 +403,8 @@ public class TabletTreatmentFragment extends Fragment
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
 
                         // показываем fabToFullScreen, если находимся в расширенном варианте окна
-                        if (((ConstraintLayout.LayoutParams) treatmentPhotosFragment.verGuideline.getLayoutParams()).guidePercent != 1.00f) {
+                        //if (((ConstraintLayout.LayoutParams) treatmentPhotosFragment.verGuideline.getLayoutParams()).guidePercent != 1.00f) {
+                        if (tabletMainActivity.inWideView) {
                             treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
                             treatmentPhotosFragment.fabToFullScreen.startAnimation(fabShowAnimation);
                         }
@@ -645,7 +650,7 @@ public class TabletTreatmentFragment extends Fragment
         } else {*/
         if (tabletMainActivity.newDiseaseAndTreatment) {
 
-            imgZoomOutTabletTreatment.setVisibility(View.VISIBLE);
+            zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
             /*TabletMainActivity.newDiseaseAndTreatment = false;
             TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
@@ -654,7 +659,7 @@ public class TabletTreatmentFragment extends Fragment
             saveDiseaseAndTreatmentToDataBase();
         } else {
 
-            imgZoomInTabletTreatment.setVisibility(View.VISIBLE);
+            zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
             /*TabletMainActivity.newDiseaseAndTreatment = false;
             TabletMainActivity.diseaseAndTreatmentInEdit = false;*/

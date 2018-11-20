@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Guideline;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -20,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,14 +44,22 @@ public class TreatmentPhotosFragment extends Fragment
     // id заболеввания
     private long _idDisease = 0;
 
+    public long _idTrPhoto = 0;
+    public String treatmentPhotoFilePath = "";
+    public String textDateOfTreatmentPhoto = "";
+    public String textPhotoDescription = "";
+    //public boolean errorOnPhotoLoading = false;
+
     // TextView добавления фотоснимка лечения
-    public TextView txtAddPhotos;
+    public TextView txtAddPhotos, widePhotoErrView;
 
     public Guideline verGuideline;
 
     public FloatingActionButton fabToFullScreen;
 
     public FloatingActionButton fabAddTreatmentPhotos;
+
+    public ImageView imgWideView;
 
     private Animation fabShowAnimation;
 
@@ -85,8 +93,6 @@ public class TreatmentPhotosFragment extends Fragment
 
         recyclerTreatmentPhotos = view.findViewById(R.id.recycler_treatment_photos);
 
-        verGuideline = view.findViewById(R.id.ver_guideline);
-
         txtAddPhotos = view.findViewById(R.id.txt_empty_photos);
         txtAddPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +108,44 @@ public class TreatmentPhotosFragment extends Fragment
             }
         });
 
+        // imgWideView только для планшета
+        verGuideline = view.findViewById(R.id.ver_guideline);
+
+        // imgWideView только для планшета
+        imgWideView = view.findViewById(R.id.img_wide_view);
+
+        // widePhotoErrView только для планшета
+        widePhotoErrView = view.findViewById(R.id.wide_photo_err_view);
+
+        // fabToFullScreen только для планшета
         fabToFullScreen = view.findViewById(R.id.fab_to_full_screen);
+        fabToFullScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
+
+                intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_idUser));
+                intentToTreatmentPhoto.putExtra("_idDisease", Long.valueOf(_idDisease));
+
+                intentToTreatmentPhoto.putExtra("_idTrPhoto", _idTrPhoto);
+                intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", treatmentPhotoFilePath);
+                intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", textDateOfTreatmentPhoto);
+                intentToTreatmentPhoto.putExtra("textPhotoDescription", textPhotoDescription);
+
+                /*Log.d("XZX", "_idUser = " + _idUser);
+                Log.d("XZX", "_idDisease = " + _idDisease);
+                Log.d("XZX", "_idTrPhoto = " + _idTrPhoto);
+                Log.d("XZX", "treatmentPhotoFilePath = " + treatmentPhotoFilePath);
+                Log.d("XZX", "textDateOfTreatmentPhoto = " + textDateOfTreatmentPhoto);
+                Log.d("XZX", "textPhotoDescription = " + textPhotoDescription);*/
+
+                /*if (errorOnPhotoLoading){
+                    intentToTreatmentPhoto.putExtra("editTreatmentPhoto", true);
+                }*/
+
+                startActivity(intentToTreatmentPhoto);
+            }
+        });
 
         fabAddTreatmentPhotos = view.findViewById(R.id.fabAddTreatmentPhotos);
         fabAddTreatmentPhotos.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +179,7 @@ public class TreatmentPhotosFragment extends Fragment
     // этот метод вызывается только в планшетном виде
     // при нажатии на закладку "Снимки" в TabletTreatmentFragment
     // при сохранении нового заболевания пользователя
-    public void initTreatmentPhotosLoader(){
+    public void initTreatmentPhotosLoader() {
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         txtAddPhotos.setVisibility(View.INVISIBLE);
@@ -363,9 +406,10 @@ public class TreatmentPhotosFragment extends Fragment
             txtAddPhotos.setVisibility(View.VISIBLE);
 
             // если в расширенном варианте окна на планшете
-            if (HomeActivity.isTablet &&
-                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {
+            /*if (HomeActivity.isTablet &&
+                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
+            if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
                 fabToFullScreen.setVisibility(View.INVISIBLE);
                 verGuideline.setGuidelinePercent(1.0f);
 
@@ -381,9 +425,10 @@ public class TreatmentPhotosFragment extends Fragment
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
 
             // если в расширенном варианте окна на планшете
-            if (HomeActivity.isTablet &&
-                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {
+            /*if (HomeActivity.isTablet &&
+                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
+            if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
                 verGuideline.setGuidelinePercent(0.4f);
                 fabToFullScreen.setVisibility(View.VISIBLE);
                 fabToFullScreen.startAnimation(fabShowAnimation);

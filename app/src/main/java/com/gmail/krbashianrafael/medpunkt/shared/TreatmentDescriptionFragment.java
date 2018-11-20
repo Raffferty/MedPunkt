@@ -117,8 +117,8 @@ public class TreatmentDescriptionFragment extends Fragment {
                             //mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
 
-                            mTabletMainActivity.tabletTreatmentFragment.imgZoomOutTabletTreatment.setVisibility(View.INVISIBLE);
-                            mTabletMainActivity.tabletTreatmentFragment.imgZoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                            mTabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+                            mTabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
 
 
                             // на планшете показываем клавиатуру
@@ -149,8 +149,27 @@ public class TreatmentDescriptionFragment extends Fragment {
                             //mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
                             float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
 
-                            if (percentVerGuideline_3!=0.00f){
-                                mTabletMainActivity.fromWideView = false;
+                            //if (percentVerGuideline_3==0.00f){
+                            if (mTabletMainActivity.inWideView) {
+                                //mTabletMainActivity.inWideView = true;
+
+                                mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
+                                mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+
+                                mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
+
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
+                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
+
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
+                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
+
+                            } else {
+                                //mTabletMainActivity.inWideView = false;
 
                                 //mTabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
 
@@ -175,23 +194,6 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
                                 mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
-                            }else {
-                                mTabletMainActivity.fromWideView = true;
-
-                                mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
-                                mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
-                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
-
-                                mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
-                                mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
-                                mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.VISIBLE);
-
-                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.setEnabled(true);
-                                mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.requestFocus();
-
-                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
-                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
-                                mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(true);
                             }
                         }
                     }, 500);

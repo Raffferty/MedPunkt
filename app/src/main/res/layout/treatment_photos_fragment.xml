@@ -7,13 +7,73 @@
     android:background="@android:color/white"
     tools:ignore="Overdraw">
 
+    <!-- элемент, которые ниже, только для планшета в wide_view -->
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.00"
+        tools:layout_constraintGuide_percent="0.50" />
+
+    <FrameLayout
+        android:id="@+id/ver_divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/my_gray"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/ver_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/img_wide_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ver_divider"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/wide_photo_err_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/ic_visibility_off_white_128dp"
+        android:gravity="center_horizontal"
+        android:text="@string/image_loading_error"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ver_divider"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_to_full_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_zoom_out_photo_white_24dp"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- элемент, которые выше, только для планшета в wide_view -->
+
     <TextView
         android:id="@+id/txt_empty_photos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="32dp"
         android:drawableBottom="@drawable/ic_add_a_photo_orang_80dp"
         android:gravity="center"
         android:text="@string/treatment_empty_image_text"

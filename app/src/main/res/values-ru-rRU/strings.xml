@@ -37,6 +37,7 @@
     <string name="user_cant_save_photo">Фотографию не удалось сохранить</string>
     <string name="user_cant_load_photo">Фотографию не удалось загрузить</string>
     <string name="user_photo_not_deleted">Фотографию не удалось удалить</string>
+    <string name="user_updated_photo_not_deleted">Обновляемую фотографию не удалось удалить</string>
     <string name="user_delete">Удалить пользователя</string>
     <string name="user_not_deleted">Пользователь НЕ удалился</string>
 
