@@ -72,7 +72,6 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
-import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -1224,7 +1223,7 @@ public class UserActivity extends AppCompatActivity
             // получаем и присваиваем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
 
-            UsersActivity.mScrollToStart = true;
+            //UsersActivity.mScrollToStart = true;
 
             // если есть что сохранять в файл фото пользователя loadedBitmap != null
             if (pathToUsersPhoto != null && loadedBitmap != null) {
@@ -1300,9 +1299,9 @@ public class UserActivity extends AppCompatActivity
 
             userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
 
-        } else {
+        } /*else {
             userPhotoUri = "No_Photo";
-        }
+        }*/
 
         //Log.d("ASAS", "userOldPhotoUri = " + userOldPhotoUri);
         //Log.d("ASAS", "userPhotoUri = " + userPhotoUri);

@@ -10,10 +10,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 public class MedProvider extends ContentProvider {
@@ -569,6 +569,13 @@ public class MedProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
+        // сохраняем id вставленного фото заболевания в поле TabletMainActivity.insertedTreatmentPhoto_id для закраски этого элемента как выделенного
+        // и загрузки фото выделенного элемента в imgWideView
+        if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
+            TabletMainActivity.insertedTreatmentPhoto_id = id;
+            TabletMainActivity.selectedTreatmentPhoto_id = TabletMainActivity.insertedTreatmentPhoto_id;
+        }
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
 
@@ -874,6 +881,13 @@ public class MedProvider extends ContentProvider {
                 selection = TreatmentPhotosEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(TreatmentPhotosEntry.TREATMENT_PHOTOS_TABLE_NAME, selection, selectionArgs);
+
+                if (rowsDeleted != 0) {
+                    // выставляем флаг, чтоб после удаления фото заболевания выделился первый элемент и загрузилось его фото в imgWideView
+                    if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
+                        TabletMainActivity.treatmentPhotoDeleted = true;
+                    }
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);

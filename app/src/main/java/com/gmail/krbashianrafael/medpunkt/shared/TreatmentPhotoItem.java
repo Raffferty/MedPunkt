@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 
-class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
+public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
     private final long _trPhotoId;
     private final long _userId;
     private final long _diseaseId;
@@ -50,7 +50,7 @@ class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
         return null;
     }
 
-    long get_trPhotoId() {
+    public long get_trPhotoId() {
         return _trPhotoId;
     }
 
@@ -62,15 +62,15 @@ class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
         return _diseaseId;
     }
 
-    String getTrPhotoDate() {
+    public String getTrPhotoDate() {
         return trPhotoDate;
     }
 
-    String getTrPhotoName() {
+    public String getTrPhotoName() {
         return trPhotoName;
     }
 
-    String getTrPhotoUri() {
+    public String getTrPhotoUri() {
         return trPhotoUri;
     }
 

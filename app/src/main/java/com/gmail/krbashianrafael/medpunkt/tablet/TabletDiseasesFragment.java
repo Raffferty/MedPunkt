@@ -925,8 +925,7 @@ public class TabletDiseasesFragment extends Fragment
         //if (scrollToInsertedDiseasePosition && myData.size() != 0) {
 
         // код для показа выделенного заболевания
-
-        if (myData.size() != 0) {
+        if (myDataSize != 0) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -949,8 +948,8 @@ public class TabletDiseasesFragment extends Fragment
         }
 
         if (myDataSize == 0) {
-            // если у пользователя нет заболеваний
 
+            // если у пользователя нет заболеваний
             recyclerDiseases.setVisibility(View.INVISIBLE);
 
             tabletMainActivity.diseasesIsEmpty = true;

@@ -38,11 +38,12 @@ public class TabletMainActivity extends AppCompatActivity
     private boolean firstLoad = false;
 
     // флаг чтоб вернуться к тому виду, в котором был нажат fab редактирования
-    public boolean inWideView = false;
+    public static boolean inWideView = false;
 
     // позиции выделенных элементов
     public int selectedUser_position = 0;
     public int selectedDisease_position = 0;
+    public int selectedTreatmentPhoto_position = 0;
 
     // эти поля получают свои значения в классе MedProvider в соответствующих методах selectedUser_id
     public static boolean userInserted = false;
@@ -58,6 +59,11 @@ public class TabletMainActivity extends AppCompatActivity
     public static boolean diseaseInserted = false;
     public static long insertedDisease_id = 0;
     public static long selectedDisease_id = 0;
+
+    public static boolean treatmentPhotoInserted = false;
+    public static boolean treatmentPhotoDeleted = false;
+    public static long insertedTreatmentPhoto_id = 0;
+    public static long selectedTreatmentPhoto_id = 0;
 
     public static boolean diseaseUpdated = false;
     /*public static boolean diseaseDeleted = false;
@@ -134,6 +140,11 @@ public class TabletMainActivity extends AppCompatActivity
         selectedDisease_id = 0;
         selectedDisease_position = 0;
         diseaseUpdated = false;
+        selectedTreatmentPhoto_position = 0;
+        treatmentPhotoInserted = false;
+        treatmentPhotoDeleted = false;
+        insertedTreatmentPhoto_id = 0;
+        selectedTreatmentPhoto_id = 0;
         /*diseaseDeleted = false;
         diseaseNameAfterUpdate = "";
         diseaseDateAfterUpdate = "";
@@ -374,10 +385,13 @@ public class TabletMainActivity extends AppCompatActivity
                     tabletUsersWideTitle.setText("");
                     tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                    ver_3_Guideline.setGuidelinePercent(1.00f);
-                    //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
+                    if (inWideView){
+                        tabletTreatmentFragment.zoomInTabletTreatment.performClick();
+                    }
 
-                    tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                    //ver_3_Guideline.setGuidelinePercent(1.00f);
+                    //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
+                    //tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;

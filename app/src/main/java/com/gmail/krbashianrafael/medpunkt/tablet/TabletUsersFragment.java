@@ -67,12 +67,12 @@ public class TabletUsersFragment extends Fragment
 
         txtAddUsers = view.findViewById(R.id.txt_empty_users);
 
-        //этот TextView виден только на планшере
-        // шапка, которая видна только на планшете
         TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
-        txtTabletUsers.setVisibility(View.VISIBLE);
+        //txtTabletUsers.setVisibility(View.VISIBLE);
+        txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
 
         ImageView imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
+        imgCancelTabletUsers.setVisibility(View.VISIBLE);
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

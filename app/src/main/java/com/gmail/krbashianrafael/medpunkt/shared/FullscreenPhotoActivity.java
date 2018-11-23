@@ -261,6 +261,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // инициализируем все View
         findViewsById();
 
+        // Мой zoomer
+        myImageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
+
         // устанавливаем слушатели
         setMyListeners();
 
@@ -548,9 +551,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         LL_title_showAnimation = AnimationUtils.loadAnimation(this, R.anim.fullscreenphoto_title_show);
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabHideAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
-
-        // Мой zoomer
-        myImageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
     }
 
     @SuppressLint("ClickableViewAccessibility")

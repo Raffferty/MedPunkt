@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.shared;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,17 +30,24 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
 
-class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
+    private final TabletMainActivity tabletMainActivity;
     private final ArrayList<TreatmentPhotoItem> treatmentPhotosList;
 
     TreatmentPhotoRecyclerViewAdapter(Context context) {
         mContext = context;
         this.treatmentPhotosList = new ArrayList<>();
+
+        if (mContext instanceof TabletMainActivity) {
+            tabletMainActivity = (TabletMainActivity) mContext;
+        } else {
+            tabletMainActivity = null;
+        }
     }
 
-    ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
+    public ArrayList<TreatmentPhotoItem> getTreatmentPhotosList() {
         return treatmentPhotosList;
     }
 
@@ -67,6 +76,38 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         ((TreatmentPhotoHolder) holder).itemDate.setText(itemDate);
         ((TreatmentPhotoHolder) holder).itemName.setText(itemName);
+
+        if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
+            if (TabletMainActivity.selectedTreatmentPhoto_id == _trPhotoId) {
+                // добавленное фото заболевания будет сразу выделенным
+                // т.к. в MedProvider есть запись TabletMainActivity.selectedTreatmentPhoto_id = TabletMainActivity.insertedtreatmentPhoto_id;
+                ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
+
+                if (tabletMainActivity != null) {
+                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                            _idTrPhoto = _trPhotoId;
+
+                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                            treatmentPhotoFilePath = itemPhotoUri;
+
+                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                            textDateOfTreatmentPhoto = itemDate;
+
+                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                            textPhotoDescription = itemName;
+                }
+
+                // грузим фото выделенного заболевания
+                ((TreatmentPhotoHolder) holder).loadTreamentPhotoInImgWideView(itemPhotoUri);
+
+                //TabletDiseasesFragment.treatmentPhotoSelected = true;
+
+            } else {
+                ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(Color.TRANSPARENT);
+            }
+        } else {
+            ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     @Override
@@ -89,6 +130,8 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         final TextView itemUri;
         final TextView itemDate;
         final TextView itemName;
+
+        long clicked_treatmentPhoto_id = 0;
 
         TreatmentPhotoHolder(View itemView, Context context) {
             super(itemView);
@@ -113,20 +156,95 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             treatmentPhotoItem.setOnClickListener(this);
         }
 
+        @SuppressLint("ClickableViewAccessibility")
+        private void loadTreamentPhotoInImgWideView(String itemUri) {
+
+            // чтоб после масштабирования старого фото, новое грузилось как FIT_CENTER
+            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                    imgWideView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            GlideApp.with(tabletMainActivity)
+                    .load(itemUri)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            //on load failed
+                                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setVisibility(View.INVISIBLE);*/
+
+                            // чтоб файл освободился (для удаления),
+                            // высвобождаем imagePhoto
+                            myHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Glide.with(tabletMainActivity).
+                                            clear(tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                                    imgWideView);
+
+                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            imgWideView.setImageResource(R.color.my_dark_gray);
+
+                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            widePhotoErrView.setVisibility(View.VISIBLE);
+
+                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
+                                }
+                            });
+
+                            //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
+
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            //on load success
+
+                            if (tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                    widePhotoErrView.getVisibility() == View.VISIBLE) {
+
+                                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        widePhotoErrView.setVisibility(View.GONE);
+
+                                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
+                            }
+
+                            //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
+
+                            return false;
+                        }
+                    })
+                    //.override(displayWidth, displayheight)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    //.error(R.color.my_dark_gray)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(
+                            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                    imgWideView
+                    );
+        }
+
         @Override
         public void onClick(final View view) {
             if (myContext == null) {
                 return;
             }
 
+            clicked_treatmentPhoto_id = Long.valueOf(_trPhotoId.getText().toString());
+
             view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
-            // если это планшет и в расширенном виде
-            if (HomeActivity.isTablet && tabletMainActivity != null && tabletMainActivity.inWideView) {
+            // если это планшет и в расширенном виде и делается клик не на том же элементе
+            if (HomeActivity.isTablet &&
+                    TabletMainActivity.selectedDisease_id != clicked_treatmentPhoto_id &&
+                    TabletMainActivity.inWideView) {
                 /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                         imgWideView.setImageResource(R.drawable.eda);*/
 
-                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                         _idTrPhoto = Long.valueOf(_trPhotoId.getText().toString());
 
                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
@@ -136,7 +254,9 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         textDateOfTreatmentPhoto = itemDate.getText().toString();
 
                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        textPhotoDescription = itemName.getText().toString();
+                        textPhotoDescription = itemName.getText().toString();*/
+
+                loadTreamentPhotoInImgWideView(itemUri.getText().toString());
 
                 /*Log.d("XZX", "item _userId = " + _userId.getText().toString());
                 Log.d("XZX", "item _idDisease = " + _diseaseId.getText().toString());
@@ -145,14 +265,14 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 Log.d("XZX", "item textDateOfTreatmentPhoto = " + itemDate.getText().toString());
                 Log.d("XZX", "item textPhotoDescription = " + itemName.getText().toString());*/
 
-                GlideApp.with(tabletMainActivity)
+                /*GlideApp.with(tabletMainActivity)
                         .load(itemUri.getText())
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 //on load failed
-                                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        fabToFullScreen.setVisibility(View.INVISIBLE);*/
+                                *//*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setVisibility(View.INVISIBLE);*//*
 
                                 // чтоб файл освободился (для удаления),
                                 // высвобождаем imagePhoto
@@ -206,7 +326,10 @@ class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         .into(
                                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                                         imgWideView
-                        );
+                        );*/
+
+                TabletMainActivity.selectedTreatmentPhoto_id = clicked_treatmentPhoto_id;
+                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
             } else {
                 new Handler().postDelayed(new Runnable() {

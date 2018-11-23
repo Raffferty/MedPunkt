@@ -90,7 +90,7 @@
 
     <!-- do not translate -->
     <string name="app_name" translatable="false">\u2000MedPunkt</string>
-    <string name="title_activity_home" translatable="false">\tMedPunkt</string>
+    <string name="title_activity_home" translatable="false">MedPunkt</string>
     <string name="txt_no_title" translatable="false">No Title</string>
     <string name="path_to_treatment_photos" translatable="false">/treatment_photos</string>
     <string name="treatment_photo_nameStart" translatable="false">trImage-</string>

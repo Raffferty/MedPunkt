@@ -1,10 +1,13 @@
 package com.gmail.krbashianrafael.medpunkt.shared;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.Guideline;
@@ -23,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
@@ -33,6 +37,8 @@ import java.util.Collections;
 
 public class TreatmentPhotosFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+
+    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     // Активити в котором может находится этот фрагмент
     private TreatmentActivity mTreatmentActivity;
@@ -59,13 +65,14 @@ public class TreatmentPhotosFragment extends Fragment
 
     public FloatingActionButton fabAddTreatmentPhotos;
 
+    // ImageView для загрузки фото в расширенном виде на планшете
     public ImageView imgWideView;
 
     private Animation fabShowAnimation;
 
     public RecyclerView recyclerTreatmentPhotos;
 
-    private TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
+    public TreatmentPhotoRecyclerViewAdapter treatmentPhotoRecyclerViewAdapter;
 
     public static boolean mScrollToStart = false;
 
@@ -77,6 +84,8 @@ public class TreatmentPhotosFragment extends Fragment
      */
     private static final int TR_PHOTOS_IN_FRAGMENT_LOADER = 2;
 
+    //public MyImageMatrixTouchHandler myTrPhotosImageMatrixTouchHandler;
+
     public TreatmentPhotosFragment() {
         // нужен ПУСТОЙ конструктор
     }
@@ -87,6 +96,7 @@ public class TreatmentPhotosFragment extends Fragment
         return inflater.inflate(R.layout.treatment_photos_fragment, container, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -108,11 +118,16 @@ public class TreatmentPhotosFragment extends Fragment
             }
         });
 
-        // imgWideView только для планшета
+        // verGuideline только для планшета
         verGuideline = view.findViewById(R.id.ver_guideline);
+
+        // Мой zoomer
+        //myTrPhotosImageMatrixTouchHandler = new MyImageMatrixTouchHandler(mTreatmentActivity);
 
         // imgWideView только для планшета
         imgWideView = view.findViewById(R.id.img_wide_view);
+
+        imgWideView.setOnTouchListener(new ImageMatrixTouchHandler(mTreatmentActivity));
 
         // widePhotoErrView только для планшета
         widePhotoErrView = view.findViewById(R.id.wide_photo_err_view);
@@ -390,9 +405,6 @@ public class TreatmentPhotosFragment extends Fragment
 
         recyclerTreatmentPhotos.setVisibility(View.VISIBLE);
 
-        // оповещаем LayoutManager, что произошли изменения
-        // LayoutManager обновляет RecyclerView
-        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
         // делаем destroyLoader, чтоб он сам повторно не вызывался,
         // а вызывался при каждом входе в активити
@@ -400,16 +412,19 @@ public class TreatmentPhotosFragment extends Fragment
 
         //Log.d("2222", "myData.size() =" + myData.size());
 
+        int myDataSize = myData.size();
+
         // если нет фото лечения
-        if (myData.size() == 0) {
+        if (myDataSize == 0) {
             recyclerTreatmentPhotos.setVisibility(View.INVISIBLE);
             txtAddPhotos.setVisibility(View.VISIBLE);
 
             // если в расширенном варианте окна на планшете
+
             /*if (HomeActivity.isTablet &&
                     ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
-            if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
+            if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
                 fabToFullScreen.setVisibility(View.INVISIBLE);
                 verGuideline.setGuidelinePercent(1.0f);
 
@@ -421,6 +436,72 @@ public class TreatmentPhotosFragment extends Fragment
             }
 
         } else {
+
+            // если это планшет и расширенном виде, то грзуим первое фото заболевания в расширенное окно
+
+            /*if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
+
+                TreatmentPhotoItem treatmentPhotoItem = myData.get(0);
+
+                _idTrPhoto = treatmentPhotoItem.get_trPhotoId();
+                treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
+                textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
+                textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
+
+                GlideApp.with(mTabletMainActivity)
+                        .load(treatmentPhotoFilePath)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                //on load failed
+                                *//*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setVisibility(View.INVISIBLE);*//*
+
+                                // чтоб файл освободился (для удаления),
+                                // высвобождаем imagePhoto
+                                myHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.with(mTabletMainActivity).
+                                                clear(imgWideView);
+
+                                        imgWideView.setImageResource(R.color.my_dark_gray);
+
+                                        widePhotoErrView.setVisibility(View.VISIBLE);
+
+                                        fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
+                                    }
+                                });
+
+                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                //on load success
+
+                                if (widePhotoErrView.getVisibility() == View.VISIBLE) {
+
+                                    widePhotoErrView.setVisibility(View.GONE);
+
+                                    fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
+                                }
+
+                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
+
+                                return false;
+                            }
+                        })
+                        //.override(displayWidth, displayheight)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        //.error(R.color.my_dark_gray)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imgWideView);
+
+            }*/
             // если есть фото лечения
             fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
 
@@ -428,7 +509,7 @@ public class TreatmentPhotosFragment extends Fragment
             /*if (HomeActivity.isTablet &&
                     ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
-            if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
+            if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
                 verGuideline.setGuidelinePercent(0.4f);
                 fabToFullScreen.setVisibility(View.VISIBLE);
                 fabToFullScreen.startAnimation(fabShowAnimation);
@@ -438,8 +519,22 @@ public class TreatmentPhotosFragment extends Fragment
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                 layoutParams.weight = 1.50f;
                 layout.setLayoutParams(layoutParams);
+
+                // если фото заболевание было удалено, но остались еще фото, то
+                // выделяем первый элемент и после treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+                // грузится его фото
+                if (TabletMainActivity.treatmentPhotoDeleted) {
+                    TreatmentPhotoItem treatmentPhotoItem = myData.get(0);
+                    TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotoItem.get_trPhotoId();
+
+                    TabletMainActivity.treatmentPhotoDeleted = false;
+                }
             }
         }
+
+        // оповещаем LayoutManager, что произошли изменения
+        // LayoutManager обновляет RecyclerView
+        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
         if (mScrollToStart && myData.size() != 0) {
             recyclerTreatmentPhotos.smoothScrollToPosition(0);
@@ -453,4 +548,27 @@ public class TreatmentPhotosFragment extends Fragment
         myData.clear();
         treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
     }
+
+    /*private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
+
+        MyImageMatrixTouchHandler(Context context) {
+            super(context);
+            //setDoubleTapZoomFactor(2f); // здесь устанавливаем кратность увеличение при DoubleTap, по умолчанию = 2,5
+            //ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
+            //crr.setMaxScale(20f); // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
+        }
+
+
+
+        @Override
+        public boolean onTouch(final View view, final MotionEvent event) {
+
+            view.performClick();
+            super.onTouch(view, event);
+
+            return true;
+        }
+    }*/
+
+
 }

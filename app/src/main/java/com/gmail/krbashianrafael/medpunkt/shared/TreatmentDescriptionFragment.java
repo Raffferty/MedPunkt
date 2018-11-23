@@ -150,7 +150,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
 
                             //if (percentVerGuideline_3==0.00f){
-                            if (mTabletMainActivity.inWideView) {
+                            if (TabletMainActivity.inWideView) {
                                 //mTabletMainActivity.inWideView = true;
 
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());

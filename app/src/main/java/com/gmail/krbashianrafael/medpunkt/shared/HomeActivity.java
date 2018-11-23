@@ -44,7 +44,8 @@ public class HomeActivity extends AppCompatActivity {
         if (actionBar != null) {
             // иконка видна, но не нажимается
             actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setTitle(R.string.title_activity_home);
+            actionBar.setTitle("\t" + getResources().getString(R.string.title_activity_home));
+            //actionBar.setTitle(R.string.title_activity_home);
 
             // для версий начиная с Nougat	7.1	API level 25 исползуются круглые икнонки
             if (Build.VERSION.SDK_INT >= 25) {
@@ -134,7 +135,7 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             if (!isTablet) {
                 UsersActivity.onResumeCounter = 1;
-            }else {
+            } else {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         }
@@ -192,7 +193,6 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Context... contexts) {
-
 
 
             if (contexts == null || contexts[0] == null || mNotDeletedFilesPaths == null) {

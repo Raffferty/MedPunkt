@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -43,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
@@ -50,6 +52,7 @@ import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentAdapter;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotoItem;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
@@ -64,6 +67,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class TabletTreatmentFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+
+    private final Handler myHandler = new Handler(Looper.getMainLooper());
 
     private TabletMainActivity tabletMainActivity;
 
@@ -146,7 +151,7 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onClick(View v) {
 
-                tabletMainActivity.inWideView = true;
+                TabletMainActivity.inWideView = true;
 
                 zoomInTabletTreatment.setVisibility(View.VISIBLE);
                 zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
@@ -162,7 +167,8 @@ public class TabletTreatmentFragment extends Fragment
 
                 //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
 
-                // если есть фото лечения есть, то в расширенном виде формируем вид окна
+                // если есть фото лечения, то в расширенном виде формируем вид окна
+                // и загружаем фото первой позиции
                 if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
 
                     treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
@@ -174,6 +180,72 @@ public class TabletTreatmentFragment extends Fragment
                     LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                     layoutParams.weight = 1.50f;//0.67
                     layout.setLayoutParams(layoutParams);
+
+                    // получаем данные из первой позиции и грузим фото
+                    TreatmentPhotoItem treatmentPhotoItem = treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
+
+                    treatmentPhotosFragment._idTrPhoto = treatmentPhotoItem.get_trPhotoId();
+                    treatmentPhotosFragment.treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
+                    treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
+                    treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
+
+                    // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
+                    TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotosFragment._idTrPhoto;
+                    treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                    // загрузка фото
+                    /*GlideApp.with(tabletMainActivity)
+                            .load(treatmentPhotosFragment.treatmentPhotoFilePath)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    //on load failed
+                                *//*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                        fabToFullScreen.setVisibility(View.INVISIBLE);*//*
+
+                                    // чтоб файл освободился (для удаления),
+                                    // высвобождаем imagePhoto
+                                    myHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Glide.with(tabletMainActivity).
+                                                    clear(treatmentPhotosFragment.imgWideView);
+
+                                            treatmentPhotosFragment.imgWideView.setImageResource(R.color.my_dark_gray);
+
+                                            treatmentPhotosFragment.widePhotoErrView.setVisibility(View.VISIBLE);
+
+                                            treatmentPhotosFragment.fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
+                                        }
+                                    });
+
+                                    //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
+
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    //on load success
+
+                                    if (treatmentPhotosFragment.widePhotoErrView.getVisibility() == View.VISIBLE) {
+
+                                        treatmentPhotosFragment.widePhotoErrView.setVisibility(View.GONE);
+
+                                        treatmentPhotosFragment.fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
+                                    }
+
+                                    //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
+
+                                    return false;
+                                }
+                            })
+                            //.override(displayWidth, displayheight)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            //.error(R.color.my_dark_gray)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(treatmentPhotosFragment.imgWideView);*/
                 }
             }
         });
@@ -184,7 +256,7 @@ public class TabletTreatmentFragment extends Fragment
             public void onClick(View v) {
                 //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
 
-                tabletMainActivity.inWideView = false;
+                TabletMainActivity.inWideView = false;
 
                 treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
                 treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
@@ -194,6 +266,19 @@ public class TabletTreatmentFragment extends Fragment
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                 layoutParams.weight = 1.00f;
                 layout.setLayoutParams(layoutParams);
+
+                // код для очистки выделения фото заболевания и очистки imgWideView
+                if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                    TabletMainActivity.selectedTreatmentPhoto_id = 0;
+                    treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                    Glide.with(tabletMainActivity).clear(treatmentPhotosFragment.imgWideView);
+
+                    treatmentPhotosFragment._idTrPhoto = 0;
+                    treatmentPhotosFragment.treatmentPhotoFilePath = "";
+                    treatmentPhotosFragment.textDateOfTreatmentPhoto = "";
+                    treatmentPhotosFragment.textPhotoDescription = "";
+                }
 
                 // код для показа выделенного пользователя
                 if (TabletMainActivity.selectedUser_id != 0) {
@@ -404,7 +489,7 @@ public class TabletTreatmentFragment extends Fragment
 
                         // показываем fabToFullScreen, если находимся в расширенном варианте окна
                         //if (((ConstraintLayout.LayoutParams) treatmentPhotosFragment.verGuideline.getLayoutParams()).guidePercent != 1.00f) {
-                        if (tabletMainActivity.inWideView) {
+                        if (TabletMainActivity.inWideView) {
                             treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
                             treatmentPhotosFragment.fabToFullScreen.startAnimation(fabShowAnimation);
                         }
@@ -659,7 +744,25 @@ public class TabletTreatmentFragment extends Fragment
             saveDiseaseAndTreatmentToDataBase();
         } else {
 
-            zoomInTabletTreatment.setVisibility(View.VISIBLE);
+            if (!TabletMainActivity.inWideView) {
+
+                zoomInTabletTreatment.performClick();
+                zoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+                //tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
+                /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                tabletMainActivity.tabletUsersWideTitle.setText("");
+                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                        tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                );*/
+            } else {
+                zoomInTabletTreatment.setVisibility(View.VISIBLE);
+            }
 
             /*TabletMainActivity.newDiseaseAndTreatment = false;
             TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
@@ -745,6 +848,9 @@ public class TabletTreatmentFragment extends Fragment
         tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
 
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+
+        // здесь обновляются _idUser и _idDisease в treatmentPhotosFragment
+        //treatmentPhotosFragment.initTreatmentPhotosLoader();
 
         //treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
     }

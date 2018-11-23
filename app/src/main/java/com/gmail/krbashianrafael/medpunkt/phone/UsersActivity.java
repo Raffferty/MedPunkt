@@ -21,12 +21,12 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
-import com.gmail.krbashianrafael.medpunkt.shared.UserActivity;
-import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.UserActivity;
+import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class UsersActivity extends AppCompatActivity
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
-    public static boolean mScrollToStart = false;
+    //public static boolean mScrollToStart = false;
 
     public static int onResumeCounter = 0;
 
@@ -64,11 +64,38 @@ public class UsersActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_activity_home);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
-            if (HomeActivity.iAmDoctor) {
+            /*if (HomeActivity.iAmDoctor) {
                 actionBar.setTitle(R.string.patients_title_activity);
-            }
+            }*/
         }
+
+        /*LinearLayout LL_up = findViewById(R.id.LL_up);
+        LL_up.setVisibility(View.VISIBLE);
+        LL_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (usersRecyclerViewAdapter.getUsersList().size() != 0) {
+                    recyclerUsers.smoothScrollToPosition(0);
+                }
+            }
+        });*/
+
+        TextView txtTabletUsers = findViewById(R.id.txt_tablet_users);
+
+        if (HomeActivity.iAmDoctor) {
+            txtTabletUsers.setText(R.string.patients_title_activity);
+        }
+
+        txtTabletUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (usersRecyclerViewAdapter.getUsersList().size() != 0) {
+                    recyclerUsers.smoothScrollToPosition(0);
+                }
+            }
+        });
 
         fabAddUser = findViewById(R.id.fabAddUser);
         fabAddUser.setOnClickListener(new View.OnClickListener() {
@@ -378,10 +405,10 @@ public class UsersActivity extends AppCompatActivity
             fabAddUser.startAnimation(fabShowAnimation);
         }
 
-        if (mScrollToStart && myData.size() != 0) {
+        /*if (mScrollToStart && myData.size() != 0) {
             recyclerUsers.smoothScrollToPosition(0);
             mScrollToStart = false;
-        }
+        }*/
 
     }
 

@@ -126,7 +126,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         final LinearLayout diseasesItem;
         //FrameLayout diseaseEdit;
 
-        long disease_id_inEdit = 0;
+        long clicked_disease_id = 0;
 
         DiseaseHolder(View itemView, Context context) {
             super(itemView);
@@ -154,7 +154,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 return;
             }
 
-            disease_id_inEdit = Long.valueOf(_diseaseId.getText().toString());
+            clicked_disease_id = Long.valueOf(_diseaseId.getText().toString());
 
             if (!HomeActivity.isTablet) {
                 // если нажат элемент с названием заболевания
@@ -184,7 +184,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 }, 500);
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
-                if (TabletMainActivity.selectedDisease_id != disease_id_inEdit) {
+                if (TabletMainActivity.selectedDisease_id != clicked_disease_id) {
                     //tabletMainActivity = (TabletMainActivity) myContext;
 
                     TabletDiseasesFragment.diseaseSelected = true;
@@ -243,7 +243,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         void tabletDiseaseSelected() {
-            tabletMainActivity.tabletTreatmentFragment.set_idDisease(disease_id_inEdit);
+            tabletMainActivity.tabletTreatmentFragment.set_idDisease(clicked_disease_id);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
             tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
             tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
@@ -256,12 +256,12 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
             tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-            //tabletMainActivity.disease_IdInEdit = disease_id_inEdit;
+            //tabletMainActivity.disease_IdInEdit = clicked_disease_id;
 
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView
             // чтоб закрасить выделенный элемент
-            TabletMainActivity.selectedDisease_id = disease_id_inEdit;
+            TabletMainActivity.selectedDisease_id = clicked_disease_id;
             tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
             // далее отрисовываем нужные поля в фрагментах
