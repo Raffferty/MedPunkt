@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
+import com.bumptech.glide.Glide;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
@@ -137,6 +138,8 @@ public class TreatmentPhotosFragment extends Fragment
         fabToFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TabletMainActivity.inWideView = true;
+
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
 
                 intentToTreatmentPhoto.putExtra("_idUser", Long.valueOf(_idUser));
@@ -419,13 +422,13 @@ public class TreatmentPhotosFragment extends Fragment
             recyclerTreatmentPhotos.setVisibility(View.INVISIBLE);
             txtAddPhotos.setVisibility(View.VISIBLE);
 
-            // если в расширенном варианте окна на планшете
-
             /*if (HomeActivity.isTablet &&
                     ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
-            if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
+            if (HomeActivity.isTablet) {
+
                 fabToFullScreen.setVisibility(View.INVISIBLE);
+
                 verGuideline.setGuidelinePercent(1.0f);
 
                 // ширину табов делаем одинаковыми
@@ -433,7 +436,13 @@ public class TreatmentPhotosFragment extends Fragment
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                 layoutParams.weight = 1.00f;
                 layout.setLayoutParams(layoutParams);
+
+                Glide.with(mTabletMainActivity).clear(mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.imgWideView);
             }
+
+            // оповещаем LayoutManager, что произошли изменения
+            // LayoutManager обновляет RecyclerView
+            treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
         } else {
 
@@ -502,39 +511,74 @@ public class TreatmentPhotosFragment extends Fragment
                         .into(imgWideView);
 
             }*/
-            // если есть фото лечения
-            fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+
 
             // если в расширенном варианте окна на планшете
             /*if (HomeActivity.isTablet &&
                     ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
-            if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
-                verGuideline.setGuidelinePercent(0.4f);
-                fabToFullScreen.setVisibility(View.VISIBLE);
-                fabToFullScreen.startAnimation(fabShowAnimation);
-
-                // это расширяет таб "снимки"
-                LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.getChildAt(0)).getChildAt(1));
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-                layoutParams.weight = 1.50f;
-                layout.setLayoutParams(layoutParams);
+            if (HomeActivity.isTablet) {
+                // если это планшет
 
                 // если фото заболевание было удалено, но остались еще фото, то
                 // выделяем первый элемент и после treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
                 // грузится его фото
-                if (TabletMainActivity.treatmentPhotoDeleted) {
-                    TreatmentPhotoItem treatmentPhotoItem = myData.get(0);
-                    TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotoItem.get_trPhotoId();
+                if (TabletMainActivity.inWideView) {
+                    if (TabletMainActivity.treatmentPhotoDeleted) {
+                        TreatmentPhotoItem treatmentPhotoItem = myData.get(0);
+                        TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotoItem.get_trPhotoId();
 
-                    TabletMainActivity.treatmentPhotoDeleted = false;
+                        TabletMainActivity.treatmentPhotoDeleted = false;
+                    }
+
+                    // это расширяет таб "снимки"
+                    LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.getChildAt(0)).getChildAt(1));
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                    layoutParams.weight = 1.50f;
+                    layout.setLayoutParams(layoutParams);
+
+                    myHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            verGuideline.setGuidelinePercent(0.4f);
+                            fabToFullScreen.setVisibility(View.VISIBLE);
+                            fabToFullScreen.startAnimation(fabShowAnimation);
+
+                            // оповещаем LayoutManager, чтоб закрасить выделенный элемент
+                            // LayoutManager обновляет RecyclerView
+                            treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    }, 200);
+
+                } else {
+                    fabToFullScreen.setVisibility(View.INVISIBLE);
+                    verGuideline.setGuidelinePercent(1.0f);
+
+                    // ширину табов делаем одинаковыми
+                    LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.getChildAt(0)).getChildAt(1));
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                    layoutParams.weight = 1.00f;
+                    layout.setLayoutParams(layoutParams);
+
+                    // оповещаем LayoutManager, чтоб очистить закраску выделенный элемент
+                    // LayoutManager обновляет RecyclerView
+                    treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                    Glide.with(mTabletMainActivity).clear(mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.imgWideView);
+
                 }
-            }
-        }
 
-        // оповещаем LayoutManager, что произошли изменения
-        // LayoutManager обновляет RecyclerView
-        treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+            } else {
+                // если это телефон
+
+                // оповещаем LayoutManager, что произошли изменения
+                // LayoutManager обновляет RecyclerView
+                treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            // если есть фото лечения
+            fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+        }
 
         if (mScrollToStart && myData.size() != 0) {
             recyclerTreatmentPhotos.smoothScrollToPosition(0);

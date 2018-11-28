@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -110,6 +111,10 @@ public class TabletMainActivity extends AppCompatActivity
     public FrameLayout tabletTreatmentDeleteFrame;
     //private FrameLayout tabletTreatmentSaveFrame;
 
+    //AutoTransition deleteTransition;
+
+    public ViewGroup mSceneRoot;
+
     public Guideline ver_1_Guideline;
     public Guideline ver_2_Guideline;
     public Guideline ver_3_Guideline;
@@ -191,6 +196,8 @@ public class TabletMainActivity extends AppCompatActivity
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
         //tabletDiseasesFrame = findViewById(R.id.tablet_diseases_frame);
 
+        mSceneRoot = findViewById(R.id.scene_root);
+
         ver_1_Guideline = findViewById(R.id.ver_1_guideline);
         ver_2_Guideline = findViewById(R.id.ver_2_guideline);
         ver_3_Guideline = findViewById(R.id.ver_3_guideline);
@@ -234,6 +241,83 @@ public class TabletMainActivity extends AppCompatActivity
                 }*/
             }
         });
+
+        //deleteTransition = new AutoTransition();
+        /*deleteTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+
+                //TransitionManager.beginDelayedTransition(mSceneRoot);
+
+                //tabletUsersWideTitle.setVisibility(View.GONE);
+                *//*tabletUsersWideTitle.setText("");
+                LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+                tabletTreatmentDelete.setVisibility(View.GONE);
+
+                tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);*//*
+
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+
+                *//*tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
+
+                LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+                tabletTreatmentDelete.setVisibility(View.GONE);
+
+                //tabletUsersWideTitle.setVisibility(View.GONE);
+                tabletUsersWideTitle.setText("");*//*
+
+                //TransitionManager.beginDelayedTransition(mSceneRoot);
+
+                *//*ver_1_Guideline.setGuidelinePercent(0.0f);
+                ver_2_Guideline.setGuidelinePercent(0.5f);
+                ver_3_Guideline.setGuidelinePercent(1.0f);
+                ver_4_Guideline.setGuidelinePercent(1.0f);*//*
+
+                //tabletUsersWideTitle.setVisibility(View.GONE);
+
+                *//*tabletTreatmentTitle.setText("");
+                tabletTreatmentFragment.editTextDiseaseName.setText("");
+                tabletTreatmentFragment.editTextDateOfDisease.setText("");
+                tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText("");*//*
+
+                *//*tabletUsersWideTitle.setText("");
+                LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+                tabletTreatmentDelete.setVisibility(View.GONE);
+
+                tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);*//*
+
+                //Log.d("qazx"," 3 tabLayout.setVisibility(View.INVISIBLE");
+
+
+                *//*tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
+                tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
+                tabletTreatmentFragment.treatmentDescriptionFragment.
+                        fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);*//*
+
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });*/
 
         tabletTreatmentDeleteFrame = findViewById(R.id.tablet_treatment_delete_frame);
         tabletTreatmentDelete = findViewById(R.id.tablet_treatment_delete);
@@ -379,49 +463,95 @@ public class TabletMainActivity extends AppCompatActivity
 
                     // если подтверждаем удаление заболевания
 
-                    TabletMainActivity.selectedDisease_id = 0;
+                    treatmentOnSavingOrUpdatingOrDeleting = true;
+                    tabletTreatmentFragment.editDisease = false;
+
+                    TabletMainActivity.inWideView = false;
+
+                    //tabletTreatmentFragment.set_idUser(0);
+                    //TabletMainActivity.selectedDisease_id = 0;
+
+
+                    /*int DiseaseListSize = tabletDiseasesFragment.diseaseRecyclerViewAdapter.
+                            getDiseaseList().size();
+
+                    Log.d("ZSXC", "DiseaseListSize = " + DiseaseListSize);
+
+                    DiseaseItem diseaseItem = tabletDiseasesFragment.diseaseRecyclerViewAdapter.
+                            getDiseaseList().get(0);
+
+                    Log.d("ZSXC", "diseaseItem.get_diseaseId() = " + diseaseItem.get_diseaseId());
+                    Log.d("ZSXC", "diseaseItem.get_diseaseUserId() = " + diseaseItem.get_diseaseUserId());
+                    Log.d("ZSXC", "diseaseItem.getDiseaseName() = " + diseaseItem.getDiseaseName());
+                    Log.d("ZSXC", "diseaseItem.getDiseaseDate() = " + diseaseItem.getDiseaseDate());
+                    Log.d("ZSXC", "diseaseItem.getTreatmentText( = " + diseaseItem.getTreatmentText());
+
+                    tabletTreatmentFragment.set_idDisease(diseaseItem.get_diseaseId());
+                    tabletTreatmentFragment.set_idUser(diseaseItem.get_diseaseUserId());
+                    tabletTreatmentFragment.setTextDiseaseName(diseaseItem.getDiseaseName());
+                    tabletTreatmentFragment.setTextDateOfDisease(diseaseItem.getDiseaseDate());
+                    tabletTreatmentFragment.setTextTreatment(diseaseItem.getTreatmentText());*/
+
 
                     tabletUsersWideTitle.setVisibility(View.GONE);
-                    tabletUsersWideTitle.setText("");
-                    tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                    if (inWideView){
-                        tabletTreatmentFragment.zoomInTabletTreatment.performClick();
-                    }
+                    //tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                    //TransitionManager.beginDelayedTransition(mSceneRoot, deleteTransition);
+
+                    ver_1_Guideline.setGuidelinePercent(0.0f);
+                    ver_2_Guideline.setGuidelinePercent(0.5f);
+                    ver_3_Guideline.setGuidelinePercent(1.0f);
+                    ver_4_Guideline.setGuidelinePercent(1.0f);
+
+                    tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                    tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
+
+                    LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+                    tabletTreatmentDelete.setVisibility(View.GONE);
+
+                    //tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletUsersWideTitle.setText("");
+
+                    /*tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+                    tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
+
+                    LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+                    tabletTreatmentDelete.setVisibility(View.GONE);
+
+                    tabletUsersWideTitle.setVisibility(View.GONE);
+                    tabletUsersWideTitle.setText("");*/
+
+
+
+                    /*ver_1_Guideline.setGuidelinePercent(0.0f);
+                    ver_2_Guideline.setGuidelinePercent(0.5f);
+                    ver_3_Guideline.setGuidelinePercent(1.0f);
+                    ver_4_Guideline.setGuidelinePercent(1.0f);*/
+
+                    // удаляем заболевание и связанные фото
+                    deleteDiseaseAndTreatmentPhotos();
+
+                    //if (inWideView){
+                    //tabletTreatmentFragment.zoomInTabletTreatment.performClick();
+                    //}
 
                     //ver_3_Guideline.setGuidelinePercent(1.00f);
                     //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
                     //tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                    treatmentOnSavingOrUpdatingOrDeleting = true;
-                    tabletTreatmentFragment.editDisease = false;
+
 
                     //blur(TABLET_TREATMENT_FRAGMENT);
 
-                    LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
-                    tabletTreatmentDelete.setVisibility(View.GONE);
 
-                    tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
-                    tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
-
-                    tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
-                    tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
-                    tabletTreatmentFragment.treatmentDescriptionFragment.
-                            fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
 
                     /*tabletTreatmentFragment.editTextDiseaseName.setEnabled(false);
                     tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
                     tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
                     tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);*/
 
-                    tabletTreatmentFragment.set_idUser(0);
-                    tabletTreatmentTitle.setText("");
-                    tabletTreatmentFragment.editTextDiseaseName.setText("");
-                    tabletTreatmentFragment.editTextDateOfDisease.setText("");
-                    tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setText("");
 
-                    // удаляем заболевание и связанные фото
-                    deleteDiseaseAndTreatmentPhotos();
                 }
             }
         });
@@ -530,13 +660,15 @@ public class TabletMainActivity extends AppCompatActivity
         tempTextDateOfTreatment = getString(R.string.disease_date);
         tempTextTreatment = "";
 
+        //TransitionManager.beginDelayedTransition(mSceneRoot);
+
         if (newDiseaseAndTreatment) {
             if (TabletDiseasesFragment.diseaseSelected) {
                 //tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
                 ver_3_Guideline.setGuidelinePercent(0.60f);
                 tabletUsersWideTitle.setVisibility(View.GONE);
                 tabletUsersWideTitle.setText("");
-                tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                //tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
@@ -551,7 +683,7 @@ public class TabletMainActivity extends AppCompatActivity
                 ver_2_Guideline.setGuidelinePercent(0.50f);
                 tabletUsersWideTitle.setVisibility(View.GONE);
                 tabletUsersWideTitle.setText("");
-                tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                //tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
                 tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
@@ -560,7 +692,7 @@ public class TabletMainActivity extends AppCompatActivity
             ver_3_Guideline.setGuidelinePercent(0.60f);
             tabletUsersWideTitle.setVisibility(View.GONE);
             tabletUsersWideTitle.setText("");
-            tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            //tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
             tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
@@ -579,6 +711,7 @@ public class TabletMainActivity extends AppCompatActivity
 
         if (diseasesIsEmpty) {
             //blur(TABLET_TREATMENT_FRAGMENT);
+
             tabletTreatmentFragment.tabLayout.setVisibility(View.INVISIBLE);
             tabletTreatmentFragment.viewPager.setVisibility(View.INVISIBLE);
 
@@ -610,6 +743,10 @@ public class TabletMainActivity extends AppCompatActivity
         // скручиваем клавиатуру
         hideSoftInput();
 
+        //if (newDiseaseAndTreatment || diseaseAndTreatmentInEdit) {
+        tabletUsersFragment.fabAddUser.startAnimation(tabletUsersFragment.fabShowAnimation);
+        //} else {
+
         /*if (!TabletDiseasesFragment.diseaseSelected) {
             tabletTreatmentTitle.setText("");
             blur(TABLET_TREATMENT_FRAGMENT);
@@ -626,9 +763,12 @@ public class TabletMainActivity extends AppCompatActivity
             );
         }*/
 
-        //if (newDiseaseAndTreatment || diseaseAndTreatmentInEdit) {
-        tabletUsersFragment.fabAddUser.startAnimation(tabletUsersFragment.fabShowAnimation);
-        //} else {
+        LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
+        tabletTreatmentDelete.setVisibility(View.GONE);
+        tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
+        tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
+
+
         tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
         tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
@@ -636,12 +776,6 @@ public class TabletMainActivity extends AppCompatActivity
                     tabletTreatmentFragment.fabShowAnimation
             );*/
         //}
-
-
-        LLtabletTreatmentCancelOrSave.setVisibility(View.GONE);
-        tabletTreatmentDelete.setVisibility(View.GONE);
-        tabletTreatmentFragment.editTextDateOfDisease.setVisibility(View.GONE);
-        tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.GONE);
 
         tabletTreatmentFragment.editDisease = false;
         tabletTreatmentFragment.editTextDiseaseName.setEnabled(false);

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,10 +12,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 
 import com.gmail.krbashianrafael.medpunkt.MyEditText;
-import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 public class TreatmentDescriptionFragment extends Fragment {
@@ -114,6 +114,9 @@ public class TreatmentDescriptionFragment extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+
+                            //TransitionManager.beginDelayedTransition(mTabletMainActivity.mSceneRoot);
+
                             //mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.GONE);
 
@@ -147,7 +150,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
 
                             //mTabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.30f);
-                            float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
+                            //float percentVerGuideline_3 = ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent;
 
                             //if (percentVerGuideline_3==0.00f){
                             if (TabletMainActivity.inWideView) {
@@ -155,7 +158,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
-                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+                                //mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
 
                                 mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
                                 mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
@@ -177,7 +180,7 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
-                                mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
+                                //mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));
 
                                 mTabletMainActivity.LLtabletTreatmentCancelOrSave.setVisibility(View.VISIBLE);
                                 mTabletMainActivity.tabletTreatmentFragment.textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
@@ -194,6 +197,46 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 mTabletMainActivity.tabletUsersWideTitle.setText(mTabletMainActivity.tabletDiseasesTitle.getText().toString());
                                 mTabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
                                 mTabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.blue));*/
+
+                                TabletMainActivity.inWideView = true;
+
+                                // если есть фото лечения, то в расширенном виде формируем вид окна
+                                // и загружаем фото первой позиции
+                                //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                                if ( mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
+                                        getTreatmentPhotosList().size() != 0) {
+
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
+                                    /*mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.fabToFullScreen.
+                                            startAnimation(mTabletMainActivity.tabletTreatmentFragment.fabShowAnimation);*/
+
+                                    // это расширяет таб "снимки"
+                                    LinearLayout layout = ((LinearLayout) ((LinearLayout)  mTabletMainActivity.tabletTreatmentFragment.tabLayout.
+                                            getChildAt(0)).getChildAt(1));
+                                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                                    layoutParams.weight = 1.50f;
+                                    layout.setLayoutParams(layoutParams);
+
+                                    // получаем данные из первой позиции и грузим фото
+                                    TreatmentPhotoItem treatmentPhotoItem =  mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
+
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment._idTrPhoto = treatmentPhotoItem.get_trPhotoId();
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
+
+                                    // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
+                                    TabletMainActivity.selectedTreatmentPhoto_id =  mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment._idTrPhoto;
+
+                                    mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                                            treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                                    // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
+                                }
+
+
                             }
                         }
                     }, 500);

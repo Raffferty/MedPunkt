@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.transition.AutoTransition;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +130,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         long clicked_disease_id = 0;
 
+        AutoTransition tabletDiseaseItemClickTransition;
+
         DiseaseHolder(View itemView, Context context) {
             super(itemView);
 
@@ -146,6 +150,39 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             diseasesItem = itemView.findViewById(R.id.recycler_diseases_item);
 
             diseasesItem.setOnClickListener(this);
+
+            tabletDiseaseItemClickTransition = new AutoTransition();
+            tabletDiseaseItemClickTransition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                    );
+
+                    tabletDiseaseSelected();
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
         }
 
         @Override
@@ -199,19 +236,22 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*/
 
-                    float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+                    //float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
 
-                    if (percentVerGuideline_2 != 0.30f) {
+                    //if (percentVerGuideline_2 != 0.30f) {
                         /*tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
                         tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);*/
 
-                        //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
 
-                        //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
+                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
 
-                        tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
+                    //TabletMainActivity.inWideView = false;
 
+                    TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, tabletDiseaseItemClickTransition);
+
+                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
 
                         /*new Handler().postDelayed(new Runnable() {
                             @Override
@@ -220,7 +260,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
                             }
                         }, 300);*/
-                    }
+                    //}
 
                     // если описание заболевание с стадии редактирования,
                     // то сначала делается Cancel
@@ -232,11 +272,13 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                             tabletMainActivity.showUnsavedChangesDialog(this);
                         }
                     } else {*/
-                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+
+                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
                             tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
                     );
 
-                    tabletDiseaseSelected();
+                    tabletDiseaseSelected();*/
+
                     //}
                 }
             }

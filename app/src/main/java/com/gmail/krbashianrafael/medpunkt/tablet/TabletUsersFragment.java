@@ -24,12 +24,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
-import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.shared.UserActivity;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
-import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -397,6 +397,7 @@ public class TabletUsersFragment extends Fragment
             //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
 
             if (TabletMainActivity.userInserted) {
+
                 fabAddUser.startAnimation(fabShowAnimation);
 
                 //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
@@ -419,6 +420,7 @@ public class TabletUsersFragment extends Fragment
                 TabletMainActivity.insertedUser_id = 0;
 
             } else if (TabletMainActivity.userUpdated) {
+
                 /*else if (TabletMainActivity.userUpdated &&
                     TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {*/
                 // если пользовоатлеь, который был в DiseasesFragment обновился (поменял имя...)
@@ -471,7 +473,9 @@ public class TabletUsersFragment extends Fragment
                 // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
                 // в tabletDiseasesFragment idUser = 0
                 //tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+
             } else if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
+
                 //если первый заход и в DiseasesFragment еще не отображаются данные,
                 // или нажат крестик на DiseasesFragment
 
@@ -529,6 +533,7 @@ public class TabletUsersFragment extends Fragment
 
 
             } else {
+
                 // если вернулись в окно без измениний (после просмотра информации о пользователе)
                 // код для показа выделенного заболевания
                 if (TabletMainActivity.selectedDisease_id != 0) {
@@ -558,7 +563,10 @@ public class TabletUsersFragment extends Fragment
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.userInserted = false;
         TabletMainActivity.userUpdated = false;
-        TabletMainActivity.userDeleted = false;
+
+        // этот флаг выставляем в TabletDiseasesFragment
+        // после проверки удаления пользователя
+        //TabletMainActivity.userDeleted = false;
 
         // прокручиваем пользователей вверх
         /*if (scrollToInsertedUserPosition && myData.size() != 0) {
