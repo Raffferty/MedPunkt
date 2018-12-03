@@ -673,7 +673,7 @@ public class TabletMainActivity extends AppCompatActivity
                 tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                 tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                        tabletTreatmentFragment.fabShowAnimation
+                        tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
                 );
 
             } else {
@@ -697,13 +697,13 @@ public class TabletMainActivity extends AppCompatActivity
             tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
             tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                    tabletTreatmentFragment.fabShowAnimation
+                    tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
             );
         } else {
             tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
             tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                    tabletTreatmentFragment.fabShowAnimation
+                    tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
             );
         }
 
@@ -759,7 +759,7 @@ public class TabletMainActivity extends AppCompatActivity
             tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
             tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                    tabletTreatmentFragment.fabShowAnimation
+                    tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
             );
         }*/
 
@@ -773,7 +773,7 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
             /*tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                    tabletTreatmentFragment.fabShowAnimation
+                    tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
             );*/
         //}
 

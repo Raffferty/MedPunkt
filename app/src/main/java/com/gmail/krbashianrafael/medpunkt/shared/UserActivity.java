@@ -512,7 +512,7 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        // Animation fabShowAnimation
+        // Animation fabEditTreatmentDescriptonShowAnimation
         Animation fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -896,7 +896,7 @@ public class UserActivity extends AppCompatActivity
 
             invalidateOptionsMenu();
 
-            fab.startAnimation(fabShowAnimation);
+            fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
 
             onSavingOrUpdatingOrDeleting = false;*/
 
@@ -1128,7 +1128,7 @@ public class UserActivity extends AppCompatActivity
                 tabletFrmDelete.setVisibility(View.VISIBLE);
                 tabletFrmSave.setVisibility(View.GONE);
 
-                fab.startAnimation(fabShowAnimation);
+                fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
                 editTextName.setEnabled(false);
                 editTextDate.setEnabled(false);
                 imagePhoto.setClickable(false);
@@ -1158,7 +1158,7 @@ public class UserActivity extends AppCompatActivity
                 tabletFrmSave.setVisibility(View.GONE);
             }
 
-            fab.startAnimation(fabShowAnimation);
+            fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
             editTextName.setEnabled(false);
             editTextDate.setEnabled(false);
             imagePhoto.setClickable(false);

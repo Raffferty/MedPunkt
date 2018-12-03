@@ -47,11 +47,18 @@
                 android:background="@drawable/ic_arrow_back_white_30dp" />
         </FrameLayout>
 
-        <FrameLayout
+        <TextView
             android:id="@+id/frm_blank"
             android:layout_width="0dp"
             android:layout_height="42dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:singleLine="true"
+            android:text="Disease_aa aa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
         <FrameLayout
             android:id="@+id/frm_save"

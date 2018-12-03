@@ -40,7 +40,7 @@ public class UsersActivity extends AppCompatActivity
     private RecyclerView recyclerUsers;
     private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
-    // Animation fabShowAnimation
+    // Animation fabEditTreatmentDescriptonShowAnimation
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
 

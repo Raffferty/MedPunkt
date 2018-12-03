@@ -161,7 +161,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                            tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
                     );
 
                     tabletDiseaseSelected();
@@ -226,6 +226,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
+                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(" ");
+
                     // ставим на таб "описание"
                     Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
@@ -274,7 +276,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     } else {*/
 
                     /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabShowAnimation
+                            tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
                     );
 
                     tabletDiseaseSelected();*/

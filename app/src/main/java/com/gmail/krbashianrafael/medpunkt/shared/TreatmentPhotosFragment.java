@@ -69,7 +69,8 @@ public class TreatmentPhotosFragment extends Fragment
     // ImageView для загрузки фото в расширенном виде на планшете
     public ImageView imgWideView;
 
-    private Animation fabShowAnimation;
+    public Animation fabAddTreatmentPhotosShowAnimation;
+    public Animation fabToFullScreenShowAnimation;
 
     public RecyclerView recyclerTreatmentPhotos;
 
@@ -242,8 +243,8 @@ public class TreatmentPhotosFragment extends Fragment
                 mTabletMainActivity.tabletTreatmentFragment.initTreatmentPhotosFragment();
             }
 
-            fabShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
-            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+            fabAddTreatmentPhotosShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
+            fabAddTreatmentPhotosShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
@@ -251,12 +252,28 @@ public class TreatmentPhotosFragment extends Fragment
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationRepeat(Animation animation) {
-                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                }
+            });
+
+            fabToFullScreenShowAnimation = AnimationUtils.loadAnimation(mTabletMainActivity, R.anim.fab_show);
+            fabToFullScreenShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    fabToFullScreen.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
                 }
             });
 
@@ -283,8 +300,8 @@ public class TreatmentPhotosFragment extends Fragment
     private void doWorkWithTreatmentActivity(final TreatmentActivity mTreaymentActivity) {
         if (mTreaymentActivity != null) {
 
-            fabShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
-            fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+            fabAddTreatmentPhotosShowAnimation = AnimationUtils.loadAnimation(mTreaymentActivity, R.anim.fab_show);
+            fabAddTreatmentPhotosShowAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
@@ -292,12 +309,12 @@ public class TreatmentPhotosFragment extends Fragment
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationRepeat(Animation animation) {
-                    fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
+                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
             });
 
@@ -541,8 +558,8 @@ public class TreatmentPhotosFragment extends Fragment
                         @Override
                         public void run() {
                             verGuideline.setGuidelinePercent(0.4f);
-                            fabToFullScreen.setVisibility(View.VISIBLE);
-                            fabToFullScreen.startAnimation(fabShowAnimation);
+                            //fabToFullScreen.setVisibility(View.VISIBLE);
+                            fabToFullScreen.startAnimation(fabToFullScreenShowAnimation);
 
                             // оповещаем LayoutManager, чтоб закрасить выделенный элемент
                             // LayoutManager обновляет RecyclerView
@@ -577,7 +594,7 @@ public class TreatmentPhotosFragment extends Fragment
             }
 
             // если есть фото лечения
-            fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+            fabAddTreatmentPhotos.startAnimation(fabAddTreatmentPhotosShowAnimation);
         }
 
         if (mScrollToStart && myData.size() != 0) {

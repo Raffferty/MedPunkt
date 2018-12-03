@@ -203,13 +203,13 @@ public class TreatmentDescriptionFragment extends Fragment {
                                 // если есть фото лечения, то в расширенном виде формируем вид окна
                                 // и загружаем фото первой позиции
                                 //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                                if ( mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
+                                if (mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
                                         getTreatmentPhotosList().size() != 0) {
 
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
                                     /*mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.fabToFullScreen.
-                                            startAnimation(mTabletMainActivity.tabletTreatmentFragment.fabShowAnimation);*/
+                                            startAnimation(mTabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation);*/
 
                                     // это расширяет таб "снимки"
                                     LinearLayout layout = ((LinearLayout) ((LinearLayout)  mTabletMainActivity.tabletTreatmentFragment.tabLayout.
@@ -288,12 +288,12 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                    //fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationRepeat(Animation animation) {
-                    fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                    //fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
                 }
             });
 

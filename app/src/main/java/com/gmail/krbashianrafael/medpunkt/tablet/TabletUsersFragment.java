@@ -45,7 +45,7 @@ public class TabletUsersFragment extends Fragment
     public RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
-    // Animation fabShowAnimation
+    // Animation fabEditTreatmentDescriptonShowAnimation
     public Animation fabShowAnimation;
     private Animation fadeInAnimation;
 
@@ -341,8 +341,8 @@ public class TabletUsersFragment extends Fragment
             }*/
 
         } /*else if (myDataSize == 1) {
-            // если один пользователь, то делаем fabShowAnimation
-            fabAddUser.startAnimation(fabShowAnimation);
+            // если один пользователь, то делаем fabEditTreatmentDescriptonShowAnimation
+            fabAddUser.startAnimation(fabEditTreatmentDescriptonShowAnimation);
 
             //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
 
@@ -564,9 +564,8 @@ public class TabletUsersFragment extends Fragment
         TabletMainActivity.userInserted = false;
         TabletMainActivity.userUpdated = false;
 
-        // этот флаг выставляем в TabletDiseasesFragment
-        // после проверки удаления пользователя
-        //TabletMainActivity.userDeleted = false;
+
+        TabletMainActivity.userDeleted = false;
 
         // прокручиваем пользователей вверх
         /*if (scrollToInsertedUserPosition && myData.size() != 0) {

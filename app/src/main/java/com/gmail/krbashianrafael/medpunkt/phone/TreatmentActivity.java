@@ -45,12 +45,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.DatePickerFragment;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentAdapter;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
@@ -107,7 +107,7 @@ public class TreatmentActivity extends AppCompatActivity
     public EditText editTextDateOfDisease;
     private EditText focusHolder;
 
-    // Animation fabShowAnimation
+    // Animation fabEditTreatmentDescriptonShowAnimation
     private Animation fabShowAnimation;
 
     private ViewPager viewPager;
@@ -295,12 +295,12 @@ public class TreatmentActivity extends AppCompatActivity
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
+                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -364,7 +364,8 @@ public class TreatmentActivity extends AppCompatActivity
 
                     // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                        treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(fabShowAnimation);
+                        treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(treatmentPhotosFragment.fabAddTreatmentPhotosShowAnimation);
+
                     }
                 }
 

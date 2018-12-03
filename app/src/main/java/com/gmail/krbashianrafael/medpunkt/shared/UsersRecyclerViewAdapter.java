@@ -73,6 +73,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         // если это планшет, то выделенных элемент будет окрашен в голубой цвет,
         // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
+
             // если только один элемент пользователя
             // то его _id и будет selected
             /*if (usersList.size() == 1) {
@@ -315,6 +316,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
                 TabletMainActivity.selectedDisease_id = 0;
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
+
                 //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
                 if (tabletMainActivity.diseaseAndTreatmentInEdit) {
