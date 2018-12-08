@@ -124,7 +124,6 @@
         app:layout_constraintTop_toTopOf="@+id/tablet_users_title" />
 
     <FrameLayout
-        android:id="@+id/tablet_diseases_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
@@ -197,7 +196,6 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/tablet_treatment_save_frame"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1">

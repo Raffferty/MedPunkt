@@ -45,7 +45,6 @@ public class HomeActivity extends AppCompatActivity {
             // иконка видна, но не нажимается
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setTitle("\t" + getResources().getString(R.string.title_activity_home));
-            //actionBar.setTitle(R.string.title_activity_home);
 
             // для версий начиная с Nougat	7.1	API level 25 исползуются круглые икнонки
             if (Build.VERSION.SDK_INT >= 25) {
@@ -66,11 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-        // ------------------------------------
-
         // узнаем Планшет это или нет
-
-
         if (!prefs.contains("isTablet")) {
             Configuration configuration = getResources().getConfiguration();
 
@@ -90,8 +85,6 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             isTablet = prefs.getBoolean("isTablet", false);
         }
-
-        // ------------------------------------
 
         final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
 
@@ -176,8 +169,6 @@ public class HomeActivity extends AppCompatActivity {
         // и пытаемся их снова удалить в doInBackground класса CleanNotDeletedFilesAsyncTask
         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
-        //Log.d("XZX", "notDeletedFilesPaths = " + notDeletedFilesPaths);
-
         if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
             new CleanNotDeletedFilesAsyncTask(notDeletedFilesPaths).execute(getApplicationContext());
         }
@@ -211,14 +202,10 @@ public class HomeActivity extends AppCompatActivity {
 
             for (String fPath : splitedFilesPaths) {
 
-                //Log.d("XZX", "to delete fPath = " + fPath);
-
                 File toBeDeletedFile = new File(fPath);
                 if (toBeDeletedFile.exists()) {
                     if (!toBeDeletedFile.delete()) {
                         sb.append(fPath).append(",");
-
-                        //Log.d("XZX", "Not deleted fPath = " + fPath);
                     }
                 }
             }

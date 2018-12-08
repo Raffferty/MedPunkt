@@ -40,11 +40,9 @@ public class TreatmentAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            //return mContext.getString(R.string.description);
             return iconWithText(mContext.getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                     mContext.getResources().getString(R.string.treatment_description));
         } else if (position == 1) {
-            //return mContext.getString(R.string.photos);
             return iconWithText(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
                     mContext.getResources().getString(R.string.treatment_images));
         }

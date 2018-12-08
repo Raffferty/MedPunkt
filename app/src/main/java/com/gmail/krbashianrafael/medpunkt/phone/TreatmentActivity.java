@@ -107,7 +107,6 @@ public class TreatmentActivity extends AppCompatActivity
     public EditText editTextDateOfDisease;
     private EditText focusHolder;
 
-    // Animation fabEditTreatmentDescriptonShowAnimation
     private Animation fabShowAnimation;
 
     private ViewPager viewPager;
@@ -171,19 +170,11 @@ public class TreatmentActivity extends AppCompatActivity
 
         TextView txtTitleTreatment = findViewById(R.id.txt_title_treatment);
 
-        //if (HomeActivity.isTablet) {
-
         if (HomeActivity.iAmDoctor) {
             txtTitleTreatment.setText(R.string.patient_treatment_title_text);
         } else {
             txtTitleTreatment.setText(R.string.treatment_description_hint_text);
         }
-
-        /*} else {
-            if (HomeActivity.iAmDoctor) {
-                txtTitleTreatment.setText(R.string.treatment_description_hint_text);
-            }
-        }*/
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
         editTextDiseaseName = findViewById(R.id.editText_disease_name);
@@ -196,14 +187,8 @@ public class TreatmentActivity extends AppCompatActivity
         editTextDateOfDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*if (HomeActivity.isTablet) {
-                    getWindow().setSoftInputMode(
-                            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
-                                    WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                    );
-                } else {*/
+
                 hideSoftInput();
-                //}
 
                 // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutDiseaseName.setError(null);
@@ -254,7 +239,6 @@ public class TreatmentActivity extends AppCompatActivity
                 }
             }
         });
-
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -315,33 +299,11 @@ public class TreatmentActivity extends AppCompatActivity
             editTextDiseaseName.setSelection(0);
             categoryAdapter.setPagesCount(1);
             tabLayout.setVisibility(View.GONE);
-
-            /*if (HomeActivity.isTablet) {
-                getWindow().setSoftInputMode(
-                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
-                                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-                );
-            }*/
-
         } else {
 
             textInputLayoutDiseaseName.setVisibility(View.GONE);
             editTextDateOfDisease.setVisibility(View.GONE);
             focusHolder.requestFocus();
-
-            // если планшет и в режиме редактирования, то оставлем только одину закадку для описания заболевания
-            /*if (HomeActivity.isTablet && editDisease) {
-                categoryAdapter.setPagesCount(1);
-                tabLayout.setVisibility(View.GONE);
-
-                textInputLayoutDiseaseName.setVisibility(View.VISIBLE);
-                editTextDateOfDisease.setVisibility(View.VISIBLE);
-
-                getWindow().setSoftInputMode(
-                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
-                                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-                );
-            }*/
         }
 
         viewPager.setAdapter(categoryAdapter);
@@ -551,7 +513,6 @@ public class TreatmentActivity extends AppCompatActivity
                     treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
 
                     focusHolder.requestFocus();
-
 
                 } else {
                     focusHolder.requestFocus();
@@ -813,6 +774,7 @@ public class TreatmentActivity extends AppCompatActivity
             // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
 
             DiseasesActivity.mScrollToStart = true;
+
         } else {
             Toast.makeText(this, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }

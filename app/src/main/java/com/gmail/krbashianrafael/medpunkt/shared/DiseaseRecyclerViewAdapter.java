@@ -23,21 +23,15 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
-//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDateOfTreatment;
-//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextDiseaseName;
-//import static com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity.tempTextTreatment;
 
 public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
     private final ArrayList<DiseaseItem> diseaseList;
 
-    //static long TabletMainActivity.selectedDisease_id = 0;
-
     public DiseaseRecyclerViewAdapter(Context context) {
         mContext = context;
         this.diseaseList = new ArrayList<>();
-        //TabletMainActivity.selectedDisease_id = 0;
     }
 
     public ArrayList<DiseaseItem> getDiseaseList() {
@@ -72,21 +66,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             // если только один элемент заболевания
             // то его _id и будет selected
             if (diseaseList.size() == 1) {
-                //TabletMainActivity.selectedDisease_id = _diseaseId;
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
                 TabletDiseasesFragment.diseaseSelected = true;
 
-            } /*else if (TabletMainActivity.insertedDisease_id != 0) {
-                // добавленное заболевание будет сразу выделенным
-                TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
-                TabletMainActivity.insertedDisease_id = 0;
-            }*/ /*else if (TabletMainActivity.insertedDisease_id == _diseaseId) {
-                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
-                TabletDiseasesFragment.diseaseSelected = true;
-                TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
-                //TabletMainActivity.insertedDisease_id = 0;
-
-            }*/ else if (TabletMainActivity.selectedDisease_id == _diseaseId) {
+            } else if (TabletMainActivity.selectedDisease_id == _diseaseId) {
                 // добавленное заболевание будет сразу выделенным
                 // т.к. в MedProvider есть запись TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
@@ -95,18 +78,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
             }
-
         }
-
-
-        /*if (TabletMainActivity.selectedDisease_id == _diseaseId) {
-            ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
-
-            TabletDiseasesFragment.diseaseSelected = true;
-
-        } else {
-            ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(Color.TRANSPARENT);
-        }*/
     }
 
 
@@ -115,7 +87,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return diseaseList.size();
     }
 
-    public static class DiseaseHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class DiseaseHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final Context myContext;
         TabletMainActivity tabletMainActivity;
@@ -127,11 +99,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         final TextView treatmentText;
 
         final LinearLayout diseasesItem;
-        //FrameLayout diseaseEdit;
 
         long clicked_disease_id = 0;
 
-        AutoTransition tabletDiseaseItemClickTransition;
+        final AutoTransition tabletDiseaseItemClickTransition;
 
         DiseaseHolder(View itemView, Context context) {
             super(itemView);
@@ -161,9 +132,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-                    );*/
 
                     tabletDiseaseSelected();
                 }
@@ -222,11 +190,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
                 if (TabletMainActivity.selectedDisease_id != clicked_disease_id) {
-                    //tabletMainActivity = (TabletMainActivity) myContext;
 
                     TabletDiseasesFragment.diseaseSelected = true;
-
-                    //tabletMainActivity.tabletTreatmentFragment.setTextTreatment(" ");
 
                     // ставим на таб "описание"
                     if (tabletMainActivity.tabletTreatmentFragment.tabLayout.getSelectedTabPosition() == 1) {
@@ -239,28 +204,12 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                   /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*/
-
                     float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
-
-                    //if (percentVerGuideline_2 != 0.30f) {
-                        /*tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);*/
-
-                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
-
-                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_100_to_60.start();
-
-                    //TabletMainActivity.inWideView = false;
 
                     if (percentVerGuideline_2 != 0.30f) {
 
                         // показываем лечение
                         TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, tabletDiseaseItemClickTransition);
-                        //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
 
                         tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
                         tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.3f);
@@ -269,43 +218,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                         tabletDiseaseSelected();
                     }
-
-
-
-                    /*if (tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
-                            fabEditTreatmentDescripton.getVisibility()!=View.VISIBLE){
-                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                                tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-                        );
-                    }*/
-
-                        /*new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
-                                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
-                            }
-                        }, 300);*/
-                    //}
-
-                    // если описание заболевание с стадии редактирования,
-                    // то сначала делается Cancel
-                    /*if (tabletMainActivity.diseaseAndTreatmentInEdit) {
-                        if (tabletMainActivity.diseaseAndTreatmentHasNotChanged()) {
-                            tabletMainActivity.cancel();
-                            tabletDiseaseSelected();
-                        } else {
-                            tabletMainActivity.showUnsavedChangesDialog(this);
-                        }
-                    } else {*/
-
-                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                            tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-                    );
-
-                    tabletDiseaseSelected();*/
-
-                    //}
                 }
             }
         }
@@ -316,8 +228,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
             tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-            //tabletMainActivity.disease_IdInEdit = clicked_disease_id;
-
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView
             // чтоб закрасить выделенный элемент
@@ -325,11 +235,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
             // далее отрисовываем нужные поля в фрагментах
-                    /*tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
-                    tabletMainActivity.tabletDiseasesFragment.txtTabletDiseases.setText(R.string.diseases_what_text);*/
-
-            //tabletMainActivity.unBlur(TABLET_TREATMENT_FRAGMENT);
-
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 

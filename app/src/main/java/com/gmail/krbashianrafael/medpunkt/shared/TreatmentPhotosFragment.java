@@ -55,11 +55,11 @@ public class TreatmentPhotosFragment extends Fragment
     public String treatmentPhotoFilePath = "";
     public String textDateOfTreatmentPhoto = "";
     public String textPhotoDescription = "";
-    //public boolean errorOnPhotoLoading = false;
 
-    // TextView добавления фотоснимка лечения
+    // TextView для добавяления фотоснимка лечения
     public TextView txtAddPhotos, widePhotoErrView;
 
+    // разделитель для планшнта
     public Guideline verGuideline;
 
     public FloatingActionButton fabToFullScreen;
@@ -86,7 +86,6 @@ public class TreatmentPhotosFragment extends Fragment
      */
     private static final int TR_PHOTOS_IN_FRAGMENT_LOADER = 2;
 
-    //public MyImageMatrixTouchHandler myTrPhotosImageMatrixTouchHandler;
 
     public TreatmentPhotosFragment() {
         // нужен ПУСТОЙ конструктор
@@ -123,9 +122,6 @@ public class TreatmentPhotosFragment extends Fragment
         // verGuideline только для планшета
         verGuideline = view.findViewById(R.id.ver_guideline);
 
-        // Мой zoomer
-        //myTrPhotosImageMatrixTouchHandler = new MyImageMatrixTouchHandler(mTreatmentActivity);
-
         // imgWideView только для планшета
         imgWideView = view.findViewById(R.id.img_wide_view);
 
@@ -139,7 +135,6 @@ public class TreatmentPhotosFragment extends Fragment
         fabToFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TabletMainActivity.inWideView = true;
 
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
 
@@ -150,17 +145,6 @@ public class TreatmentPhotosFragment extends Fragment
                 intentToTreatmentPhoto.putExtra("treatmentPhotoFilePath", treatmentPhotoFilePath);
                 intentToTreatmentPhoto.putExtra("textDateOfTreatmentPhoto", textDateOfTreatmentPhoto);
                 intentToTreatmentPhoto.putExtra("textPhotoDescription", textPhotoDescription);
-
-                /*Log.d("XZX", "_idUser = " + _idUser);
-                Log.d("XZX", "_idDisease = " + _idDisease);
-                Log.d("XZX", "_idTrPhoto = " + _idTrPhoto);
-                Log.d("XZX", "treatmentPhotoFilePath = " + treatmentPhotoFilePath);
-                Log.d("XZX", "textDateOfTreatmentPhoto = " + textDateOfTreatmentPhoto);
-                Log.d("XZX", "textPhotoDescription = " + textPhotoDescription);*/
-
-                /*if (errorOnPhotoLoading){
-                    intentToTreatmentPhoto.putExtra("editTreatmentPhoto", true);
-                }*/
 
                 startActivity(intentToTreatmentPhoto);
             }
@@ -216,16 +200,6 @@ public class TreatmentPhotosFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-        /*if (HomeActivity.isTablet){
-            mTabletMainActivity = (TabletMainActivity) getActivity();
-            doWorkWithTabletMainActivity(mTabletMainActivity);
-        }
-        else {
-            mTreatmentActivity = (TreatmentActivity) getActivity();
-            doWorkWithTreatmentActivity(mTreatmentActivity);
-        }*/
-
         if (getActivity() instanceof TabletMainActivity) {
             mTabletMainActivity = (TabletMainActivity) getActivity();
             doWorkWithTabletMainActivity(mTabletMainActivity);
@@ -252,12 +226,10 @@ public class TreatmentPhotosFragment extends Fragment
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationRepeat(Animation animation) {
-                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
             });
 
@@ -294,7 +266,6 @@ public class TreatmentPhotosFragment extends Fragment
             // устанавливаем адаптер для RecyclerView
             recyclerTreatmentPhotos.setAdapter(treatmentPhotoRecyclerViewAdapter);
         }
-
     }
 
     private void doWorkWithTreatmentActivity(final TreatmentActivity mTreaymentActivity) {
@@ -309,16 +280,15 @@ public class TreatmentPhotosFragment extends Fragment
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationRepeat(Animation animation) {
-                    //fabAddTreatmentPhotos.setVisibility(View.VISIBLE);
                 }
             });
 
-            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
+            // в главном активити инициализируем фрагмент
+            // есл он еще не инициализирован, т.е. если он еще null)
             if (mTreaymentActivity.treatmentPhotosFragment == null) {
                 mTreaymentActivity.initTreatmentPhotosFragment();
             }
@@ -345,7 +315,6 @@ public class TreatmentPhotosFragment extends Fragment
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        // Define a projection that specifies the columns from the table we care about.
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
@@ -361,12 +330,6 @@ public class TreatmentPhotosFragment extends Fragment
         String[] selectionArgs = new String[]{String.valueOf(_idUser), String.valueOf(_idDisease)};
 
         Context mContext;
-        /*if (HomeActivity.isTablet) {
-            mContext = mTabletMainActivity;
-        } else {
-            mContext = mTreatmentActivity;
-
-        }*/
 
         if (getActivity() instanceof TabletMainActivity) {
             mContext = mTabletMainActivity;
@@ -374,7 +337,6 @@ public class TreatmentPhotosFragment extends Fragment
             mContext = mTreatmentActivity;
         }
 
-        // This loader will execute the ContentProvider's query method on a background thread
         // Loader грузит ВСЕ данные из таблицы users через Provider в diseaseRecyclerViewAdapter и далее в recyclerDiseases
         return new CursorLoader(mContext,   // Parent activity context
                 TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
@@ -398,7 +360,6 @@ public class TreatmentPhotosFragment extends Fragment
             // проходим в цикле курсор и заполняем объектами DiseaseItem наш ArrayList<TreatmentPhotoItem> myData
             while (cursor.moveToNext()) {
 
-                // Find the columns of disease attributes that we're interested in
                 int trPhoto_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.TR_PHOTO_ID);
                 int trPhotoUser_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_U_ID);
                 int trPhotoDisease_IdColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_DIS_ID);
@@ -406,7 +367,6 @@ public class TreatmentPhotosFragment extends Fragment
                 int trPhoto_dateColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE);
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
 
-                // Read the disease attributes from the Cursor for the current disease
                 long _trPhotoId = cursor.getInt(trPhoto_IdColumnIndex);
                 long _userId = cursor.getInt(trPhotoUser_IdColumnIndex);
                 long _diseaseId = cursor.getInt(trPhotoDisease_IdColumnIndex);
@@ -425,22 +385,16 @@ public class TreatmentPhotosFragment extends Fragment
 
         recyclerTreatmentPhotos.setVisibility(View.VISIBLE);
 
-
         // делаем destroyLoader, чтоб он сам повторно не вызывался,
         // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TR_PHOTOS_IN_FRAGMENT_LOADER);
 
-        //Log.d("2222", "myData.size() =" + myData.size());
-
         int myDataSize = myData.size();
 
-        // если нет фото лечения
+        // если нет снимков лечения
         if (myDataSize == 0) {
             recyclerTreatmentPhotos.setVisibility(View.INVISIBLE);
             txtAddPhotos.setVisibility(View.VISIBLE);
-
-            /*if (HomeActivity.isTablet &&
-                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
 
             if (HomeActivity.isTablet) {
 
@@ -462,77 +416,7 @@ public class TreatmentPhotosFragment extends Fragment
             treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
         } else {
-
-            // если это планшет и расширенном виде, то грзуим первое фото заболевания в расширенное окно
-
-            /*if (HomeActivity.isTablet && mTabletMainActivity.inWideView) {
-
-                TreatmentPhotoItem treatmentPhotoItem = myData.get(0);
-
-                _idTrPhoto = treatmentPhotoItem.get_trPhotoId();
-                treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
-                textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
-                textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
-
-                GlideApp.with(mTabletMainActivity)
-                        .load(treatmentPhotoFilePath)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                //on load failed
-                                *//*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        fabToFullScreen.setVisibility(View.INVISIBLE);*//*
-
-                                // чтоб файл освободился (для удаления),
-                                // высвобождаем imagePhoto
-                                myHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Glide.with(mTabletMainActivity).
-                                                clear(imgWideView);
-
-                                        imgWideView.setImageResource(R.color.my_dark_gray);
-
-                                        widePhotoErrView.setVisibility(View.VISIBLE);
-
-                                        fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
-                                    }
-                                });
-
-                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
-
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                //on load success
-
-                                if (widePhotoErrView.getVisibility() == View.VISIBLE) {
-
-                                    widePhotoErrView.setVisibility(View.GONE);
-
-                                    fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
-                                }
-
-                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
-
-                                return false;
-                            }
-                        })
-                        //.override(displayWidth, displayheight)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        //.error(R.color.my_dark_gray)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imgWideView);
-
-            }*/
-
-
-            // если в расширенном варианте окна на планшете
-            /*if (HomeActivity.isTablet &&
-                    ((ConstraintLayout.LayoutParams) mTabletMainActivity.ver_3_Guideline.getLayoutParams()).guidePercent == 0.00f) {*/
+            // если есть снимки лечения
 
             if (HomeActivity.isTablet) {
                 // если это планшет
@@ -558,11 +442,9 @@ public class TreatmentPhotosFragment extends Fragment
                         @Override
                         public void run() {
                             verGuideline.setGuidelinePercent(0.4f);
-                            //fabToFullScreen.setVisibility(View.VISIBLE);
                             fabToFullScreen.startAnimation(fabToFullScreenShowAnimation);
 
                             // оповещаем LayoutManager, чтоб закрасить выделенный элемент
-                            // LayoutManager обновляет RecyclerView
                             treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     }, 200);
@@ -582,7 +464,6 @@ public class TreatmentPhotosFragment extends Fragment
                     treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
                     Glide.with(mTabletMainActivity).clear(mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.imgWideView);
-
                 }
 
             } else {
@@ -609,27 +490,4 @@ public class TreatmentPhotosFragment extends Fragment
         myData.clear();
         treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
     }
-
-    /*private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
-
-        MyImageMatrixTouchHandler(Context context) {
-            super(context);
-            //setDoubleTapZoomFactor(2f); // здесь устанавливаем кратность увеличение при DoubleTap, по умолчанию = 2,5
-            //ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
-            //crr.setMaxScale(20f); // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
-        }
-
-
-
-        @Override
-        public boolean onTouch(final View view, final MotionEvent event) {
-
-            view.performClick();
-            super.onTouch(view, event);
-
-            return true;
-        }
-    }*/
-
-
 }

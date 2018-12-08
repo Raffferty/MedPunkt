@@ -100,8 +100,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                 // грузим фото выделенного заболевания
                 ((TreatmentPhotoHolder) holder).loadTreamentPhotoInImgWideView(itemPhotoUri);
 
-                //TabletDiseasesFragment.treatmentPhotoSelected = true;
-
             } else {
                 ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -169,8 +167,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             //on load failed
-                                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        fabToFullScreen.setVisibility(View.INVISIBLE);*/
 
                             // чтоб файл освободился (для удаления),
                             // высвобождаем imagePhoto
@@ -192,8 +188,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                                 }
                             });
 
-                            //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
-
                             return false;
                         }
 
@@ -211,20 +205,14 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                                         fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
                             }
 
-                            //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
-
                             return false;
                         }
                     })
-                    //.override(displayWidth, displayheight)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
-                    //.error(R.color.my_dark_gray)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(
-                            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                    imgWideView
-                    );
+                    .into(tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
+                            imgWideView);
         }
 
         @Override
@@ -238,95 +226,11 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
             // если это планшет и в расширенном виде и делается клик не на том же элементе
-            if (HomeActivity.isTablet &&
-                    TabletMainActivity.selectedDisease_id != clicked_treatmentPhoto_id &&
-                    TabletMainActivity.inWideView) {
-                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        imgWideView.setImageResource(R.drawable.eda);*/
-
-                /*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        _idTrPhoto = Long.valueOf(_trPhotoId.getText().toString());
-
-                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        treatmentPhotoFilePath = itemUri.getText().toString();
-
-                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        textDateOfTreatmentPhoto = itemDate.getText().toString();
-
-                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                        textPhotoDescription = itemName.getText().toString();*/
+            if (HomeActivity.isTablet
+                    && TabletMainActivity.selectedDisease_id != clicked_treatmentPhoto_id
+                    && TabletMainActivity.inWideView) {
 
                 loadTreamentPhotoInImgWideView(itemUri.getText().toString());
-
-                /*Log.d("XZX", "item _userId = " + _userId.getText().toString());
-                Log.d("XZX", "item _idDisease = " + _diseaseId.getText().toString());
-                Log.d("XZX", "item _idTrPhoto = " + _trPhotoId.getText().toString());
-                Log.d("XZX", "item treatmentPhotoFilePath = " + itemUri.getText().toString());
-                Log.d("XZX", "item textDateOfTreatmentPhoto = " + itemDate.getText().toString());
-                Log.d("XZX", "item textPhotoDescription = " + itemName.getText().toString());*/
-
-                /*GlideApp.with(tabletMainActivity)
-                        .load(itemUri.getText())
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                //on load failed
-                                *//*tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        fabToFullScreen.setVisibility(View.INVISIBLE);*//*
-
-                                // чтоб файл освободился (для удаления),
-                                // высвобождаем imagePhoto
-                                myHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Glide.with(tabletMainActivity).
-                                                clear(tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                                        imgWideView);
-
-                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                                imgWideView.setImageResource(R.color.my_dark_gray);
-
-                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                                widePhotoErrView.setVisibility(View.VISIBLE);
-
-                                        tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                                fabToFullScreen.setImageResource(R.drawable.ic_edit_white_24dp);
-                                    }
-                                });
-
-                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = true;
-
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                //on load success
-
-                                if (tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        widePhotoErrView.getVisibility() == View.VISIBLE) {
-
-                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                            widePhotoErrView.setVisibility(View.GONE);
-
-                                    tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                            fabToFullScreen.setImageResource(R.drawable.ic_zoom_out_photo_white_24dp);
-                                }
-
-                                //tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.errorOnPhotoLoading = false;
-
-                                return false;
-                            }
-                        })
-                        //.override(displayWidth, displayheight)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        //.error(R.color.my_dark_gray)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(
-                                tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
-                                        imgWideView
-                        );*/
 
                 TabletMainActivity.selectedTreatmentPhoto_id = clicked_treatmentPhoto_id;
                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();

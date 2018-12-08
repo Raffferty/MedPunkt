@@ -40,16 +40,12 @@ public class UsersActivity extends AppCompatActivity
     private RecyclerView recyclerUsers;
     private UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
-    // Animation fabEditTreatmentDescriptonShowAnimation
     private Animation fabShowAnimation;
     private Animation fadeInAnimation;
-
-    //public static boolean mScrollToStart = false;
 
     public static int onResumeCounter = 0;
 
     /**
-     * Identifier for the user data loader
      * Лоадеров может много (они обрабатываются в case)
      * поэтому устанавливаем инициализатор для каждого лоадера
      * в данном случае private static final int USERS_LOADER = 0;
@@ -66,21 +62,7 @@ public class UsersActivity extends AppCompatActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.title_activity_home);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_home_white_30dp);
-            /*if (HomeActivity.iAmDoctor) {
-                actionBar.setTitle(R.string.patients_title_activity);
-            }*/
         }
-
-        /*LinearLayout LL_up = findViewById(R.id.LL_up);
-        LL_up.setVisibility(View.VISIBLE);
-        LL_up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (usersRecyclerViewAdapter.getUsersList().size() != 0) {
-                    recyclerUsers.smoothScrollToPosition(0);
-                }
-            }
-        });*/
 
         TextView txtTabletUsers = findViewById(R.id.txt_tablet_users);
 
@@ -145,28 +127,10 @@ public class UsersActivity extends AppCompatActivity
             }
         });
 
-        // инициализируем recyclerUsers
         recyclerUsers = findViewById(R.id.recycler_users);
 
-        // инициализируем linearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
-
-        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerUsers.getContext(), linearLayoutManager.getOrientation()
-        );
-
-        //инициализируем Drawable, который будет установлен как разделитель между элементами
-        Drawable divider_blue = ContextCompat.getDrawable(this, R.drawable.blue_drawable);
-
-        //устанавливаем divider_blue как разделитель между элементами
-        if (divider_blue != null) {
-            itemDecoration.setDrawable(divider_blue);
-        }
-
-        //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerUsers.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerUsers.setLayoutManager(linearLayoutManager);
@@ -181,8 +145,6 @@ public class UsersActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
@@ -242,7 +204,6 @@ public class UsersActivity extends AppCompatActivity
     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Define a projection that specifies the columns from the table we care about.
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
@@ -251,7 +212,6 @@ public class UsersActivity extends AppCompatActivity
                 MedContract.UsersEntry.COLUMN_USER_DATE,
                 MedContract.UsersEntry.COLUMN_USER_PHOTO_PATH};
 
-        // This loader will execute the ContentProvider's query method on a background thread
         // Loader грузит ВСЕ данные из таблицы users через Provider в usersRecyclerViewAdapter и далее в recyclerUsers
         return new CursorLoader(this,   // Parent activity context
                 UsersEntry.CONTENT_USERS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/users/
@@ -326,7 +286,6 @@ public class UsersActivity extends AppCompatActivity
 
                 String userBirthDate = cursor.getString(user_dateColumnIndex);
                 String userPhotoUri = cursor.getString(user_photoColumnIndex);
-
 
                 // добавляем новый user в ArrayList<UserItem> myData
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
@@ -404,12 +363,6 @@ public class UsersActivity extends AppCompatActivity
             // если больше одного пользователя, то остаемся в окне "Пользователи"
             fabAddUser.startAnimation(fabShowAnimation);
         }
-
-        /*if (mScrollToStart && myData.size() != 0) {
-            recyclerUsers.smoothScrollToPosition(0);
-            mScrollToStart = false;
-        }*/
-
     }
 
     @Override

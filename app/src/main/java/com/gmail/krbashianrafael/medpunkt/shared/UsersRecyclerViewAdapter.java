@@ -33,16 +33,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private final Context mContext;
     private final ArrayList<UserItem> usersList;
 
-   /* public static void setSelected_user_id(long selected_user_id) {
-        TabletMainActivity.selectedUser_id = selected_user_id;
-    }*/
-
-    //private static long selected_user_id = 0;
-
     public UsersRecyclerViewAdapter(Context context) {
         mContext = context;
         usersList = new ArrayList<>();
-        //selected_user_id = 0;
     }
 
     public ArrayList<UserItem> getUsersList() {
@@ -76,9 +69,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             // если только один элемент пользователя
             // то его _id и будет selected
-            /*if (usersList.size() == 1) {
-                ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
-            } else */
             if (TabletMainActivity.selectedUser_id == _userId) {
                 // добавленное заболевание будет сразу выделенным,
                 // т.к. в MedProvider есть запись TabletMainActivity.selectedUser_id = TabletMainActivity.insertedUser_id;
@@ -89,11 +79,13 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         File imgFile = new File(userPhotoUri);
+
+        // signature, чтоб при обновлении фото грузилось из файла, а не из кеша
         if (imgFile.exists()) {
             GlideApp.with(mContext)
                     .load(userPhotoUri)
                     .centerCrop()
-                    .signature(new ObjectKey(imgFile.lastModified()))   // signature, чтоб при обновлении фото грузилось из файла, а не из кеша
+                    .signature(new ObjectKey(imgFile.lastModified()))
                     .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .error(R.drawable.ic_camera_alt_gray_54dp)
@@ -206,8 +198,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 } else {
                     // если это планшет
-                    //final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
-
                     //открываем UserActivity для просмотра/изменения данных пользователя
 
                     Intent userEditIntent = new Intent(myContext, UserActivity.class);
@@ -300,27 +290,15 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 // чтоб закрасить выделенный элемент
                 TabletMainActivity.selectedUser_id = user_id_inEdit;
 
-                //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
-
                 tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
 
                 // далее отрисовываем нужные поля в фрагментах
-                //tabletMainActivity.tabletUsersFragment.txtTabletUsers.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimary));
-                        /*if (HomeActivity.iAmDoctor) {
-                            tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.patients_title_activity);
-                        } else {
-                            tabletMainActivity.tabletUsersFragment.txtTabletUsers.setText(R.string.users_title_activity);
-                        }*/
-
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
                 TabletMainActivity.selectedDisease_id = 0;
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
-                //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
-
                 if (tabletMainActivity.diseaseAndTreatmentInEdit) {
-                    //tabletMainActivity.tabletTreatmentCancel.performClick();
                     tabletMainActivity.hideElementsOnTabletTreatmentFragment();
                 }
             }

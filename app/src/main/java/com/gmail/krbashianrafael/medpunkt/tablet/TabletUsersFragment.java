@@ -42,15 +42,12 @@ public class TabletUsersFragment extends Fragment
 
     private TabletMainActivity tabletMainActivity;
 
-    public ImageView imgCancelTabletUsers;
-
     private TextView txtAddUsers;
     public TextView txtTabletUsers;
     public FloatingActionButton fabAddUser;
     public RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
 
-    // Animation fabEditTreatmentDescriptonShowAnimation
     public Animation fabShowAnimation;
     private Animation fadeInAnimation;
     private Animation onlyUsersAnimation;
@@ -74,10 +71,9 @@ public class TabletUsersFragment extends Fragment
         txtAddUsers = view.findViewById(R.id.txt_empty_users);
 
         txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
-        //txtTabletUsers.setVisibility(View.VISIBLE);
         txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
 
-        imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
+        ImageView imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
         imgCancelTabletUsers.setVisibility(View.VISIBLE);
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,13 +86,6 @@ public class TabletUsersFragment extends Fragment
             txtAddUsers.setText(R.string.patient_title_activity);
             txtTabletUsers.setText(R.string.patients_title_activity);
         }
-
-        //FrameLayout dividerTabletFrame = view.findViewById(R.id.divider_tablet_frame);
-
-        // Все это для выравнивания txtAddUsers по центру
-        //этот FrameLayout виден только на планшере
-        //dividerTabletFrame.setVisibility(View.VISIBLE);
-
 
         fabAddUser = view.findViewById(R.id.fabAddUser);
         fabAddUser.setOnClickListener(new View.OnClickListener() {
@@ -194,11 +183,10 @@ public class TabletUsersFragment extends Fragment
         // от движения:
         // tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
         // tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
-        onlyUsersAnimation =new TranslateAnimation(tabletMainActivity, null);
+        onlyUsersAnimation = new TranslateAnimation(tabletMainActivity, null);
         onlyUsersAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -212,7 +200,6 @@ public class TabletUsersFragment extends Fragment
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
 
@@ -269,19 +256,16 @@ public class TabletUsersFragment extends Fragment
             // проходим в цикле курсор и заполняем объектами UserItem наш ArrayList<UserItem> myData
             while (cursor.moveToNext()) {
 
-                // Find the columns of user attributes that we're interested in
                 int user_idColumnIndex = cursor.getColumnIndex(UsersEntry._ID);
                 int user_nameColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_NAME);
                 int user_dateColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_DATE);
                 int user_photoColumnIndex = cursor.getColumnIndex(UsersEntry.COLUMN_USER_PHOTO_PATH);
 
-                // Read the user attributes from the Cursor for the current user
                 long _userId = cursor.getLong(user_idColumnIndex);
                 String userName = cursor.getString(user_nameColumnIndex);
 
                 String userBirthDate = cursor.getString(user_dateColumnIndex);
                 String userPhotoUri = cursor.getString(user_photoColumnIndex);
-
 
                 // добавляем новый user в ArrayList<UserItem> myData
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
@@ -323,8 +307,6 @@ public class TabletUsersFragment extends Fragment
                     recyclerUsers.smoothScrollToPosition(tabletMainActivity.selectedUser_position);
                 }
             }, 500);
-
-            //scrollToInsertedDiseasePosition = false;
         }
 
         if (myDataSize == 0) {
@@ -337,9 +319,6 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
-            /*tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                    getDrawable(R.drawable.shadow));*/
-
             // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
             // и fabAddUser.setVisibility(View.INVISIBLE);
             new Handler(Looper.getMainLooper()).
@@ -351,94 +330,20 @@ public class TabletUsersFragment extends Fragment
                         }
                     }, 300);
 
-            // делаем blur на TABLET_DISEASES_FRAGMENT и TABLET_TREATMENT_FRAGMENT
-            //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
             tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
-
-            // если нет пользователей, то чистим DiseasesFragment
-            //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
             tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
-            // если не осталось пользователей после удаления единственного пользователя, то
-            // загружаем данные в tabletDiseasesFragment с помощю tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-            // т.к. заболеваний у удаленного пользовател нет, то будет очищено окно tabletDiseasesFragment
-            // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
-            // в tabletDiseasesFragment idUser = 0
-
-            // если был первый заход и не было пользователей, то этот медод не вызывается
-            /*if (TabletMainActivity.userDeleted) {
-                tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-            }*/
-
-        } /*else if (myDataSize == 1) {
-            // если один пользователь, то делаем fabEditTreatmentDescriptonShowAnimation
-            fabAddUser.startAnimation(fabEditTreatmentDescriptonShowAnimation);
-
-            //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
-
-            tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
-            tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
-
-            *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
-            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
-            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
-
-         *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.5f);
-            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
-
-         *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);*//*
-         *//*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
-
-            //txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-
-            *//*if (HomeActivity.iAmDoctor) {
-                txtTabletUsers.setText(R.string.patients_title_activity);
-            } else {
-                txtTabletUsers.setText(R.string.users_title_activity);
-            }*//*
-
-            // если один пользователь, то сразу загружаем его заболевания
-            Long _userId = myData.get(0).get_userId();
-            String userName = myData.get(0).getUserName();
-
-            // делаем unBlur(TABLET_DISEASES_FRAGMENT)
-            tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
-
-            // готовим tabletDiseasesTitle для рамещения в нем имени пользователя
-            // прописываем туда имя пользоватлея
-            tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName);
-
-            // устанавливаем idUser
-            tabletMainActivity.tabletDiseasesFragment.set_idUser(_userId);
-
-            // иниициализируем Loader заболеваний для загрузки заболеваний
-            tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-
-        }*/ else {
+        } else {
             // если больше одного пользователя
 
             fabAddUser.startAnimation(fabShowAnimation);
 
-            //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.VISIBLE);
-
             if (TabletMainActivity.userInserted) {
 
                 fabAddUser.startAnimation(fabShowAnimation);
-
-                //tabletMainActivity.tabletDiseasesFragment.imgCancelTabletDiseases.setVisibility(View.INVISIBLE);
-
-                //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
-
-                /*tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
-                tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);*/
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
@@ -455,12 +360,6 @@ public class TabletUsersFragment extends Fragment
 
             } else if (TabletMainActivity.userUpdated) {
 
-                /*else if (TabletMainActivity.userUpdated &&
-                    TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {*/
-                // если пользовоатлеь, который был в DiseasesFragment обновился (поменял имя...)
-                // то устанавливаем user_IdInEdit и userNameAfterUpdate в DiseasesFragment
-                // и иниициализируем Loader заболеваний
-
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(tabletMainActivity.user_IdInEdit);
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(TabletMainActivity.userNameAfterUpdate);
 
@@ -468,13 +367,6 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
             } else if (TabletMainActivity.userDeleted) {
-            /*else if (TabletMainActivity.userDeleted &&
-                    TabletMainActivity.user_IdInEdit == tabletMainActivity.tabletDiseasesFragment.get_idUser()) {*/
-                // если пользовоатлеь, который был в DiseasesFragment удалился
-                // то очищаем DiseasesFragment
-                // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
-
-                //tabletMainActivity.tabletUsersFrame.setBackgroundResource(R.drawable.shadow);
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
                 tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
@@ -482,130 +374,16 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
-                /*tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                        getDrawable(android.R.drawable.dialog_holo_light_frame));*/
-
-                /*if (HomeActivity.iAmDoctor) {
-                    txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
-                } else {
-                    txtTabletUsers.setText(R.string.tablet_diseases_select_user);
-                }
-
-                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
-
-                //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
-
-                //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
                 // в методе tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
                 // происходит tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
 
-                // после удаления пользователя и загрузки данных в tabletUsersFragment
-                // загружаем данные в tabletDiseasesFragment с помощю tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-                // т.к. заболеваний у удаленного пользовател нет, то будет очищено окно tabletDiseasesFragment
-                // при этом tabletMainActivity.tabletDiseasesFragment.textViewAddDisease будет не видимым, т.к.
-                // в tabletDiseasesFragment idUser = 0
-                //tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-
             } else if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
 
                 //если первый заход и в DiseasesFragment еще не отображаются данные,
                 // или нажат крестик на DiseasesFragment
-
-                /*if (HomeActivity.iAmDoctor) {
-                    txtTabletUsers.setText(R.string.tablet_diseases_select_patient);
-                } else {
-                    txtTabletUsers.setText(R.string.tablet_diseases_select_user);
-                }
-
-                txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.colorFab));*/
-
-                /*if (tabletMainActivity.firstLoad) {
-                 *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*//*
-
-                    tabletMainActivity.firstLoad = false;
-
-                } else {*/
-
-                /*AutoTransition transition_05 = new AutoTransition();
-                transition_05.addListener(new Transition.TransitionListener() {
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-                            *//*TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, new Fade());
-
-                            tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);*//*
-
-                    }
-
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, new Fade());
-                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
-                        tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
-
-                        //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
-
-                        //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-                    }
-
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionPause(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-
-                    }
-                });*/
-
-                /*AutoTransition transition_03 = new AutoTransition();
-                transition_03.addListener(new Transition.TransitionListener() {
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
-                        *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*//*
-
-                        tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
-                    }
-
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionPause(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-
-                    }
-                });*/
-
 
                 float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
 
@@ -613,77 +391,19 @@ public class TabletUsersFragment extends Fragment
 
                     tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
-                    //tabletMainActivity.tabletDiseasesFrame.startAnimation(onlyUsersAnimation);
 
                     // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
                     tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
-
-                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, transition_03);
-
-                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
-
-                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);*/
-
-
-                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*/
-                    //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);
-                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*/
-
-                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
-                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
-                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);*/
-
-
 
                 } else if (percentVerGuideline_2 == 0.50f) {
 
-                    //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
-
-                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, transition_05);
-                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
                     tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
-                    //tabletMainActivity.tabletDiseasesFrame.startAnimation(onlyUsersAnimation);
 
                     // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
                     tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
-
-
-                    //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
-
-                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*/
-
-
-
-                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*/
-
                 }
-                //}
 
-                //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
-                //tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
-                //tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-
-                //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
-
-                /*new Handler(Looper.getMainLooper()).
-                        postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                                        getDrawable(R.drawable.shadow));
-                            }
-                        }, 1000);*/
-
 
             } else {
 
@@ -716,15 +436,7 @@ public class TabletUsersFragment extends Fragment
         // после прохождения всех if выставляем флаги в false
         TabletMainActivity.userInserted = false;
         TabletMainActivity.userUpdated = false;
-
-
         TabletMainActivity.userDeleted = false;
-
-        // прокручиваем пользователей вверх
-        /*if (scrollToInsertedUserPosition && myData.size() != 0) {
-            recyclerUsers.smoothScrollToPosition(0);
-            scrollToInsertedUserPosition = false;
-        }*/
     }
 
     @Override

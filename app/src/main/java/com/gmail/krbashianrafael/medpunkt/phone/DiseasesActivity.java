@@ -47,7 +47,6 @@ public class DiseasesActivity extends AppCompatActivity
     private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
     /**
-     * Identifier for the user data loader
      * Лоадеров может много (они обрабатываются в case)
      * поэтому устанавливаем инициализатор для каждого лоадера
      * в данном случае private static final int DISEASES_LOADER = 1;
@@ -132,8 +131,6 @@ public class DiseasesActivity extends AppCompatActivity
             }
         });
 
-
-        // инициализируем recyclerDiseases
         recyclerDiseases = findViewById(R.id.recycler_diseases);
 
         // при нажатии на "чем болел" список заболеваний прокручивется вверх
@@ -145,25 +142,8 @@ public class DiseasesActivity extends AppCompatActivity
             }
         });
 
-        // инициализируем linearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
-
-        /*// инизиализируем разделитель для элементов recyclerTreatmentPhotos
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerDiseases.getContext(), linearLayoutManager.getOrientation()
-        );
-
-        //инициализируем Drawable, который будет установлен как разделитель между элементами
-        Drawable divider_blue = ContextCompat.getDrawable(this, R.drawable.blue_drawable);
-
-        //устанавливаем divider_blue как разделитель между элементами
-        if (divider_blue != null) {
-            itemDecoration.setDrawable(divider_blue);
-        }
-
-        //устанавливаем созданный и настроенный объект DividerItemDecoration нашему recyclerView
-        recyclerDiseases.addItemDecoration(itemDecoration);*/
 
         // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);
@@ -178,8 +158,6 @@ public class DiseasesActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         textViewAddDisease.setVisibility(View.INVISIBLE);
@@ -216,7 +194,6 @@ public class DiseasesActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // Define a projection that specifies the columns from the table we care about.
         // для Loader в projection обязательно нужно указывать поле с _ID
         // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
@@ -230,7 +207,6 @@ public class DiseasesActivity extends AppCompatActivity
         String selection = DiseasesEntry.COLUMN_U_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser)};
 
-        // This loader will execute the ContentProvider's query method on a background thread
         // Loader грузит ВСЕ данные из таблицы users через Provider в diseaseRecyclerViewAdapter и далее в recyclerDiseases
         return new CursorLoader(this,   // Parent activity context
                 DiseasesEntry.CONTENT_DISEASES_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/diseases/
@@ -254,22 +230,18 @@ public class DiseasesActivity extends AppCompatActivity
             // проходим в цикле курсор и заполняем объектами DiseaseItem наш ArrayList<DiseaseItem> myData
             while (cursor.moveToNext()) {
 
-                // Find the columns of disease attributes that we're interested in
                 int disease_idColumnIndex = cursor.getColumnIndex(DiseasesEntry._ID);
                 int diseaseUser_IdColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_U_ID);
                 int disease_nameColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_NAME);
                 int disease_dateColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_DATE);
                 int disease_treatmentColumnIndex = cursor.getColumnIndex(DiseasesEntry.COLUMN_DISEASE_TREATMENT);
 
-                // Read the disease attributes from the Cursor for the current disease
                 long _diseaseId = cursor.getLong(disease_idColumnIndex);
                 long _diseaseUserId = cursor.getLong(diseaseUser_IdColumnIndex);
                 String diseaseName = cursor.getString(disease_nameColumnIndex);
                 String diseaseDate = cursor.getString(disease_dateColumnIndex);
                 String diseaseTreatment = cursor.getString(disease_treatmentColumnIndex);
 
-
-                // добавляем новый DiseaseItem в ArrayList<DiseaseItem> myData
                 myData.add(new DiseaseItem(_diseaseId, _diseaseUserId, diseaseName, diseaseDate, diseaseTreatment));
             }
         }
@@ -287,10 +259,7 @@ public class DiseasesActivity extends AppCompatActivity
         // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(DISEASES_LOADER);
 
-        // если нет заболеваний, то делаем textViewAddDisease.setVisibility(View.VISIBLE);
-        // и fabAddDisease.setVisibility(View.INVISIBLE);
         if (myData.size() == 0) {
-
             recyclerDiseases.setVisibility(View.INVISIBLE);
 
             new Handler(Looper.getMainLooper()).
@@ -309,7 +278,6 @@ public class DiseasesActivity extends AppCompatActivity
             recyclerDiseases.smoothScrollToPosition(0);
             mScrollToStart = false;
         }
-
     }
 
     @Override

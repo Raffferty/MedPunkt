@@ -138,7 +138,6 @@ public class UserActivity extends AppCompatActivity
     // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
 
-
     // TextView на случай, если ошибка загрузки фото
     private TextView txtErr;
 
@@ -292,7 +291,9 @@ public class UserActivity extends AppCompatActivity
         }
 
         // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
@@ -342,8 +343,6 @@ public class UserActivity extends AppCompatActivity
                         })
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
-                        //.error(R.drawable.error_camera_alt_gray_128dp)
-                        //.error(R.color.my_dark_gray)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imagePhoto);
             }
@@ -512,7 +511,6 @@ public class UserActivity extends AppCompatActivity
             }
         });
 
-        // Animation fabEditTreatmentDescriptonShowAnimation
         Animation fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -562,7 +560,6 @@ public class UserActivity extends AppCompatActivity
                     textViewNoUserPhoto.setVisibility(View.VISIBLE);
                     textDeleteUserPhoto.setVisibility(View.INVISIBLE);
                     userHasChangedPhoto = true;
-                    //userPhotoUri = "No_Photo";
                     userSetNoPhotoUri = "Set_No_Photo";
 
                 } else {
@@ -663,9 +660,6 @@ public class UserActivity extends AppCompatActivity
                         //on load failed
 
                         txtErr.setVisibility(View.VISIBLE);
-
-                        //olduserPhotoUri = userPhotoUri;
-                        //userPhotoUri = "No_Photo";
                         userSetNoPhotoUri = "Set_No_Photo";
                         imageUriInView = null;
                         userHasChangedPhoto = true;
@@ -688,10 +682,6 @@ public class UserActivity extends AppCompatActivity
                             txtErr.setVisibility(View.GONE);
 
                         }
-
-                        /*if (pathToUsersPhoto != null && _idUser != 0) {
-                            userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
-                        }*/
 
                         imageUriInView = newSelectedImageUri;
                         userHasChangedPhoto = true;
@@ -716,48 +706,12 @@ public class UserActivity extends AppCompatActivity
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                //.error(R.drawable.error_camera_alt_gray_128dp)
                 .error(R.color.my_dark_gray)
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(imagePhoto);
 
-        /*if (pathToUsersPhoto != null && _idUser != 0) {
-            userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
-        }
-
-        imageUriInView = newSelectedImageUri;
-        userHasChangedPhoto = true;
-        textDeleteUserPhoto.setVisibility(View.VISIBLE);
-        textViewNoUserPhoto.setVisibility(View.GONE);
-
-        loadedBitmap = null;
-
-        GlideApp.with(this)
-                .asBitmap()
-                .load(imageUriInView)
-                .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        // здесь получаем Bitmap
-                        loadedBitmap = resource;
-                    }
-                });*/
-
         onLoading = false;
     }
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-
-        // если клавиатура была открыта для редактирования имени пользователя или даты, то она снова откроется
-        // если нет - то не откроется
-        if (editTextName.hasFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        } else {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        }
-    }*/
 
     @Override
     protected void onDestroy() {
@@ -881,24 +835,8 @@ public class UserActivity extends AppCompatActivity
             // то сразу выходим
             goToUsersActivity();
             onSavingOrUpdatingOrDeleting = false;
+
             return true;
-
-            // далее если это телефон
-            /*hideSoftInput();
-
-            focusHolder.requestFocus();
-
-            editUser = true;
-            editTextName.setEnabled(false);
-            editTextDate.setEnabled(false);
-            imagePhoto.setClickable(false);
-            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-            invalidateOptionsMenu();
-
-            fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
-
-            onSavingOrUpdatingOrDeleting = false;*/
 
         } else {
             // если что-то менялось
@@ -1066,11 +1004,8 @@ public class UserActivity extends AppCompatActivity
         // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу в папку под номером _id пользователя
 
         // если фото было удалено нажатием на "удалить фото", то удалить фото (если оно есть)
-        //if (userSetNoPhotoUri.equals("Set_No_Photo") && pathToUsersPhoto != null) {
         if (userSetNoPhotoUri.equals("Set_No_Photo") && !userPhotoUri.equals("No_Photo")) {
 
-            // формируем путь к папке фото юзера
-            //File fileToDelete = new File(pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd));
             File fileToDelete = new File(userPhotoUri);
 
             if (fileToDelete.exists()) {
@@ -1084,7 +1019,7 @@ public class UserActivity extends AppCompatActivity
                     SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
+                    // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                     String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
                     // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
                     String updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + userPhotoUri;
@@ -1120,52 +1055,12 @@ public class UserActivity extends AppCompatActivity
         } else {
             // если это планшет, то идем в UsersActivity
             goToUsersActivity();
-
-                /*editUser = true;
-                newUser = false;
-                userHasChangedPhoto = false;
-
-                tabletFrmDelete.setVisibility(View.VISIBLE);
-                tabletFrmSave.setVisibility(View.GONE);
-
-                fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
-                editTextName.setEnabled(false);
-                editTextDate.setEnabled(false);
-                imagePhoto.setClickable(false);
-                textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-                onSavingOrUpdatingOrDeleting = false;*/
         }
     }
 
     private void afterUpdateUser() {
         // идем в UsersActivity
         goToUsersActivity();
-
-        // если была нажата стрелка "обратно" - идем обратно
-        /*if (goBack) {
-            goToUsersActivity();
-        } else {
-            editUser = true;
-            userHasChangedPhoto = false;
-
-            // если это телефон (а не Планшет), то обновляем меню
-            if (!HomeActivity.isTablet) {
-                invalidateOptionsMenu();
-            } else {
-                // если это Планшет, то делаем видимым "удалить" и невидимым "сохранить"
-                tabletFrmDelete.setVisibility(View.VISIBLE);
-                tabletFrmSave.setVisibility(View.GONE);
-            }
-
-            fab.startAnimation(fabEditTreatmentDescriptonShowAnimation);
-            editTextName.setEnabled(false);
-            editTextDate.setEnabled(false);
-            imagePhoto.setClickable(false);
-            textDeleteUserPhoto.setVisibility(View.INVISIBLE);
-
-            onSavingOrUpdatingOrDeleting = false;
-        }*/
     }
 
     // проверка на изменения пользователя
@@ -1194,9 +1089,6 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void hideSoftInput() {
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1223,13 +1115,9 @@ public class UserActivity extends AppCompatActivity
             // получаем и присваиваем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
 
-            //UsersActivity.mScrollToStart = true;
-
             // если есть что сохранять в файл фото пользователя loadedBitmap != null
             if (pathToUsersPhoto != null && loadedBitmap != null) {
                 // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
-                // userPhotoUri = /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1-usrImage.jpg
-                //userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
                 userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
 
                 // обновляем данные по пути к файлу фото пользовател в базе
@@ -1292,19 +1180,12 @@ public class UserActivity extends AppCompatActivity
 
         if (pathToUsersPhoto != null && loadedBitmap != null) {
             // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
-            // userPhotoUri = /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/1-usrImage.jpg
-            //userPhotoUri = pathToUsersPhoto + _idUser + getString(R.string.user_photo_nameEnd);
 
             userOldPhotoUri = userPhotoUri;
 
             userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
 
-        } /*else {
-            userPhotoUri = "No_Photo";
-        }*/
-
-        //Log.d("ASAS", "userOldPhotoUri = " + userOldPhotoUri);
-        //Log.d("ASAS", "userPhotoUri = " + userPhotoUri);
+        }
 
         ContentValues values = new ContentValues();
         values.put(MedContract.UsersEntry.COLUMN_USER_NAME, textUserName);
@@ -1488,7 +1369,6 @@ public class UserActivity extends AppCompatActivity
 
             // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteUserFromDbOperation);
-
 
             // переменная количества удаленных строк из таблицы treatmentPhotos
             int rowsFromUsersAndTreatmentPhotosDeleted = -1;
@@ -1680,7 +1560,6 @@ public class UserActivity extends AppCompatActivity
                 }
             }
 
-
             // сохраняем новую фотографию
             String fileToSavePath = fileToSavePathReference.get();
 
@@ -1715,9 +1594,7 @@ public class UserActivity extends AppCompatActivity
                     }
                 } else {
                     // если папки не было и она не создалась
-                    //if (!fileToSave.getParentFile().exists()) {
                     return null;
-                    //}
                 }
             }
 
@@ -1755,9 +1632,6 @@ public class UserActivity extends AppCompatActivity
             if (userActivity == null || userActivity.isFinishing()) {
                 return;
             }
-
-            // обнуляем loadedBitmap
-            //userActivity.loadedBitmap = null;
 
             if (savedFile == null) {
                 Toast.makeText(userActivity, R.string.user_cant_save_photo, Toast.LENGTH_LONG).show();

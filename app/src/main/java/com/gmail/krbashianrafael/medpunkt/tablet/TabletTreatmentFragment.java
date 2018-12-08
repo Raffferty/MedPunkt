@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -68,8 +67,6 @@ import static android.content.Context.MODE_PRIVATE;
 public class TabletTreatmentFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final Handler myHandler = new Handler(Looper.getMainLooper());
-
     private TabletMainActivity tabletMainActivity;
 
     /**
@@ -96,8 +93,6 @@ public class TabletTreatmentFragment extends Fragment
     private String textDateOfDisease = "";
     public String textTreatment = "";
 
-    //public TextView txtTitleDisease;
-
     public ImageView zoomOutTabletTreatment, zoomInTabletTreatment;
 
     // поля названия заболевания, описания лечения и focusHolder
@@ -106,7 +101,6 @@ public class TabletTreatmentFragment extends Fragment
     public EditText editTextDateOfDisease;
     public EditText focusHolder;
 
-    // Animation fabEditTreatmentDescriptonShowAnimation
     public Animation fabEditTreatmentDescriptonShowAnimation;
 
     public ViewPager viewPager;
@@ -146,50 +140,12 @@ public class TabletTreatmentFragment extends Fragment
         txtTitleTreatment.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
         txtTitleTreatment.setTextColor(getResources().getColor(R.color.white));
 
-        /*final AutoTransition zoomOutTransition = new AutoTransition();
-        zoomOutTransition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionEnd(Transition transition) {
-                // если есть фото лечения, то в расширенном виде формируем вид окна
-                // и загружаем фото первой позиции
-                if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                    // загрузка фото происходит в notifyDataSetChanged()
-                    treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onTransitionCancel(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(Transition transition) {
-
-            }
-        });*/
-
         zoomOutTabletTreatment = view.findViewById(R.id.img_zoom_out_tablet_treatment);
         zoomOutTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 TabletMainActivity.inWideView = true;
-
-                //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
-                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
-
-                //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, zoomOutTransition);
 
                 zoomInTabletTreatment.setVisibility(View.VISIBLE);
                 zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
@@ -198,17 +154,12 @@ public class TabletTreatmentFragment extends Fragment
                 tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
                 tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
 
-
-                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_60_to_0.start();
-
                 // если есть фото лечения, то в расширенном виде формируем вид окна
                 // и загружаем фото первой позиции
-                //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                 if (treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
                         getTreatmentPhotosList().size() != 0) {
 
                     treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
-                    //treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
                     treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
 
                     // это расширяет таб "снимки"
@@ -235,13 +186,10 @@ public class TabletTreatmentFragment extends Fragment
             }
         });
 
-        //final AutoTransition zoomInTransition = new AutoTransition();
-
         zoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
         zoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
 
                 TabletMainActivity.inWideView = false;
 
@@ -291,9 +239,6 @@ public class TabletTreatmentFragment extends Fragment
                     }
                 }
 
-                //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, zoomInTransition);
-                //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
                 treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
                 tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
@@ -320,12 +265,6 @@ public class TabletTreatmentFragment extends Fragment
                     layoutParams.weight = 1.00f;
                     layout.setLayoutParams(layoutParams);
                 }
-
-
-                //tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-
-                //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
-
             }
         });
 
@@ -417,17 +356,9 @@ public class TabletTreatmentFragment extends Fragment
         tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setVisibility(View.INVISIBLE);
 
-        /*boolean newDisease = false;
-        if (newDisease) {
-            editTextDiseaseName.requestFocus();
-            editTextDiseaseName.setSelection(0);
-            categoryAdapter.setPagesCount(1);
-            tabLayout.setVisibility(View.GONE);
-        } else {*/
         textInputLayoutDiseaseName.setVisibility(View.GONE);
         editTextDateOfDisease.setVisibility(View.GONE);
         focusHolder.requestFocus();
-        //}
     }
 
     @Override
@@ -435,13 +366,6 @@ public class TabletTreatmentFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
 
         tabletMainActivity = (TabletMainActivity) getActivity();
-
-        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
-        /*if (tabletMainActivity != null) {
-            tabletMainActivity.getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
-                            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        }*/
 
         TreatmentAdapter categoryAdapter = new TreatmentAdapter(tabletMainActivity, this.getChildFragmentManager());
 
@@ -457,10 +381,6 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
-                    //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                    //treatmentPhotosFragment.fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
-                    //}
-
                     // и делаем анимацию fabEditTreatmentDescriptonShowAnimation
                     // если заболевание не в состоянии добавления или редактирования
                     if (!tabletMainActivity.newDiseaseAndTreatment) {
@@ -471,23 +391,15 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
 
-                    //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-
                     // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(treatmentPhotosFragment.fabAddTreatmentPhotosShowAnimation);
 
                         // показываем fabToFullScreen, если находимся в расширенном варианте окна
-                        //if (((ConstraintLayout.LayoutParams) treatmentPhotosFragment.verGuideline.getLayoutParams()).guidePercent != 1.00f) {
                         if (TabletMainActivity.inWideView) {
-                            //treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
                             treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
-
                         }
                     }
-
-                    // загружаем связынные с лечением снимки
-                    //treatmentPhotosFragment.initTreatmentPhotosLoader();
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -500,16 +412,9 @@ public class TabletTreatmentFragment extends Fragment
                 if (tab.getPosition() == 0) {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
                             getResources().getString(R.string.treatment_description)));
-
-                    //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
-
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_black_24dp),
                             getResources().getString(R.string.treatment_images)));
-
-                    //if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                    //treatmentPhotosFragment.fabAddTreatmentPhotos.setVisibility(View.INVISIBLE);
-                    //}
                 }
 
                 tabLayout.setTabTextColors(getResources().getColor(android.R.color.black),
@@ -546,12 +451,10 @@ public class TabletTreatmentFragment extends Fragment
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -590,8 +493,6 @@ public class TabletTreatmentFragment extends Fragment
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
         }
-
-        //tabletMainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     // SpannableString с картикной для элеменов меню
@@ -628,22 +529,9 @@ public class TabletTreatmentFragment extends Fragment
         treatmentDescriptionFragment.editTextTreatment.setText(textTreatment);
     }
 
-    /*public void setNewDisease(boolean newDisease) {
-        this.newDisease = newDisease;
-    }*/
-
-    /*public void setEditDisease(boolean editDisease) {
-        this.editDisease = editDisease;
-    }*/
-
-    /*public long get_idDisease() {
-        return _idDisease;
-    }*/
-
     public long get_idUser() {
         return _idUser;
     }
-
 
     public void saveDiseaseAndTreatment() {
         // устанавливаем анимацию на случай Error
@@ -691,16 +579,6 @@ public class TabletTreatmentFragment extends Fragment
         }
 
         // проверка окончена, начинаем сохранение
-
-        /*if (TabletDiseasesFragment.diseaseSelected) {
-            tabletMainActivity.tabletDiseasesFragment.animVerGuideline_3_from_30_to_60.start();
-        } else {
-            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
-            tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
-        }*/
-
-        //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
         // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
@@ -710,28 +588,9 @@ public class TabletTreatmentFragment extends Fragment
         textDateOfDisease = editTextDateOfDisease.getText().toString();
         textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
 
-        // если было нажато идти обратно
-        /*if (goBack) {
-            if (newDisease) {
-                // сохранять в базу в отдельном треде
-                saveDiseaseAndTreatmentToDataBase();
-            } else {
-                // обновлять в базу в отдельном треде
-                updateDiseaseAndTreatmentToDataBase();
-            }
-
-            onSavingOrUpdatingOrDeleting = false;
-
-            //и идем в DiseasesActivity
-            goToDiseasesActivity();
-
-        } else {*/
         if (tabletMainActivity.newDiseaseAndTreatment) {
 
             zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-            /*TabletMainActivity.newDiseaseAndTreatment = false;
-            TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
 
             // сохранять в базу в отдельном треде
             saveDiseaseAndTreatmentToDataBase();
@@ -739,57 +598,9 @@ public class TabletTreatmentFragment extends Fragment
 
             zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
-            /*if (!TabletMainActivity.inWideView) {
-
-                //zoomInTabletTreatment.performClick();
-                *//*treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
-                tabletMainActivity.tabletUsersWideTitle.setText("");*//*
-
-                //zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-                //tabletDiseasesFragment.animVerGuideline_3_from_0_to_60.start();
-                *//*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
-                tabletMainActivity.tabletUsersWideTitle.setText("");
-                tabletMainActivity.tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-
-                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-                tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                        tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-                );*//*
-            } else {
-                zoomInTabletTreatment.setVisibility(View.VISIBLE);
-            }*/
-
-            /*TabletMainActivity.newDiseaseAndTreatment = false;
-            TabletMainActivity.diseaseAndTreatmentInEdit = false;*/
             // обновлять в базу в отдельном треде
             updateDiseaseAndTreatmentToDataBase();
         }
-
-        /*tabletMainActivity.tabletDiseasesTitle.setText(textDiseaseName);
-        tabletMainActivity.tabletDiseasesTitle.setVisibility(View.VISIBLE);*/
-
-        //editDisease = false;
-        /*textInputLayoutDiseaseName.setVisibility(View.GONE);
-        editTextDateOfDisease.setVisibility(View.GONE);
-
-        treatmentDescriptionFragment.editTextTreatment.setSelection(0);
-        treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
-        treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
-        treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
-
-        focusHolder.requestFocus();*/
-
-        /*tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-
-        treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabEditTreatmentDescriptonShowAnimation);
-
-        tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;*/
-        //}
     }
 
     private void saveDiseaseAndTreatmentToDataBase() {
@@ -806,11 +617,6 @@ public class TabletTreatmentFragment extends Fragment
             // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
 
-            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе DiseasesActivity в true
-            // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
-            // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
-
-            //TabletDiseasesFragment.scrollToInsertedDiseasePosition = true;
         } else {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }
@@ -840,19 +646,12 @@ public class TabletTreatmentFragment extends Fragment
         if (rowsAffected == 0) {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
         } else {
-            //if (!TabletDiseasesFragment.diseaseSelected){
             tabletMainActivity.tabletTreatmentTitle.setText(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString());
-            //}
         }
 
         tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
 
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
-
-        // здесь обновляются _idUser и _idDisease в treatmentPhotosFragment
-        //treatmentPhotosFragment.initTreatmentPhotosLoader();
-
-        //treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabEditTreatmentDescriptonShowAnimation);
     }
 
     public void initLoaderToDiseaseAndTreatmentPhotos() {
@@ -1099,9 +898,6 @@ public class TabletTreatmentFragment extends Fragment
                 // result == 0 или result == 1
                 // если не было снимков для удаления или заболевание удалилось и снимки удалены (или отсутствуют)
 
-
-                int sz = mTabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.
-                        getDiseaseList().size();
 
                 mTabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                 mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(mTabletMainActivity.tabletUsersFragment.fabShowAnimation);
