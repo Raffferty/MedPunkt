@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.transition.AutoTransition;
 import android.transition.Transition;
@@ -160,12 +161,11 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-                    tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                    /*tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
                             tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-                    );
+                    );*/
 
                     tabletDiseaseSelected();
-
                 }
 
                 @Override
@@ -226,22 +226,28 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
-                    tabletMainActivity.tabletTreatmentFragment.setTextTreatment(" ");
+                    //tabletMainActivity.tabletTreatmentFragment.setTextTreatment(" ");
 
                     // ставим на таб "описание"
-                    Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
+                    if (tabletMainActivity.tabletTreatmentFragment.tabLayout.getSelectedTabPosition() == 1) {
+                        Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
+                    } else {
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                                tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
+                        );
+                    }
 
                     tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                    /* tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*/
 
-                    //float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+                    float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
 
                     //if (percentVerGuideline_2 != 0.30f) {
-                        /*tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                        /*tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
                         tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);*/
 
                     //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_30.start();
@@ -250,15 +256,33 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     //TabletMainActivity.inWideView = false;
 
-                    TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, tabletDiseaseItemClickTransition);
+                    if (percentVerGuideline_2 != 0.30f) {
 
-                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
+                        // показываем лечение
+                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, tabletDiseaseItemClickTransition);
+                        //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+
+                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.3f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
+                    } else {
+
+                        tabletDiseaseSelected();
+                    }
+
+
+
+                    /*if (tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
+                            fabEditTreatmentDescripton.getVisibility()!=View.VISIBLE){
+                        tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
+                                tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
+                        );
+                    }*/
 
                         /*new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+                                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
                                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
                             }
                         }, 300);*/
@@ -287,14 +311,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         void tabletDiseaseSelected() {
-            tabletMainActivity.tabletTreatmentFragment.set_idDisease(clicked_disease_id);
-            tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
-            tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
-            tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
-            tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
-
-            // грузим снимки этого заболевания
-            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.initTreatmentPhotosLoader();
 
             tabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
@@ -316,6 +332,15 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
+
+            tabletMainActivity.tabletTreatmentFragment.set_idDisease(clicked_disease_id);
+            tabletMainActivity.tabletTreatmentFragment.set_idUser(Long.valueOf(_diseaseUserId.getText().toString()));
+            tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName.getText().toString());
+            tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
+            tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
+
+            // грузим снимки этого заболевания
+            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.initTreatmentPhotosLoader();
         }
     }
 }

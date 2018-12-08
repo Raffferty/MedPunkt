@@ -48,7 +48,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/frm_blank"
+            android:id="@+id/txt_photo_title"
             android:layout_width="0dp"
             android:layout_height="42dp"
             android:layout_weight="1"
@@ -56,7 +56,6 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
             android:singleLine="true"
-            android:text="Disease_aa aa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:textColor="@color/white"
             android:textSize="22sp" />
 

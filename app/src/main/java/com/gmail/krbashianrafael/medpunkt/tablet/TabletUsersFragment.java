@@ -16,11 +16,13 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +42,10 @@ public class TabletUsersFragment extends Fragment
 
     private TabletMainActivity tabletMainActivity;
 
+    public ImageView imgCancelTabletUsers;
+
     private TextView txtAddUsers;
+    public TextView txtTabletUsers;
     public FloatingActionButton fabAddUser;
     public RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
@@ -48,6 +53,7 @@ public class TabletUsersFragment extends Fragment
     // Animation fabEditTreatmentDescriptonShowAnimation
     public Animation fabShowAnimation;
     private Animation fadeInAnimation;
+    private Animation onlyUsersAnimation;
 
     private static final int TABLET_USERS_LOADER = 1000;
 
@@ -67,11 +73,11 @@ public class TabletUsersFragment extends Fragment
 
         txtAddUsers = view.findViewById(R.id.txt_empty_users);
 
-        TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
+        txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
         //txtTabletUsers.setVisibility(View.VISIBLE);
         txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
 
-        ImageView imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
+        imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
         imgCancelTabletUsers.setVisibility(View.VISIBLE);
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,6 +187,32 @@ public class TabletUsersFragment extends Fragment
             @Override
             public void onAnimationRepeat(Animation animation) {
                 fabAddUser.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // создаем пустую анимацию, чтоб отделить движение tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+        // от движения:
+        // tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+        // tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+        onlyUsersAnimation =new TranslateAnimation(tabletMainActivity, null);
+        onlyUsersAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+
+                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
 
@@ -300,12 +332,13 @@ public class TabletUsersFragment extends Fragment
             recyclerUsers.setVisibility(View.INVISIBLE);
 
             tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+            tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
-            tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
-                    getDrawable(R.drawable.shadow));
+            /*tabletMainActivity.tabletUsersFrame.setBackground(tabletMainActivity.getResources().
+                    getDrawable(R.drawable.shadow));*/
 
             // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
             // и fabAddUser.setVisibility(View.INVISIBLE);
@@ -350,17 +383,17 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
 
             *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);
+            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.6f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
 
          *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.5f);
+            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.5f);
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
 
          *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.0f);
-            tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.3f);*//*
+            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);*//*
          *//*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);*//*
 
@@ -404,11 +437,12 @@ public class TabletUsersFragment extends Fragment
 
                 //tabletMainActivity.unBlur(TABLET_DISEASES_FRAGMENT);
 
-                tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
-                tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);
+                /*tabletMainActivity.tabletUsersFrame.setBackgroundResource(0);
+                tabletMainActivity.tabletUsersFrame.setPadding(0, 0, 0, 0);*/
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
-                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.50f);
+                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
+                tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
 
@@ -440,10 +474,11 @@ public class TabletUsersFragment extends Fragment
                 // то очищаем DiseasesFragment
                 // и предлагаем сдеалть выбор пользоватля для отображения его заболеваний
 
-                tabletMainActivity.tabletUsersFrame.setBackgroundResource(R.drawable.shadow);
+                //tabletMainActivity.tabletUsersFrame.setBackgroundResource(R.drawable.shadow);
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+                tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
                 tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
@@ -489,7 +524,7 @@ public class TabletUsersFragment extends Fragment
 
                 /*if (tabletMainActivity.firstLoad) {
                  *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*//*
 
@@ -497,26 +532,144 @@ public class TabletUsersFragment extends Fragment
 
                 } else {*/
 
+                /*AutoTransition transition_05 = new AutoTransition();
+                transition_05.addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                            *//*TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, new Fade());
 
-                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                            tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);*//*
 
-                float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Guideline.getLayoutParams()).guidePercent;
+                    }
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, new Fade());
+                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+
+                        tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+
+                        //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+
+                        //tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });*/
+
+                /*AutoTransition transition_03 = new AutoTransition();
+                transition_03.addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+
+                        *//*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*//*
+
+                        tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });*/
+
+
+                float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
 
                 if (percentVerGuideline_2 == 0.30f) {
+
+                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
+                    //tabletMainActivity.tabletDiseasesFrame.startAnimation(onlyUsersAnimation);
+
+                    // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
+                    tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
+
+                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, transition_03);
+
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
+
+                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);*/
+
+
+                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*/
+                    //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*/
+
+                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.3f);
                     tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.3f);
                     //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_30_to_90.start();
-                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.9f);*/
+
+
+
                 } else if (percentVerGuideline_2 == 0.50f) {
-                    tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.5f);
-                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.5f);
+
                     //tabletMainActivity.tabletDiseasesFragment.animVerGuideline_2_from_50_to_90.start();
-                    tabletMainActivity.ver_2_Guideline.setGuidelinePercent(0.9f);
+
+                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, transition_05);
+                    //TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+
+                    tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+                    //tabletMainActivity.tabletDiseasesFrame.startAnimation(onlyUsersAnimation);
+
+                    // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
+                    tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
+
+
+                    //tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
+
+                    /*tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
+                    tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);*/
+
+
+
+                    /*tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
+                    tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);*/
+
                 }
                 //}
 
                 //tabletMainActivity.blur(TABLET_DISEASES_FRAGMENT);
-                tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
+                //tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
                 //tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
 
                 //tabletMainActivity.blur(TABLET_TREATMENT_FRAGMENT);

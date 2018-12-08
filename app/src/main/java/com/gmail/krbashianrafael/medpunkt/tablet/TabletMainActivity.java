@@ -106,7 +106,7 @@ public class TabletMainActivity extends AppCompatActivity
     //public FrameLayout tabletDiseasesBlurFrame;
     //private FrameLayout tableTreatmentBlurFrame;
     public FrameLayout tabletUsersFrame;
-    //private FrameLayout tabletDiseasesFrame;
+    //public FrameLayout tabletDiseasesFrame;
 
     public FrameLayout tabletTreatmentDeleteFrame;
     //private FrameLayout tabletTreatmentSaveFrame;
@@ -116,7 +116,8 @@ public class TabletMainActivity extends AppCompatActivity
     public ViewGroup mSceneRoot;
 
     public Guideline ver_1_Guideline;
-    public Guideline ver_2_Guideline;
+    public Guideline ver_2_Left_Guideline;
+    public Guideline ver_2_Right_Guideline;
     public Guideline ver_3_Guideline;
     public Guideline ver_4_Guideline;
 
@@ -199,12 +200,14 @@ public class TabletMainActivity extends AppCompatActivity
         mSceneRoot = findViewById(R.id.scene_root);
 
         ver_1_Guideline = findViewById(R.id.ver_1_guideline);
-        ver_2_Guideline = findViewById(R.id.ver_2_guideline);
+        ver_2_Left_Guideline = findViewById(R.id.ver_2_Left_guideline);
+        ver_2_Right_Guideline = findViewById(R.id.ver_2_Right_guideline);
         ver_3_Guideline = findViewById(R.id.ver_3_guideline);
         ver_4_Guideline = findViewById(R.id.ver_4_guideline);
 
         ver_1_Guideline.setGuidelinePercent(0.1f);
-        ver_2_Guideline.setGuidelinePercent(0.9f);
+        ver_2_Left_Guideline.setGuidelinePercent(0.9f);
+        ver_2_Right_Guideline.setGuidelinePercent(0.9f);
         ver_3_Guideline.setGuidelinePercent(0.9f);
         ver_4_Guideline.setGuidelinePercent(0.9f);
 
@@ -275,7 +278,7 @@ public class TabletMainActivity extends AppCompatActivity
                 //TransitionManager.beginDelayedTransition(mSceneRoot);
 
                 *//*ver_1_Guideline.setGuidelinePercent(0.0f);
-                ver_2_Guideline.setGuidelinePercent(0.5f);
+                ver_2_Left_Guideline.setGuidelinePercent(0.5f);
                 ver_3_Guideline.setGuidelinePercent(1.0f);
                 ver_4_Guideline.setGuidelinePercent(1.0f);*//*
 
@@ -500,7 +503,8 @@ public class TabletMainActivity extends AppCompatActivity
                     //TransitionManager.beginDelayedTransition(mSceneRoot, deleteTransition);
 
                     ver_1_Guideline.setGuidelinePercent(0.0f);
-                    ver_2_Guideline.setGuidelinePercent(0.5f);
+                    ver_2_Left_Guideline.setGuidelinePercent(0.5f);
+                    ver_2_Right_Guideline.setGuidelinePercent(0.5f);
                     ver_3_Guideline.setGuidelinePercent(1.0f);
                     ver_4_Guideline.setGuidelinePercent(1.0f);
 
@@ -525,7 +529,7 @@ public class TabletMainActivity extends AppCompatActivity
 
 
                     /*ver_1_Guideline.setGuidelinePercent(0.0f);
-                    ver_2_Guideline.setGuidelinePercent(0.5f);
+                    ver_2_Left_Guideline.setGuidelinePercent(0.5f);
                     ver_3_Guideline.setGuidelinePercent(1.0f);
                     ver_4_Guideline.setGuidelinePercent(1.0f);*/
 
@@ -680,7 +684,8 @@ public class TabletMainActivity extends AppCompatActivity
                 // если добавляли новое заболевание при невыделенном другом заболевании
                 ver_3_Guideline.setGuidelinePercent(1.00f);
                 //tabletDiseasesFragment.animVerGuideline_2_from_30_to_50.start();
-                ver_2_Guideline.setGuidelinePercent(0.50f);
+                ver_2_Left_Guideline.setGuidelinePercent(0.50f);
+                ver_2_Right_Guideline.setGuidelinePercent(0.50f);
                 tabletUsersWideTitle.setVisibility(View.GONE);
                 tabletUsersWideTitle.setText("");
                 //tabletTreatmentTitle.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -835,7 +840,7 @@ public class TabletMainActivity extends AppCompatActivity
         }
 
         if (!usersLoaded) {
-            float percentVer_2 = ((ConstraintLayout.LayoutParams) ver_2_Guideline.getLayoutParams()).guidePercent;
+            float percentVer_2 = ((ConstraintLayout.LayoutParams) ver_2_Left_Guideline.getLayoutParams()).guidePercent;
 
             if (percentVer_2 != 0.90f) {
                 tabletDiseasesFragment.initDiseasesLoader();

@@ -17,7 +17,14 @@
         app:layout_constraintGuide_percent="0.00" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/ver_2_guideline"
+        android:id="@+id/ver_2_Left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/ver_2_Right_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -80,15 +87,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tablet_users_wide_title" />
 
     <!-- android:background="@android:drawable/dialog_holo_light_frame" -->
+    <!-- android:background="@drawable/shadow" -->
     <FrameLayout
         android:id="@+id/tablet_users_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
-        android:background="@drawable/shadow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ver_2_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/ver_2_Left_guideline"
         app:layout_constraintStart_toStartOf="@+id/ver_1_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_users_title">
 
@@ -126,7 +133,7 @@
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/ver_3_guideline"
-        app:layout_constraintStart_toStartOf="@+id/ver_2_guideline"
+        app:layout_constraintStart_toStartOf="@+id/ver_2_Right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/tablet_diseases_title">
 
         <fragment

@@ -163,7 +163,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, tapped;
     private boolean onLoading, onSavingOrUpdatingOrDeleting;
 
-    private View mDescriptionView, LL_title, frm_back, frm_blank, frm_save, frm_delete;
+    private View mDescriptionView, LL_title, frm_back, frm_save, frm_delete;
+    private TextView txtViewPhotoTitle;
     private EditText focusHolder, editTextDateOfTreatmentPhoto;
     private TextInputLayout textInputLayoutPhotoDescription;
     private TextInputEditText editTextPhotoDescription;
@@ -192,7 +193,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private ImageView imagePhoto;
 
     // TextView для ошибок при загрузке снимка
-    private TextView txtErr;
+    private TextView txtViewErr;
 
     // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
@@ -260,6 +261,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         // инициализируем все View
         findViewsById();
+
+        txtViewPhotoTitle.setText(textPhotoDescription);
 
         // Мой zoomer
         myImageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
@@ -348,12 +351,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                                             load(R.drawable.eda).into(imagePhoto);*//*
 
                                     imagePhoto.setImageResource(R.color.my_dark_gray);
-                                    txtErr.setVisibility(View.VISIBLE);
+                                    txtViewErr.setVisibility(View.VISIBLE);
                                 }
                             });*/
 
                             //imagePhoto.setImageResource(R.color.my_dark_gray);
-                            txtErr.setVisibility(View.VISIBLE);
+                            txtViewErr.setVisibility(View.VISIBLE);
 
                             /*new Thread(new Runnable() {
                                 @Override
@@ -381,9 +384,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             //on load success
 
-                            if (txtErr.getVisibility() == View.VISIBLE) {
+                            if (txtViewErr.getVisibility() == View.VISIBLE) {
 
-                                txtErr.setVisibility(View.GONE);
+                                txtViewErr.setVisibility(View.GONE);
                                 /*frm_save.setVisibility(View.VISIBLE);
 
                                 mDescriptionView.setVisibility(View.VISIBLE);
@@ -406,7 +409,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imagePhoto);
 
-            /*final TextView txtErr = findViewById(R.id.err_view);
+            /*final TextView txtViewErr = findViewById(R.id.err_view);
 
 
             GlideApp.with(this)
@@ -421,7 +424,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             //on load success
-                            txtErr.setVisibility(View.VISIBLE);
+                            txtViewErr.setVisibility(View.VISIBLE);
                             return false;
                         }
                     })
@@ -535,14 +538,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         mVisible = true;
         LL_title = findViewById(R.id.LL_title);
         frm_back = findViewById(R.id.frm_back);
-        frm_blank = findViewById(R.id.frm_blank);
+        txtViewPhotoTitle = findViewById(R.id.txt_photo_title);
         frm_save = findViewById(R.id.frm_save);
         frm_delete = findViewById(R.id.frm_delete);
         focusHolder = findViewById(R.id.focus_holder);
         editTextDateOfTreatmentPhoto = findViewById(R.id.editText_date);
         mDescriptionView = findViewById(R.id.fullscreen_content_description);
         imagePhoto = findViewById(R.id.fullscreen_image);
-        txtErr = findViewById(R.id.treatment_photo_err_view);
+        txtViewErr = findViewById(R.id.treatment_photo_err_view);
         textInputLayoutPhotoDescription = findViewById(R.id.text_input_layout_photo_description);
         editTextPhotoDescription = findViewById(R.id.editText_photo_description);
         fab = findViewById(R.id.fabEditTreatmentPhoto);
@@ -608,7 +611,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         frm_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (photoAndDescriptionHasNotChanged() || txtErr.getVisibility() == View.VISIBLE) {
+                if (photoAndDescriptionHasNotChanged() || txtViewErr.getVisibility() == View.VISIBLE) {
                     goToTreatmentActivity();
                 } else {
                     // Если были изменения
@@ -627,7 +630,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
         });
 
-        frm_blank.setOnClickListener(new View.OnClickListener() {
+        txtViewPhotoTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!editTreatmentPhoto) {
@@ -799,7 +802,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         super.onConfigurationChanged(newConfig);
 
         // изменение оринтации только для телефона
-        if (HomeActivity.isTablet || txtErr.getVisibility() == View.VISIBLE) {
+        if (HomeActivity.isTablet || txtViewErr.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -1049,7 +1052,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     //on load failed
 
-                                    txtErr.setVisibility(View.VISIBLE);
+                                    txtViewErr.setVisibility(View.VISIBLE);
 
                                     frm_save.setVisibility(View.INVISIBLE);
                                     LL_title.startAnimation(LL_title_showAnimation);
@@ -1069,9 +1072,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                     //on load success
 
-                                    if (txtErr.getVisibility() == View.VISIBLE) {
+                                    if (txtViewErr.getVisibility() == View.VISIBLE) {
 
-                                        txtErr.setVisibility(View.GONE);
+                                        txtViewErr.setVisibility(View.GONE);
                                         frm_save.setVisibility(View.VISIBLE);
 
                                         mDescriptionView.setVisibility(View.VISIBLE);
@@ -1096,11 +1099,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(imagePhoto);
 
-                    //final TextView txtErr = findViewById(R.id.err_view);
+                    //final TextView txtViewErr = findViewById(R.id.err_view);
 
-                    /*if (txtErr.getVisibility() == View.VISIBLE) {
+                    /*if (txtViewErr.getVisibility() == View.VISIBLE) {
 
-                        txtErr.setVisibility(View.GONE);
+                        txtViewErr.setVisibility(View.GONE);
                         frm_save.setVisibility(View.VISIBLE);
 
                         mDescriptionView.setVisibility(View.VISIBLE);
@@ -1119,7 +1122,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                                 @Override
                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                     //on load success
-                                    txtErr.setVisibility(View.VISIBLE);
+                                    txtViewErr.setVisibility(View.VISIBLE);
                                     frm_save.setVisibility(View.INVISIBLE);
 
                                     mDescriptionView.setVisibility(View.INVISIBLE);
@@ -1225,9 +1228,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
             onLoading = true;
 
-            /*if (txtErr.getVisibility() == View.VISIBLE) {
+            /*if (txtViewErr.getVisibility() == View.VISIBLE) {
 
-                txtErr.setVisibility(View.GONE);
+                txtViewErr.setVisibility(View.GONE);
                 frm_save.setVisibility(View.VISIBLE);
 
                 mDescriptionView.setVisibility(View.VISIBLE);
@@ -1269,7 +1272,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (photoAndDescriptionHasNotChanged() || txtErr.getVisibility() == View.VISIBLE) {
+        if (photoAndDescriptionHasNotChanged() || txtViewErr.getVisibility() == View.VISIBLE) {
             goToTreatmentActivity();
             return;
         }
@@ -1412,6 +1415,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // проверка окончена, начинаем сохранение
         textPhotoDescription = photoDescriptionToCheck;
         textDateOfTreatmentPhoto = dateOfTreatmentPhotoToCheck;
+
+        txtViewPhotoTitle.setText(textPhotoDescription);
+
 
         // в отдельном потоке пишем файл фотки в интернал
         if (imageUriInView != null) {
