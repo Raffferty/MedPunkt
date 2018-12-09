@@ -15,6 +15,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.15" />
 
+
     <android.support.constraint.Guideline
         android:id="@+id/ver_085_guideline"
         android:layout_width="wrap_content"
