@@ -78,7 +78,14 @@ public class TabletUsersFragment extends Fragment
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tabletMainActivity.finish();
+                // сначала сробатывает Ripple эфект на imgCancelTabletUsers
+                // потом с задержкой в пол-секунды запускается код ниже
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.finish();
+                    }
+                }, 300);
             }
         });
 

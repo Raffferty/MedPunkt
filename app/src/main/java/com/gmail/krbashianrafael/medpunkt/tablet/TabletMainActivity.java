@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Guideline;
 import android.support.v7.app.ActionBar;
@@ -31,6 +32,9 @@ import java.util.Locale;
 
 public class TabletMainActivity extends AppCompatActivity
         implements DatePickerDialog.OnDateSetListener {
+
+    public final Handler myTabletHandler = new Handler(Looper.getMainLooper());
+
 
     public TabletUsersFragment tabletUsersFragment;
     public TabletDiseasesFragment tabletDiseasesFragment;

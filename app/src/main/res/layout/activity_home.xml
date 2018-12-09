@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:paddingTop="16dp"
     tools:context="com.gmail.krbashianrafael.medpunkt.shared.HomeActivity">
 
@@ -15,11 +15,11 @@
         android:layout_margin="16dp"
         android:text="@string/greeting"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:textStyle="italic"
         android:textColor="@color/colorPrimaryDark"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/enter"
@@ -35,11 +35,11 @@
         android:id="@+id/checkbox_doctor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:layout_marginStart="24dp"
-        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginBottom="24dp"
         android:buttonTint="@color/colorPrimaryDark"
         android:text="@string/doctor"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/checkbox_show_greeting"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,11 +49,11 @@
         android:id="@+id/checkbox_show_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
         android:layout_marginStart="24dp"
-        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginBottom="64dp"
         android:buttonTint="@color/colorPrimaryDark"
         android:text="@string/show_greeting"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:targetApi="lollipop" />

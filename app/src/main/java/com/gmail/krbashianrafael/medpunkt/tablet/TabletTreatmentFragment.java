@@ -147,45 +147,57 @@ public class TabletTreatmentFragment extends Fragment
 
                 TabletMainActivity.inWideView = true;
 
-                zoomInTabletTreatment.setVisibility(View.VISIBLE);
-                zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
+                // сначала сробатывает Ripple эфект на zoomOutTabletTreatment
+                // и выставляется inWideView = true
+                // потом с задержкой в пол-секунды запускается код ниже
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
-                tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
-                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
+                        zoomInTabletTreatment.setVisibility(View.VISIBLE);
+                        zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
-                // если есть фото лечения, то в расширенном виде формируем вид окна
-                // и загружаем фото первой позиции
-                if (treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
-                        getTreatmentPhotosList().size() != 0) {
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.00f);
+                        tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
+                        tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
 
-                    treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
-                    treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
+                        // если есть фото лечения, то в расширенном виде формируем вид окна
+                        // и загружаем фото первой позиции
+                        if (treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
+                                getTreatmentPhotosList().size() != 0) {
 
-                    // это расширяет таб "снимки"
-                    LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-                    layoutParams.weight = 1.50f;
-                    layout.setLayoutParams(layoutParams);
+                            treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
+                            treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
 
-                    // получаем данные из первой позиции и грузим фото
-                    TreatmentPhotoItem treatmentPhotoItem = treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
+                            // это расширяет таб "снимки"
+                            LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                            layoutParams.weight = 1.50f;
+                            layout.setLayoutParams(layoutParams);
 
-                    treatmentPhotosFragment._idTrPhoto = treatmentPhotoItem.get_trPhotoId();
-                    treatmentPhotosFragment.treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
-                    treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
-                    treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
+                            // получаем данные из первой позиции и грузим фото
+                            TreatmentPhotoItem treatmentPhotoItem = treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
 
-                    // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
-                    TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotosFragment._idTrPhoto;
+                            treatmentPhotosFragment._idTrPhoto = treatmentPhotoItem.get_trPhotoId();
+                            treatmentPhotosFragment.treatmentPhotoFilePath = treatmentPhotoItem.getTrPhotoUri();
+                            treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
+                            treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
 
-                    treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+                            // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
+                            TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotosFragment._idTrPhoto;
 
-                    // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
-                }
+                            treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                            // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
+                        }
+                    }
+                }, 500);
             }
         });
 
+        // сначала сробатывает Ripple эфект на zoomInTabletTreatment
+        // и выставляется inWideView = false
+        // потом с задержкой в пол-секунды запускается код ниже
         zoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
         zoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,78 +205,84 @@ public class TabletTreatmentFragment extends Fragment
 
                 TabletMainActivity.inWideView = false;
 
-                // код для показа выделенного пользователя
-                if (TabletMainActivity.selectedUser_id != 0) {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    final ArrayList<UserItem> myUsersData = tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
+                        // код для показа выделенного пользователя
+                        if (TabletMainActivity.selectedUser_id != 0) {
 
-                    if (myUsersData.size() != 0) {
-                        tabletMainActivity.selectedUser_position = 0;
+                            final ArrayList<UserItem> myUsersData = tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
 
-                        for (int i = 0; i < myUsersData.size(); i++) {
-                            if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
-                                tabletMainActivity.selectedUser_position = i;
+                            if (myUsersData.size() != 0) {
+                                tabletMainActivity.selectedUser_position = 0;
+
+                                for (int i = 0; i < myUsersData.size(); i++) {
+                                    if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
+                                        tabletMainActivity.selectedUser_position = i;
+                                    }
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tabletMainActivity.tabletUsersFragment.recyclerUsers.smoothScrollToPosition(tabletMainActivity.selectedUser_position);
+                                    }
+                                }, 250);
                             }
                         }
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tabletMainActivity.tabletUsersFragment.recyclerUsers.smoothScrollToPosition(tabletMainActivity.selectedUser_position);
-                            }
-                        }, 250);
-                    }
-                }
+                        // код для показа выделенного заболевания
+                        if (TabletMainActivity.selectedDisease_id != 0) {
 
-                // код для показа выделенного заболевания
-                if (TabletMainActivity.selectedDisease_id != 0) {
+                            final ArrayList<DiseaseItem> myDiseasesData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
-                    final ArrayList<DiseaseItem> myDiseasesData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
+                            if (myDiseasesData.size() != 0) {
+                                tabletMainActivity.selectedDisease_position = 0;
 
-                    if (myDiseasesData.size() != 0) {
-                        tabletMainActivity.selectedDisease_position = 0;
+                                for (int i = 0; i < myDiseasesData.size(); i++) {
+                                    if (myDiseasesData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
+                                        tabletMainActivity.selectedDisease_position = i;
+                                    }
+                                }
 
-                        for (int i = 0; i < myDiseasesData.size(); i++) {
-                            if (myDiseasesData.get(i).get_diseaseId() == TabletMainActivity.selectedDisease_id) {
-                                tabletMainActivity.selectedDisease_position = i;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);
+                                    }
+                                }, 500);
                             }
                         }
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);
-                            }
-                        }, 500);
+                        treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                        tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                        tabletMainActivity.tabletUsersWideTitle.setText("");
+                        treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
+                        zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                        zoomOutTabletTreatment.setVisibility(View.VISIBLE);
+
+                        // код для очистки выделения фото заболевания и очистки imgWideView
+                        if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
+                            TabletMainActivity.selectedTreatmentPhoto_id = 0;
+                            treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
+
+                            Glide.with(tabletMainActivity).clear(treatmentPhotosFragment.imgWideView);
+
+                            treatmentPhotosFragment._idTrPhoto = 0;
+                            treatmentPhotosFragment.treatmentPhotoFilePath = "";
+                            treatmentPhotosFragment.textDateOfTreatmentPhoto = "";
+                            treatmentPhotosFragment.textPhotoDescription = "";
+
+                            // ширину табов делаем одинаковыми
+                            LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+                            layoutParams.weight = 1.00f;
+                            layout.setLayoutParams(layoutParams);
+                        }
                     }
-                }
-
-                treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-                tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
-                tabletMainActivity.tabletUsersWideTitle.setText("");
-                treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
-                zoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-                // код для очистки выделения фото заболевания и очистки imgWideView
-                if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
-                    TabletMainActivity.selectedTreatmentPhoto_id = 0;
-                    treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
-
-                    Glide.with(tabletMainActivity).clear(treatmentPhotosFragment.imgWideView);
-
-                    treatmentPhotosFragment._idTrPhoto = 0;
-                    treatmentPhotosFragment.treatmentPhotoFilePath = "";
-                    treatmentPhotosFragment.textDateOfTreatmentPhoto = "";
-                    treatmentPhotosFragment.textPhotoDescription = "";
-
-                    // ширину табов делаем одинаковыми
-                    LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-                    layoutParams.weight = 1.00f;
-                    layout.setLayoutParams(layoutParams);
-                }
+                }, 500);
             }
         });
 

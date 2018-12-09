@@ -86,7 +86,15 @@ public class TabletDiseasesFragment extends Fragment
                 clearDataFromDiseasesFragment();
 
                 TabletMainActivity.selectedUser_id = 0;
-                tabletMainActivity.tabletUsersFragment.initUsersLoader();
+
+                // сначала сробатывает Ripple эфект на imgCancelTabletDiseases
+                // потом с задержкой в пол-секунды запускается код ниже
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.tabletUsersFragment.initUsersLoader();
+                    }
+                }, 500);
             }
         });
 
