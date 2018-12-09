@@ -28,7 +28,6 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.io.File;
 
-
 public class HomeActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "PREFS";
