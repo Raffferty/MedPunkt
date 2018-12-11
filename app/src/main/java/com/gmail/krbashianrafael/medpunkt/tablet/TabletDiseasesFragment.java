@@ -94,7 +94,7 @@ public class TabletDiseasesFragment extends Fragment
                     public void run() {
                         tabletMainActivity.tabletUsersFragment.initUsersLoader();
                     }
-                }, 500);
+                }, 200);
             }
         });
 

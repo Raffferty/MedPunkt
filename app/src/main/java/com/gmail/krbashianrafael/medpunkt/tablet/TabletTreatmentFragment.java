@@ -191,7 +191,7 @@ public class TabletTreatmentFragment extends Fragment
                             // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
                         }
                     }
-                }, 500);
+                }, 250);
             }
         });
 
@@ -282,7 +282,7 @@ public class TabletTreatmentFragment extends Fragment
                             layout.setLayoutParams(layoutParams);
                         }
                     }
-                }, 500);
+                }, 250);
             }
         });
 

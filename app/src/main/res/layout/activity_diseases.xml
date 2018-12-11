@@ -14,7 +14,6 @@
         android:background="@color/colorPrimary"
         android:gravity="center"
         android:text="@string/diseases_what_text"
-        android:textAppearance="@style/Widget.AppCompat.Toolbar"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 

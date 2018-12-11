@@ -227,7 +227,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             // если это планшет и в расширенном виде и делается клик не на том же элементе
             if (HomeActivity.isTablet
-                    && TabletMainActivity.selectedDisease_id != clicked_treatmentPhoto_id
+                    && TabletMainActivity.selectedTreatmentPhoto_id != clicked_treatmentPhoto_id
                     && TabletMainActivity.inWideView) {
 
                 loadTreamentPhotoInImgWideView(itemUri.getText().toString());
@@ -236,6 +236,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
             } else {
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
