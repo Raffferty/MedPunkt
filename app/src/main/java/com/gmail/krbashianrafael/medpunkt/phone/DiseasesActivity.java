@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -17,16 +18,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
+import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseRecyclerViewAdapter;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("SpellCheckingInspection")
+@SuppressLint("RestrictedApi")
 public class DiseasesActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -53,10 +60,60 @@ public class DiseasesActivity extends AppCompatActivity
      */
     private static final int DISEASES_LOADER = 1;
 
+    private AdView adViewInDiseasesActivity;
+    private AdRequest adRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diseases);
+
+        // рекламный блок -----
+        // инициализация просиходит в HomeActivity
+        // мой app_id = ca-app-pub-5926695077684771~8182565017
+        // MobileAds.initialize(this, getResources().getString(R.string.app_id));
+        // Запускается в onResume
+        // adViewInDiseasesActivity.loadAd(adRequest);
+
+        FrameLayout adViewFrame = findViewById(R.id.adViewFrame);
+        adViewFrame.setVisibility(View.VISIBLE);
+
+        adViewInDiseasesActivity = findViewById(R.id.adViewInDiseasesActivity);
+
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                //.addTestDevice("7D6074C25D2B142E67EA1A88F1EACA1E") // Sony Ericson
+                //.addTestDevice("72C8B9DAE86F2FD98F7D59D62911A49B") // Samsung Nat
+                .build();
+
+        adViewInDiseasesActivity.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // если реклама загрузилась - показываем
+                adViewInDiseasesActivity.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // если реклама не загрузилась - скрываем
+                adViewInDiseasesActivity.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAdOpened() {
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+            }
+
+            @Override
+            public void onAdClosed() {
+            }
+        });
+
+
+        // --------------------
 
         Intent intent = getIntent();
 
@@ -72,6 +129,9 @@ public class DiseasesActivity extends AppCompatActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_30dp);
+
+            // т.к. под actionBar будет рекламный баннер, то actionBar.setElevation(0);
+            actionBar.setElevation(0);
 
             if (textUserName != null) {
                 actionBar.setTitle(textUserName);
@@ -155,8 +215,21 @@ public class DiseasesActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPause() {
+        if (adViewInDiseasesActivity != null) {
+            adViewInDiseasesActivity.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        // запускаем рекламный блок
+        if (adViewInDiseasesActivity != null) {
+            adViewInDiseasesActivity.loadAd(adRequest);
+        }
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         textViewAddDisease.setVisibility(View.INVISIBLE);
@@ -164,6 +237,14 @@ public class DiseasesActivity extends AppCompatActivity
 
         // Инициализируем Loader
         getLoaderManager().initLoader(DISEASES_LOADER, null, this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adViewInDiseasesActivity != null) {
+            adViewInDiseasesActivity.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override

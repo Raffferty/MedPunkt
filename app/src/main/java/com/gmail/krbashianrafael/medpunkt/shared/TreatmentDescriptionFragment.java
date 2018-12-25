@@ -1,8 +1,8 @@
 package com.gmail.krbashianrafael.medpunkt.shared;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -19,6 +19,9 @@ import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
+import java.util.Objects;
+
+@SuppressLint("RestrictedApi")
 public class TreatmentDescriptionFragment extends Fragment {
 
     // кастомный EditText у которого клавиатура не перекрывает текст
@@ -103,12 +106,27 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
+                    // В режиме редактировани скрываем рекламные блоки
+                    if (TabletMainActivity.inWideView){
+                        // скрываем БОЛЬШОЙ рекламный блок
+                        if (mTabletMainActivity.adViewInTabletWideView != null){
+                            mTabletMainActivity.adViewInTabletWideView.setVisibility(View.GONE);
+                            mTabletMainActivity.adViewInTabletWideView.pause();
+                        }
+                    } else {
+                        // скрываем МАЛЫЙ рекламный блок
+                        mTabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                        if (mTabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                            mTabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
+                        }
+                    }
+
                     mTabletMainActivity.diseaseAndTreatmentInEdit = true;
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
                     mTabletMainActivity.tabletDiseasesFragment.fabAddDisease.startAnimation(fabHideAnimation);
                     mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
 
-                    new Handler().postDelayed(new Runnable() {
+                    mTabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
@@ -116,13 +134,13 @@ public class TreatmentDescriptionFragment extends Fragment {
                             mTabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
                             mTabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
 
-                            mTabletMainActivity.tempTextDiseaseName = mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
-                            mTabletMainActivity.tempTextDateOfTreatment = mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-                            mTabletMainActivity.tempTextTreatment = mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+                            mTabletMainActivity.tempTextDiseaseName = Objects.requireNonNull(mTabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText()).toString();
+                            mTabletMainActivity.tempTextDateOfTreatment = Objects.requireNonNull(mTabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText()).toString();
+                            mTabletMainActivity.tempTextTreatment = Objects.requireNonNull(mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
                             mTabletMainActivity.tabletTreatmentFragment.editDisease = true;
                             editTextTreatment.requestFocus();
-                            editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+                            editTextTreatment.setSelection(Objects.requireNonNull(editTextTreatment.getText()).toString().length());
                             mTabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.VISIBLE);
                             mTabletMainActivity.tabletTreatmentDelete.setVisibility(View.VISIBLE);
 
@@ -278,7 +296,7 @@ public class TreatmentDescriptionFragment extends Fragment {
                     editTextTreatment.setFocusableInTouchMode(true);
                     editTextTreatment.setCursorVisible(true);
                     editTextTreatment.requestFocus();
-                    editTextTreatment.setSelection(editTextTreatment.getText().toString().length());
+                    editTextTreatment.setSelection(Objects.requireNonNull(editTextTreatment.getText()).toString().length());
 
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 

@@ -49,7 +49,7 @@
     <string name="patient_cant_update">Patient could not be updated</string>
     <string name="patient_delete">Delete patient</string>
     <string name="patient_not_deleted">Patient could not be deleted</string>
-    <string name="patient_treatment_title_text">Symptomatology and Treatment</string>
+    <string name="patient_treatment_title_text">Symptoms and Treatment</string>
     <string name="patient_treatment_description_hint_text">Symptoms and treatment description</string>
 
     <!-- diseases_activity -->
@@ -89,6 +89,8 @@
     <string name="image_loading_error">Image loading error</string>
 
     <!-- do not translate -->
+    <string name="app_id" translatable="false">ca-app-pub-5926695077684771~8182565017</string>
+    <string name="banner_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     <string name="app_name" translatable="false">\u2000MedPunkt</string>
     <string name="title_activity_home" translatable="false">MedPunkt</string>
     <string name="txt_no_title" translatable="false">No Title</string>

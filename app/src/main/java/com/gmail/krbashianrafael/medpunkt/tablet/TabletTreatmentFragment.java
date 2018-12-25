@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -28,6 +27,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,6 +54,8 @@ import com.gmail.krbashianrafael.medpunkt.shared.TreatmentDescriptionFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotoItem;
 import com.gmail.krbashianrafael.medpunkt.shared.TreatmentPhotosFragment;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdView;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -61,9 +63,12 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("RestrictedApi")
 public class TabletTreatmentFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -107,6 +112,8 @@ public class TabletTreatmentFragment extends Fragment
 
     public TabLayout tabLayout;
 
+    public FrameLayout adViewFrameTabletTreatmentFragment;
+    public AdView adViewInTabletTreatmentFragment;
 
     public TabletTreatmentFragment() {
         // Required empty public constructor
@@ -122,6 +129,38 @@ public class TabletTreatmentFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+        // рекламный блок в TabletTreatmentFragment
+        adViewFrameTabletTreatmentFragment = view.findViewById(R.id.adViewFrameTabletTreatment);
+        adViewInTabletTreatmentFragment = view.findViewById(R.id.adViewInTabletTreatment);
+        adViewInTabletTreatmentFragment.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // если реклама загрузилась - показываем
+                adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
+                TabletMainActivity.adIsShown = true;
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // если реклама не загрузилась - скрываем
+                adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                TabletMainActivity.adIsShown = false;
+            }
+
+            @Override
+            public void onAdOpened() {
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+            }
+
+            @Override
+            public void onAdClosed() {
+            }
+        });
 
         // убираем фреймы, которые нужны только на телефоне
         FrameLayout frmDividerGreen = view.findViewById(R.id.divider_frame_white);
@@ -145,7 +184,16 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onClick(View v) {
 
+                if (tabletMainActivity == null) {
+                    return;
+                }
+
                 TabletMainActivity.inWideView = true;
+
+                // показываем БОЛЬШОЙ рекламный блок
+                if (tabletMainActivity.adViewInTabletWideView != null) {
+                    tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
+                }
 
                 // сначала сробатывает Ripple эфект на zoomOutTabletTreatment
                 // и выставляется inWideView = true
@@ -153,6 +201,12 @@ public class TabletTreatmentFragment extends Fragment
                 tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+                        // скрываем МАЛЫЙ рекламный блок
+                        adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                        if (adViewInTabletTreatmentFragment != null) {
+                            adViewInTabletTreatmentFragment.pause();
+                        }
 
                         zoomInTabletTreatment.setVisibility(View.VISIBLE);
                         zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
@@ -203,6 +257,10 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onClick(View v) {
 
+                if (tabletMainActivity == null) {
+                    return;
+                }
+
                 TabletMainActivity.inWideView = false;
 
                 tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
@@ -223,7 +281,7 @@ public class TabletTreatmentFragment extends Fragment
                                     }
                                 }
 
-                                new Handler().postDelayed(new Runnable() {
+                                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         tabletMainActivity.tabletUsersFragment.recyclerUsers.smoothScrollToPosition(tabletMainActivity.selectedUser_position);
@@ -246,13 +304,25 @@ public class TabletTreatmentFragment extends Fragment
                                     }
                                 }
 
-                                new Handler().postDelayed(new Runnable() {
+                                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);
                                     }
                                 }, 500);
                             }
+                        }
+
+                        // скрываем рекламный блок
+                        if (tabletMainActivity.adViewInTabletWideView != null) {
+                            tabletMainActivity.adViewInTabletWideView.setVisibility(View.GONE);
+                            tabletMainActivity.adViewInTabletWideView.pause();
+                        }
+
+                        // показываем МАЛЫЙ рекламный блок
+                        //adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
+                        if (adViewInTabletTreatmentFragment != null) {
+                            adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
                         }
 
                         treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
@@ -493,6 +563,31 @@ public class TabletTreatmentFragment extends Fragment
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (adViewInTabletTreatmentFragment != null) {
+            adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adViewInTabletTreatmentFragment != null) {
+            adViewInTabletTreatmentFragment.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adViewInTabletTreatmentFragment != null) {
+            adViewInTabletTreatmentFragment.destroy();
+        }
+    }
+
     // инициализация Фрагментов если они null
     // вызов этого метода и проверка происходит в самих фрагментах
     public void initTreatmentDescriptionFragment() {
@@ -556,7 +651,7 @@ public class TabletTreatmentFragment extends Fragment
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
 
-        String nameToCheck = editTextDiseaseName.getText().toString().trim();
+        String nameToCheck = Objects.requireNonNull(editTextDiseaseName.getText()).toString().trim();
         String dateOfDiseaseToCheck = editTextDateOfDisease.getText().toString();
         boolean wrongField = false;
 
@@ -604,7 +699,7 @@ public class TabletTreatmentFragment extends Fragment
         // для дальнейшей проверки на их изменения
         textDiseaseName = nameToCheck;
         textDateOfDisease = editTextDateOfDisease.getText().toString();
-        textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
+        textTreatment = Objects.requireNonNull(treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
         if (tabletMainActivity.newDiseaseAndTreatment) {
 
@@ -615,6 +710,9 @@ public class TabletTreatmentFragment extends Fragment
         } else {
 
             zoomInTabletTreatment.setVisibility(View.VISIBLE);
+
+            // т.к. после обновления заболевания в планшетном виде остаемся в inWideView, открываем БОЛЬШОЙ рекламный блок
+            tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
 
             // обновлять в базу в отдельном треде
             updateDiseaseAndTreatmentToDataBase();
@@ -647,6 +745,17 @@ public class TabletTreatmentFragment extends Fragment
         treatmentPhotosFragment.initTreatmentPhotosLoader();
 
         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabEditTreatmentDescriptonShowAnimation);
+
+        // т.к. после сохранения нового заболевания в планшетном виде переходим в НЕ inWideView, открываем МАЛЫЙ рекламный блок
+        tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
+                if (adViewInTabletTreatmentFragment != null) {
+                    adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+                }
+            }
+        }, 250);
     }
 
     private void updateDiseaseAndTreatmentToDataBase() {
@@ -664,7 +773,7 @@ public class TabletTreatmentFragment extends Fragment
         if (rowsAffected == 0) {
             Toast.makeText(tabletMainActivity, R.string.treatment_cant_update, Toast.LENGTH_LONG).show();
         } else {
-            tabletMainActivity.tabletTreatmentTitle.setText(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString());
+            tabletMainActivity.tabletTreatmentTitle.setText(Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText()).toString());
         }
 
         tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;

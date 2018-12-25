@@ -44,13 +44,37 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="1.00" />
 
+    <!-- тестовый banner_id = ca-app-pub-3940256099942544/6300978111 -->
+    <FrameLayout
+        android:id="@+id/adViewTabletFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingTop="0.5dp"
+        android:paddingBottom="0.5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adViewInTablet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="@string/banner_id"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/adViewTabletFrame" />
 
     <TextView
         android:id="@+id/tablet_users_wide_title"
@@ -67,7 +91,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/ver_3_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/adViewTabletFrame" />
 
     <TextView
         android:id="@+id/tablet_users_title"

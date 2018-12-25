@@ -85,8 +85,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 
 
+@SuppressWarnings("UnusedAssignment")
+@SuppressLint("RestrictedApi")
 public class UserActivity extends AppCompatActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback,
         LoaderManager.LoaderCallbacks<Cursor>,
@@ -147,8 +150,6 @@ public class UserActivity extends AppCompatActivity
     // путь к сохраненному фото
     private String userPhotoUri, userSetNoPhotoUri = "";
 
-    //private String olduserPhotoUri;
-
     // id пользователя
     private long _idUser = 0;
 
@@ -177,12 +178,12 @@ public class UserActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         if (HomeActivity.isTablet) {
+            setContentView(R.layout.tablet_activity_user);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
+            setContentView(R.layout.activity_user);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-
-        setContentView(R.layout.activity_user);
 
         Intent intent = getIntent();
 
@@ -441,7 +442,7 @@ public class UserActivity extends AppCompatActivity
                     // используем эту библиотеку для
                     // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        String dateInEditTextDate = editTextDate.getText().toString().trim();
+                        String dateInEditTextDate = Objects.requireNonNull(editTextDate.getText()).toString().trim();
 
                         int mYear;
                         int mMonth;
@@ -538,7 +539,7 @@ public class UserActivity extends AppCompatActivity
                 editTextName.requestFocus();
 
                 // устанавливаем курсор в конец строки (cursor)
-                editTextName.setSelection(editTextName.getText().length());
+                editTextName.setSelection(Objects.requireNonNull(editTextName.getText()).length());
                 editTextDate.setEnabled(true);
                 imagePhoto.setClickable(true);
 
@@ -953,8 +954,8 @@ public class UserActivity extends AppCompatActivity
         scaleAnimation.setDuration(500);
 
         // првоерка имени и ДР
-        String nameToCheck = editTextName.getText().toString().trim();
-        String birthDateToCheck = editTextDate.getText().toString();
+        String nameToCheck = Objects.requireNonNull(editTextName.getText()).toString().trim();
+        String birthDateToCheck = Objects.requireNonNull(editTextDate.getText()).toString();
         boolean wrongField = false;
 
         if (TextUtils.isEmpty(nameToCheck)) {
@@ -1066,8 +1067,8 @@ public class UserActivity extends AppCompatActivity
     // проверка на изменения пользователя
     private boolean userHasNotChanged() {
         return !userHasChangedPhoto &&
-                editTextName.getText().toString().equals(textUserName) &&
-                editTextDate.getText().toString().equals(textUserBirthDate);
+                Objects.requireNonNull(editTextName.getText()).toString().equals(textUserName) &&
+                Objects.requireNonNull(editTextDate.getText()).toString().equals(textUserBirthDate);
 
     }
 

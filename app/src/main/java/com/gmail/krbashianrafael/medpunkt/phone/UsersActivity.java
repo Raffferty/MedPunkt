@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.phone;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -32,6 +33,7 @@ import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressLint("RestrictedApi")
 public class UsersActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 

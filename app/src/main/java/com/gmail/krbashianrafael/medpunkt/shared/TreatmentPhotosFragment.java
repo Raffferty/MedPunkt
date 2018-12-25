@@ -36,6 +36,8 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("RestrictedApi")
 public class TreatmentPhotosFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -94,6 +96,11 @@ public class TreatmentPhotosFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (HomeActivity.isTablet) {
+            return inflater.inflate(R.layout.tablet_treatment_photos_fragment, container, false);
+        }
+
         return inflater.inflate(R.layout.treatment_photos_fragment, container, false);
     }
 

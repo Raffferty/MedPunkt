@@ -224,9 +224,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         void tabletDiseaseSelected() {
 
-            tabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+            tabletMainActivity.tempTextDiseaseName = Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText()).toString();
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-            tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+            tabletMainActivity.tempTextTreatment = Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
             // устанавливаем новое значение для selected_disease_id
             // и заново отрисовываем все видимые элементы в diseaseRecyclerView

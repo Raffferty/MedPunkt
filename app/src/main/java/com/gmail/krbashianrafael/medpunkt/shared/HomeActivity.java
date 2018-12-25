@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,8 +25,6 @@ import android.widget.TextView;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
@@ -37,27 +35,15 @@ public class HomeActivity extends AppCompatActivity {
     public static boolean iAmDoctor = false;
     public static boolean isTablet = false;
 
-    private AdView adView;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, "ca-app-pub-5926695077684771~8182565017");
-
-        adView = findViewById(R.id.adView);
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-
-        adView.loadAd(adRequest);
-
-
-
+        // инициализируем MobileAds с id приложения MedPunkt
+        // мой app_id = ca-app-pub-5926695077684771~8182565017
+        MobileAds.initialize(this, getResources().getString(R.string.app_id));
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -86,13 +72,26 @@ public class HomeActivity extends AppCompatActivity {
 
         // узнаем Планшет это или нет
         if (!prefs.contains("isTablet")) {
-            Configuration configuration = getResources().getConfiguration();
 
-            //The smallest screen size an application will see in normal operation,
-            // corresponding to smallest screen width resource qualifier.
-            int smallestScreenWidthDp = configuration.smallestScreenWidthDp;
+            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+            float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+            float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-            if (smallestScreenWidthDp >= 600) {
+            float maxSize;
+            float minSize;
+
+            if (dpHeight >= dpWidth) {
+                maxSize = dpHeight;
+                minSize = dpWidth;
+            } else {
+                maxSize = dpWidth;
+                minSize = dpHeight;
+            }
+
+            // минимальную ширину, при которой, устройстово будет считаться планшетом, ставим 800dp
+            // т.к. рекламный блок в fragment_tablet_treatment имеет размер 320dp
+            // а размещается он в фрейме размером 40% от общей ширины, т.е. 800*0,4 = 320
+            if (maxSize >= 960 && minSize >= 600) {
                 isTablet = true;
                 prefsEditor.putBoolean("isTablet", true);
             } else {
@@ -104,6 +103,29 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             isTablet = prefs.getBoolean("isTablet", false);
         }
+
+        /*if (!prefs.contains("isTablet")) {
+            Configuration configuration = getResources().getConfiguration();
+
+            //The smallest screen size an application will see in normal operation,
+            // corresponding to smallest screen width resource qualifier.
+            int smallestScreenWidthDp = configuration.smallestScreenWidthDp;
+
+            // минимальную ширину, при которой, устройстово будет считаться планшетом, ставим 800dp
+            // т.к. рекламный блок в fragment_tablet_treatment имеет размер 320dp
+            // а размещается он в фрейме размером 40% от общей ширины, т.е. 800*0,4 = 320
+            if (smallestScreenWidthDp >= 320) {
+                isTablet = true;
+                prefsEditor.putBoolean("isTablet", true);
+            } else {
+                prefsEditor.putBoolean("isTablet", false);
+            }
+
+            prefsEditor.apply();
+
+        } else {
+            isTablet = prefs.getBoolean("isTablet", false);
+        }*/
 
         final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
 
@@ -191,33 +213,6 @@ public class HomeActivity extends AppCompatActivity {
         if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
             new CleanNotDeletedFilesAsyncTask(notDeletedFilesPaths).execute(getApplicationContext());
         }
-    }
-
-    /** Called when leaving the activity */
-    @Override
-    public void onPause() {
-        if (adView != null) {
-            adView.pause();
-        }
-        super.onPause();
-    }
-
-    /** Called when returning to the activity */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (adView != null) {
-            adView.resume();
-        }
-    }
-
-    /** Called before the activity is destroyed */
-    @Override
-    public void onDestroy() {
-        if (adView != null) {
-            adView.destroy();
-        }
-        super.onDestroy();
     }
 
     private static class CleanNotDeletedFilesAsyncTask extends AsyncTask<Context, Void, Boolean> {

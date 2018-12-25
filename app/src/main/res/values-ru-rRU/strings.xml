@@ -2,7 +2,7 @@
 <resources>
     <!-- app -->
     <string name="greeting">MedPunkt
-        \n\n\поможет запомнить когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.</string>
+        \n\n\поможет запомнить, когда и чем болели Вы, ваши близкие или ваши пациенты и какое было лечение.</string>
     <string name="doctor">Я врач</string>
     <string name="show_greeting">Больше не показывать</string>
 
@@ -48,8 +48,8 @@
     <string name="patient_cant_update">Пациента не удалось обновить</string>
     <string name="patient_delete">Удалить пациента</string>
     <string name="patient_not_deleted">Пациент НЕ удалился</string>
-    <string name="patient_treatment_title_text">Симптоматика и Лечение</string>
-    <string name="patient_treatment_description_hint_text">Описание симтомов и лечения</string>
+    <string name="patient_treatment_title_text">Симптомы и Лечение</string>
+    <string name="patient_treatment_description_hint_text">Описание симтомов и лечение</string>
 
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Заболевания</string>

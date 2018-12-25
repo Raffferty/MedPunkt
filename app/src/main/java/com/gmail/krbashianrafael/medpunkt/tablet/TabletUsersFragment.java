@@ -1,5 +1,6 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,13 +38,14 @@ import com.gmail.krbashianrafael.medpunkt.shared.UsersRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("RestrictedApi")
 public class TabletUsersFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private TabletMainActivity tabletMainActivity;
 
     private TextView txtAddUsers;
-    public TextView txtTabletUsers;
     public FloatingActionButton fabAddUser;
     public RecyclerView recyclerUsers;
     public UsersRecyclerViewAdapter usersRecyclerViewAdapter;
@@ -70,7 +72,7 @@ public class TabletUsersFragment extends Fragment
 
         txtAddUsers = view.findViewById(R.id.txt_empty_users);
 
-        txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
+        TextView txtTabletUsers = view.findViewById(R.id.txt_tablet_users);
         txtTabletUsers.setBackgroundColor(getResources().getColor(R.color.my_dark_gray));
 
         ImageView imgCancelTabletUsers = view.findViewById(R.id.img_cancel_tablet_users);
@@ -296,7 +298,7 @@ public class TabletUsersFragment extends Fragment
 
         // код для показа выделенного пользователя
         if (myData.size() != 0) {
-            new Handler().postDelayed(new Runnable() {
+            tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
@@ -429,7 +431,7 @@ public class TabletUsersFragment extends Fragment
                             }
                         }
 
-                        new Handler().postDelayed(new Runnable() {
+                        tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);

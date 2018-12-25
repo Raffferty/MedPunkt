@@ -72,8 +72,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 
-
+@SuppressLint("RestrictedApi")
 public class FullscreenPhotoActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         DatePickerDialog.OnDateSetListener {
@@ -371,7 +372,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 // устанавливаем вид в зависимости от ориентации экрана при первом вхождении
                 if (myScreenOrientation == Configuration.ORIENTATION_PORTRAIT) {
                     editTextPhotoDescription.requestFocus();
-                    editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
+                    editTextPhotoDescription.setSelection(Objects.requireNonNull(editTextPhotoDescription.getText()).toString().length());
                     frm_delete.setVisibility(View.GONE);
                 } else {
                     mDescriptionView.setVisibility(View.INVISIBLE);
@@ -626,7 +627,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 mDescriptionView.setVisibility(View.VISIBLE);
                 editTextDateOfTreatmentPhoto.setVisibility(View.VISIBLE);
                 editTextPhotoDescription.requestFocus();
-                editTextPhotoDescription.setSelection(editTextPhotoDescription.getText().toString().length());
+                editTextPhotoDescription.setSelection(Objects.requireNonNull(editTextPhotoDescription.getText()).toString().length());
                 fab.setVisibility(View.INVISIBLE);
                 editTreatmentPhoto = true;
                 frm_save.setVisibility(View.VISIBLE);
@@ -1002,7 +1003,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     // проверка на изменения описания, даты и фото
     private boolean photoAndDescriptionHasNotChanged() {
         return !treatmentPhotoHasChanged &&
-                TextUtils.equals(editTextPhotoDescription.getText().toString(), textPhotoDescription) &&
+                TextUtils.equals(Objects.requireNonNull(editTextPhotoDescription.getText()).toString(), textPhotoDescription) &&
                 TextUtils.equals(editTextDateOfTreatmentPhoto.getText().toString(), textDateOfTreatmentPhoto);
     }
 
@@ -1037,7 +1038,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
 
-        String photoDescriptionToCheck = editTextPhotoDescription.getText().toString().trim();
+        String photoDescriptionToCheck = Objects.requireNonNull(editTextPhotoDescription.getText()).toString().trim();
         String dateOfTreatmentPhotoToCheck = editTextDateOfTreatmentPhoto.getText().toString();
         boolean wrongField = false;
 

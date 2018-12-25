@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Guideline;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +21,9 @@ import android.widget.TextView;
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 
@@ -30,11 +32,11 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+@SuppressLint("RestrictedApi")
 public class TabletMainActivity extends AppCompatActivity
         implements DatePickerDialog.OnDateSetListener {
 
     public final Handler myTabletHandler = new Handler(Looper.getMainLooper());
-
 
     public TabletUsersFragment tabletUsersFragment;
     public TabletDiseasesFragment tabletDiseasesFragment;
@@ -63,12 +65,13 @@ public class TabletMainActivity extends AppCompatActivity
     public static long insertedDisease_id = 0;
     public static long selectedDisease_id = 0;
 
-    public static boolean treatmentPhotoInserted = false;
     public static boolean treatmentPhotoDeleted = false;
     public static long insertedTreatmentPhoto_id = 0;
     public static long selectedTreatmentPhoto_id = 0;
 
     public static boolean diseaseUpdated = false;
+
+    public static boolean adIsShown = false;
 
     // это поле берется из TabletDiseasesFragment.
     // если заболеваний нет, то diseasesIsEmpty = true
@@ -95,8 +98,6 @@ public class TabletMainActivity extends AppCompatActivity
     public LinearLayout LLtabletTreatmentCancelOrSave;
     public FrameLayout tabletTreatmentDelete;
 
-    public FrameLayout tabletUsersFrame;
-
     public FrameLayout tabletTreatmentDeleteFrame;
 
     public ViewGroup mSceneRoot;
@@ -107,10 +108,49 @@ public class TabletMainActivity extends AppCompatActivity
     public Guideline ver_3_Guideline;
     public Guideline ver_4_Guideline;
 
+    public AdView adViewInTabletWideView;
+    public AdRequest adRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
+
+        // рекламный блок -----
+
+        adViewInTabletWideView = findViewById(R.id.adViewInTablet);
+
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        adViewInTabletWideView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // если реклама загрузилась - показываем
+                adViewInTabletWideView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // если реклама не загрузилась - скрываем
+                adViewInTabletWideView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAdOpened() {
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+            }
+
+            @Override
+            public void onAdClosed() {
+            }
+        });
+
+        // --------------------
 
         firstLoad = true;
         inWideView = false;
@@ -127,7 +167,6 @@ public class TabletMainActivity extends AppCompatActivity
         selectedDisease_id = 0;
         selectedDisease_position = 0;
         diseaseUpdated = false;
-        treatmentPhotoInserted = false;
         treatmentPhotoDeleted = false;
         insertedTreatmentPhoto_id = 0;
         selectedTreatmentPhoto_id = 0;
@@ -139,6 +178,8 @@ public class TabletMainActivity extends AppCompatActivity
         diseaseAndTreatmentInEdit = false;
         newDiseaseAndTreatment = false;
         treatmentOnSavingOrUpdatingOrDeleting = false;
+
+        adIsShown = false;
 
         tabletUsersFragment = (TabletUsersFragment)
                 getSupportFragmentManager().findFragmentById(R.id.tablet_users_fragment);
@@ -155,8 +196,6 @@ public class TabletMainActivity extends AppCompatActivity
         }
 
         tabletUsersWideTitle = findViewById(R.id.tablet_users_wide_title);
-
-        tabletUsersFrame = findViewById(R.id.tablet_users_frame);
 
         tabletDiseasesTitle = findViewById(R.id.tablet_diseases_title);
 
@@ -185,13 +224,12 @@ public class TabletMainActivity extends AppCompatActivity
 
                 hideSoftInput();
 
-                new Handler().postDelayed(new Runnable() {
+                myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         cancel();
                     }
                 }, 500);
-
             }
         });
 
@@ -224,7 +262,7 @@ public class TabletMainActivity extends AppCompatActivity
 
                 hideSoftInput();
 
-                new Handler().postDelayed(new Runnable() {
+                myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         save();
@@ -276,6 +314,11 @@ public class TabletMainActivity extends AppCompatActivity
 
                     // удаляем заболевание и связанные фото
                     deleteDiseaseAndTreatmentPhotos();
+
+                    // загружаем МАЛЫЙ рекламный блок
+                    if (tabletTreatmentFragment.adViewInTabletTreatmentFragment!=null){
+                        tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+                    }
                 }
             }
         });
@@ -325,7 +368,7 @@ public class TabletMainActivity extends AppCompatActivity
                     }
                 }
 
-                new Handler().postDelayed(new Runnable() {
+                myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         tabletUsersFragment.recyclerUsers.smoothScrollToPosition(selectedUser_position);
@@ -348,7 +391,7 @@ public class TabletMainActivity extends AppCompatActivity
                     }
                 }
 
-                new Handler().postDelayed(new Runnable() {
+                myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(selectedDisease_position);
@@ -366,8 +409,16 @@ public class TabletMainActivity extends AppCompatActivity
         tempTextTreatment = "";
 
         if (newDiseaseAndTreatment) {
-            if (TabletDiseasesFragment.diseaseSelected) {
 
+            // нажатие на cancel в режиме добавления нового заболевания
+            // вернет к !inWideView
+            // показываем МАЛЫЙ рекламный блок
+            //tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
+            if (tabletTreatmentFragment != null && tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+            }
+
+            if (TabletDiseasesFragment.diseaseSelected) {
                 ver_3_Guideline.setGuidelinePercent(0.60f);
                 tabletUsersWideTitle.setVisibility(View.GONE);
                 tabletUsersWideTitle.setText("");
@@ -388,18 +439,11 @@ public class TabletMainActivity extends AppCompatActivity
 
                 tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
-        } else if (!inWideView) {
-
-            ver_3_Guideline.setGuidelinePercent(0.60f);
-            tabletUsersWideTitle.setVisibility(View.GONE);
-            tabletUsersWideTitle.setText("");
-
-            tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-            tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
-                    tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-            );
         } else {
+            // если НЕ в процессе добавления новго заболевания, то кнопка cancel видна только в режиме inWideView
+            // поэтому в режиме inWideView and !newDiseaseAndTreatment раскрываем БОЛЬШОЙ рекламный блок
+            adViewInTabletWideView.loadAd(adRequest);
+
             tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
             tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
@@ -448,7 +492,6 @@ public class TabletMainActivity extends AppCompatActivity
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusable(false);
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(false);
         tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.setCursorVisible(false);
-
     }
 
 
@@ -475,49 +518,28 @@ public class TabletMainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        boolean usersLoaded = false;
+        // грузим рекламный блок, если в inWideView и не в процессе редактирования заболевания
+        // если нет интернета, то блок не раскроется
+        if (adViewInTabletWideView != null && inWideView && !diseaseAndTreatmentInEdit) {
+            adViewInTabletWideView.loadAd(adRequest);
+        }
 
         if (firstLoad || userInserted || userUpdated || userDeleted) {
+
             // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
             // иначе, загружаем данные в окно tabletUsersFragment
             tabletUsersFragment.initUsersLoader();
 
-            usersLoaded = true;
             firstLoad = false;
         }
+    }
 
-        if (!usersLoaded) {
-            float percentVer_2 = ((ConstraintLayout.LayoutParams) ver_2_Left_Guideline.getLayoutParams()).guidePercent;
-
-            if (percentVer_2 != 0.90f) {
-                tabletDiseasesFragment.initDiseasesLoader();
-            }
-
-            // код для показа выделенного пользователя
-
-            final ArrayList<UserItem> myUsersData = tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
-
-            if (myUsersData.size() != 0) {
-
-                selectedUser_position = 0;
-
-                if (TabletMainActivity.selectedUser_id != 0) {
-
-                    for (int i = 0; i < myUsersData.size(); i++) {
-                        if (myUsersData.get(i).get_userId() == TabletMainActivity.selectedUser_id) {
-                            selectedUser_position = i;
-                        }
-                    }
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        tabletUsersFragment.recyclerUsers.smoothScrollToPosition(selectedUser_position);
-                    }
-                }, 500);
-            }
+    @Override
+    public void onDestroy() {
+        if (adViewInTabletWideView != null) {
+            adViewInTabletWideView.destroy();
         }
+        super.onDestroy();
     }
 
     @Override
@@ -549,6 +571,11 @@ public class TabletMainActivity extends AppCompatActivity
             if (imm != null) {
                 imm.hideSoftInputFromWindow(viewToHide.getWindowToken(), 0);
             }
+        }
+
+        if (adViewInTabletWideView != null) {
+            adViewInTabletWideView.setVisibility(View.GONE);
+            adViewInTabletWideView.pause();
         }
     }
 

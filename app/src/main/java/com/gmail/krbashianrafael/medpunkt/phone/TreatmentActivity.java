@@ -65,7 +65,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 
+@SuppressLint("RestrictedApi")
 public class TreatmentActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         DatePickerDialog.OnDateSetListener {
@@ -279,12 +281,10 @@ public class TreatmentActivity extends AppCompatActivity
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                //treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -625,7 +625,7 @@ public class TreatmentActivity extends AppCompatActivity
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
 
-        String nameToCheck = editTextDiseaseName.getText().toString().trim();
+        String nameToCheck = Objects.requireNonNull(editTextDiseaseName.getText()).toString().trim();
         String dateOfDiseaseToCheck = editTextDateOfDisease.getText().toString();
         boolean wrongField = false;
 
@@ -672,7 +672,7 @@ public class TreatmentActivity extends AppCompatActivity
         // для дальнейшей проверки на их изменения
         textDiseaseName = nameToCheck;
         textDateOfDisease = editTextDateOfDisease.getText().toString();
-        textTreatment = treatmentDescriptionFragment.editTextTreatment.getText().toString();
+        textTreatment = Objects.requireNonNull(treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
         // если было нажато идти обратно
         if (goBack) {
@@ -733,7 +733,7 @@ public class TreatmentActivity extends AppCompatActivity
 
     // проверка на изменения заболевания (название, дата, описание)
     private boolean diseaseAndTreatmentHasNotChanged() {
-        return TextUtils.equals(editTextDiseaseName.getText().toString(), textDiseaseName) &&
+        return TextUtils.equals(Objects.requireNonNull(editTextDiseaseName.getText()).toString(), textDiseaseName) &&
                 TextUtils.equals(editTextDateOfDisease.getText(), textDateOfDisease) &&
                 TextUtils.equals(treatmentDescriptionFragment.editTextTreatment.getText(), textTreatment);
     }

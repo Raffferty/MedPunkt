@@ -248,6 +248,16 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 } else {
                     //если это планшет
+
+                    // загружаем МАЛЫЙ рекламный блок
+                    if (tabletMainActivity.tabletTreatmentFragment != null &&
+                            tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null &&
+                            !TabletMainActivity.adIsShown) {
+                        tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(
+                                tabletMainActivity.adRequest
+                        );
+                    }
+
                     tabletUserSelected(user_id_inEdit);
                 }
             }
@@ -271,7 +281,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 }
 
-                new Handler().postDelayed(new Runnable() {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         tabletMainActivity.tabletDiseasesFragment.recyclerDiseases.smoothScrollToPosition(tabletMainActivity.selectedDisease_position);

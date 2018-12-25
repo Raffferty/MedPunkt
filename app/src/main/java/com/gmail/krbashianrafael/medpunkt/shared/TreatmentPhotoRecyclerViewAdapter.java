@@ -30,6 +30,7 @@ import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
@@ -80,7 +81,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
             if (TabletMainActivity.selectedTreatmentPhoto_id == _trPhotoId) {
                 // добавленное фото заболевания будет сразу выделенным
-                // т.к. в MedProvider есть запись TabletMainActivity.selectedTreatmentPhoto_id = TabletMainActivity.insertedtreatmentPhoto_id;
+                // т.к. в MedProvider есть запись TabletMainActivity.selectedTreatmentPhoto_id = TabletMainActivity.insertedTreatmentPhoto_id;
                 ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
 
                 if (tabletMainActivity != null) {
@@ -98,7 +99,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                 }
 
                 // грузим фото выделенного заболевания
-                ((TreatmentPhotoHolder) holder).loadTreamentPhotoInImgWideView(itemPhotoUri);
+                ((TreatmentPhotoHolder) holder).loadTreatmentPhotoInImgWideView(itemPhotoUri);
 
             } else {
                 ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(Color.TRANSPARENT);
@@ -155,7 +156,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private void loadTreamentPhotoInImgWideView(String itemUri) {
+        private void loadTreatmentPhotoInImgWideView(String itemUri) {
 
             // чтоб после масштабирования старого фото, новое грузилось как FIT_CENTER
             tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
@@ -230,7 +231,7 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                     && TabletMainActivity.selectedTreatmentPhoto_id != clicked_treatmentPhoto_id
                     && TabletMainActivity.inWideView) {
 
-                loadTreamentPhotoInImgWideView(itemUri.getText().toString());
+                loadTreatmentPhotoInImgWideView(itemUri.getText().toString());
 
                 TabletMainActivity.selectedTreatmentPhoto_id = clicked_treatmentPhoto_id;
                 tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();

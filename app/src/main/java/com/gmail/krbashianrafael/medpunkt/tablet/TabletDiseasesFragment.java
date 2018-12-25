@@ -1,10 +1,10 @@
 package com.gmail.krbashianrafael.medpunkt.tablet;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("RestrictedApi")
 public class TabletDiseasesFragment extends Fragment
         implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -55,11 +57,9 @@ public class TabletDiseasesFragment extends Fragment
 
     private static final int TABLET_DISEASES_LOADER = 1001;
 
-
     public TabletDiseasesFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -83,6 +83,15 @@ public class TabletDiseasesFragment extends Fragment
             @Override
             public void onClick(View v) {
 
+                // скрываем МАЛЫЙ рекламный блок
+                tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                TabletMainActivity.adIsShown = false;
+
+                if (tabletMainActivity.tabletTreatmentFragment != null &&
+                        tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                    tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
+                }
+
                 clearDataFromDiseasesFragment();
 
                 TabletMainActivity.selectedUser_id = 0;
@@ -104,6 +113,16 @@ public class TabletDiseasesFragment extends Fragment
             @Override
             public void onClick(View v) {
 
+                if (tabletMainActivity == null) {
+                    return;
+                }
+
+                // убираем МАЛЫЙ рекламный блок
+                tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                if (tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                    tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
+                }
+
                 tabletMainActivity.newDiseaseAndTreatment = true;
                 tabletMainActivity.diseaseAndTreatmentInEdit = true;
                 tabletMainActivity.tabletTreatmentFragment.editDisease = true;
@@ -112,7 +131,7 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
                 tabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.GONE);
 
-                new Handler().postDelayed(new Runnable() {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         textViewAddDisease.setVisibility(View.INVISIBLE);
@@ -127,12 +146,21 @@ public class TabletDiseasesFragment extends Fragment
             @Override
             public void onClick(View v) {
 
+                if (tabletMainActivity == null) {
+                    return;
+                }
+
+                // убираем МАЛЫЙ рекламный блок
+                tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                if (tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                    tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
+                }
+
                 tabletMainActivity.newDiseaseAndTreatment = true;
                 tabletMainActivity.diseaseAndTreatmentInEdit = true;
                 tabletMainActivity.tabletTreatmentFragment.editDisease = true;
 
                 if (diseaseSelected) {
-
                     tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(
                             tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.fabHideAnimation);
 
@@ -144,7 +172,7 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(fabHideAnimation);
                 tabletMainActivity.tabletTreatmentDeleteFrame.setVisibility(View.GONE);
 
-                new Handler().postDelayed(new Runnable() {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         onAddDiseaseClicked();
@@ -166,9 +194,9 @@ public class TabletDiseasesFragment extends Fragment
     }
 
     private void onAddDiseaseClicked() {
-        tabletMainActivity.tempTextDiseaseName = tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText().toString();
+        tabletMainActivity.tempTextDiseaseName = Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.editTextDiseaseName.getText()).toString();
         tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
-        tabletMainActivity.tempTextTreatment = tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText().toString();
+        tabletMainActivity.tempTextTreatment = Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
         tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.INVISIBLE);
 
@@ -365,7 +393,7 @@ public class TabletDiseasesFragment extends Fragment
 
         // код для показа выделенного заболевания
         if (myDataSize != 0) {
-            new Handler().postDelayed(new Runnable() {
+            tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
@@ -399,7 +427,7 @@ public class TabletDiseasesFragment extends Fragment
             if (percentVerGuideline_2 == 0.90f) {
                 // если были видны только пользователи и нажимали на пользователя у которого нет заболеваний
 
-                new Handler().postDelayed(new Runnable() {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
@@ -563,7 +591,7 @@ public class TabletDiseasesFragment extends Fragment
                     // если были видны только пользователи
                     // и был нажат пользователь у которого более одного заболевания
 
-                    new Handler().postDelayed(new Runnable() {
+                    tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
