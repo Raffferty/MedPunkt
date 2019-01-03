@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -71,6 +73,10 @@ public class TabletDiseasesFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // этот фрейм вден только в телефонном режиме
+        FrameLayout mAdViewFrame= view.findViewById(R.id.adViewFrame);
+        mAdViewFrame.setVisibility(View.GONE);
 
         // шапка, которая видна только на планшете
         TextView txtTabletDiseases = view.findViewById(R.id.txt_diseases);
@@ -431,7 +437,9 @@ public class TabletDiseasesFragment extends Fragment
                     @Override
                     public void run() {
 
-                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+                        AutoTransition autoTransition1 = new AutoTransition();
+                        autoTransition1.setDuration(240L);
+                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition1);
 
                         tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                         tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
@@ -450,7 +458,9 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
                         editTextTreatment.setVisibility(View.INVISIBLE);
 
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+                AutoTransition autoTransition2 = new AutoTransition();
+                autoTransition2.setDuration(240L);
+                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition2);
 
                 tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                 tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
@@ -524,7 +534,9 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
                 tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+                AutoTransition autoTransition3 = new AutoTransition();
+                autoTransition3.setDuration(240L);
+                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition3);
 
                 tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                 tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.30f);

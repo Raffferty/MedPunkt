@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -27,7 +28,9 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
+import android.transition.AutoTransition;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -115,6 +118,8 @@ public class TabletTreatmentFragment extends Fragment
     public FrameLayout adViewFrameTabletTreatmentFragment;
     public AdView adViewInTabletTreatmentFragment;
 
+    private AutoTransition adCloseTransition;
+
     public TabletTreatmentFragment() {
         // Required empty public constructor
     }
@@ -131,13 +136,14 @@ public class TabletTreatmentFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
 
-        // рекламный блок в TabletTreatmentFragment
+        // рекламный блок МАЛЫЙ в TabletTreatmentFragment
         adViewFrameTabletTreatmentFragment = view.findViewById(R.id.adViewFrameTabletTreatment);
         adViewInTabletTreatmentFragment = view.findViewById(R.id.adViewInTabletTreatment);
         adViewInTabletTreatmentFragment.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
+                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
                 adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
                 TabletMainActivity.adIsShown = true;
             }
@@ -192,7 +198,13 @@ public class TabletTreatmentFragment extends Fragment
 
                 // показываем БОЛЬШОЙ рекламный блок
                 if (tabletMainActivity.adViewInTabletWideView != null) {
-                    tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
+                    // рекламу грузим с задержкой, чтоб успела отрисоваться
+                    tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
+                        }
+                    }, 600);
                 }
 
                 // сначала сробатывает Ripple эфект на zoomOutTabletTreatment
@@ -313,25 +325,33 @@ public class TabletTreatmentFragment extends Fragment
                             }
                         }
 
-                        // скрываем рекламный блок
-                        if (tabletMainActivity.adViewInTabletWideView != null) {
+                        // показываем МАЛЫЙ рекламный блок
+                        if (adViewInTabletTreatmentFragment != null) {
+                            // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
+                            tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+                                }
+                            }, 600);
+                        }
+
+                        // скрываем БОЛЬШОЙ рекламный блок
+                        if (tabletMainActivity.adViewInTabletWideView != null
+                                && tabletMainActivity.adViewInTabletWideView.getVisibility() != View.GONE) {
+                            TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, adCloseTransition);
                             tabletMainActivity.adViewInTabletWideView.setVisibility(View.GONE);
                             tabletMainActivity.adViewInTabletWideView.pause();
-                        }
+                        } else {
+                            tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                            treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
+                            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
 
-                        // показываем МАЛЫЙ рекламный блок
-                        //adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
-                        if (adViewInTabletTreatmentFragment != null) {
-                            adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+                            tabletMainActivity.tabletUsersWideTitle.setText("");
+                            treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
+                            zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                            zoomOutTabletTreatment.setVisibility(View.VISIBLE);
                         }
-
-                        treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-                        tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
-                        tabletMainActivity.tabletUsersWideTitle.setText("");
-                        treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
-                        zoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                        zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
                         // код для очистки выделения фото заболевания и очистки imgWideView
                         if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
@@ -529,6 +549,45 @@ public class TabletTreatmentFragment extends Fragment
             }
         });
 
+        adCloseTransition = new AutoTransition();
+        adCloseTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
+                        treatmentPhotosFragment.verGuideline.setGuidelinePercent(1.0f);
+                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
+                        tabletMainActivity.tabletUsersWideTitle.setText("");
+                        treatmentPhotosFragment.fabToFullScreen.setVisibility(View.INVISIBLE);
+                        zoomInTabletTreatment.setVisibility(View.INVISIBLE);
+                        zoomOutTabletTreatment.setVisibility(View.VISIBLE);
+                    }
+                }, 300);
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
+
         // анимация для показа fabEditTreatmentDescripton
         fabEditTreatmentDescriptonShowAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fab_show);
         fabEditTreatmentDescriptonShowAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -567,8 +626,30 @@ public class TabletTreatmentFragment extends Fragment
     public void onResume() {
         super.onResume();
 
-        if (adViewInTabletTreatmentFragment != null) {
-            adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+        if (adViewInTabletTreatmentFragment != null
+                && !TabletMainActivity.inWideView
+                && !tabletMainActivity.diseaseAndTreatmentInEdit) {
+
+            if (tabletMainActivity.isNetworkConnected()) {
+                if (adViewFrameTabletTreatmentFragment.getVisibility() == View.VISIBLE) {
+                    adViewInTabletTreatmentFragment.resume();
+                } else {
+                    // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+                        }
+                    }, 600);
+                }
+            } else {
+                if (adViewFrameTabletTreatmentFragment.getVisibility() == View.VISIBLE) {
+                    adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                    adViewInTabletTreatmentFragment.pause();
+                }
+
+                TabletMainActivity.adIsShown = false;
+            }
         }
     }
 
@@ -712,7 +793,13 @@ public class TabletTreatmentFragment extends Fragment
             zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
             // т.к. после обновления заболевания в планшетном виде остаемся в inWideView, открываем БОЛЬШОЙ рекламный блок
-            tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
+            // рекламу грузим с задержкой, чтоб успела отрисоваться
+            tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tabletMainActivity.adViewInTabletWideView.loadAd(tabletMainActivity.adRequest);
+                }
+            }, 600);
 
             // обновлять в базу в отдельном треде
             updateDiseaseAndTreatmentToDataBase();
@@ -750,12 +837,12 @@ public class TabletTreatmentFragment extends Fragment
         tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
                 if (adViewInTabletTreatmentFragment != null) {
+                    // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                     adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
                 }
             }
-        }, 250);
+        }, 600);
     }
 
     private void updateDiseaseAndTreatmentToDataBase() {

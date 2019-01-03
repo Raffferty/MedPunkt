@@ -2,10 +2,13 @@ package com.gmail.krbashianrafael.medpunkt.phone;
 
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,11 +17,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
@@ -60,6 +64,7 @@ public class DiseasesActivity extends AppCompatActivity
      */
     private static final int DISEASES_LOADER = 1;
 
+    RelativeLayout adRoot;
     private AdView adViewInDiseasesActivity;
     private AdRequest adRequest;
 
@@ -68,35 +73,41 @@ public class DiseasesActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diseases);
 
-        // рекламный блок -----
+        // рекламный блок ----- для телефона
         // инициализация просиходит в HomeActivity
         // мой app_id = ca-app-pub-5926695077684771~8182565017
         // MobileAds.initialize(this, getResources().getString(R.string.app_id));
         // Запускается в onResume
         // adViewInDiseasesActivity.loadAd(adRequest);
 
-        FrameLayout adViewFrame = findViewById(R.id.adViewFrame);
-        adViewFrame.setVisibility(View.VISIBLE);
+        adRoot = findViewById(R.id.adRoot);
 
         adViewInDiseasesActivity = findViewById(R.id.adViewInDiseasesActivity);
 
         adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 //.addTestDevice("7D6074C25D2B142E67EA1A88F1EACA1E") // Sony Ericson
-                //.addTestDevice("72C8B9DAE86F2FD98F7D59D62911A49B") // Samsung Nat
+                //.addTestDevice("5F3286283D8861EB4BB0977151D7C0F1") // Samsung SM-J710 Аня Мищенко
+                //.addTestDevice("95D2BBAB6CBBA81C34A1C9009F2B8B52") // Meizu U10 Таня
+                //.addTestDevice("72C8B9DAE86F2FD98F7D59D62911A49B") // Samsung Nat SM-G920F
                 .build();
 
         adViewInDiseasesActivity.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
-                adViewInDiseasesActivity.setVisibility(View.VISIBLE);
+                if (adViewInDiseasesActivity.getVisibility() != View.VISIBLE) {
+                    TransitionManager.beginDelayedTransition(adRoot);
+                    adViewInDiseasesActivity.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
-                adViewInDiseasesActivity.setVisibility(View.GONE);
+                if (adViewInDiseasesActivity.getVisibility() != View.GONE) {
+                    adViewInDiseasesActivity.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -111,7 +122,6 @@ public class DiseasesActivity extends AppCompatActivity
             public void onAdClosed() {
             }
         });
-
 
         // --------------------
 
@@ -224,11 +234,27 @@ public class DiseasesActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        super.onResume();
 
-        // запускаем рекламный блок
         if (adViewInDiseasesActivity != null) {
-            adViewInDiseasesActivity.loadAd(adRequest);
+            if (isNetworkConnected()) {
+                if (adViewInDiseasesActivity.getVisibility() == View.VISIBLE) {
+                    adViewInDiseasesActivity.resume();
+                } else {
+                    // запускаем рекламный блок
+                    // грузим с задержкой, чтоб успело отрисоваться
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            adViewInDiseasesActivity.loadAd(adRequest);
+                        }
+                    }, 600);
+                }
+            } else {
+                if (adViewInDiseasesActivity.getVisibility() == View.VISIBLE) {
+                    adViewInDiseasesActivity.setVisibility(View.GONE);
+                    adViewInDiseasesActivity.pause();
+                }
+            }
         }
 
         // сразу INVISIBLE делаем чтоб не было скачков при смене вида
@@ -237,6 +263,16 @@ public class DiseasesActivity extends AppCompatActivity
 
         // Инициализируем Loader
         getLoaderManager().initLoader(DISEASES_LOADER, null, this);
+
+        super.onResume();
+    }
+
+    // Check network connection
+    private boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

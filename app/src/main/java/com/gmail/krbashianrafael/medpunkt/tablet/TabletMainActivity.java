@@ -3,6 +3,8 @@ package com.gmail.krbashianrafael.medpunkt.tablet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +12,7 @@ import android.support.constraint.Guideline;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,25 +119,35 @@ public class TabletMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
 
-        // рекламный блок -----
+        // рекламный блок для планшета ----- БОЛЬШОЙ
+        // инициализация просиходит в HomeActivity
+        // мой app_id = ca-app-pub-5926695077684771~8182565017
+        // MobileAds.initialize(this, getResources().getString(R.string.app_id));
+        // Запускается в onResume
 
         adViewInTabletWideView = findViewById(R.id.adViewInTablet);
 
         adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813
                 .build();
 
         adViewInTabletWideView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
-                adViewInTabletWideView.setVisibility(View.VISIBLE);
+                if (adViewInTabletWideView.getVisibility() != View.VISIBLE) {
+                    TransitionManager.beginDelayedTransition(mSceneRoot);
+                    adViewInTabletWideView.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
-                adViewInTabletWideView.setVisibility(View.GONE);
+                if (adViewInTabletWideView.getVisibility() != View.GONE) {
+                    adViewInTabletWideView.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -316,8 +329,14 @@ public class TabletMainActivity extends AppCompatActivity
                     deleteDiseaseAndTreatmentPhotos();
 
                     // загружаем МАЛЫЙ рекламный блок
-                    if (tabletTreatmentFragment.adViewInTabletTreatmentFragment!=null){
-                        tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+                    if (tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                        // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
+                        myTabletHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+                            }
+                        }, 600);
                     }
                 }
             }
@@ -413,9 +432,14 @@ public class TabletMainActivity extends AppCompatActivity
             // нажатие на cancel в режиме добавления нового заболевания
             // вернет к !inWideView
             // показываем МАЛЫЙ рекламный блок
-            //tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
             if (tabletTreatmentFragment != null && tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
-                tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+                // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
+                myTabletHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(adRequest);
+                    }
+                }, 600);
             }
 
             if (TabletDiseasesFragment.diseaseSelected) {
@@ -442,7 +466,13 @@ public class TabletMainActivity extends AppCompatActivity
         } else {
             // если НЕ в процессе добавления новго заболевания, то кнопка cancel видна только в режиме inWideView
             // поэтому в режиме inWideView and !newDiseaseAndTreatment раскрываем БОЛЬШОЙ рекламный блок
-            adViewInTabletWideView.loadAd(adRequest);
+            // рекламу грузим с задержкой, чтоб успела отрисоваться
+            myTabletHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    adViewInTabletWideView.loadAd(adRequest);
+                }
+            }, 600);
 
             tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
@@ -516,12 +546,29 @@ public class TabletMainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        super.onResume();
 
         // грузим рекламный блок, если в inWideView и не в процессе редактирования заболевания
         // если нет интернета, то блок не раскроется
         if (adViewInTabletWideView != null && inWideView && !diseaseAndTreatmentInEdit) {
-            adViewInTabletWideView.loadAd(adRequest);
+            if (isNetworkConnected()) {
+                if (adViewInTabletWideView.getVisibility() == View.VISIBLE) {
+                    adViewInTabletWideView.resume();
+                } else {
+                    // запускаем рекламный блок
+                    // грузим с задержкой, чтоб успело отрисоваться
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            adViewInTabletWideView.loadAd(adRequest);
+                        }
+                    }, 600);
+                }
+            } else {
+                if (adViewInTabletWideView.getVisibility() == View.VISIBLE) {
+                    adViewInTabletWideView.setVisibility(View.GONE);
+                    adViewInTabletWideView.pause();
+                }
+            }
         }
 
         if (firstLoad || userInserted || userUpdated || userDeleted) {
@@ -532,6 +579,16 @@ public class TabletMainActivity extends AppCompatActivity
 
             firstLoad = false;
         }
+
+        super.onResume();
+    }
+
+    // Check network connection
+    public boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -574,7 +631,6 @@ public class TabletMainActivity extends AppCompatActivity
         }
 
         if (adViewInTabletWideView != null) {
-            adViewInTabletWideView.setVisibility(View.GONE);
             adViewInTabletWideView.pause();
         }
     }

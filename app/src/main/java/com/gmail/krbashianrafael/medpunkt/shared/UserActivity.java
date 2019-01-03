@@ -374,6 +374,13 @@ public class UserActivity extends AppCompatActivity
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
                 }
+
+                // если не было фото при открытии, то будет editUser = true, а imagePhoto будет imagePhoto.setClickable(true);
+                // после fab.performClick(); будет editUser = false;
+                // и повторное нажатие на imagePhoto не вызовет fab.performClick();
+                if (editUser) {
+                    fab.performClick();
+                }
             }
         });
 
@@ -590,11 +597,19 @@ public class UserActivity extends AppCompatActivity
 
             editTextName.setEnabled(false);
             editTextDate.setEnabled(false);
-            imagePhoto.setClickable(false);
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
             fab.startAnimation(fabShowAnimation);
+
+            // если открылись с "No_Photo", то imagePhoto.setClickable(true);
+            // иначе imagePhoto.setClickable(false);
+            if (userPhotoUri.equals("No_Photo")) {
+                imagePhoto.setClickable(true);
+            } else {
+                imagePhoto.setClickable(false);
+            }
         } else if (userPhotoUri.equals("No_Photo")) {
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
+
         }
     }
 

@@ -49,7 +49,6 @@ dependencies {
     // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
     implementation 'com.github.drawers:SpinnerDatePicker:1.0.6'
 
-
     // это для рекламного блока
     implementation 'com.google.android.gms:play-services-ads:17.1.2'
 }

@@ -54,7 +54,7 @@
     <!-- diseases_activity -->
     <string name="diseases_activity_title">Захворювання</string>
     <string name="diseases_empty_text">Додати захворювання</string>
-    <string name="diseases_what_text">Чим хворів</string>
+    <string name="diseases_what_text">Захворювання</string>
     <string name="disease_name">Назва захворювання</string>
     <string name="disease_date">Дата</string>
     <string name="disease_error_name">Вкажіть назву захворювання</string>
