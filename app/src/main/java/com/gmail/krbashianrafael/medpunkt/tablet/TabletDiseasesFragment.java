@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -59,6 +60,8 @@ public class TabletDiseasesFragment extends Fragment
 
     private static final int TABLET_DISEASES_LOADER = 1001;
 
+    AutoTransition autoTransition;
+
     public TabletDiseasesFragment() {
         // Required empty public constructor
     }
@@ -74,8 +77,14 @@ public class TabletDiseasesFragment extends Fragment
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        autoTransition = new AutoTransition();
+        autoTransition.setDuration(280L);
+        autoTransition.setInterpolator(new AccelerateDecelerateInterpolator());
+        //autoTransition.setInterpolator(new LinearInterpolator());
+
+
         // этот фрейм вден только в телефонном режиме
-        FrameLayout mAdViewFrame= view.findViewById(R.id.adViewFrame);
+        FrameLayout mAdViewFrame = view.findViewById(R.id.adViewFrame);
         mAdViewFrame.setVisibility(View.GONE);
 
         // шапка, которая видна только на планшете
@@ -437,10 +446,7 @@ public class TabletDiseasesFragment extends Fragment
                     @Override
                     public void run() {
 
-                        AutoTransition autoTransition1 = new AutoTransition();
-                        autoTransition1.setDuration(240L);
-                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition1);
-
+                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
                         tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                         tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                         tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
@@ -458,10 +464,7 @@ public class TabletDiseasesFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
                         editTextTreatment.setVisibility(View.INVISIBLE);
 
-                AutoTransition autoTransition2 = new AutoTransition();
-                autoTransition2.setDuration(240L);
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition2);
-
+                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
                 tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                 tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
                 tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
@@ -485,81 +488,8 @@ public class TabletDiseasesFragment extends Fragment
             textViewAddDisease.setVisibility(View.VISIBLE);
             textViewAddDisease.startAnimation(fadeInAnimation);
 
-        } else if (myDataSize == 1) {
-            // если у пользователя одно заболевание
-
-            tabletMainActivity.diseasesIsEmpty = false;
-
-            tabletMainActivity.hideElementsOnTabletTreatmentFragment();
-
-            fabAddDisease.startAnimation(fabShowAnimation);
-
-            tabletMainActivity.tabletUsersWideTitle.setVisibility(View.GONE);
-            tabletMainActivity.tabletUsersWideTitle.setText("");
-
-            tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
-            tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
-
-            diseaseSelected = true;
-
-            // если одино заболевание, то сразу загружаем его леченин
-            Long _diseaseId = myData.get(0).get_diseaseId();
-            Long _diseaseUserId = myData.get(0).get_diseaseUserId();
-            String diseaseName = myData.get(0).getDiseaseName();
-            String diseaseDate = myData.get(0).getDiseaseDate();
-            String treatmentText = myData.get(0).getTreatmentText();
-
-            TabletMainActivity.selectedDisease_id = _diseaseId;
-
-            tabletMainActivity.tabletTreatmentFragment.set_idDisease(_diseaseId);
-            tabletMainActivity.tabletTreatmentFragment.set_idUser(_diseaseUserId);
-            tabletMainActivity.tabletTreatmentFragment.setTextDiseaseName(diseaseName);
-            tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate);
-            tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText);
-
-            // грузим снимки этого заболевания
-            tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.initTreatmentPhotosLoader();
-
-            tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
-                    fabEditTreatmentDescripton.startAnimation(
-                    tabletMainActivity.tabletTreatmentFragment.fabEditTreatmentDescriptonShowAnimation
-            );
-
-            float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
-
-            if (percentVerGuideline_2 == 0.90f) {
-                // если были открыты только пользователи
-                // и было нажато на пользователя у которого только одно заболевание
-
-                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-                AutoTransition autoTransition3 = new AutoTransition();
-                autoTransition3.setDuration(240L);
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition3);
-
-                tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
-                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.30f);
-                tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.30f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-                tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.00f);
-
-            } else if (percentVerGuideline_2 == 0.50f) {
-                // если был открыт пользователь, у которого нет заболеваний и
-                // был нажат польлзователь, у которого одно заболевание
-
-                tabletMainActivity.tabletTreatmentFragment.zoomInTabletTreatment.setVisibility(View.INVISIBLE);
-                tabletMainActivity.tabletTreatmentFragment.zoomOutTabletTreatment.setVisibility(View.VISIBLE);
-
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-
-                tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.30f);
-                tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.30f);
-                tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.60f);
-            }
-
         } else {
-            // если у пользователя более одного заболевания
+            // если у пользователя есть заболевания
 
             tabletMainActivity.diseasesIsEmpty = false;
 
@@ -606,8 +536,8 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
 
+                            TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
                             tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                             tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                             tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
@@ -636,7 +566,7 @@ public class TabletDiseasesFragment extends Fragment
                     tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
                             editTextTreatment.setVisibility(View.INVISIBLE);
 
-                    TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+                    TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
 
                     tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                     tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);

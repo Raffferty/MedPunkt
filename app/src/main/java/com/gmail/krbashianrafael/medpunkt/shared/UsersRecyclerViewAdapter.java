@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,33 +249,13 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 } else {
                     //если это планшет
 
-                    Log.d("ASDF", "TabletMainActivity.adIsShown" + TabletMainActivity.adIsShown);
-                    Log.d("ASDF", "tabletMainActivity.isNetworkConnected()" + tabletMainActivity.isNetworkConnected());
+                    // скрываем МАЛЫЙ рекламный блок
+                    tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                    TabletMainActivity.adIsShown = false;
 
-                    if (tabletMainActivity.tabletTreatmentFragment != null
-                            && tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
-
-                        // если реклама не показывалась, но соединение есть
-                        if (!TabletMainActivity.adIsShown){
-                            if (tabletMainActivity.isNetworkConnected()){
-                                // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
-                                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(
-                                                tabletMainActivity.adRequest
-                                        );
-                                    }
-                                }, 600);
-                            }
-                        }else {
-                            // если реклама паказывалась, но соедининеия нет
-                            if (!tabletMainActivity.isNetworkConnected()){
-                                tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
-                                tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
-                                TabletMainActivity.adIsShown = false;
-                            }
-                        }
+                    if (tabletMainActivity.tabletTreatmentFragment != null &&
+                            tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+                        tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
                     }
 
                     tabletUserSelected(user_id_inEdit);

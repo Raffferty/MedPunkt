@@ -13,6 +13,7 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,13 +64,7 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         // если это планшет, то выделенный элемент будет окрашен в голубой цвет,
         // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
-            // если только один элемент заболевания
-            // то его _id и будет selected
-            if (diseaseList.size() == 1) {
-                ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
-                TabletDiseasesFragment.diseaseSelected = true;
-
-            } else if (TabletMainActivity.selectedDisease_id == _diseaseId) {
+            if (TabletMainActivity.selectedDisease_id == _diseaseId) {
                 // добавленное заболевание будет сразу выделенным
                 // т.к. в MedProvider есть запись TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
@@ -124,6 +119,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             diseasesItem.setOnClickListener(this);
 
             tabletDiseaseItemClickTransition = new AutoTransition();
+            tabletDiseaseItemClickTransition.setDuration(280L);
+            tabletDiseaseItemClickTransition.setInterpolator(new LinearInterpolator());
+
             tabletDiseaseItemClickTransition.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
@@ -132,7 +130,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-
                     tabletDiseaseSelected();
                 }
 
@@ -217,6 +214,33 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     } else {
 
                         tabletDiseaseSelected();
+                    }
+
+                    // реклама Малая
+                    if (tabletMainActivity.tabletTreatmentFragment != null
+                            && tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
+
+                        // если реклама не показывалась, но соединение есть
+                        if (!TabletMainActivity.adIsShown) {
+                            if (tabletMainActivity.isNetworkConnected()) {
+                                // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
+                                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.loadAd(
+                                                tabletMainActivity.adRequest
+                                        );
+                                    }
+                                }, 600);
+                            }
+                        } else {
+                            // если реклама паказывалась, но соедининеия нет
+                            if (!tabletMainActivity.isNetworkConnected()) {
+                                tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                                tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
+                                TabletMainActivity.adIsShown = false;
+                            }
+                        }
                     }
                 }
             }

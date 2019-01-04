@@ -129,7 +129,7 @@ public class TabletMainActivity extends AppCompatActivity
 
         adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813
+                .addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813, 7.0 API 24
                 .build();
 
         adViewInTabletWideView.setAdListener(new AdListener() {
@@ -547,7 +547,7 @@ public class TabletMainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
 
-        // грузим рекламный блок, если в inWideView и не в процессе редактирования заболевания
+        // грузим Большой рекламный блок, если в inWideView и не в процессе редактирования заболевания
         // если нет интернета, то блок не раскроется
         if (adViewInTabletWideView != null && inWideView && !diseaseAndTreatmentInEdit) {
             if (isNetworkConnected()) {
