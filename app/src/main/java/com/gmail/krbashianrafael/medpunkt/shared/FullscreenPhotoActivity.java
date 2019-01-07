@@ -221,16 +221,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
-        // если это планшет, то ориентация все время LANDSCAPE
-        if (HomeActivity.isTablet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if (newTreatmentPhoto) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
-        // получаем ориентацию экрана
-        int myScreenOrientation = getResources().getConfiguration().orientation;
-
         // получаем размеры экрана
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -259,26 +249,37 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         // устанавливаем слушателей
         setMyListeners();
 
-        // если при первом вхождении иориентация LANDSCAPE, то делаем  hide();
-        if (myScreenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // если это телефон и в горизонтальном положении, то делаем hide();
+        // если это планшет, то ориентация все время LANDSCAPE
+        if (HomeActivity.isTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
+        // получаем ориентацию экрана
+        int myScreenOrientation = getResources().getConfiguration().orientation;
+
+        if (!newTreatmentPhoto) {
+            // если не новое фото
             if (!HomeActivity.isTablet) {
-                hide();
-            } else {
-                if (!newTreatmentPhoto) {
-                    // если это планшет (планшет только в горизантальном) и не устанавливается новое фото
-                    fab.startAnimation(fabShowAnimation);
+                // если телефон и ориентация ORIENTATION_PORTRAIT
+                // то скрываем все и показываем фото на весь экран
+                if (myScreenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                    hide();
                 } else {
+                    // если телефон и ориентация ORIENTATION_LANDSCAPE
+                    // показываем UI
+                    // без показа полей ввода названия забалевания и даты
                     show();
                 }
+            } else {
+                // если планшет - то скрываем все и показываем фото на весь экран
+                hide();
             }
-
-            landscape = true;
-
-        } else if (!newTreatmentPhoto) {
-            // если это телефон (т.к. толлько телефон может быть в вертикальном положении)
-            fab.startAnimation(fabShowAnimation);
+        } else if (HomeActivity.isTablet) {
+            // если новое фото и планшет
+            // показываем UI
+            show();
         }
+
 
         // если пришел путь к сохраненному ранее фото, то грузим картинку в imagePhoto
         if (!newTreatmentPhoto
@@ -710,7 +711,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private void hide() {
         // Hide UI first
         LL_title.startAnimation(LL_title_hideAnimation);
-        fab.startAnimation(fabHideAnimation);
+
+        if (fab.getVisibility() == View.VISIBLE) {
+            fab.startAnimation(fabHideAnimation);
+        }
 
         mDescriptionView.setVisibility(View.INVISIBLE);
         editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);

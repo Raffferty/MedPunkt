@@ -4,21 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    tools:context="com.gmail.krbashianrafael.medpunkt.shared.HomeActivity">
+    android:background="@color/white"
+    tools:context="com.gmail.krbashianrafael.medpunkt.shared.HomeActivity"
+    tools:ignore="Overdraw">
 
     <TextView
         android:id="@+id/txt_greeting"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/greeting"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Greeting" />
 
     <FrameLayout
         android:id="@+id/enter"
@@ -34,8 +35,8 @@
         android:id="@+id/checkbox_doctor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:buttonTint="@color/colorPrimaryDark"
         android:text="@string/doctor"
         android:textColor="@color/colorPrimaryDark"
@@ -48,8 +49,8 @@
         android:id="@+id/checkbox_show_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:buttonTint="@color/colorPrimaryDark"
         android:text="@string/show_greeting"
         android:textColor="@color/colorPrimaryDark"

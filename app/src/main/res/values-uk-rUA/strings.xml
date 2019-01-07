@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app -->
-    <string name="greeting">MedPunkt
-        \n\n\допоможе запам’ятати, коли і чим хворіли Ви, ваші близькі або ваші пацієнти і як лікувалися.</string>
+    <string name="greeting_start">MedPunkt допоможе запам’ятати,</string>
+    <string name="greeting_mid">коли і чим хворіли Ви, ваші близькі або ваші пацієнти і</string>
+    <string name="greeting_end">як лікувалися.</string>
     <string name="doctor">Я лікар</string>
     <string name="show_greeting">Більше не показувати</string>
 

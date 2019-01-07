@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app -->
-    <string name="greeting">MedPunkt
-        \n\nhelps you to remember when and what were you,
-        your relatives’ or your patients’ diseases and what was the treatment.</string>
+    <string name="greeting_start">MedPunkt keeps</string>
+    <string name="greeting_mid">your/your relatives’/your patients’</string>
+    <string name="greeting_end">health record.</string>
     <string name="doctor">I am a doctor</string>
     <string name="show_greeting">Don’t show again</string>
 
@@ -15,7 +15,7 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
 
-    <string name="permission_to_storage_need">Needs access to photos</string>
+    <string name="permission_to_storage_need">App needs access to photos</string>
     <string name="permission_not_available">NO access to photos!\nRequesting access</string>
     <string name="permission_was_denied">Access to photos is denied</string>
 
@@ -43,48 +43,48 @@
     <string name="user_not_deleted">User could not be deleted</string>
 
     <!-- patient_white -->
-    <string name="patient_title_activity">Add patient</string>
+    <string name="patient_title_activity">Add a patient</string>
     <string name="patient_name">Name and Surname</string>
     <string name="patient_cant_save">Patient could not be saved</string>
     <string name="patient_cant_update">Patient could not be updated</string>
-    <string name="patient_delete">Delete patient</string>
+    <string name="patient_delete">Delete the patient</string>
     <string name="patient_not_deleted">Patient could not be deleted</string>
     <string name="patient_treatment_title_text">Symptoms and Treatment</string>
-    <string name="patient_treatment_description_hint_text">Symptoms and treatment description</string>
+    <string name="patient_treatment_description_hint_text">Enter symptoms and treatment</string>
 
     <!-- diseases_activity -->
-    <string name="diseases_activity_title">Diseases</string>
-    <string name="diseases_empty_text">Add disease</string>
-    <string name="diseases_what_text">Diseases</string>
-    <string name="disease_name">Disease name</string>
-    <string name="disease_date">Disease date</string>
-    <string name="disease_error_name">Specify disease name</string>
-    <string name="disease_error_date">Specify disease date</string>
-    <string name="disease_not_deleted">Disease could not be deleted</string>
-    <string name="disease_delete">Delete disease</string>
+    <string name="diseases_activity_title">Health record</string>
+    <string name="diseases_empty_text">Add ailment/disease</string>
+    <string name="diseases_what_text">Health record</string>
+    <string name="disease_name">Ailment/Disease</string>
+    <string name="disease_date">Beginning date</string>
+    <string name="disease_error_name">Specify ailment/disease</string>
+    <string name="disease_error_date">Specify beginning date</string>
+    <string name="disease_not_deleted">Ailment/Disease could not be deleted</string>
+    <string name="disease_delete">Delete ailment/disease</string>
 
     <!-- treatment_activity -->
-    <string name="treatment_empty_image_text">Add images\nconnected with treatment\n(prescriptions, analyzes, etc.)</string>
+    <string name="treatment_empty_image_text">Add images\nrelated to treatment\n(prescriptions, analyses, etc.)</string>
     <string name="treatment_cant_save_image">Image could not be saved</string>
-    <string name="treatment_cant_save">Disease and treatment could not be saved</string>
-    <string name="treatment_cant_update">Disease and treatment could not be updated</string>
+    <string name="treatment_cant_save">Ailment/Disease/Treatment could not be saved</string>
+    <string name="treatment_cant_update">Ailment/Disease/Treatment could not be updated</string>
     <string name="treatment_cant_load_image">Image could not be loaded</string>
     <string name="treatment_cant_update_image">Image could not be updated</string>
     <string name="treatment_image_not_deleted">Image could not be deleted</string>
     <string name="treatment_image_copy_error">Errors on image saving,\ntry again later</string>
     <string name="treatment_old_image_not_deleted">Updated image could not be deleted</string>
-    <string name="treatment_title_activity">Add disease</string>
+    <string name="treatment_title_activity">Health record</string>
     <string name="treatment_title_text">Treatment</string>
-    <string name="treatment_description_hint_text">Treatment Description</string>
-    <string name="treatment_description">DESCRIPTION</string>
+    <string name="treatment_description_hint_text">Enter Treatment</string>
+    <string name="treatment_description">COURSE</string>
     <string name="treatment_images">IMAGES</string>
 
     <!-- fullscreen_activity -->
     <string name="fullscreen_title_activity">Add image</string>
-    <string name="fullscreen_image_description">Image description</string>
-    <string name="fullscreen_date_of_image">Image date</string>
-    <string name="fullscreen_error_date_of_image">Specify image date</string>
-    <string name="fullscreen_error_image_description">Specify image brief description</string>
+    <string name="fullscreen_image_description">Image details</string>
+    <string name="fullscreen_date_of_image">Date taken</string>
+    <string name="fullscreen_error_date_of_image">Specify image taken date</string>
+    <string name="fullscreen_error_image_description">Specify image details</string>
     <string name="fullscreen_dialog_msg_delete_image">Delete image</string>
     <string name="image_loading_error">Image loading error</string>
 

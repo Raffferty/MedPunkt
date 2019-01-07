@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -61,11 +62,17 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView greetingTextView = findViewById(R.id.txt_greeting);
 
-        String greetingText = getText(R.string.greeting).toString();
-        Spannable spannable = new SpannableString(greetingText);
-        spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, 8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        String greetingStartText = getText(R.string.greeting_start).toString();
+        String greetingMidText = getText(R.string.greeting_mid).toString();
+        String greetingEndText = getText(R.string.greeting_end).toString();
 
-        greetingTextView.setText(spannable, TextView.BufferType.SPANNABLE);
+        Spannable spannableStartText = new SpannableString(greetingStartText);
+        Spannable spannableEndText = new SpannableString(greetingEndText);
+
+        spannableStartText.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableStartText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableEndText.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableEndText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        greetingTextView.setText(TextUtils.concat(spannableStartText, "\n", greetingMidText, " ", spannableEndText), TextView.BufferType.SPANNABLE);
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor prefsEditor = prefs.edit();
@@ -103,29 +110,6 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             isTablet = prefs.getBoolean("isTablet", false);
         }
-
-        /*if (!prefs.contains("isTablet")) {
-            Configuration configuration = getResources().getConfiguration();
-
-            //The smallest screen size an application will see in normal operation,
-            // corresponding to smallest screen width resource qualifier.
-            int smallestScreenWidthDp = configuration.smallestScreenWidthDp;
-
-            // минимальную ширину, при которой, устройстово будет считаться планшетом, ставим 800dp
-            // т.к. рекламный блок в fragment_tablet_treatment имеет размер 320dp
-            // а размещается он в фрейме размером 40% от общей ширины, т.е. 800*0,4 = 320
-            if (smallestScreenWidthDp >= 320) {
-                isTablet = true;
-                prefsEditor.putBoolean("isTablet", true);
-            } else {
-                prefsEditor.putBoolean("isTablet", false);
-            }
-
-            prefsEditor.apply();
-
-        } else {
-            isTablet = prefs.getBoolean("isTablet", false);
-        }*/
 
         final CheckBox checkBoxIamDoctor = findViewById(R.id.checkbox_doctor);
 

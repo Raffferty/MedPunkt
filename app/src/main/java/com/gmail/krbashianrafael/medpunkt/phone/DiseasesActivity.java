@@ -85,8 +85,8 @@ public class DiseasesActivity extends AppCompatActivity
         adViewInDiseasesActivity = findViewById(R.id.adViewInDiseasesActivity);
 
         adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("7D6074C25D2B142E67EA1A88F1EACA1E") // Sony Ericson D2203, 4.4.4 API 19
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("7D6074C25D2B142E67EA1A88F1EACA1E") // Sony Ericson D2203, 4.4.4 API 19
                 //.addTestDevice("5F3286283D8861EB4BB0977151D7C0F1") // Samsung SM-J710 Аня Мищенко, 8.1.0 API 27
                 //.addTestDevice("95D2BBAB6CBBA81C34A1C9009F2B8B52") // Meizu U10 Таня, 6.0 API 23
                 //.addTestDevice("72C8B9DAE86F2FD98F7D59D62911A49B") // Samsung Nat SM-G920F

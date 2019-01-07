@@ -731,12 +731,8 @@ public class MedProvider extends ContentProvider {
         }
 
         // Выставляем флаг для загрузки пользователей в планшете после обновления пользователя
-        // и устанавливаем userNameAfterUpdate
         if (HomeActivity.isTablet) {
             TabletMainActivity.diseaseUpdated = true;
-            /*TabletMainActivity.diseaseNameAfterUpdate = diseaseName;
-            TabletMainActivity.diseaseDateAfterUpdate = diseaseDate;
-            TabletMainActivity.diseaseTreatmentAfterUpdate = diseaseTreatment;*/
         }
 
         // Returns the number of database rows affected by the update statement
@@ -860,14 +856,6 @@ public class MedProvider extends ContentProvider {
                 break;
             case DISEASES:
                 rowsDeleted = database.delete(DiseasesEntry.DISEASES_TABLE_NAME, selection, selectionArgs);
-
-                /*if (rowsDeleted != 0) {
-                    // Выставляем флаг для загрузки заболеваний в планшете после удаления заболевания
-                    if (HomeActivity.isTablet) {
-                        TabletMainActivity.diseaseDeleted = true;
-                    }
-                }*/
-
                 break;
             case DISEASES_ID:
                 selection = DiseasesEntry._ID + "=?";

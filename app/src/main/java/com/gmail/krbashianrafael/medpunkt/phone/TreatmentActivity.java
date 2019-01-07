@@ -175,7 +175,7 @@ public class TreatmentActivity extends AppCompatActivity
         if (HomeActivity.iAmDoctor) {
             txtTitleTreatment.setText(R.string.patient_treatment_title_text);
         } else {
-            txtTitleTreatment.setText(R.string.treatment_description_hint_text);
+            txtTitleTreatment.setText(R.string.treatment_title_text);
         }
 
         textInputLayoutDiseaseName = findViewById(R.id.text_input_layout_disease_name);
