@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:inputType="none"
-            tools:ignore="Autofill,LabelFor" />
+            tools:ignore="Autofill,LabelFor,MissingConstraints" />
 
         <TextView
             android:id="@+id/txt_title_disease"
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 ads:adSize="BANNER"
-                ads:adUnitId="@string/banner_id" />
+                ads:adUnitId="@string/tablet_small_banner_id" />
 
         </FrameLayout>
 

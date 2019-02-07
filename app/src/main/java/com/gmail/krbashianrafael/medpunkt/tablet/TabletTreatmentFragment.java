@@ -31,6 +31,7 @@ import android.text.style.ImageSpan;
 import android.transition.AutoTransition;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -151,6 +152,10 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
+
+                Log.d("tablet_small_ad", "errorCode = " + errorCode);
+
+
                 adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                 TabletMainActivity.adIsShown = false;
             }
@@ -255,7 +260,7 @@ public class TabletTreatmentFragment extends Fragment
 
                             treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
 
-                            // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
+                            // загрузка фото происходит после notifyDataSetChanged() в TreatmentPhotoRecyclerViewAdapter
                         }
                     }
                 }, 250);

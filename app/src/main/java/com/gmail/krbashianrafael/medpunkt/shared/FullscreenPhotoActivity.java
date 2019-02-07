@@ -227,7 +227,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         display.getSize(size);
 
         // если это телефон с шириной экрана меньше 1000
-        // то снимки будут загружаться на базу увеличенную вдвое, чтоб не терялось качество при зумме
+        // то снимки будут загружаться в размере на базу увеличенную вдвое, чтоб не терялось качество при зумме
         if (!HomeActivity.isTablet && size.x < 1000) {
             displayWidth = size.x * 2;
             displayheight = size.y * 2;

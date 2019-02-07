@@ -60,7 +60,7 @@ public class TabletDiseasesFragment extends Fragment
 
     private static final int TABLET_DISEASES_LOADER = 1001;
 
-    AutoTransition autoTransition;
+    private AutoTransition autoTransition;
 
     public TabletDiseasesFragment() {
         // Required empty public constructor

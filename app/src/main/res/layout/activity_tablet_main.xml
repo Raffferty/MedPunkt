@@ -63,7 +63,7 @@
             android:layout_gravity="center"
             android:visibility="gone"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="@string/banner_id"
+            ads:adUnitId="@string/tablet_big_banner_id"
             tools:visibility="visible" />
 
     </FrameLayout>

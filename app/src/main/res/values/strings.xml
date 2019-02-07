@@ -89,8 +89,11 @@
     <string name="image_loading_error">Image loading error</string>
 
     <!-- do not translate -->
+    <!--test_banner_id: ca-app-pub-3940256099942544/6300978111-->
     <string name="app_id" translatable="false">ca-app-pub-5926695077684771~8182565017</string>
-    <string name="banner_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="phone_banner_id" translatable="false">ca-app-pub-5926695077684771/7377300480</string>
+    <string name="tablet_small_banner_id" translatable="false">ca-app-pub-5926695077684771/4327754873</string>
+    <string name="tablet_big_banner_id" translatable="false">ca-app-pub-5926695077684771/2664277270</string>
     <string name="app_name" translatable="false">\u2000MedPunkt</string>
     <string name="title_activity_home" translatable="false">MedPunkt</string>
     <string name="txt_no_title" translatable="false">No Title</string>

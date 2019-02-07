@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,6 +146,9 @@ public class TabletMainActivity extends AppCompatActivity
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
+
+                Log.d("tablet_big_ad", "errorCode = " + errorCode);
+
                 if (adViewInTabletWideView.getVisibility() != View.GONE) {
                     adViewInTabletWideView.setVisibility(View.GONE);
                 }

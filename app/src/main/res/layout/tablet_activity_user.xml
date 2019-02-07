@@ -130,7 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:inputType="none"
-                tools:ignore="Autofill,LabelFor" />
+                tools:ignore="Autofill,LabelFor,MissingConstraints" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guidelineEnd"
