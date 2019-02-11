@@ -115,6 +115,13 @@ public class TreatmentPhotosFragment extends Fragment
         txtAddPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
+                // если ранее, при нажатии на рекламу, tabletBigAdOpened или tabletSmallAdOpened был выставлен в true
+                if (mTabletMainActivity != null) {
+                    mTabletMainActivity.tabletBigAdOpened = false;
+                    mTabletMainActivity.tabletTreatmentFragment.tabletSmallAdOpened = false;
+                }
+
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
 
                 intentToTreatmentPhoto.putExtra("_idUser", _idUser);
@@ -161,6 +168,14 @@ public class TreatmentPhotosFragment extends Fragment
         fabAddTreatmentPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
+                // если ранее, при нажатии на рекламу, tabletBigAdOpened или tabletSmallAdOpened был выставлен в true
+                if (mTabletMainActivity != null) {
+                    mTabletMainActivity.tabletBigAdOpened = false;
+                    mTabletMainActivity.tabletTreatmentFragment.tabletSmallAdOpened = false;
+                }
+
                 Intent intentToTreatmentPhoto = new Intent(getContext(), FullscreenPhotoActivity.class);
 
                 intentToTreatmentPhoto.putExtra("_idUser", _idUser);

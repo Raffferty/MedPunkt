@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
+import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
 import com.gmail.krbashianrafael.medpunkt.phone.TreatmentActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletDiseasesFragment;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
@@ -161,6 +162,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             if (!HomeActivity.isTablet) {
                 // если нажат элемент с названием заболевания
                 // если это телефон
+
+                // восстанавливаем возможность загрузки рекламы
+                ((DiseasesActivity) myContext).phoneAdOpened = false;
+
                 view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
                 new Handler().postDelayed(new Runnable() {

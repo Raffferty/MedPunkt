@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -23,6 +24,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    implementation 'com.google.firebase:firebase-ads:17.1.3'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -49,6 +53,10 @@ dependencies {
     // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
     implementation 'com.github.drawers:SpinnerDatePicker:1.0.6'
 
-    // это для рекламного блока
-    implementation 'com.google.android.gms:play-services-ads:17.1.2'
+    // для рекламного блока
+    implementation 'com.google.android.gms:play-services-ads:17.1.3'
+
+    // для определения локации
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
 }

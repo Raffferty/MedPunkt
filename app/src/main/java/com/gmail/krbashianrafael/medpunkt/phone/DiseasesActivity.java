@@ -30,6 +30,7 @@ import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseRecyclerViewAdapter;
+import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -68,6 +69,7 @@ public class DiseasesActivity extends AppCompatActivity
     private RelativeLayout adRoot;
     private AdView adViewInDiseasesActivity;
     private AdRequest adRequest;
+    public boolean phoneAdOpened = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,18 +87,28 @@ public class DiseasesActivity extends AppCompatActivity
 
         adViewInDiseasesActivity = findViewById(R.id.adViewInDiseasesActivity);
 
+        Log.d("mLocation", "setLocation = " + HomeActivity.mylocation);
+
+        //Location loc = new Location("");
+        /*loc.setLatitude(49.98);
+        loc.setLongitude(36.20);*/
+
         adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 //.addTestDevice("7D6074C25D2B142E67EA1A88F1EACA1E") // Sony Ericson D2203, 4.4.4 API 19
                 //.addTestDevice("5F3286283D8861EB4BB0977151D7C0F1") // Samsung SM-J710 Аня Мищенко, 8.1.0 API 27
                 //.addTestDevice("95D2BBAB6CBBA81C34A1C9009F2B8B52") // Meizu U10 Таня, 6.0 API 23
                 //.addTestDevice("72C8B9DAE86F2FD98F7D59D62911A49B") // Samsung Nat SM-G920F
+                //.setLocation(HomeActivity.mylocation)
+                //.setLocation(new Location("fused 49,983149,36,223845 acc=22 et=+15h16m12s66ms"))
                 .build();
 
         adViewInDiseasesActivity.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
+                Log.d("phone_ad", "onAdLoaded");
+
                 if (adViewInDiseasesActivity.getVisibility() != View.VISIBLE) {
                     TransitionManager.beginDelayedTransition(adRoot);
                     adViewInDiseasesActivity.setVisibility(View.VISIBLE);
@@ -116,14 +128,27 @@ public class DiseasesActivity extends AppCompatActivity
 
             @Override
             public void onAdOpened() {
+                Log.d("phone_ad", "onAdOpened");
+
+                // если на рекламу делается клик, то
+                // закрываем рекламу
+                if (adViewInDiseasesActivity.getVisibility() != View.GONE) {
+                    adViewInDiseasesActivity.setVisibility(View.GONE);
+                    phoneAdOpened = true;
+                    adViewInDiseasesActivity.pause();
+                }
             }
 
             @Override
             public void onAdLeftApplication() {
+                Log.d("phone_ad", "onAdLeftApplication");
+
             }
 
             @Override
             public void onAdClosed() {
+                Log.d("phone_ad", "onAdClosed");
+
             }
         });
 
@@ -159,6 +184,9 @@ public class DiseasesActivity extends AppCompatActivity
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // восстанавливаем возможность загрузки рекламы
+                phoneAdOpened = false;
+
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
                 treatmentIntent.putExtra("_idUser", _idUser);
                 treatmentIntent.putExtra("newDisease", true);
@@ -173,6 +201,10 @@ public class DiseasesActivity extends AppCompatActivity
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // восстанавливаем возможность загрузки рекламы
+                phoneAdOpened = false;
+
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
 
                 treatmentIntent.putExtra("_idUser", _idUser);
@@ -244,14 +276,18 @@ public class DiseasesActivity extends AppCompatActivity
                 if (adViewInDiseasesActivity.getVisibility() == View.VISIBLE) {
                     adViewInDiseasesActivity.resume();
                 } else {
-                    // запускаем рекламный блок
+                    // запускаем рекламный блок если до этого на рекламу уже не было нажато
+                    // если на рекламу уже нажимали, то она будет закрыта и не откроется повторно
+                    // а откроется после перехода на предыдущее или следующее активити
                     // грузим с задержкой, чтоб успело отрисоваться
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            adViewInDiseasesActivity.loadAd(adRequest);
-                        }
-                    }, 600);
+                    if(!phoneAdOpened){
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                adViewInDiseasesActivity.loadAd(adRequest);
+                            }
+                        }, 600);
+                    }
                 }
             } else {
                 if (adViewInDiseasesActivity.getVisibility() == View.VISIBLE) {

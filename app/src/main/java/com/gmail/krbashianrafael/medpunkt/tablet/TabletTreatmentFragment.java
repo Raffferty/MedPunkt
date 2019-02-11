@@ -118,6 +118,7 @@ public class TabletTreatmentFragment extends Fragment
 
     public FrameLayout adViewFrameTabletTreatmentFragment;
     public AdView adViewInTabletTreatmentFragment;
+    public boolean tabletSmallAdOpened = false;
 
     private AutoTransition adCloseTransition;
 
@@ -144,9 +145,23 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
-                TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
-                adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
-                TabletMainActivity.adIsShown = true;
+
+                Log.d("smallAd", "inWideView = " + TabletMainActivity.inWideView);
+
+                if (!TabletMainActivity.inWideView){
+                    TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
+                    adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
+                    TabletMainActivity.adIsShown = true;
+
+                    tabletSmallAdOpened = false;
+
+                } else {
+                    adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                    adViewInTabletTreatmentFragment.pause();
+                    TabletMainActivity.adIsShown = false;
+
+                    tabletSmallAdOpened = false;
+                }
             }
 
             @Override
@@ -155,13 +170,20 @@ public class TabletTreatmentFragment extends Fragment
 
                 Log.d("tablet_small_ad", "errorCode = " + errorCode);
 
-
                 adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                adViewInTabletTreatmentFragment.pause();
                 TabletMainActivity.adIsShown = false;
+
+                tabletSmallAdOpened = false;
             }
 
             @Override
             public void onAdOpened() {
+                adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
+                adViewInTabletTreatmentFragment.pause();
+                TabletMainActivity.adIsShown = false;
+
+                tabletSmallAdOpened = true;
             }
 
             @Override
@@ -278,6 +300,10 @@ public class TabletTreatmentFragment extends Fragment
                 if (tabletMainActivity == null) {
                     return;
                 }
+
+                // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
+                // если ранее, при нажатии на рекламу, tabletBigAdOpened был выставлен в true
+                tabletMainActivity.tabletBigAdOpened = false;
 
                 TabletMainActivity.inWideView = false;
 
@@ -643,12 +669,14 @@ public class TabletTreatmentFragment extends Fragment
                 } else {
                     // если заболевание выделено, загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                     if (TabletDiseasesFragment.diseaseSelected) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
-                            }
-                        }, 600);
+                        if (!tabletSmallAdOpened){
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
+                                }
+                            }, 600);
+                        }
                     }
                 }
             } else {
@@ -800,6 +828,10 @@ public class TabletTreatmentFragment extends Fragment
         } else {
 
             zoomInTabletTreatment.setVisibility(View.VISIBLE);
+
+            // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
+            // если ранее, при нажатии на рекламу, tabletBigAdOpened был выставлен в true
+            tabletMainActivity.tabletBigAdOpened = false;
 
             // т.к. после обновления заболевания в планшетном виде остаемся в inWideView, открываем БОЛЬШОЙ рекламный блок
             // рекламу грузим с задержкой, чтоб успела отрисоваться
