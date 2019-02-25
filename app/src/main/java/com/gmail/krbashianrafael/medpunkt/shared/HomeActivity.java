@@ -1,20 +1,14 @@
 package com.gmail.krbashianrafael.medpunkt.shared;
 
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -22,7 +16,6 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -33,13 +26,6 @@ import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.phone.UsersActivity;
 import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 
@@ -48,9 +34,6 @@ public class HomeActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "PREFS";
     public static boolean iAmDoctor = false;
     public static boolean isTablet = false;
-
-    private FusedLocationProviderClient mFusedLocationClient;
-    public static Location mylocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +95,7 @@ public class HomeActivity extends AppCompatActivity {
                 minSize = dpHeight;
             }
 
-            // минимальную ширину, при которой, устройстово будет считаться планшетом, ставим 800dp
-            // т.к. рекламный блок в fragment_tablet_treatment имеет размер 320dp
-            // а размещается он в фрейме размером 40% от общей ширины, т.е. 800*0,4 = 320
+            // при размерах 600 на 960, устройстово будет считаться планшетом
             if (maxSize >= 960 && minSize >= 600) {
                 isTablet = true;
                 prefsEditor.putBoolean("isTablet", true);
@@ -214,129 +195,6 @@ public class HomeActivity extends AppCompatActivity {
         if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
             new CleanNotDeletedFilesAsyncTask(notDeletedFilesPaths).execute(getApplicationContext());
         }
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Log.d("mLocation", "No permition");
-
-            ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            //return;
-        }else{
-            Log.d("mLocation", "already has permition");
-
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                                Log.d("mLocation", "mLocation = " + location);
-                                mylocation = location;
-                            } else {
-                                Log.d("mLocation", "mLocation = " + location);
-                            }
-                        }
-
-
-                    });
-
-            mFusedLocationClient.getLastLocation().addOnCanceledListener(this, new OnCanceledListener() {
-                @Override
-                public void onCanceled() {
-                    Log.d("mLocation", "Canceled");
-                }
-            });
-
-            mFusedLocationClient.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("mLocation", "Failure");
-
-                }
-            });
-
-            mFusedLocationClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    Log.d("mLocation", "Complete");
-
-                }
-            });
-
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Log.d("mLocation", "has permition");
-
-                    mFusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-
-                                @Override
-                                public void onSuccess(Location location) {
-                                    // Got last known location. In some rare situations this can be null.
-                                    if (location != null) {
-                                        // Logic to handle location object
-                                        Log.d("mLocation", "mLocation = " + location);
-                                        mylocation = location;
-                                    } else {
-                                        Log.d("mLocation", "mLocation = " + location);
-                                    }
-                                }
-
-
-                            });
-
-                    mFusedLocationClient.getLastLocation().addOnCanceledListener(this, new OnCanceledListener() {
-                        @Override
-                        public void onCanceled() {
-                            Log.d("mLocation", "Canceled");
-                        }
-                    });
-
-                    mFusedLocationClient.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("mLocation", "Failure");
-
-                        }
-                    });
-
-                    mFusedLocationClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            Log.d("mLocation", "Complete");
-
-                        }
-                    });
-
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Log.d("mLocation", "permission denied");
-                }
-                //return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     private static class CleanNotDeletedFilesAsyncTask extends AsyncTask<Context, Void, Boolean> {
@@ -390,14 +248,6 @@ public class HomeActivity extends AppCompatActivity {
             mPrefsEditor.apply();
 
             return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean filesDeleted) {
-            super.onPostExecute(filesDeleted);
-            if (!filesDeleted) {
-                Log.d("mOnLoadFinished", "Files NOT Re-Deleted");
-            }
         }
     }
 }

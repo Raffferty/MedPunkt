@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.gmail.krbashianrafael.medpunkt.R;
 import com.gmail.krbashianrafael.medpunkt.shared.DiseaseItem;
-import com.gmail.krbashianrafael.medpunkt.shared.HomeActivity;
 import com.gmail.krbashianrafael.medpunkt.shared.UserItem;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -130,24 +129,15 @@ public class TabletMainActivity extends AppCompatActivity
 
         adViewInTabletWideView = findViewById(R.id.adViewInTablet);
 
-        Log.d("mLocation", "setLocation = " + HomeActivity.mylocation);
-
-
         adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813, 7.0 API 24
-                //.setLocation(HomeActivity.mylocation)
-                //.setLocation(new Location("fused 49,983149,36,223845 acc=22 et=+15h16m12s66ms"))
                 .build();
 
         adViewInTabletWideView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
-                Log.d("tablet_big_ad", "onAdLoaded");
-
-                Log.d("bigAd", "inWideView = " + inWideView);
-
                 if(inWideView){
                     if (adViewInTabletWideView.getVisibility() != View.VISIBLE) {
                         TransitionManager.beginDelayedTransition(mSceneRoot);
@@ -163,9 +153,6 @@ public class TabletMainActivity extends AppCompatActivity
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
-
-                Log.d("tablet_big_ad", "errorCode = " + errorCode);
-
                 if (adViewInTabletWideView.getVisibility() != View.GONE) {
                     adViewInTabletWideView.setVisibility(View.GONE);
                 }
@@ -173,8 +160,6 @@ public class TabletMainActivity extends AppCompatActivity
 
             @Override
             public void onAdOpened() {
-                Log.d("tablet_big_ad", "onAdOpened");
-
                 if (adViewInTabletWideView.getVisibility() != View.GONE) {
                     adViewInTabletWideView.setVisibility(View.GONE);
                     tabletBigAdOpened = true;
@@ -184,15 +169,12 @@ public class TabletMainActivity extends AppCompatActivity
 
             @Override
             public void onAdLeftApplication() {
-                Log.d("tablet_big_ad", "onAdLeftApplication");
             }
 
             @Override
             public void onAdClosed() {
             }
         });
-
-        // --------------------
 
         firstLoad = true;
         inWideView = false;
@@ -332,7 +314,6 @@ public class TabletMainActivity extends AppCompatActivity
                     }
 
                     // если подтверждаем удаление заболевания
-
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;
 
@@ -500,9 +481,6 @@ public class TabletMainActivity extends AppCompatActivity
             // если НЕ в процессе добавления новго заболевания, то кнопка cancel видна только в режиме inWideView
             // поэтому в режиме inWideView and !newDiseaseAndTreatment раскрываем БОЛЬШОЙ рекламный блок
             // рекламу грузим с задержкой, чтоб успела отрисоваться
-
-            Log.d("bigAd", "cancel inWideView = " + inWideView);
-
             if (!tabletBigAdOpened){
                 myTabletHandler.postDelayed(new Runnable() {
                     @Override

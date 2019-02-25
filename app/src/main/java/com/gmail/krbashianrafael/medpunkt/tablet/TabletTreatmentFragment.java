@@ -145,9 +145,6 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onAdLoaded() {
                 // если реклама загрузилась - показываем
-
-                Log.d("smallAd", "inWideView = " + TabletMainActivity.inWideView);
-
                 if (!TabletMainActivity.inWideView){
                     TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
                     adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
@@ -167,9 +164,6 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // если реклама не загрузилась - скрываем
-
-                Log.d("tablet_small_ad", "errorCode = " + errorCode);
-
                 adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                 adViewInTabletTreatmentFragment.pause();
                 TabletMainActivity.adIsShown = false;
