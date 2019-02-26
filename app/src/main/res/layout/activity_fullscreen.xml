@@ -11,9 +11,6 @@
         android:inputType="none"
         tools:ignore="Autofill,LabelFor" />
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
     <ImageView
         android:id="@+id/fullscreen_image"
         android:layout_width="match_parent"
@@ -129,9 +126,6 @@
                 android:textColorHint="@color/colorPrimaryDark"
                 app:hintTextAppearance="@style/Lable">
 
-                <!-- это кастомный TextInputEditText
-                у которого клавиатура не перекрывает текст
-                и, при сворачивании клавиатуры EditText выходит из фокуса -->
                 <com.gmail.krbashianrafael.medpunkt.MyTextInputEditText
                     android:id="@+id/editText_photo_description"
                     android:layout_width="match_parent"

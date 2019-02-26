@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- app -->
     <string name="greeting_start">MedPunkt поможет запомнить,</string>
     <string name="greeting_mid">когда и чем болели Вы, ваши близкие или ваши пациенты и</string>
     <string name="greeting_end">какое было лечение.</string>
@@ -19,13 +18,10 @@
     <string name="permission_not_available">Доступа к фотографиям НЕТ!\nЗапрашиваю Доступ к фотографиям</string>
     <string name="permission_was_denied">В доступе к фотографиям отказано</string>
 
-    <!-- users/patients activity -->
     <string name="users_title_activity">Пользователи</string>
 
-    <!-- patient_white -->
     <string name="patients_title_activity">Пациенты</string>
 
-    <!-- user/patient_white activity -->
     <string name="user_title_activity">Добавить Пользователя</string>
     <string name="user_photo">Фото</string>
     <string name="user_delete_photo">Удалить фото</string>
@@ -42,7 +38,6 @@
     <string name="user_delete">Удалить пользователя</string>
     <string name="user_not_deleted">Пользователь НЕ удалился</string>
 
-    <!-- patient_white -->
     <string name="patient_title_activity">Добавить Пациента</string>
     <string name="patient_name">Имя и Фамилия</string>
     <string name="patient_cant_save">Пациента не удалось сохранить</string>
@@ -52,7 +47,6 @@
     <string name="patient_treatment_title_text">Симптомы и Лечение</string>
     <string name="patient_treatment_description_hint_text">Описание симтомов и лечение</string>
 
-    <!-- diseases_activity -->
     <string name="diseases_activity_title">Заболевания</string>
     <string name="diseases_empty_text">Добавить заболевание</string>
     <string name="diseases_what_text">Заболевания</string>
@@ -63,7 +57,6 @@
     <string name="disease_not_deleted">Заболевание НЕ удалилось</string>
     <string name="disease_delete">Удалить заболевание</string>
 
-    <!-- treatment_activity -->
     <string name="treatment_empty_image_text">Добавить снимки,\nсвязанные с лечением\n(назначения, анализы и т.д.)</string>
     <string name="treatment_cant_save_image">Снимок не удалось сохранить</string>
     <string name="treatment_cant_save">Заболевание и лечение не удалось сохранить</string>
@@ -80,7 +73,6 @@
     <string name="treatment_images">СНИМКИ</string>
     <string name="fullscreen_error_image_description">Укажите краткое описание снимка</string>
 
-    <!-- fullscreen_activity -->
     <string name="fullscreen_title_activity">Добавить снимок</string>
     <string name="fullscreen_image_description">Описание снимка</string>
     <string name="fullscreen_date_of_image">дата снимка</string>

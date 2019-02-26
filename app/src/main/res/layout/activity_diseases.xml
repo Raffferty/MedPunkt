@@ -51,7 +51,6 @@
         android:clipToPadding="false"
         android:paddingBottom="92dp" />
 
-    <!-- android:layout_alignParentBottom="true" -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddDisease"
         android:layout_width="wrap_content"
@@ -64,7 +63,6 @@
         app:backgroundTint="@color/colorFab"
         tools:visibility="visible" />
 
-    <!-- тестовый banner_id = ca-app-pub-3940256099942544/6300978111 -->
     <FrameLayout
         android:id="@+id/adViewFrame"
         android:layout_width="match_parent"

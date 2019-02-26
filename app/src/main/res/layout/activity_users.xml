@@ -19,7 +19,6 @@
         android:textColor="@color/white"
         android:textSize="20sp" />
 
-    <!-- этот ImageView виден только на планшере -->
     <ImageView
         android:id="@+id/img_cancel_tablet_users"
         android:layout_width="36dp"

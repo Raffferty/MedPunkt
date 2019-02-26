@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- app -->
     <string name="greeting_start">MedPunkt допоможе запам’ятати,</string>
     <string name="greeting_mid">коли і чим хворіли Ви, ваші близькі або ваші пацієнти і</string>
     <string name="greeting_end">як лікувалися.</string>
@@ -19,13 +18,10 @@
     <string name="permission_not_available">Доступу до фотографій немає!\nЗапрошую доступ до фотографій</string>
     <string name="permission_was_denied">У доступі до фотографій відмовлено</string>
 
-    <!-- users/patients activity -->
     <string name="users_title_activity">Користувачі</string>
 
-    <!-- patient_white -->
     <string name="patients_title_activity">Пацієнти</string>
 
-    <!-- user/patient_white activity -->
     <string name="user_title_activity">Додати Користувача</string>
     <string name="user_photo">Фото</string>
     <string name="user_delete_photo">Видалити фото</string>
@@ -42,7 +38,6 @@
     <string name="user_delete">Видалити користувача</string>
     <string name="user_not_deleted">Користувача не вдалося видалити</string>
 
-    <!-- patient_white -->
     <string name="patient_title_activity">Додати пацієнта</string>
     <string name="patient_name">Ім’я та Прізвище</string>
     <string name="patient_cant_save">Пацієнта не вдалося зберегти</string>
@@ -52,7 +47,6 @@
     <string name="patient_treatment_title_text">Симптоми та Лікування</string>
     <string name="patient_treatment_description_hint_text">Опис симптомів та лікування</string>
 
-    <!-- diseases_activity -->
     <string name="diseases_activity_title">Захворювання</string>
     <string name="diseases_empty_text">Додати захворювання</string>
     <string name="diseases_what_text">Захворювання</string>
@@ -63,7 +57,6 @@
     <string name="disease_not_deleted">Захворювання не вдалося видалити</string>
     <string name="disease_delete">Видалити захворювання</string>
 
-    <!-- treatment_activity -->
     <string name="treatment_empty_image_text">Додати знімки,\nпов’язані з лікуванням\n(призначення, аналізи тощо)</string>
     <string name="treatment_cant_save_image">Знімок не вдалося зберегти</string>
     <string name="treatment_cant_save">Захворювання і лікування не вдалося зберегти</string>
@@ -80,7 +73,6 @@
     <string name="treatment_images">ЗНІМКИ</string>
     <string name="fullscreen_error_image_description">Вкажіть короткий опис знімка</string>
 
-    <!-- fullscreen_activity -->
     <string name="fullscreen_title_activity">Додати знімок</string>
     <string name="fullscreen_image_description">Опис знімка</string>
     <string name="fullscreen_date_of_image">дата знімка</string>

@@ -92,9 +92,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_photo">
 
-        <!-- это кастомный TextInputEditText
-            у которого клавиатура не перекрывает текст
-            и, при сворачивании клавиатуры EditText выходит из фокуса -->
         <com.gmail.krbashianrafael.medpunkt.MyTextInputEditText
             android:id="@+id/editText_name"
             android:layout_width="match_parent"
@@ -163,9 +160,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible" />
 
-    <!-- это фреймы которые присутствуют в планшетном виде
-     если их здесь не указать, то в планшетном виде они  будут null
-     -->
     <FrameLayout
         android:id="@+id/tablet_frm_back"
         android:layout_width="0dp"

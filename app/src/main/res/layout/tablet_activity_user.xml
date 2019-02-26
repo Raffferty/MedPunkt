@@ -36,7 +36,6 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.77" />
 
-    <!-- LinearLayout для шапки формы заполнения данных пользователя -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -108,7 +107,6 @@
 
     </LinearLayout>
 
-    <!-- FrameLayout для формы заполнения данных пользователя -->
     <FrameLayout
         android:id="@+id/user_frame"
         android:layout_width="0dp"

@@ -117,7 +117,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_title_treatment" />
 
-        <!-- тестовый banner_id = ca-app-pub-3940256099942544/6300978111 -->
         <FrameLayout
             android:id="@+id/adViewFrameTabletTreatment"
             android:layout_width="match_parent"
