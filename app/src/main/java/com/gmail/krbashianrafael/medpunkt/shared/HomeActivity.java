@@ -40,19 +40,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Initialize the Mobile Ads SDK.
-        // инициализируем MobileAds с id приложения MedPunkt
-        // мой app_id = ca-app-pub-5926695077684771~8182565017
         MobileAds.initialize(this, getResources().getString(R.string.app_id));
-
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // иконка видна, но не нажимается
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setTitle("\t" + getResources().getString(R.string.title_activity_home));
 
-            // для версий начиная с Nougat	7.1	API level 25 исползуются круглые икнонки
             if (Build.VERSION.SDK_INT >= 25) {
                 actionBar.setIcon(R.drawable.med_round);
             } else {
@@ -77,7 +71,6 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-        // узнаем Планшет это или нет
         if (!prefs.contains("isTablet")) {
 
             DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
@@ -95,7 +88,6 @@ public class HomeActivity extends AppCompatActivity {
                 minSize = dpHeight;
             }
 
-            // при размерах 600 на 960, устройстово будет считаться планшетом
             if (maxSize >= 960 && minSize >= 600) {
                 isTablet = true;
                 prefsEditor.putBoolean("isTablet", true);
@@ -120,7 +112,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // если отмечено
                     iAmDoctor = true;
                     prefsEditor.putBoolean("iAmDoctor", true);
                     prefsEditor.apply();
@@ -134,8 +125,6 @@ public class HomeActivity extends AppCompatActivity {
 
         final CheckBox checkBoxShowGreeting = findViewById(R.id.checkbox_show_greeting);
 
-        // при первом заходе проверяем была ли ранее выставлена галочка "Не показывать больше"
-        // и если была, то идем в UsersActivity, при этом ставим галочку
         if (!prefs.getBoolean("showGreeting", true)) {
 
             checkBoxShowGreeting.setChecked(true);
@@ -156,13 +145,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        // checkBox.setOnCheckedChangeListener инициализируем после проверки на галочку (вверху)
-        // чтоб лишний раз не записывать prefsEditor.putBoolean
         checkBoxShowGreeting.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // если отмечено БОЛЬШЕ НЕ ПОКАЗЫВАТЬ, то окно приветсвия будет пропускаться
                     prefsEditor.putBoolean("showGreeting", false);
                     prefsEditor.apply();
                 } else {
@@ -187,9 +173,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // при первой загрузке проверяем есть ли висячие файлы фотографий,
-        // которые должны были быть удалены, но не удалились
-        // и пытаемся их снова удалить в doInBackground класса CleanNotDeletedFilesAsyncTask
         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
         if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
@@ -215,7 +198,6 @@ public class HomeActivity extends AppCompatActivity {
 
             Context mContext = contexts[0];
 
-            // получаем SharedPreferences, чтоб писать в файл "PREFS"
             SharedPreferences mPrefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             final SharedPreferences.Editor mPrefsEditor = mPrefs.edit();
 
@@ -242,8 +224,6 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
 
-            // если после повторной попытки удаления не осталось висячих файлов sb = 0,
-            // то очищаем поле notDeletedFilesPaths
             mPrefsEditor.putString("notDeletedFilesPaths", null);
             mPrefsEditor.apply();
 

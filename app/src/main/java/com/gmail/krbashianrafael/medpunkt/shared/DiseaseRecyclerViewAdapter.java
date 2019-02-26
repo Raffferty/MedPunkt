@@ -62,12 +62,8 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((DiseaseHolder) holder).diseaseName.setText(diseaseName);
         ((DiseaseHolder) holder).treatmentText.setText(treatmentText);
 
-        // если это планшет, то выделенный элемент будет окрашен в голубой цвет,
-        // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
             if (TabletMainActivity.selectedDisease_id == _diseaseId) {
-                // добавленное заболевание будет сразу выделенным
-                // т.к. в MedProvider есть запись TabletMainActivity.selectedDisease_id = TabletMainActivity.insertedDisease_id;
                 ((DiseaseHolder) holder).diseasesItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
                 TabletDiseasesFragment.diseaseSelected = true;
 
@@ -160,10 +156,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             clicked_disease_id = Long.valueOf(_diseaseId.getText().toString());
 
             if (!HomeActivity.isTablet) {
-                // если нажат элемент с названием заболевания
-                // если это телефон
-
-                // восстанавливаем возможность загрузки рекламы
                 ((DiseasesActivity) myContext).phoneAdOpened = false;
 
                 view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
@@ -190,12 +182,10 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                 }, 500);
             } else {
-                //если это планшет и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
                 if (TabletMainActivity.selectedDisease_id != clicked_disease_id) {
 
                     TabletDiseasesFragment.diseaseSelected = true;
 
-                    // ставим на таб "описание"
                     if (tabletMainActivity.tabletTreatmentFragment.tabLayout.getSelectedTabPosition() == 1) {
                         Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
                     } else {
@@ -210,7 +200,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
                     if (percentVerGuideline_2 != 0.30f) {
 
-                        // показываем лечение
                         TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, tabletDiseaseItemClickTransition);
 
                         tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.3f);
@@ -221,14 +210,11 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         tabletDiseaseSelected();
                     }
 
-                    // реклама Малая
                     if (tabletMainActivity.tabletTreatmentFragment != null
                             && tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
 
-                        // если реклама не показывалась, но соединение есть
                         if (!TabletMainActivity.adIsShown) {
                             if (tabletMainActivity.isNetworkConnected()) {
-                                // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                                 tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -239,7 +225,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                                 }, 600);
                             }
                         } else {
-                            // если реклама паказывалась, но соедининеия нет
                             if (!tabletMainActivity.isNetworkConnected()) {
                                 tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                                 tabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
@@ -257,13 +242,9 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tempTextDateOfTreatment = tabletMainActivity.tabletTreatmentFragment.editTextDateOfDisease.getText().toString();
             tabletMainActivity.tempTextTreatment = Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
-            // устанавливаем новое значение для selected_disease_id
-            // и заново отрисовываем все видимые элементы в diseaseRecyclerView
-            // чтоб закрасить выделенный элемент
             TabletMainActivity.selectedDisease_id = clicked_disease_id;
             tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
-            // далее отрисовываем нужные поля в фрагментах
             tabletMainActivity.tabletTreatmentFragment.tabLayout.setVisibility(View.VISIBLE);
             tabletMainActivity.tabletTreatmentFragment.viewPager.setVisibility(View.VISIBLE);
 
@@ -273,7 +254,6 @@ public class DiseaseRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             tabletMainActivity.tabletTreatmentFragment.setTextDateOfDisease(diseaseDate.getText().toString());
             tabletMainActivity.tabletTreatmentFragment.setTextTreatment(treatmentText.getText().toString());
 
-            // грузим снимки этого заболевания
             tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.initTreatmentPhotosLoader();
         }
     }

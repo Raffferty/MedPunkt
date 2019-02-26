@@ -4,11 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 
-/**
- * это кастомный EditText у которого клавиатура не перекрывает текст
- * и, при сворачивании клавиатуры EditText выходит из фокуса
- * */
-
 public class MyEditText extends android.support.v7.widget.AppCompatEditText {
 
     public MyEditText(Context context) {

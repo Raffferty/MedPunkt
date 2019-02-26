@@ -99,78 +99,50 @@ public class UserActivity extends AppCompatActivity
 
     private static final String PREFS_NAME = "PREFS";
 
-    /**
-     * Лоадеров может много (они обрабатываются в case)
-     * поэтому устанавливаем инициализатор для каждого лоадера
-     * private static final int USER_TR_PHOTOS_LOADER = 202
-     */
-    // Лоадер для загрузки путей снимков связанных с лечением юзера
     private static final int USER_TR_PHOTOS_LOADER = 202;
 
-    // загруженный Bitmap фотографии
     private Bitmap loadedBitmap;
 
     private String pathToUsersPhoto;
 
-    // новый ли пользователь, возможность изменфть пользователя,
-    // показывать стрелку обратно, был ли изменен пользователь,
-    // в процессе сохранения или нет
     private boolean newUser, goBack, editUser, userHasChangedPhoto, onSavingOrUpdatingOrDeleting, onLoading;
 
     private ActionBar actionBar;
 
-    // имя и дата рождени полей UserActivity
     private String textUserName, textUserBirthDate;
 
-    // поля имени, ДР и focusHolder
     private TextInputLayout textInputLayoutName, textInputLayoutDate;
     private TextInputEditText editTextDate, editTextName;
     private EditText focusHolder;
 
-    // фото пользоватлея
     private ImageView imagePhoto;
 
-    //для планшета:
-
-    // TextView для указания UserTitle
     private TextView txtTabletUserTitle;
 
     private FrameLayout tabletFrmSave;
     private FrameLayout tabletFrmDelete;
 
-    // если нет пользоватлея будет рамка с текстом, что нет фото и можно загрузить
     private TextView textViewNoUserPhoto;
 
-    // TextView на случай, если ошибка загрузки фото
     private TextView txtErr;
 
-    // TextView удаления фото, при нажатии удаляется фото
     private TextView textDeleteUserPhoto;
 
-    // путь к сохраненному фото
     private String userPhotoUri, userSetNoPhotoUri = "";
 
-    // id пользователя
     private long _idUser = 0;
 
-    // View mLayout для привязки snackbar
     private View mLayout;
 
-    // fabEditTreatmentDescripton
     private FloatingActionButton fab;
 
-    // Animation fabHideAnimation
     private Animation fabHideAnimation;
 
-    // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
-    // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
 
-    // путь к загружаемому фото
     private Uri imageUriInView;
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -201,7 +173,6 @@ public class UserActivity extends AppCompatActivity
 
         actionBar = getSupportActionBar();
 
-        // если это телефон устанавливаме actionBar для телефона
         if (!HomeActivity.isTablet) {
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
@@ -216,11 +187,6 @@ public class UserActivity extends AppCompatActivity
                 }
             }
         } else {
-            // если это Плншет прячем actionBar
-            // и инициализируем вьюшки, которые относятся к планшету
-
-            // эти вюшки обязатльно должны присутствовать в телефонном виде,
-            // иначе findViewById вернет null
             if (actionBar != null) {
                 actionBar.hide();
             }
@@ -247,24 +213,18 @@ public class UserActivity extends AppCompatActivity
             tabletFrmDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // привязываем PopupMenu к tabletFrmDelete
                     PopupMenu popup = new PopupMenu(UserActivity.this, tabletFrmDelete);
 
-                    // создаем PopupMenu
                     popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
 
-                    // создаем строку для зацепки к символу "удалить"
                     String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
-                    // убираем не нужные Item
                     popup.getMenu().removeItem(R.id.action_delete);
                     popup.getMenu().removeItem(R.id.action_save);
 
-                    // добавление в меню текста с картинкой символа "удалить"
                     popup.getMenu().add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
                             deleteString));
 
-                    //registering popup with OnMenuItemClickListener
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {
                             onDeleteClick();
@@ -272,7 +232,6 @@ public class UserActivity extends AppCompatActivity
                         }
                     });
 
-                    //showing popup menu
                     popup.show();
                 }
             });
@@ -286,17 +245,14 @@ public class UserActivity extends AppCompatActivity
             }
         }
 
-        //  /data/data/com.gmail.krbashianrafael.medpunkt/files/users_photos/
         if (getFilesDir() != null) {
             pathToUsersPhoto = getFilesDir().toString() + getString(R.string.path_to_users_photos);
         }
 
-        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                         WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        // привязка для snackbar
         mLayout = findViewById(R.id.user_layout);
 
         textViewNoUserPhoto = findViewById(R.id.no_user_photo);
@@ -306,7 +262,6 @@ public class UserActivity extends AppCompatActivity
         imagePhoto = findViewById(R.id.image_photo);
 
         if (!userPhotoUri.equals("No_Photo")) {
-            // если есть файл фото для загрузки, то грузим
             textViewNoUserPhoto.setVisibility(View.GONE);
 
             File imgFile = new File(userPhotoUri);
@@ -317,7 +272,6 @@ public class UserActivity extends AppCompatActivity
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                //on load failed
                                 myHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -333,7 +287,6 @@ public class UserActivity extends AppCompatActivity
 
                             @Override
                             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                //on load success
                                 if (txtErr.getVisibility() == View.VISIBLE) {
 
                                     txtErr.setVisibility(View.GONE);
@@ -361,13 +314,10 @@ public class UserActivity extends AppCompatActivity
 
                 onLoading = true;
 
-                // скручиваем клавиатуру
                 hideSoftInput();
 
-                // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
                 if (ActivityCompat.checkSelfPermission(UserActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    // Запрашиваем разрешение на чтение и запись фото
                     MyReadWritePermissionHandler.getReadWritePermission(UserActivity.this, mLayout, PERMISSION_WRITE_EXTERNAL_STORAGE);
                 } else {
                     Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -375,17 +325,12 @@ public class UserActivity extends AppCompatActivity
                     startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
                 }
 
-                // если не было фото при открытии, то будет editUser = true, а imagePhoto будет imagePhoto.setClickable(true);
-                // после fab.performClick(); будет editUser = false;
-                // и повторное нажатие на imagePhoto не вызовет fab.performClick();
                 if (editUser) {
                     fab.performClick();
                 }
             }
         });
 
-        // при нажатии на textDeleteUserPhoto убирается фото из рамки
-        // и далее, при сохранении (если ранее было фото) удаляется файл фото
         textDeleteUserPhoto = findViewById(R.id.text_delete_photo);
         textDeleteUserPhoto.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp), getResources().getString(R.string.user_delete_photo)));
         textDeleteUserPhoto.setOnClickListener(new View.OnClickListener() {
@@ -397,7 +342,6 @@ public class UserActivity extends AppCompatActivity
                 textViewNoUserPhoto.setVisibility(View.VISIBLE);
                 textDeleteUserPhoto.setVisibility(View.INVISIBLE);
 
-                // если до удаления фото не было, то изменений нет
                 if (userPhotoUri.equals("No_Photo")) {
                     userHasChangedPhoto = false;
                 } else {
@@ -432,22 +376,12 @@ public class UserActivity extends AppCompatActivity
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // скручиваем клавиатуру
                     hideSoftInput();
 
                     textInputLayoutDate.setError(null);
 
-                    // передаем фокус, чтоб поля имени и ДР не были в фокусе
                     focusHolder.requestFocus();
 
-                    // выбираем дату ДР
-
-                    // в версии Build.VERSION_CODES.N нет календаря с прокруткой
-                    // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
-                    // слушатель прописываем в нашем же классе .callback(UserActivity.this)
-                    // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-                    // используем эту библиотеку для
-                    // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         String dateInEditTextDate = Objects.requireNonNull(editTextDate.getText()).toString().trim();
 
@@ -455,16 +389,12 @@ public class UserActivity extends AppCompatActivity
                         int mMonth;
                         int mDay;
 
-                        // если в поле dateInEditTextDate уже была установленна дата, то
-                        // получаем ее и открываем диалог с этой датой
                         if (dateInEditTextDate.contains("-")) {
                             String[] mDayMonthYear = dateInEditTextDate.split("-");
                             mYear = Integer.valueOf(mDayMonthYear[2]);
                             mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
                             mDay = Integer.valueOf(mDayMonthYear[0]);
                         } else {
-                            // если в поле dateInEditTextDate не была установлена дата
-                            // то открываем диалог с текущей датой
                             final Calendar c = Calendar.getInstance();
                             mYear = c.get(Calendar.YEAR);
                             mMonth = c.get(Calendar.MONTH);
@@ -481,7 +411,6 @@ public class UserActivity extends AppCompatActivity
                         spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
                         spinnerDatePickerDialog.show();
                     } else {
-                        // в остальных случаях пользуемся классом DatePickerFragment
                         DatePickerFragment newFragment = new DatePickerFragment();
                         newFragment.show(getSupportFragmentManager(), "datePicker");
                     }
@@ -545,7 +474,6 @@ public class UserActivity extends AppCompatActivity
                 editTextName.setEnabled(true);
                 editTextName.requestFocus();
 
-                // устанавливаем курсор в конец строки (cursor)
                 editTextName.setSelection(Objects.requireNonNull(editTextName.getText()).length());
                 editTextDate.setEnabled(true);
                 imagePhoto.setClickable(true);
@@ -574,23 +502,17 @@ public class UserActivity extends AppCompatActivity
                     textDeleteUserPhoto.setVisibility(View.VISIBLE);
                 }
 
-                // если это телефон (не Планшет), то обновляем меню
                 if (!HomeActivity.isTablet) {
                     invalidateOptionsMenu();
                 } else {
-                    // если это планшет, то показываем "сохранить" и убираем "удалить"
                     tabletFrmSave.setVisibility(View.VISIBLE);
                     tabletFrmDelete.setVisibility(View.GONE);
                 }
             }
         });
 
-        // если окно отрылось как просмотр профиля,
-        // то редактирование запрещено
-        // если редактировать можно, но нет фото, то и удалять не нужно
         if (editUser) {
             if (HomeActivity.isTablet) {
-                // если это планшет, то показываем "сохранить" и убираем "удалить"
                 tabletFrmSave.setVisibility(View.GONE);
                 tabletFrmDelete.setVisibility(View.VISIBLE);
             }
@@ -600,8 +522,6 @@ public class UserActivity extends AppCompatActivity
             textDeleteUserPhoto.setVisibility(View.INVISIBLE);
             fab.startAnimation(fabShowAnimation);
 
-            // если открылись с "No_Photo", то imagePhoto.setClickable(true);
-            // иначе imagePhoto.setClickable(false);
             if (userPhotoUri.equals("No_Photo")) {
                 imagePhoto.setClickable(true);
             } else {
@@ -613,7 +533,6 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -622,7 +541,6 @@ public class UserActivity extends AppCompatActivity
         editTextDate.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
-    // результат запроса на загрузку фото
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -640,7 +558,6 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    // здесь грузим фотку в imagePhoto
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -652,17 +569,13 @@ public class UserActivity extends AppCompatActivity
                 Toast.makeText(UserActivity.this, R.string.user_cant_load_photo, Toast.LENGTH_LONG).show();
                 onLoading = false;
             } else {
-                // если грузим фотку в первый раз
-                // или если грузим другую фотку вместо уже загруженной (ту же фотку повторно не грузим)
                 if (imageUriInView == null || !imageUriInView.equals(newSelectedImageUri)) {
                     loadPhotoIntoViewAndGetBitmap(newSelectedImageUri);
                 } else {
-                    // если грузим ту же фотку, которую только что грузили
                     onLoading = false;
                 }
             }
         } else {
-            // если вернулись не сделав выбор
             onLoading = false;
         }
     }
@@ -673,8 +586,6 @@ public class UserActivity extends AppCompatActivity
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        //on load failed
-
                         txtErr.setVisibility(View.VISIBLE);
                         userSetNoPhotoUri = "Set_No_Photo";
                         imageUriInView = null;
@@ -689,8 +600,6 @@ public class UserActivity extends AppCompatActivity
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        //on load success
-
                         userSetNoPhotoUri = "";
 
                         if (txtErr.getVisibility() == View.VISIBLE) {
@@ -712,7 +621,6 @@ public class UserActivity extends AppCompatActivity
                                 .into(new SimpleTarget<Bitmap>(imagePhoto.getWidth(), imagePhoto.getHeight()) {
                                     @Override
                                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                        // здесь получаем Bitmap
                                         loadedBitmap = resource;
                                     }
                                 });
@@ -738,7 +646,6 @@ public class UserActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        // Планшет идет без меню
         if (HomeActivity.isTablet) {
             return false;
         }
@@ -748,14 +655,12 @@ public class UserActivity extends AppCompatActivity
         String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
 
         menu.removeItem(R.id.action_delete);
-        // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
                 deleteString));
 
         return true;
     }
 
-    // SpannableString с картикной для элеменов меню
     private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
@@ -769,14 +674,10 @@ public class UserActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        // если в состоянии editUser (тоесть есть кнопка fabEditTreatmentDescripton со значком редактирования)
-        // то в меню элемент "сохранить" делаем не видимым
-        // видимым остается "удалить"
         if (editUser) {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
-            // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
             menuItemDelete.setVisible(false);
         }
@@ -802,10 +703,8 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    // если было нажато "домой" (обратно)
     @SuppressWarnings("SameReturnValue")
     private boolean onHomeClick() {
-        // Если не было изменений
         if (userHasNotChanged()) {
             goToUsersActivity();
             return true;
@@ -814,8 +713,6 @@ public class UserActivity extends AppCompatActivity
         textInputLayoutName.setError(null);
         textInputLayoutDate.setError(null);
 
-        // Если были изменения
-        // если выходим без сохранения изменений
         DialogInterface.OnClickListener discardButtonClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -828,45 +725,35 @@ public class UserActivity extends AppCompatActivity
                     }
                 };
 
-        // если выходим с сохранением изменений
         showUnsavedChangesDialog(discardButtonClickListener);
 
         return true;
     }
 
-    // если было нажато "сохранить"
     @SuppressWarnings("SameReturnValue")
     private boolean onSaveClick() {
-        // флаг, чтоб повторный клик не работал,
-        // пока идет сохранения
         if (onSavingOrUpdatingOrDeleting) {
             return true;
         }
 
         onSavingOrUpdatingOrDeleting = true;
 
-        // если ничего не менялось
         if (userHasNotChanged() && !newUser) {
 
-            // то сразу выходим
             goToUsersActivity();
             onSavingOrUpdatingOrDeleting = false;
 
             return true;
 
         } else {
-            // если что-то менялось
             saveOrUpdateUser();
         }
 
         return true;
     }
 
-    // если было нажато "удалить"
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteClick() {
-        // флаг, чтоб клик не работал,
-        // пока идет сохранения
         if (onSavingOrUpdatingOrDeleting) {
             return true;
         }
@@ -892,7 +779,6 @@ public class UserActivity extends AppCompatActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //hideSoftInput();
                         if (dialog != null) {
                             dialog.dismiss();
                         }
@@ -904,7 +790,6 @@ public class UserActivity extends AppCompatActivity
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
-    // Диалог "Удалить пользователя или отменить удаление"
     private void showDeleteConfirmationDialog() {
 
         String deleteString = HomeActivity.iAmDoctor ? getResources().getString(R.string.patient_delete) : getResources().getString(R.string.user_delete);
@@ -937,7 +822,6 @@ public class UserActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
         hideSoftInput();
@@ -964,11 +848,9 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void saveOrUpdateUser() {
-        // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
 
-        // првоерка имени и ДР
         String nameToCheck = Objects.requireNonNull(editTextName.getText()).toString().trim();
         String birthDateToCheck = Objects.requireNonNull(editTextDate.getText()).toString();
         boolean wrongField = false;
@@ -991,16 +873,12 @@ public class UserActivity extends AppCompatActivity
             textInputLayoutDate.setError(null);
         }
 
-        // если поля имени и др были не верными - выходим
         if (wrongField) {
             hideSoftInput();
             onSavingOrUpdatingOrDeleting = false;
             return;
         }
 
-        // проверка окончена, начинаем сохранение
-
-        // скручиваем клавиатуру
         hideSoftInput();
 
         focusHolder.requestFocus();
@@ -1014,12 +892,6 @@ public class UserActivity extends AppCompatActivity
             txtTabletUserTitle.setText(textUserName);
         }
 
-        // когда сохраняем НОВОГО пользователя в базу, вместо пути к фото пишем "No_Photo" на случай,
-        // если фото не будет установленно
-        // при сохранении пользователя в базу получаем его _id
-        // далее, если фото будет выбрано, то дописываем (обновляем) путь к фото в базу в папку под номером _id пользователя
-
-        // если фото было удалено нажатием на "удалить фото", то удалить фото (если оно есть)
         if (userSetNoPhotoUri.equals("Set_No_Photo") && !userPhotoUri.equals("No_Photo")) {
 
             File fileToDelete = new File(userPhotoUri);
@@ -1028,19 +900,14 @@ public class UserActivity extends AppCompatActivity
 
                 if (!fileToDelete.delete()) {
 
-                    // если файл не удалился
                     Toast.makeText(this, R.string.user_photo_not_deleted, Toast.LENGTH_LONG).show();
 
-                    // получаем SharedPreferences, чтоб вписать путь к неудаленному файлу в "PREFS"
                     SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                     final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                    // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                     String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
-                    // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
                     String updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + userPhotoUri;
 
-                    // пишем заново в в "PREFS" обновленную строку
                     prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                     prefsEditor.apply();
                 }
@@ -1050,11 +917,9 @@ public class UserActivity extends AppCompatActivity
             userSetNoPhotoUri = "";
         }
 
-        // если новый пользователь, то сохраняем в базу и идем в DiseasesActivity
         if (newUser) {
             saveUserToDataBase();
         }
-        // если НЕ новый пользователь, то обновляем в базу и
         else {
             updateUserToDataBase();
         }
@@ -1062,29 +927,24 @@ public class UserActivity extends AppCompatActivity
 
     private void afterSaveUser() {
         if (!HomeActivity.isTablet) {
-            // если это телефон
             if (goBack) {
                 goToUsersActivity();
             } else {
                 goToDiseasesActivity();
             }
         } else {
-            // если это планшет, то идем в UsersActivity
             goToUsersActivity();
         }
     }
 
     private void afterUpdateUser() {
-        // идем в UsersActivity
         goToUsersActivity();
     }
 
-    // проверка на изменения пользователя
     private boolean userHasNotChanged() {
         return !userHasChangedPhoto &&
                 Objects.requireNonNull(editTextName.getText()).toString().equals(textUserName) &&
                 Objects.requireNonNull(editTextDate.getText()).toString().equals(textUserBirthDate);
-
     }
 
     private void goToDiseasesActivity() {
@@ -1119,27 +979,19 @@ public class UserActivity extends AppCompatActivity
         ContentValues values = new ContentValues();
         values.put(UsersEntry.COLUMN_USER_NAME, textUserName);
         values.put(UsersEntry.COLUMN_USER_DATE, textUserBirthDate);
-        // при вставке нового пользователя в Базу его userPhotoUri = "No_Photo";
         values.put(UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUri);
 
-        // при сохранении пользователя в Базу делаем сначала insert и получаем Uri вставленной строки
         Uri newUri = getContentResolver().insert(UsersEntry.CONTENT_USERS_URI, values);
 
-        // если первичное сохранение нового пользователя в Базу было успешным
         if (newUri != null) {
 
-            // получаем и присваиваем _idUser из возвращенного newUri
             _idUser = ContentUris.parseId(newUri);
 
-            // если есть что сохранять в файл фото пользователя loadedBitmap != null
             if (pathToUsersPhoto != null && loadedBitmap != null) {
-                // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
                 userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
 
-                // обновляем данные по пути к файлу фото пользовател в базе
                 int rowsAffected = insertUserPhotoUriToDataBase(userPhotoUri);
 
-                // если обновление пути к файлу в базе НЕ произошло
                 if (rowsAffected == 0) {
                     userPhotoUri = "No_Photo";
                     onSavingOrUpdatingOrDeleting = false;
@@ -1148,22 +1000,11 @@ public class UserActivity extends AppCompatActivity
                     afterSaveUser();
 
                 } else {
-                    // если userPhotoUri обновилось,
-                    // сохраняем файл фото (если фото было загружено loadedBitmap != null)
-                    // и идем по нормальному сценарию выхода после сохранения нового пользователя
-
-                    // сохранение файла фото происходит асинхронно
-                    // в UserPhotoSavingAsyncTask
-                    // в конструктор передаются activity, loadedBitmap, и путь к файлу фото
                     if (loadedBitmap != null) {
 
                         new UserPhotoSavingAsyncTask(this, loadedBitmap, null, userPhotoUri).execute();
 
                     } else {
-                        // если после указания в базе пути к фото
-                        // по каким-то причинам loadedBitmap == null
-                        // то оставляем в базе путь, т.к. он все равно ничего не вытянет
-                        // по причине отсутствия файла по этому пути
                         onSavingOrUpdatingOrDeleting = false;
                         afterSaveUser();
                     }
@@ -1178,7 +1019,6 @@ public class UserActivity extends AppCompatActivity
         }
     }
 
-    // для добавления userPhotoUri нового пользователя после получения _idUser делаем update
     private int insertUserPhotoUriToDataBase(String userPhotoUri) {
 
         ContentValues values = new ContentValues();
@@ -1187,7 +1027,6 @@ public class UserActivity extends AppCompatActivity
 
         Uri mCurrentUserUri = Uri.withAppendedPath(UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
-        // делаем update
         return getContentResolver().update(mCurrentUserUri, values, null, null);
     }
 
@@ -1195,12 +1034,9 @@ public class UserActivity extends AppCompatActivity
         String userOldPhotoUri = null;
 
         if (pathToUsersPhoto != null && loadedBitmap != null) {
-            // пирсваиваем userPhotoUri путь к файлу фото пользователя для сохранения
-
             userOldPhotoUri = userPhotoUri;
 
             userPhotoUri = pathToUsersPhoto + _idUser + "-" + SystemClock.elapsedRealtime() + getString(R.string.user_photo_nameEnd);
-
         }
 
         ContentValues values = new ContentValues();
@@ -1208,31 +1044,20 @@ public class UserActivity extends AppCompatActivity
         values.put(MedContract.UsersEntry.COLUMN_USER_DATE, textUserBirthDate);
         values.put(MedContract.UsersEntry.COLUMN_USER_PHOTO_PATH, userPhotoUri);
 
-        // Uri к юзеру, который будет обновляться
         Uri mCurrentUserUri = Uri.withAppendedPath(UsersEntry.CONTENT_USERS_URI, String.valueOf(_idUser));
 
-        // делаем update в Базе
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
-        // если update в Базе был НЕ успешным
         if (rowsAffected == 0) {
             Toast.makeText(UserActivity.this, HomeActivity.iAmDoctor ? R.string.patient_cant_update : R.string.user_cant_update, Toast.LENGTH_LONG).show();
 
-            // если обновление было неудачным, то остаемся на месте
             userOldPhotoUri = null;
             goBack = false;
             afterUpdateUser();
-
-            // update в Базе был успешным
         } else {
-            // если была загрузенна новое фото loadedBitmap != null,
-            // то в отдельном потоке сохраняем фото в файл в папку юзера
             if (loadedBitmap != null) {
                 new UserPhotoSavingAsyncTask(this, loadedBitmap, userOldPhotoUri, userPhotoUri).execute();
             } else {
-                // если новое фото не было загружено,
-                // то обновление в базе уже было и больше ничего делать не надо
-
                 userOldPhotoUri = null;
                 afterUpdateUser();
             }
@@ -1240,29 +1065,20 @@ public class UserActivity extends AppCompatActivity
     }
 
     private void deleteUserAndPhotos() {
-        // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
-        // которые будут удаляться вместе с удалением юзера из таблицы users
-        // кроме того, после удаления строк из таблиц users, treatmentPhotos и diseases будут удаляться соответствующие фото
         getLoaderManager().initLoader(USER_TR_PHOTOS_LOADER, null, this);
-
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // для Loader в projection обязательно нужно указывать поле с _ID
-        // здесь мы указываем поля таблицы treatmentPhotos , которые будем брать из Cursor для дальнейшей обработки
         String[] projection = {
                 TreatmentPhotosEntry.TR_PHOTO_ID,
                 TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
 
-        // выборку фото делаем по _idUser, который будет удаляться
         String selection = TreatmentPhotosEntry.COLUMN_U_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser)};
 
-        // This loader will execute the ContentProvider's query method on a background thread
-        // Loader грузит ВСЕ данные из таблицы users через Provider
-        return new CursorLoader(this,   // Parent activity context
-                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
+        return new CursorLoader(this,
+                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,
                 projection,
                 selection,
                 selectionArgs,
@@ -1271,21 +1087,15 @@ public class UserActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // ArrayList для путей к файлам фото, которые нужно будет удалить
         ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
-        // если у пользователя есть фото, то
-        // путь к этому фото доабавляем в photoFilePathsToBeDeletedList
         if (!TextUtils.equals(userPhotoUri, "No_Photo")) {
             photoFilePathsToBeDeletedList.add(userPhotoUri);
         }
 
         if (cursor != null) {
-            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
-            // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
@@ -1294,21 +1104,15 @@ public class UserActivity extends AppCompatActivity
             }
         }
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался
         getLoaderManager().destroyLoader(USER_TR_PHOTOS_LOADER);
 
-        // Запускаем AsyncTask для удаления строк из таблиц users, treatmentPhotos и diseases
-        // а далее, и для удаления файлов
         new UserActivity.UserAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathsToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //
     }
 
-    // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
-    // чтоб не было утечки памяти при его работе
     private static class UserAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Context, Void, Integer> {
 
         private static final String PREFS_NAME = "PREFS";
@@ -1317,21 +1121,11 @@ public class UserActivity extends AppCompatActivity
         private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromUsersAndTreatmentPhotosDeleted = -1;
 
-        // в конструкторе получаем WeakReference<UserActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathsListToBeDeleted
-        // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathsListToBeDeleted
         UserAndTreatmentPhotosDeletingAsyncTask(UserActivity context, ArrayList<String> photoFilePathsListToBeDeleted) {
             userActivityReference = new WeakReference<>(context);
             mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathsListToBeDeleted);
         }
 
-        // в onPreExecute получаем  UserActivity userActivity
-        // и если он null, то никакое удаление не происходит
-        // если же userActivity не null,
-        // то в основном треде удаляем строки из таблиц users, treatmentPhotos и diseases в одной транзакции
-        // при этом, получаем (как резульат удаления строк из таблиц users и treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -1343,14 +1137,9 @@ public class UserActivity extends AppCompatActivity
             mRowsFromUsersAndTreatmentPhotosDeleted = deleteUserAndDiseaseAndTreatmentPhotosFromDataBase(userActivity);
         }
 
-        // метод удаления строк из таблиц treatmentPhotos и diseases в одной транзакции
-        // возвращает количество удаленных строк из таблицы treatmentPhotos или -1
         private int deleteUserAndDiseaseAndTreatmentPhotosFromDataBase(UserActivity userActivity) {
-            // ArrayList для операций по удалению строк из таблиц users, treatmentPhotos и diseases
-            // в одной транзакции
             ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
 
-            // пишем операцию удаления строк снимков пользователя ИЗ ТАБЛИЦЫ treatmentPhotos
             String selectionTrPhotos = TreatmentPhotosEntry.COLUMN_U_ID + "=?";
             String[] selectionArgsTrPhotos = new String[]{String.valueOf(userActivity._idUser)};
 
@@ -1359,10 +1148,8 @@ public class UserActivity extends AppCompatActivity
                     .withSelection(selectionTrPhotos, selectionArgsTrPhotos)
                     .build();
 
-            // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteTreatmentPhotosFromDbOperation);
 
-            // пишем операцию удаления строк заболеваний пользователя ИЗ ТАБЛИЦЫ diseases
             String selectionDiseases = DiseasesEntry.COLUMN_U_ID + "=?";
             String[] selectionArgsDiseases = new String[]{String.valueOf(userActivity._idUser)};
 
@@ -1371,10 +1158,8 @@ public class UserActivity extends AppCompatActivity
                     .withSelection(selectionDiseases, selectionArgsDiseases)
                     .build();
 
-            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteDiseaseFromDbOperation);
 
-            // пишем операцию удаления строки пользователя ИЗ ТАБЛИЦЫ users
             String selectionUser = UsersEntry.U_ID + "=?";
             String[] selectionArgsUser = new String[]{String.valueOf(userActivity._idUser)};
 
@@ -1383,64 +1168,39 @@ public class UserActivity extends AppCompatActivity
                     .withSelection(selectionUser, selectionArgsUser)
                     .build();
 
-            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteUserFromDbOperation);
 
-            // переменная количества удаленных строк из таблицы treatmentPhotos
             int rowsFromUsersAndTreatmentPhotosDeleted = -1;
 
             try {
-                // запускаем транзакцию удаления строк из таблиц treatmentPhotos и diseases
-                // и получаем результат
                 ContentProviderResult[] results = userActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
 
-                // если транзакция прошла успешно
-                // results[0] - результат запроса из TreatmentPhotos
-                // results[2] - результат запроса из Users
                 if (results.length == 3 && results[0] != null && results[2] != null) {
-                    // записываем в rowsFromUsersAndTreatmentPhotosDeleted
-                    // сумму удаленных строк из аблицы treatmentPhotos и users
                     rowsFromUsersAndTreatmentPhotosDeleted = results[0].count + results[2].count;
                 } else {
                     return rowsFromUsersAndTreatmentPhotosDeleted;
                 }
             } catch (RemoteException | OperationApplicationException e) {
                 e.printStackTrace();
-                // если транзакция НЕ прошла успешно, то возвращаем -1
                 return rowsFromUsersAndTreatmentPhotosDeleted;
             }
 
-            // возвращаем количество удаленных строк из аблицы treatmentPhotos
             return rowsFromUsersAndTreatmentPhotosDeleted;
         }
 
-        // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromUsersAndTreatmentPhotosDeleted == -1) {
-                // если были ошибки во время удаления строк из таблиц users, treatmentPhotos и diseases
-                // возвращаем -1
-                // и выводим сообщение, что удалить пользователя не удалилось и оставляем все как есть (не удаляем файлы)
                 return -1;
             } else if (mRowsFromUsersAndTreatmentPhotosDeleted == 0) {
-                // если у пользователя не было фотографий и его по его лечению не было снимков,
-                // то ограничиваемся удалением пользователя из таблиц users и diseases,
-                // без дальнейшего удаления каких либо файлов фото
                 return 1;
             } else {
-                // если у пользователя были фотографи или были снимки по его лечению,
-                // mRowsFromUsersAndTreatmentPhotosDeleted > 0,
-                // то удаляем соответствующие файлы фотографий
-
-                // в этом блоке ошибки возвращают 0
                 Context mContext = contexts[0];
 
                 if (mContext == null) {
                     return 0;
                 }
 
-                // получаем SharedPreferences, чтоб писать в файл "PREFS"
                 SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                 final SharedPreferences.Editor prefsEditor = prefs.edit();
 
@@ -1452,32 +1212,19 @@ public class UserActivity extends AppCompatActivity
 
                     if (toBeDeletedFile.exists()) {
                         if (!toBeDeletedFile.delete()) {
-                            // если файл не удалился,
-                            // то дописываем в sb его путь и ставим запятую,
-                            // чтоб потом по запятой делать split
                             sb.append(fPath).append(",");
                         }
                     }
                 }
 
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                     String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
-                    // если из prefs вытянулись пути к ранее не удаленным файлам,
-                    // то цепляем их в конец sb за запятой
                     if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
                         sb.append(notDeletedFilesPaths);
                     } else {
-                        // если в prefs не было путей к ранее не удаленным файлам,
-                        // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
-
-                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
-                    // при этом старая строка в prefs заменится новой строкой
-                    // и выходим с return 0,
-                    // что означает, что были файлы, которые не удалились
 
                     prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
@@ -1500,27 +1247,18 @@ public class UserActivity extends AppCompatActivity
             }
 
             if (result == -1) {
-                // если пользователь не удалился из базы и фото не были удалены
                 userActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(userActivity, HomeActivity.iAmDoctor ? R.string.patient_not_deleted : R.string.user_not_deleted, Toast.LENGTH_LONG).show();
             } else if (result == 0) {
-                // если были ошибки при удалении файлов
                 Toast.makeText(userActivity, R.string.treatment_image_not_deleted, Toast.LENGTH_LONG).show();
                 userActivity.goToUsersActivity();
             } else {
-                // result == 1
-                // пользователь удалился и снимки удалены (или отсутствуют)
                 userActivity.goToUsersActivity();
             }
         }
     }
 
-    // класс UserPhotoSavingAsyncTask делаем статическим,
-    // чтоб не было утечки памяти при его работе
     private static class UserPhotoSavingAsyncTask extends AsyncTask<Void, Void, File> {
-
-        // получаем WeakReference на объекты,
-        // чтобы GC мог их собрать
         private final WeakReference<UserActivity> userActivityReference;
         private final WeakReference<Bitmap> loadedBitmapReference;
         private final WeakReference<String> oldFileToDeletePathReference;
@@ -1533,11 +1271,9 @@ public class UserActivity extends AppCompatActivity
             fileToSavePathReference = new WeakReference<>(fileToSavePath);
         }
 
-        // в Background делаем сохранение Bitmap в File
         @Override
         protected File doInBackground(Void... params) {
 
-            // перед сохранением нового файла фотографии удаляем существующий файл старой фотографии (если он существует)
             String oldFileToDeletePath = oldFileToDeletePathReference.get();
 
             if (oldFileToDeletePath != null) {
@@ -1553,14 +1289,10 @@ public class UserActivity extends AppCompatActivity
                             }
                         });
 
-                        // если файл не удалился, то
-                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
                         SharedPreferences prefs = userActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
-                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
 
                         String updatedNotDeletedFilesPaths;
                         if (notDeletedFilesPaths == null) {
@@ -1569,14 +1301,12 @@ public class UserActivity extends AppCompatActivity
                             updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + oldFile.getPath();
                         }
 
-                        // пишем заново в в "PREFS" обновленную строку
                         prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                         prefsEditor.apply();
                     }
                 }
             }
 
-            // сохраняем новую фотографию
             String fileToSavePath = fileToSavePathReference.get();
 
             if (fileToSavePath == null) {
@@ -1585,10 +1315,8 @@ public class UserActivity extends AppCompatActivity
 
             File fileToSave = new File(fileToSavePath);
 
-            // если папка для файла существует
             if (fileToSave.getParentFile().exists()) {
                 try {
-                    // создаем файл
                     if (!fileToSave.createNewFile()) {
                         return null;
                     }
@@ -1597,10 +1325,8 @@ public class UserActivity extends AppCompatActivity
                     return null;
                 }
             } else {
-                // если папка для файла НЕ существует создаем сначала папку, потом файл
                 if (fileToSave.getParentFile().mkdir()) {
                     try {
-                        // создаем файл
                         if (!fileToSave.createNewFile()) {
                             return null;
                         }
@@ -1609,30 +1335,21 @@ public class UserActivity extends AppCompatActivity
                         return null;
                     }
                 } else {
-                    // если папки не было и она не создалась
                     return null;
                 }
             }
 
-            // В созданный файл пишем loadedBitmap
             Bitmap loadedBitmap = loadedBitmapReference.get();
             if (loadedBitmap == null) {
                 return null;
             }
 
-            // The try-with-resources Statement JDK 8
             try (FileOutputStream outputStream = new FileOutputStream(fileToSave)) {
-                // получаем из WeakReference<Bitmap> loadedBitmap
-                // и проверяем его на null, т.к. GC мог его собрать
-                // если таокое произошло, то файл не сохраняяем
-                //loadedBitmap = loadedBitmapReference.get();
-                //if (loadedBitmap != null) {
                 loadedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 outputStream.flush();
                 loadedBitmap = null;
             } catch (IOException e) {
                 e.printStackTrace();
-                //noinspection UnusedAssignment
                 loadedBitmap = null;
                 return null;
             }
@@ -1656,7 +1373,6 @@ public class UserActivity extends AppCompatActivity
                 return;
             }
 
-            // если сохранение или обновление файла фото было удачным
             if (savedFile.exists()) {
 
                 userActivity.userPhotoUri = savedFile.toString();
@@ -1666,7 +1382,6 @@ public class UserActivity extends AppCompatActivity
                 } else {
                     userActivity.afterUpdateUser();
                 }
-                // если сохранение или обновление файла фото было НЕ удачным
             } else {
                 userActivity.userPhotoUri = "No_Photo";
                 userActivity.goBack = false;

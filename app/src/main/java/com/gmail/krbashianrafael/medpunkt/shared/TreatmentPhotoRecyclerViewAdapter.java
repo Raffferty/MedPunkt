@@ -80,8 +80,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
         if (HomeActivity.isTablet && TabletMainActivity.inWideView) {
             if (TabletMainActivity.selectedTreatmentPhoto_id == _trPhotoId) {
-                // добавленное фото заболевания будет сразу выделенным
-                // т.к. в MedProvider есть запись TabletMainActivity.selectedTreatmentPhoto_id = TabletMainActivity.insertedTreatmentPhoto_id;
                 ((TreatmentPhotoHolder) holder).treatmentPhotoItem.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
 
                 if (tabletMainActivity != null) {
@@ -98,7 +96,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                             textPhotoDescription = itemName;
                 }
 
-                // грузим фото выделенного заболевания
                 ((TreatmentPhotoHolder) holder).loadTreatmentPhotoInImgWideView(itemPhotoUri);
 
             } else {
@@ -158,7 +155,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         @SuppressLint("ClickableViewAccessibility")
         private void loadTreatmentPhotoInImgWideView(String itemUri) {
 
-            // чтоб после масштабирования старого фото, новое грузилось как FIT_CENTER
             tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                     imgWideView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -167,10 +163,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            //on load failed
-
-                            // чтоб файл освободился (для удаления),
-                            // высвобождаем imagePhoto
                             myHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -194,8 +186,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            //on load success
-
                             if (tabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                                     widePhotoErrView.getVisibility() == View.VISIBLE) {
 
@@ -226,7 +216,6 @@ public class TreatmentPhotoRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             view.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
-            // если это планшет и в расширенном виде и делается клик не на том же элементе
             if (HomeActivity.isTablet
                     && TabletMainActivity.selectedTreatmentPhoto_id != clicked_treatmentPhoto_id
                     && TabletMainActivity.inWideView) {

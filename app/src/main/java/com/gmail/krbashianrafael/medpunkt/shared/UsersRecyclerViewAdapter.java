@@ -63,15 +63,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         ((UserHolder) holder).userBirthDate.setText(userBirthDate);
         ((UserHolder) holder).userName.setText(userName);
 
-        // если это планшет, то выделенных элемент будет окрашен в голубой цвет,
-        // а остальные в TRANSPARENT
         if (HomeActivity.isTablet) {
 
-            // если только один элемент пользователя
-            // то его _id и будет selected
             if (TabletMainActivity.selectedUser_id == _userId) {
-                // добавленное заболевание будет сразу выделенным,
-                // т.к. в MedProvider есть запись TabletMainActivity.selectedUser_id = TabletMainActivity.insertedUser_id;
                 ((UserHolder) holder).container.setBackgroundColor(mContext.getResources().getColor(R.color.my_blue));
             } else {
                 ((UserHolder) holder).container.setBackgroundColor(Color.TRANSPARENT);
@@ -80,7 +74,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         File imgFile = new File(userPhotoUri);
 
-        // signature, чтоб при обновлении фото грузилось из файла, а не из кеша
         if (imgFile.exists()) {
             GlideApp.with(mContext)
                     .load(userPhotoUri)
@@ -92,13 +85,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     .transition(DrawableTransitionOptions.withCrossFade(300))
                     .into(((UserHolder) holder).userImage);
         } else {
-            // если без фото, то пишем "No_Photo"
             ((UserHolder) holder).userPhotoUri.setText("No_Photo");
 
-            // чистим userImage
             GlideApp.with(mContext).clear(((UserHolder) holder).userImage);
 
-            // ставим в userImage R.drawable.ic_camera_alt_gray_54dp
             GlideApp.with(mContext)
                     .load(R.drawable.ic_camera_alt_gray_54dp)
                     .centerInside()
@@ -162,16 +152,11 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             final long user_id_inEdit = Long.valueOf(_userId.getText().toString());
 
-            // если нажали на кружок с буквой i (информация по пользователю)
             if (view.getId() == R.id.user_item_edit) {
 
-                // закрашиваем выделенный элемент (i) в голубой
                 view.setBackgroundColor(myContext.getResources().getColor(R.color.colorPrimaryLight));
 
                 if (!HomeActivity.isTablet) {
-                    // если это телефон
-
-                    // с задержкой в 250 мс открываем UserActivity для просмотра/изменения данных пользователя
                     myHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -186,8 +171,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }, 250);
 
-                    // через 500 мс закрашиваем выделенный элемент (i) в TRANSPARENT
-                    // чтоб по возвращении он не был голубым
                     myHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -197,9 +180,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
 
                 } else {
-                    // если это планшет
-                    //открываем UserActivity для просмотра/изменения данных пользователя
-
                     Intent userEditIntent = new Intent(myContext, UserActivity.class);
                     userEditIntent.putExtra("_idUser", user_id_inEdit);
                     userEditIntent.putExtra("editUser", true);
@@ -207,12 +187,10 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     userEditIntent.putExtra("birthDate", userBirthDate.getText());
                     userEditIntent.putExtra("userPhotoUri", userPhotoUri.getText());
 
-                    // получаем user_id_inEdit для контроля над изменениями пользователя
                     tabletMainActivity.user_IdInEdit = user_id_inEdit;
 
                     tabletMainActivity.startActivity(userEditIntent);
 
-                    // загружаем данные этотго пользователя, чтоб при возвращении он был выделеным
                     myHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -221,10 +199,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }, 1000);
                 }
-
             } else {
-                // если нажат сам элемент с именем пользователя
-                // если это телефон
                 if (!HomeActivity.isTablet) {
                     container.setBackgroundColor(myContext.getResources().getColor(R.color.my_blue));
 
@@ -247,9 +222,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     }, 500);
 
                 } else {
-                    //если это планшет
-
-                    // скрываем МАЛЫЙ рекламный блок
                     tabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                     TabletMainActivity.adIsShown = false;
 
@@ -264,9 +236,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         private void tabletUserSelected(long user_id_inEdit) {
-            //final TabletMainActivity tabletMainActivity = (TabletMainActivity) myContext;
-
-            // код для показа выделенного заболевания при повторном нажатии на пользователя
             final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
             if (myDiseaseData.size() != 0) {
@@ -290,19 +259,12 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             }
 
             if (TabletMainActivity.selectedUser_id != user_id_inEdit) {
-                //и делается клик НЕ на том же элементе (чтоб дважды не грузить ту же информацию)
-
-                // ставим на таб "описание"
                 Objects.requireNonNull(tabletMainActivity.tabletTreatmentFragment.tabLayout.getTabAt(0)).select();
 
-                // устанавливаем новое значение для selected_user_id
-                // и заново отрисовываем все видимые элементы в usersRecyclerView
-                // чтоб закрасить выделенный элемент
                 TabletMainActivity.selectedUser_id = user_id_inEdit;
 
                 tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.notifyDataSetChanged();
 
-                // далее отрисовываем нужные поля в фрагментах
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
                 TabletMainActivity.selectedDisease_id = 0;

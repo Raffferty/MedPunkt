@@ -41,16 +41,12 @@ public class DatePickerFragment extends DialogFragment
         int mMonth;
         int mDay;
 
-        // если в поле dateInEditTextDate уже была установленна дата, то
-        // получаем ее и открываем диалог с этой датой
         if (dateInEditTextDate != null && dateInEditTextDate.contains("-")) {
             String[] mDayMonthYear = dateInEditTextDate.split("-");
             mYear = Integer.valueOf(mDayMonthYear[2]);
             mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
             mDay = Integer.valueOf(mDayMonthYear[0]);
         } else {
-            // если в поле dateInEditTextDate не была установлена дата
-            // то открываем диалог с текущей датой
             final Calendar c = Calendar.getInstance();
             mYear = c.get(Calendar.YEAR);
             mMonth = c.get(Calendar.MONTH);

@@ -8,12 +8,6 @@ import android.view.View;
 
 import com.gmail.krbashianrafael.medpunkt.R;
 
-/**
- * Created by raf on 17.03.2018.
- * <p>
- * Вынесен в отдельный класс запрос на ReadWritePermission
- */
-
 class MyReadWritePermissionHandler {
 
     static void getReadWritePermission(final Activity mActivity, final View mLayout,

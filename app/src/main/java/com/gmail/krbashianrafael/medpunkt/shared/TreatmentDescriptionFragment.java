@@ -24,16 +24,13 @@ import java.util.Objects;
 @SuppressLint("RestrictedApi")
 public class TreatmentDescriptionFragment extends Fragment {
 
-    // кастомный EditText у которого клавиатура не перекрывает текст
     public MyEditText editTextTreatment;
 
-    // fabEditTreatmentDescripton
     public FloatingActionButton fabEditTreatmentDescripton;
 
     public Animation fabHideAnimation;
 
     public TreatmentDescriptionFragment() {
-        // нужен ПУСТОЙ конструктор
     }
 
     @Override
@@ -58,9 +55,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Активити в котором может находится этот фрагмент
-        // TreatmentActivity - если телефорн
-        // TabletMainActivity - если планшет
         TreatmentActivity mTreatmentActivity;
         TabletMainActivity mTabletMainActivity;
 
@@ -76,8 +70,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     private void doWorkWithTabletMainActivity(final TabletMainActivity mTabletMainActivity) {
         if (mTabletMainActivity != null) {
 
-            // в главном активити инициализируем фрагмент (есл он еще не инициализирован,
-            // т.е. если он еще null)
             if (mTabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment == null) {
                 mTabletMainActivity.tabletTreatmentFragment.initTreatmentDescriptionFragment();
             }
@@ -106,15 +98,12 @@ public class TreatmentDescriptionFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    // В режиме редактировани скрываем рекламные блоки
                     if (TabletMainActivity.inWideView){
-                        // скрываем БОЛЬШОЙ рекламный блок
                         if (mTabletMainActivity.adViewInTabletWideView != null){
                             mTabletMainActivity.adViewInTabletWideView.setVisibility(View.GONE);
                             mTabletMainActivity.adViewInTabletWideView.pause();
                         }
                     } else {
-                        // скрываем МАЛЫЙ рекламный блок
                         mTabletMainActivity.tabletTreatmentFragment.adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                         if (mTabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
                             mTabletMainActivity.tabletTreatmentFragment.adViewInTabletTreatmentFragment.pause();
@@ -180,22 +169,18 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                                 TabletMainActivity.inWideView = true;
 
-                                // если есть фото лечения, то в расширенном виде формируем вид окна
-                                // и загружаем фото первой позиции
                                 if (mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
                                         getTreatmentPhotosList().size() != 0) {
 
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.fabToFullScreen.setVisibility(View.VISIBLE);
 
-                                    // это расширяет таб "снимки"
                                     LinearLayout layout = ((LinearLayout) ((LinearLayout) mTabletMainActivity.tabletTreatmentFragment.tabLayout.
                                             getChildAt(0)).getChildAt(1));
                                     LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                                     layoutParams.weight = 1.50f;
                                     layout.setLayoutParams(layoutParams);
 
-                                    // получаем данные из первой позиции и грузим фото
                                     TreatmentPhotoItem treatmentPhotoItem = mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                                             treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
 
@@ -204,18 +189,14 @@ public class TreatmentDescriptionFragment extends Fragment {
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
 
-                                    // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
                                     TabletMainActivity.selectedTreatmentPhoto_id = mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment._idTrPhoto;
 
                                     mTabletMainActivity.tabletTreatmentFragment.treatmentPhotosFragment.
                                             treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
-
-                                    // загрузка фото происходит в notifyDataSetChanged() в TransitionListener
                                 }
                             }
                         }
                     }, 500);
-
                 }
             });
 
@@ -232,7 +213,6 @@ public class TreatmentDescriptionFragment extends Fragment {
     private void doWorkWithTreatmentActivity(final TreatmentActivity mTreatmentActivity) {
         if (mTreatmentActivity != null) {
 
-            // в главном активити инициализируем фрагмент (есл он еще не инициализирован, т.е. если он еще null)
             if (mTreatmentActivity.treatmentDescriptionFragment == null) {
                 mTreatmentActivity.initTreatmentDescriptionFragment();
             }
@@ -288,8 +268,6 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                     mTreatmentActivity.invalidateOptionsMenu();
 
-                    // оставляем только страницу редактирования описания лечения
-                    // страницу с фото убираем
                     mTreatmentActivity.tabLayout.setVisibility(View.GONE);
 
                     editTextTreatment.setFocusable(true);
@@ -300,7 +278,6 @@ public class TreatmentDescriptionFragment extends Fragment {
 
                     fabEditTreatmentDescripton.startAnimation(fabHideAnimation);
 
-                    // показываем клавиатуру если это планшет
                     if (HomeActivity.isTablet) {
                         InputMethodManager imm = (InputMethodManager)
                                 mTreatmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -309,7 +286,6 @@ public class TreatmentDescriptionFragment extends Fragment {
                         }
                     }
 
-                    // выбор даты делаем видимым
                     mTreatmentActivity.editTextDateOfDisease.setVisibility(View.VISIBLE);
 
                     mTreatmentActivity.txtTitleDisease.setVisibility(View.GONE);

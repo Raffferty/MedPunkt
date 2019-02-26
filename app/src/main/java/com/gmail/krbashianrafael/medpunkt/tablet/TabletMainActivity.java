@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,11 +49,9 @@ public class TabletMainActivity extends AppCompatActivity
 
     public static boolean inWideView = false;
 
-    // позиции выделенных элементов
     public int selectedUser_position = 0;
     public int selectedDisease_position = 0;
 
-    // эти поля получают свои значения в классе MedProvider в соответствующих методах selectedUser_id
     public static boolean userInserted = false;
     public static long insertedUser_id = 0;
     public static long selectedUser_id = 0;
@@ -77,19 +74,12 @@ public class TabletMainActivity extends AppCompatActivity
 
     public static boolean adIsShown = false;
 
-    // это поле берется из TabletDiseasesFragment.
-    // если заболеваний нет, то diseasesIsEmpty = true
     public boolean diseasesIsEmpty = false;
 
-    // это поле берется из UsersRecyclerViewAdapter
     public long user_IdInEdit = 0;
 
-    // это поля, которые хранят соответствующие значения String перед редактированием,
-    // чтоб при нажатии CANCEL вернуть их обратно
     public String tempTextDiseaseName, tempTextTreatment, tempTextDateOfTreatment = "";
 
-    // эти поля устанавливаются в TabletDiseasesFragment и TreatmentDescriptionFragment
-    // при нажатии на fab добавления заболевания или при нажатии на fab редактирования заболевания
     public boolean diseaseAndTreatmentInEdit = false;
     public boolean newDiseaseAndTreatment = false;
     public boolean treatmentOnSavingOrUpdatingOrDeleting = false;
@@ -98,7 +88,6 @@ public class TabletMainActivity extends AppCompatActivity
     public TextView tabletDiseasesTitle;
     public TextView tabletTreatmentTitle;
 
-    // LLtabletTreatmentCancelOrSave в себе содержит tabletTreatmentCancel, tabletTreatmentSave
     public LinearLayout LLtabletTreatmentCancelOrSave;
     public FrameLayout tabletTreatmentDelete;
 
@@ -121,23 +110,16 @@ public class TabletMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablet_main);
 
-        // рекламный блок для планшета ----- БОЛЬШОЙ
-        // инициализация просиходит в HomeActivity
-        // мой app_id = ca-app-pub-5926695077684771~8182565017
-        // MobileAds.initialize(this, getResources().getString(R.string.app_id));
-        // Запускается в onResume
-
         adViewInTabletWideView = findViewById(R.id.adViewInTablet);
 
         adRequest = new AdRequest.Builder()
-                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813, 7.0 API 24
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                //.addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813, 7.0 API 24
                 .build();
 
         adViewInTabletWideView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                // если реклама загрузилась - показываем
                 if(inWideView){
                     if (adViewInTabletWideView.getVisibility() != View.VISIBLE) {
                         TransitionManager.beginDelayedTransition(mSceneRoot);
@@ -152,7 +134,6 @@ public class TabletMainActivity extends AppCompatActivity
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // если реклама не загрузилась - скрываем
                 if (adViewInTabletWideView.getVisibility() != View.GONE) {
                     adViewInTabletWideView.setVisibility(View.GONE);
                 }
@@ -265,8 +246,6 @@ public class TabletMainActivity extends AppCompatActivity
 
                 hideSoftInput();
 
-                // флаг, чтоб клик не работал,
-                // пока идет сохранения
                 if (treatmentOnSavingOrUpdatingOrDeleting) {
                     return;
                 }
@@ -296,7 +275,6 @@ public class TabletMainActivity extends AppCompatActivity
         });
     }
 
-    // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
         builder.setMessage(getString(R.string.disease_delete) + " " + tabletTreatmentFragment.editTextDiseaseName.getText() + "?");
@@ -313,7 +291,6 @@ public class TabletMainActivity extends AppCompatActivity
                         dialog.dismiss();
                     }
 
-                    // если подтверждаем удаление заболевания
                     treatmentOnSavingOrUpdatingOrDeleting = true;
                     tabletTreatmentFragment.editDisease = false;
 
@@ -335,16 +312,11 @@ public class TabletMainActivity extends AppCompatActivity
 
                     tabletUsersWideTitle.setText("");
 
-                    // удаляем заболевание и связанные фото
                     deleteDiseaseAndTreatmentPhotos();
 
-                    // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
-                    // если ранее, при нажатии на рекламу, tabletBigAdOpened был выставлен в true
                     tabletBigAdOpened = false;
 
-                    // загружаем МАЛЫЙ рекламный блок
                     if (tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
-                        // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                         myTabletHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -373,8 +345,6 @@ public class TabletMainActivity extends AppCompatActivity
 
     private void save() {
 
-        // флаг, чтоб клик не работал,
-        // пока идет сохранения
         if (treatmentOnSavingOrUpdatingOrDeleting) {
             return;
         }
@@ -387,7 +357,6 @@ public class TabletMainActivity extends AppCompatActivity
 
     private void cancel() {
 
-        // код для показа выделенного пользователя
         if (TabletMainActivity.selectedUser_id != 0) {
             final ArrayList<UserItem> myUsersData = tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
 
@@ -410,7 +379,6 @@ public class TabletMainActivity extends AppCompatActivity
             }
         }
 
-        // код для показа выделенного заболевания
         if (TabletMainActivity.selectedDisease_id != 0) {
             final ArrayList<DiseaseItem> myDiseasesData = tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
 
@@ -443,11 +411,7 @@ public class TabletMainActivity extends AppCompatActivity
 
         if (newDiseaseAndTreatment) {
 
-            // нажатие на cancel в режиме добавления нового заболевания
-            // вернет к !inWideView
-            // показываем МАЛЫЙ рекламный блок
             if (tabletTreatmentFragment != null && tabletTreatmentFragment.adViewInTabletTreatmentFragment != null) {
-                // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                 myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -468,7 +432,6 @@ public class TabletMainActivity extends AppCompatActivity
                 );
 
             } else {
-                // если добавляли новое заболевание при невыделенном другом заболевании
                 ver_3_Guideline.setGuidelinePercent(1.00f);
                 ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                 ver_2_Right_Guideline.setGuidelinePercent(0.50f);
@@ -478,9 +441,6 @@ public class TabletMainActivity extends AppCompatActivity
                 tabletTreatmentFragment.treatmentDescriptionFragment.fabEditTreatmentDescripton.setVisibility(View.INVISIBLE);
             }
         } else {
-            // если НЕ в процессе добавления новго заболевания, то кнопка cancel видна только в режиме inWideView
-            // поэтому в режиме inWideView and !newDiseaseAndTreatment раскрываем БОЛЬШОЙ рекламный блок
-            // рекламу грузим с задержкой, чтоб успела отрисоваться
             if (!tabletBigAdOpened){
                 myTabletHandler.postDelayed(new Runnable() {
                     @Override
@@ -519,7 +479,6 @@ public class TabletMainActivity extends AppCompatActivity
     }
 
     public void hideElementsOnTabletTreatmentFragment() {
-        // скручиваем клавиатуру
         hideSoftInput();
 
         tabletUsersFragment.fabAddUser.startAnimation(tabletUsersFragment.fabShowAnimation);
@@ -541,8 +500,6 @@ public class TabletMainActivity extends AppCompatActivity
 
 
     private void hideSoftInput() {
-        // скручиваем клавиатуру (эдесь срабатывает этот метод)
-        // hideSoftInput(); не срабатывает
         View viewToHide = TabletMainActivity.this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -553,24 +510,17 @@ public class TabletMainActivity extends AppCompatActivity
     }
 
     private void deleteDiseaseAndTreatmentPhotos() {
-        // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
-        // которые будут удаляться вместе с удалением заболевания из таблицы diseases
-        // кроме того, после удаления строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
         tabletTreatmentFragment.initLoaderToDiseaseAndTreatmentPhotos();
     }
 
     @Override
     protected void onResume() {
 
-        // грузим Большой рекламный блок, если в inWideView и не в процессе редактирования заболевания
-        // если нет интернета, то блок не раскроется
         if (adViewInTabletWideView != null && inWideView && !diseaseAndTreatmentInEdit) {
             if (isNetworkConnected()) {
                 if (adViewInTabletWideView.getVisibility() == View.VISIBLE) {
                     adViewInTabletWideView.resume();
                 } else {
-                    // запускаем рекламный блок
-                    // грузим с задержкой, чтоб успело отрисоваться
                     if (!tabletBigAdOpened){
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -590,8 +540,6 @@ public class TabletMainActivity extends AppCompatActivity
 
         if (firstLoad || userInserted || userUpdated || userDeleted) {
 
-            // если просто смотрели на карточку юзера (без изменений), то и грузить не надо
-            // иначе, загружаем данные в окно tabletUsersFragment
             tabletUsersFragment.initUsersLoader();
 
             firstLoad = false;
@@ -600,7 +548,6 @@ public class TabletMainActivity extends AppCompatActivity
         super.onResume();
     }
 
-    // Check network connection
     public boolean isNetworkConnected() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -638,7 +585,6 @@ public class TabletMainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        // убираем клавиатуру
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -652,7 +598,6 @@ public class TabletMainActivity extends AppCompatActivity
         }
     }
 
-    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);

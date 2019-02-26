@@ -57,11 +57,6 @@ public class DiseasesActivity extends AppCompatActivity
     private RecyclerView recyclerDiseases;
     private DiseaseRecyclerViewAdapter diseaseRecyclerViewAdapter;
 
-    /**
-     * Лоадеров может много (они обрабатываются в case)
-     * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int DISEASES_LOADER = 1;
-     */
     private static final int DISEASES_LOADER = 1;
 
     private RelativeLayout adRoot;
@@ -73,13 +68,6 @@ public class DiseasesActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diseases);
-
-        // рекламный блок ----- для телефона
-        // инициализация просиходит в HomeActivity
-        // мой app_id = ca-app-pub-5926695077684771~8182565017
-        // MobileAds.initialize(this, getResources().getString(R.string.app_id));
-        // Запускается в onResume
-        // adViewInDiseasesActivity.loadAd(adRequest);
 
         adRoot = findViewById(R.id.adRoot);
 
@@ -96,7 +84,6 @@ public class DiseasesActivity extends AppCompatActivity
         adViewInDiseasesActivity.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                // если реклама загрузилась - показываем
                 if (adViewInDiseasesActivity.getVisibility() != View.VISIBLE) {
                     TransitionManager.beginDelayedTransition(adRoot);
                     adViewInDiseasesActivity.setVisibility(View.VISIBLE);
@@ -105,7 +92,6 @@ public class DiseasesActivity extends AppCompatActivity
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // если реклама не загрузилась - скрываем
                 if (adViewInDiseasesActivity.getVisibility() != View.GONE) {
                     adViewInDiseasesActivity.setVisibility(View.GONE);
                 }
@@ -113,8 +99,6 @@ public class DiseasesActivity extends AppCompatActivity
 
             @Override
             public void onAdOpened() {
-                // если на рекламу делается клик, то
-                // закрываем рекламу
                 if (adViewInDiseasesActivity.getVisibility() != View.GONE) {
                     adViewInDiseasesActivity.setVisibility(View.GONE);
                     phoneAdOpened = true;
@@ -146,7 +130,6 @@ public class DiseasesActivity extends AppCompatActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_group_white_30dp);
 
-            // т.к. под actionBar будет рекламный баннер, то actionBar.setElevation(0);
             actionBar.setElevation(0);
 
             if (textUserName != null) {
@@ -161,7 +144,6 @@ public class DiseasesActivity extends AppCompatActivity
         textViewAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // восстанавливаем возможность загрузки рекламы
                 phoneAdOpened = false;
 
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
@@ -178,7 +160,6 @@ public class DiseasesActivity extends AppCompatActivity
         fabAddDisease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // восстанавливаем возможность загрузки рекламы
                 phoneAdOpened = false;
 
                 Intent treatmentIntent = new Intent(DiseasesActivity.this, TreatmentActivity.class);
@@ -214,7 +195,6 @@ public class DiseasesActivity extends AppCompatActivity
 
         recyclerDiseases = findViewById(R.id.recycler_diseases);
 
-        // при нажатии на "чем болел" список заболеваний прокручивется вверх
         TextView txtDiseases = findViewById(R.id.txt_diseases);
         txtDiseases.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,13 +206,10 @@ public class DiseasesActivity extends AppCompatActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
 
-        // устанавливаем LayoutManager для RecyclerView
         recyclerDiseases.setLayoutManager(linearLayoutManager);
 
-        // инициализируем DiseaseRecyclerViewAdapter
         diseaseRecyclerViewAdapter = new DiseaseRecyclerViewAdapter(this);
 
-        // устанавливаем адаптер для RecyclerView
         recyclerDiseases.setAdapter(diseaseRecyclerViewAdapter);
     }
 
@@ -252,10 +229,6 @@ public class DiseasesActivity extends AppCompatActivity
                 if (adViewInDiseasesActivity.getVisibility() == View.VISIBLE) {
                     adViewInDiseasesActivity.resume();
                 } else {
-                    // запускаем рекламный блок если до этого на рекламу уже не было нажато
-                    // если на рекламу уже нажимали, то она будет закрыта и не откроется повторно
-                    // а откроется после перехода на предыдущее или следующее активити
-                    // грузим с задержкой, чтоб успело отрисоваться
                     if(!phoneAdOpened){
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -273,17 +246,14 @@ public class DiseasesActivity extends AppCompatActivity
             }
         }
 
-        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         textViewAddDisease.setVisibility(View.INVISIBLE);
         fabAddDisease.setVisibility(View.INVISIBLE);
 
-        // Инициализируем Loader
         getLoaderManager().initLoader(DISEASES_LOADER, null, this);
 
         super.onResume();
     }
 
-    // Check network connection
     private boolean isNetworkConnected() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -319,15 +289,8 @@ public class DiseasesActivity extends AppCompatActivity
         finish();
     }
 
-    /*
-   ниже имплиментация метдов интерфеса LoaderManager.LoaderCallbacks<Cursor>
-   которые будет вызываться при активации getLoaderManager().initLoader(DISEASES_LOADER, null, this);
-   */
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // для Loader в projection обязательно нужно указывать поле с _ID
-        // здесь мы указываем поля, которые будем брать из Cursor для дальнейшей передачи в RecyclerView
         String[] projection = {
                 DiseasesEntry.DIS_ID,
                 DiseasesEntry.COLUMN_U_ID,
@@ -335,17 +298,15 @@ public class DiseasesActivity extends AppCompatActivity
                 DiseasesEntry.COLUMN_DISEASE_DATE,
                 DiseasesEntry.COLUMN_DISEASE_TREATMENT};
 
-        // выборку заболеванй делаем по _idUser
         String selection = DiseasesEntry.COLUMN_U_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idUser)};
 
-        // Loader грузит ВСЕ данные из таблицы users через Provider в diseaseRecyclerViewAdapter и далее в recyclerDiseases
-        return new CursorLoader(this,   // Parent activity context
-                DiseasesEntry.CONTENT_DISEASES_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/diseases/
-                projection,             // Columns to include in the resulting Cursor
-                selection,                   // selection by DiseasesEntry.COLUMN_U_ID
-                selectionArgs,                   // selection arguments by _idUser
-                null);                  // Default sort order
+        return new CursorLoader(this,
+                DiseasesEntry.CONTENT_DISEASES_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null);
     }
 
     @Override
@@ -356,10 +317,8 @@ public class DiseasesActivity extends AppCompatActivity
 
         if (cursor != null) {
 
-            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
-            // проходим в цикле курсор и заполняем объектами DiseaseItem наш ArrayList<DiseaseItem> myData
             while (cursor.moveToNext()) {
 
                 int disease_idColumnIndex = cursor.getColumnIndex(DiseasesEntry._ID);
@@ -378,17 +337,12 @@ public class DiseasesActivity extends AppCompatActivity
             }
         }
 
-        // делаем сортировку заболеваний по именеи
         Collections.sort(myData);
 
         recyclerDiseases.setVisibility(View.VISIBLE);
 
-        // оповещаем LayoutManager, что произошли изменения
-        // LayoutManager обновляет RecyclerView
         diseaseRecyclerViewAdapter.notifyDataSetChanged();
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался,
-        // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(DISEASES_LOADER);
 
         if (myData.size() == 0) {

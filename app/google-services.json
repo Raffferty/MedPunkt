@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "901985773942",
+    "firebase_url": "https://medpunkt.firebaseio.com",
+    "project_id": "medpunkt",
+    "storage_bucket": "medpunkt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901985773942:android:0c212cc75832be50",
+        "android_client_info": {
+          "package_name": "com.gmail.krbashianrafael.medpunkt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901985773942-cpjf04um4m5sgj6th7msjttctq15kgpa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmail.krbashianrafael.medpunkt",
+            "certificate_hash": "72f8b21b9c156ce9aafa5a31ee54eec1d1d218b7"
+          }
+        },
+        {
+          "client_id": "901985773942-nlrkn5oa08qk8q8sf22r6ogo44j2ch87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjreVV0evq2P-Xt6aUn7Sy61tvIrKUXa8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901985773942-nlrkn5oa08qk8q8sf22r6ogo44j2ch87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

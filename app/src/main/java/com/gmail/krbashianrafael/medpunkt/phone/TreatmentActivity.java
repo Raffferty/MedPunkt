@@ -72,38 +72,27 @@ public class TreatmentActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         DatePickerDialog.OnDateSetListener {
 
-    /**
-     * Лоадеров может много (они обрабатываются в case)
-     * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int TR_PHOTOS_LOADER = 22;
-     */
     private static final int TR_PHOTOS_LOADER = 22;
 
-    // Фрагменты
     public TreatmentDescriptionFragment treatmentDescriptionFragment;
     public TreatmentPhotosFragment treatmentPhotosFragment;
 
-    // id пользователя
     public long _idUser = 0;
 
-    // id заболеввания
     public long _idDisease = 0;
 
-    // возможность изменять пользователя, показывать стрелку обратно, был ли изменен пользователь
     private boolean goBack, onSavingOrUpdatingOrDeleting;
     public boolean editDisease;
     public boolean newDisease;
 
     private ActionBar actionBar;
 
-    // название заболевания
     private String textDiseaseName = "";
     private String textDateOfDisease = "";
     public String textTreatment = "";
 
     public TextView txtTitleDisease;
 
-    // поля названия заболевания, описания лечения и focusHolder
     public TextInputLayout textInputLayoutDiseaseName;
     public TextInputEditText editTextDiseaseName;
     public EditText editTextDateOfDisease;
@@ -122,16 +111,11 @@ public class TreatmentActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // если это планшет, то показываем в LANDSCAPE
-        // и сразу показываем клавиатуру
-        // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
-            // если это телефон, то показываем в PORTRAIT и скрываем клавиатуру
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-            // если клавиатура перекрывает поле ввода, то поле ввода приподнимается
             getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
                             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
@@ -192,20 +176,12 @@ public class TreatmentActivity extends AppCompatActivity
 
                 hideSoftInput();
 
-                // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutDiseaseName.setError(null);
                 textInputLayoutDiseaseName.setErrorEnabled(false);
                 textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable);
 
                 editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                // выбираем дату фото
-                // в версии Build.VERSION_CODES.N нет календаря с прокруткой
-                // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
-                // слушатель прописываем в нашем же классе .callback(TreatmentActivity.this)
-                // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-                // используем эту библиотеку для
-                // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     String dateInEditTextDate = editTextDateOfDisease.getText().toString().trim();
 
@@ -235,7 +211,6 @@ public class TreatmentActivity extends AppCompatActivity
                     spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
                     spinnerDatePickerDialog.show();
                 } else {
-                    // в остальных случаях пользуемся классом DatePickerFragment
                     DatePickerFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 }
@@ -254,7 +229,6 @@ public class TreatmentActivity extends AppCompatActivity
 
         editTextDiseaseName.setText(textDiseaseName);
 
-        // при OnTouch editTextPhotoDescription убираем ошибку
         editTextDiseaseName.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -271,7 +245,6 @@ public class TreatmentActivity extends AppCompatActivity
         focusHolder = findViewById(R.id.focus_holder);
         focusHolder.requestFocus();
 
-        // анимация для показа fabEditTreatmentDescripton
         fabShowAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_show);
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -313,21 +286,17 @@ public class TreatmentActivity extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    // при нажатии на табы формируем внешний вид табов
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
-                    // и делаем анимацию fab
                     treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
 
                 } else {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
 
-                    // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(treatmentPhotosFragment.fabAddTreatmentPhotosShowAnimation);
-
                     }
                 }
 
@@ -337,7 +306,6 @@ public class TreatmentActivity extends AppCompatActivity
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // при отжатии табов формируем внешний вид табов
                 if (tab.getPosition() == 0) {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
                             getResources().getString(R.string.treatment_description)));
@@ -354,7 +322,6 @@ public class TreatmentActivity extends AppCompatActivity
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    // при повторном нажатии на таб "ОПИСАНИЕ" прокручиваем вверх описание лечения
                     treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
                     treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
                     treatmentDescriptionFragment.editTextTreatment.requestFocus();
@@ -365,14 +332,12 @@ public class TreatmentActivity extends AppCompatActivity
                     focusHolder.requestFocus();
 
                 } else {
-                    // при повторном нажатии на таб "СНИМКИ" прокручиваем вверх список снимков
                     treatmentPhotosFragment.recyclerTreatmentPhotos.smoothScrollToPosition(0);
                 }
             }
         });
     }
 
-    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
@@ -380,8 +345,6 @@ public class TreatmentActivity extends AppCompatActivity
         editTextDateOfDisease.setText(simpleDateFormat.format(date.getTime()) + " ");
     }
 
-    // инициализация Фрагментов если они null
-    // вызов этого метода и проверка происходит в самих фрагментах
     public void initTreatmentDescriptionFragment() {
         treatmentDescriptionFragment = (TreatmentDescriptionFragment) getSupportFragmentManager().getFragments().get(0);
     }
@@ -395,14 +358,12 @@ public class TreatmentActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu, menu);
 
         menu.removeItem(R.id.action_delete);
-        // добавление в меню текста с картинкой
         menu.add(0, R.id.action_delete, 3, menuIconWithText(getResources().getDrawable(R.drawable.ic_delete_red_24dp),
                 getResources().getString(R.string.disease_delete)));
 
         return true;
     }
 
-    // SpannableString с картикной для элеменов меню
     private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
@@ -416,14 +377,10 @@ public class TreatmentActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        // если в состоянии Не edit (тоесть, есть кнопка fabEditTreatmentDescripton со значком редактирования)
-        // то в меню элемент "сохранить" делаем не видимым
-        // видимым остается "удалить"
         if (!editDisease) {
             MenuItem menuItemSave = menu.getItem(1);
             menuItemSave.setVisible(false);
         } else {
-            // иначе, делаем невидимым "удалить"
             MenuItem menuItemDelete = menu.getItem(0);
             menuItemDelete.setVisible(false);
         }
@@ -436,7 +393,6 @@ public class TreatmentActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                // Если не было изменений
                 if (diseaseAndTreatmentHasNotChanged()) {
                     goToDiseasesActivity();
                     return true;
@@ -446,8 +402,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                 textInputLayoutDiseaseName.setError(null);
 
-                // Если были изменения
-                // если выходим без сохранения изменений
                 DialogInterface.OnClickListener discardButtonClickListener =
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -456,13 +410,10 @@ public class TreatmentActivity extends AppCompatActivity
                             }
                         };
 
-                // если выходим с сохранением изменений
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
             case R.id.action_save:
 
-                // скручиваем клавиатуру (эдесь срабатывает этот метод)
-                // hideSoftInput(); не срабатывает
                 View viewToHide = this.getCurrentFocus();
                 if (viewToHide != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -471,8 +422,6 @@ public class TreatmentActivity extends AppCompatActivity
                     }
                 }
 
-                // флаг, чтоб повторный клик не работал,
-                // пока идет сохранения
                 if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
@@ -487,7 +436,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                     txtTitleDisease.setVisibility(View.VISIBLE);
 
-                    // делаем два листа в адаптере если это телефон, а не планшет
                     if (!HomeActivity.isTablet) {
                         categoryAdapter.setPagesCount(2);
                         viewPager.setAdapter(categoryAdapter);
@@ -496,7 +444,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                     editDisease = false;
 
-                    // обновляем OptionsMenu
                     invalidateOptionsMenu();
 
                     treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabShowAnimation);
@@ -521,8 +468,6 @@ public class TreatmentActivity extends AppCompatActivity
 
                 return true;
             case R.id.action_delete:
-                // флаг, чтоб клик не работал,
-                // пока идет сохранения
                 if (onSavingOrUpdatingOrDeleting) {
                     return true;
                 }
@@ -565,7 +510,6 @@ public class TreatmentActivity extends AppCompatActivity
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
-    // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
@@ -589,7 +533,6 @@ public class TreatmentActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    // Диалог "Удалить заболевание или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
         builder.setMessage(getString(R.string.disease_delete) + " " + editTextDiseaseName.getText() + "?");
@@ -621,7 +564,6 @@ public class TreatmentActivity extends AppCompatActivity
 
     private void saveDiseaseAndTreatment() {
 
-        // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
 
@@ -629,7 +571,6 @@ public class TreatmentActivity extends AppCompatActivity
         String dateOfDiseaseToCheck = editTextDateOfDisease.getText().toString();
         boolean wrongField = false;
 
-        // првоерка названия заболевания
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable_Error);
             textInputLayoutDiseaseName.setError(getString(R.string.disease_error_name));
@@ -639,7 +580,6 @@ public class TreatmentActivity extends AppCompatActivity
             wrongField = true;
         }
 
-        // проверка Даты заболевания
         if (TextUtils.equals(dateOfDiseaseToCheck, getString(R.string.disease_date))) {
             if (wrongField) {
                 textInputLayoutDiseaseName.setError(
@@ -657,7 +597,6 @@ public class TreatmentActivity extends AppCompatActivity
             wrongField = true;
         }
 
-        // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
             onSavingOrUpdatingOrDeleting = false;
             return;
@@ -665,46 +604,32 @@ public class TreatmentActivity extends AppCompatActivity
             textInputLayoutDiseaseName.setError(null);
         }
 
-        // проверка окончена, начинаем сохранение
-
-        // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
-        // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
-        // для дальнейшей проверки на их изменения
         textDiseaseName = nameToCheck;
         textDateOfDisease = editTextDateOfDisease.getText().toString();
         textTreatment = Objects.requireNonNull(treatmentDescriptionFragment.editTextTreatment.getText()).toString();
 
-        // если было нажато идти обратно
         if (goBack) {
             if (newDisease) {
-                // сохранять в базу в отдельном треде
                 saveDiseaseAndTreatmentToDataBase();
             } else {
-                // обновлять в базу в отдельном треде
                 updateDiseaseAndTreatmentToDataBase();
             }
 
             onSavingOrUpdatingOrDeleting = false;
 
-            //и идем в DiseasesActivity
             goToDiseasesActivity();
 
         } else {
             if (newDisease) {
-                // т.к. сохраняем новое заболевание,
-                // то оно уже не newDisease
                 newDisease = false;
 
-                // сохранять в базу в отдельном треде
                 saveDiseaseAndTreatmentToDataBase();
             } else {
-                // обновлять в базу в отдельном треде
                 updateDiseaseAndTreatmentToDataBase();
             }
 
             onSavingOrUpdatingOrDeleting = false;
 
-            // делаем два листа в адаптере если это телефон, а не планшет
             if (!HomeActivity.isTablet) {
                 categoryAdapter.setPagesCount(2);
                 viewPager.setAdapter(categoryAdapter);
@@ -731,7 +656,6 @@ public class TreatmentActivity extends AppCompatActivity
         }
     }
 
-    // проверка на изменения заболевания (название, дата, описание)
     private boolean diseaseAndTreatmentHasNotChanged() {
         return TextUtils.equals(Objects.requireNonNull(editTextDiseaseName.getText()).toString(), textDiseaseName) &&
                 TextUtils.equals(editTextDateOfDisease.getText(), textDateOfDisease) &&
@@ -744,8 +668,6 @@ public class TreatmentActivity extends AppCompatActivity
     }
 
     private void hideSoftInput() {
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         View viewToHide = this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -762,19 +684,11 @@ public class TreatmentActivity extends AppCompatActivity
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
 
-        // при сохранении пользователя в Базу делаем insert и получаем Uri вставленной строки
         Uri newUri = getContentResolver().insert(DiseasesEntry.CONTENT_DISEASES_URI, values);
 
         if (newUri != null) {
-            // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
-
-            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе DiseasesActivity в true
-            // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
-            // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
-
             DiseasesActivity.mScrollToStart = true;
-
         } else {
             Toast.makeText(this, R.string.treatment_cant_save, Toast.LENGTH_LONG).show();
         }
@@ -786,10 +700,8 @@ public class TreatmentActivity extends AppCompatActivity
         values.put(DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
 
-        // Uri к заболеванию, которое будет обновляться
         Uri mCurrentUserUri = Uri.withAppendedPath(DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
 
-        // делаем update в Базе
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
@@ -798,28 +710,20 @@ public class TreatmentActivity extends AppCompatActivity
     }
 
     private void deleteDiseaseAndTreatmentPhotos() {
-        // Инициализируем Loader для загрузки строк из таблицы treatmentPhotos,
-        // которые будут удаляться вместе с удалением заболевания из таблицы diseases
-        // кроме того, после удаления строк из таблиц treatmentPhotos и diseases будут удаляться соответствующие фото
         getLoaderManager().initLoader(TR_PHOTOS_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // для Loader в projection обязательно нужно указывать поле с _ID
-        // здесь мы указываем поля таблицы treatmentPhotos , которые будем брать из Cursor для дальнейшей обработки
         String[] projection = {
                 TreatmentPhotosEntry.TR_PHOTO_ID,
                 TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
 
-        // выборку фото делаем по _idDisease, который будет удаляться
         String selection = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idDisease)};
 
-        // This loader will execute the ContentProvider's query method on a background thread
-        // Loader грузит ВСЕ данные из таблицы users через Provider
-        return new CursorLoader(this,   // Parent activity context
-                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
+        return new CursorLoader(this,
+                TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,
                 projection,
                 selection,
                 selectionArgs,
@@ -828,15 +732,11 @@ public class TreatmentActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // ArrayList для путей к файлам фото, которые нужно будет удалить
         ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
         if (cursor != null) {
-            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
-            // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
@@ -845,21 +745,15 @@ public class TreatmentActivity extends AppCompatActivity
             }
         }
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался
         getLoaderManager().destroyLoader(TR_PHOTOS_LOADER);
 
-        // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
-        // а далее, и для удаления файлов
         new DiseaseAndTreatmentPhotosDeletingAsyncTask(this, photoFilePathsToBeDeletedList).execute(getApplicationContext());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //
     }
 
-    // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
-    // чтоб не было утечки памяти при его работе
     private static class DiseaseAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Context, Void, Integer> {
 
         private static final String PREFS_NAME = "PREFS";
@@ -868,21 +762,11 @@ public class TreatmentActivity extends AppCompatActivity
         private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromTreatmentPhotosDeleted = -1;
 
-        // в конструкторе получаем WeakReference<TreatmentActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
-        // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathsListToBeDeleted
         DiseaseAndTreatmentPhotosDeletingAsyncTask(TreatmentActivity context, ArrayList<String> photoFilePathsListToBeDeleted) {
             treatmentActivityReference = new WeakReference<>(context);
             mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathsListToBeDeleted);
         }
 
-        // в onPreExecute получаем  TreatmentActivity treatmentActivity
-        // и если он null, то никакое удаление не происходит
-        // если же treatmentActivity не null,
-        // то в основном треде удаляем строки из таблиц treatmentPhotos и diseases в одной транзакции
-        // при этом, получаем (как резульат удаления строк из таблицы treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -894,14 +778,9 @@ public class TreatmentActivity extends AppCompatActivity
             mRowsFromTreatmentPhotosDeleted = deleteDiseaseAndTreatmentPhotosFromDataBase(treatmentActivity);
         }
 
-        // метод удаления строк из таблиц treatmentPhotos и diseases в одной транзакции
-        // возвращает количество удаленных строк из таблицы treatmentPhotos или -1
         private int deleteDiseaseAndTreatmentPhotosFromDataBase(TreatmentActivity treatmentActivity) {
-            // ArrayList для операций по удалению строк из таблиц treatmentPhotos и diseases
-            // в одной транзакции
             ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
 
-            // пишем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos
             String selectionTrPhotos = TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
             String[] selectionArgsTrPhotos = new String[]{String.valueOf(treatmentActivity._idDisease)};
 
@@ -910,10 +789,8 @@ public class TreatmentActivity extends AppCompatActivity
                     .withSelection(selectionTrPhotos, selectionArgsTrPhotos)
                     .build();
 
-            // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteTreatmentPhotosFromDbOperation);
 
-            // пишем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases
             String selectionDisease = DiseasesEntry.DIS_ID + "=?";
             String[] selectionArgsDisease = new String[]{String.valueOf(treatmentActivity._idDisease)};
 
@@ -922,61 +799,39 @@ public class TreatmentActivity extends AppCompatActivity
                     .withSelection(selectionDisease, selectionArgsDisease)
                     .build();
 
-            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteDiseaseFromDbOperation);
 
-            // переменная количества удаленных строк из таблицы treatmentPhotos
             int rowsFromTreatmentPhotosDeleted = -1;
 
             try {
-                // запускаем транзакцию удаления строк из таблиц treatmentPhotos и diseases
-                // и получаем результат
                 ContentProviderResult[] results = treatmentActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
 
-                // если транзакция прошла успешно
                 if (results.length == 2 && results[0] != null) {
-                    // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
                     rowsFromTreatmentPhotosDeleted = results[0].count;
                 } else {
                     return rowsFromTreatmentPhotosDeleted;
                 }
             } catch (RemoteException | OperationApplicationException e) {
                 e.printStackTrace();
-                // если транзакция НЕ прошла успешно, то возвращаем -1
                 return rowsFromTreatmentPhotosDeleted;
             }
 
-            // возвращаем количество удаленных строк из аблицы treatmentPhotos
             return rowsFromTreatmentPhotosDeleted;
         }
 
-        // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromTreatmentPhotosDeleted == -1) {
-                // если были ошибки во время удаления строк из таблиц treatmentPhotos и diseases
-                // возвращаем -1
-                // и выводим сообщение, что заболевания не удалилось и оставляем все как есть (не удаляем файлы)
                 return -1;
             } else if (mRowsFromTreatmentPhotosDeleted == 0) {
-                // если у заболевания не было фотографий,
-                // то ограничиваемся удалением заболевания из таблицы diseases
-                // без дальнейшего удаления каких либо файлов фото
                 return 1;
             } else {
-                // если у заболевания были снимки по лечению,
-                // mRowsFromTreatmentPhotosDeleted > 0,
-                // то удаляем соответствующие файлы фотографий
-
-                // в этом блоке ошибки возвращают 0
                 Context mContext = contexts[0];
 
                 if (mContext == null) {
                     return 0;
                 }
 
-                // получаем SharedPreferences, чтоб писать в файл "PREFS"
                 SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                 final SharedPreferences.Editor prefsEditor = prefs.edit();
 
@@ -987,33 +842,19 @@ public class TreatmentActivity extends AppCompatActivity
 
                     if (toBeDeletedFile.exists()) {
                         if (!toBeDeletedFile.delete()) {
-                            // если файл не удалился,
-                            // то дописываем в sb его путь и ставим запятую,
-                            // чтоб потом по запятой делать split
                             sb.append(fPath).append(",");
                         }
                     }
                 }
 
-                // если есть висячие файлы
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                     String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
-                    // если из prefs вытянулись пути к ранее не удаленным файлам,
-                    // то цепляем их в конец sb за запятой
                     if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
                         sb.append(notDeletedFilesPaths);
                     } else {
-                        // если в prefs не было путей к ранее не удаленным файлам,
-                        // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
-
-                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
-                    // при этом старая строка в prefs заменится новой строкой
-                    // и выходим с return 0,
-                    // что означает, что были файлы, которые не удалились
 
                     prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
@@ -1036,12 +877,9 @@ public class TreatmentActivity extends AppCompatActivity
             }
 
             if (result == -1) {
-                // если заболевание не удалилось из базы и фото не были удалены
                 treatmentActivity.onSavingOrUpdatingOrDeleting = false;
                 Toast.makeText(treatmentActivity, R.string.disease_not_deleted, Toast.LENGTH_LONG).show();
             } else {
-                // result == 0 или result == 1
-                // если не было снимков для удаления или заболевание удалилось и снимки удалены (или отсутствуют)
                 treatmentActivity.goToDiseasesActivity();
             }
         }

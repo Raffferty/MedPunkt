@@ -31,7 +31,6 @@ import android.text.style.ImageSpan;
 import android.transition.AutoTransition;
 import android.transition.Transition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -78,33 +77,23 @@ public class TabletTreatmentFragment extends Fragment
 
     private TabletMainActivity tabletMainActivity;
 
-    /**
-     * Лоадеров может много (они обрабатываются в case)
-     * поэтому устанавливаем инициализатор для каждого лоадера
-     * в данном случае private static final int TR_PHOTOS_LOADER = 22;
-     */
     private static final int TR_PHOTOS_LOADER = 22;
 
-    // Фрагменты
     public TreatmentDescriptionFragment treatmentDescriptionFragment;
     public TreatmentPhotosFragment treatmentPhotosFragment;
 
-    // id пользователя
     public long _idUser = 0;
 
-    // id заболеввания
     public long _idDisease = 0;
 
     public boolean editDisease = false;
 
-    // название заболевания
     public String textDiseaseName = "";
     private String textDateOfDisease = "";
     public String textTreatment = "";
 
     public ImageView zoomOutTabletTreatment, zoomInTabletTreatment;
 
-    // поля названия заболевания, описания лечения и focusHolder
     public TextInputLayout textInputLayoutDiseaseName;
     public TextInputEditText editTextDiseaseName;
     public EditText editTextDateOfDisease;
@@ -123,7 +112,6 @@ public class TabletTreatmentFragment extends Fragment
     private AutoTransition adCloseTransition;
 
     public TabletTreatmentFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -138,13 +126,11 @@ public class TabletTreatmentFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
 
-        // рекламный блок МАЛЫЙ в TabletTreatmentFragment
         adViewFrameTabletTreatmentFragment = view.findViewById(R.id.adViewFrameTabletTreatment);
         adViewInTabletTreatmentFragment = view.findViewById(R.id.adViewInTabletTreatment);
         adViewInTabletTreatmentFragment.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                // если реклама загрузилась - показываем
                 if (!TabletMainActivity.inWideView){
                     TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot);
                     adViewFrameTabletTreatmentFragment.setVisibility(View.VISIBLE);
@@ -163,7 +149,6 @@ public class TabletTreatmentFragment extends Fragment
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // если реклама не загрузилась - скрываем
                 adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                 adViewInTabletTreatmentFragment.pause();
                 TabletMainActivity.adIsShown = false;
@@ -189,14 +174,12 @@ public class TabletTreatmentFragment extends Fragment
             }
         });
 
-        // убираем фреймы, которые нужны только на телефоне
         FrameLayout frmDividerGreen = view.findViewById(R.id.divider_frame_white);
         frmDividerGreen.setVisibility(View.GONE);
 
         FrameLayout frmDividerBlue = view.findViewById(R.id.divider_frame_blue);
         frmDividerBlue.setVisibility(View.GONE);
 
-        // устанавливаем txtTitleTreatment
         TextView txtTitleTreatment = view.findViewById(R.id.txt_title_treatment);
 
         if (HomeActivity.iAmDoctor) {
@@ -217,10 +200,8 @@ public class TabletTreatmentFragment extends Fragment
 
                 TabletMainActivity.inWideView = true;
 
-                // показываем БОЛЬШОЙ рекламный блок
                 if (tabletMainActivity.adViewInTabletWideView != null
                         && tabletMainActivity.isNetworkConnected()) {
-                    // рекламу грузим с задержкой, чтоб успела отрисоваться
                     tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -229,14 +210,10 @@ public class TabletTreatmentFragment extends Fragment
                     }, 600);
                 }
 
-                // сначала сробатывает Ripple эфект на zoomOutTabletTreatment
-                // и выставляется inWideView = true
-                // потом с задержкой в пол-секунды запускается код ниже
                 tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
-                        // скрываем МАЛЫЙ рекламный блок
                         adViewFrameTabletTreatmentFragment.setVisibility(View.GONE);
                         if (adViewInTabletTreatmentFragment != null) {
                             adViewInTabletTreatmentFragment.pause();
@@ -249,21 +226,17 @@ public class TabletTreatmentFragment extends Fragment
                         tabletMainActivity.tabletUsersWideTitle.setText(tabletMainActivity.tabletDiseasesTitle.getText().toString());
                         tabletMainActivity.tabletUsersWideTitle.setVisibility(View.VISIBLE);
 
-                        // если есть фото лечения, то в расширенном виде формируем вид окна
-                        // и загружаем фото первой позиции
                         if (treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.
                                 getTreatmentPhotosList().size() != 0) {
 
                             treatmentPhotosFragment.verGuideline.setGuidelinePercent(0.4f);
                             treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
 
-                            // это расширяет таб "снимки"
                             LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
                             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                             layoutParams.weight = 1.50f;
                             layout.setLayoutParams(layoutParams);
 
-                            // получаем данные из первой позиции и грузим фото
                             TreatmentPhotoItem treatmentPhotoItem = treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.getTreatmentPhotosList().get(0);
 
                             treatmentPhotosFragment._idTrPhoto = treatmentPhotoItem.get_trPhotoId();
@@ -271,21 +244,15 @@ public class TabletTreatmentFragment extends Fragment
                             treatmentPhotosFragment.textDateOfTreatmentPhoto = treatmentPhotoItem.getTrPhotoDate();
                             treatmentPhotosFragment.textPhotoDescription = treatmentPhotoItem.getTrPhotoName();
 
-                            // код для выделения первого элемента фото заболевания и его загрузки в imgWideView
                             TabletMainActivity.selectedTreatmentPhoto_id = treatmentPhotosFragment._idTrPhoto;
 
                             treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
-
-                            // загрузка фото происходит после notifyDataSetChanged() в TreatmentPhotoRecyclerViewAdapter
                         }
                     }
                 }, 250);
             }
         });
 
-        // сначала сробатывает Ripple эфект на zoomInTabletTreatment
-        // и выставляется inWideView = false
-        // потом с задержкой в пол-секунды запускается код ниже
         zoomInTabletTreatment = view.findViewById(R.id.img_zoom_in_tablet_treatment);
         zoomInTabletTreatment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -295,8 +262,6 @@ public class TabletTreatmentFragment extends Fragment
                     return;
                 }
 
-                // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
-                // если ранее, при нажатии на рекламу, tabletBigAdOpened был выставлен в true
                 tabletMainActivity.tabletBigAdOpened = false;
 
                 TabletMainActivity.inWideView = false;
@@ -305,7 +270,6 @@ public class TabletTreatmentFragment extends Fragment
                     @Override
                     public void run() {
 
-                        // код для показа выделенного пользователя
                         if (TabletMainActivity.selectedUser_id != 0) {
 
                             final ArrayList<UserItem> myUsersData = tabletMainActivity.tabletUsersFragment.usersRecyclerViewAdapter.getUsersList();
@@ -328,7 +292,6 @@ public class TabletTreatmentFragment extends Fragment
                             }
                         }
 
-                        // код для показа выделенного заболевания
                         if (TabletMainActivity.selectedDisease_id != 0) {
 
                             final ArrayList<DiseaseItem> myDiseasesData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
@@ -351,10 +314,8 @@ public class TabletTreatmentFragment extends Fragment
                             }
                         }
 
-                        // показываем МАЛЫЙ рекламный блок
                         if (adViewInTabletTreatmentFragment != null
                                 && tabletMainActivity.isNetworkConnected()) {
-                            // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                             tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -363,7 +324,6 @@ public class TabletTreatmentFragment extends Fragment
                             }, 600);
                         }
 
-                        // скрываем БОЛЬШОЙ рекламный блок
                         if (tabletMainActivity.adViewInTabletWideView != null
                                 && tabletMainActivity.adViewInTabletWideView.getVisibility() != View.GONE) {
                             TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, adCloseTransition);
@@ -380,7 +340,6 @@ public class TabletTreatmentFragment extends Fragment
                             zoomOutTabletTreatment.setVisibility(View.VISIBLE);
                         }
 
-                        // код для очистки выделения фото заболевания и очистки imgWideView
                         if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                             TabletMainActivity.selectedTreatmentPhoto_id = 0;
                             treatmentPhotosFragment.treatmentPhotoRecyclerViewAdapter.notifyDataSetChanged();
@@ -392,7 +351,6 @@ public class TabletTreatmentFragment extends Fragment
                             treatmentPhotosFragment.textDateOfTreatmentPhoto = "";
                             treatmentPhotosFragment.textPhotoDescription = "";
 
-                            // ширину табов делаем одинаковыми
                             LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
                             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
                             layoutParams.weight = 1.00f;
@@ -417,20 +375,12 @@ public class TabletTreatmentFragment extends Fragment
 
                 hideSoftInput();
 
-                // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutDiseaseName.setError(null);
                 textInputLayoutDiseaseName.setErrorEnabled(false);
                 textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable);
 
                 editTextDateOfDisease.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
-                // выбираем дату фото
-                // в версии Build.VERSION_CODES.N нет календаря с прокруткой
-                // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
-                // слушатель прописываем в нашем же классе .callback(TreatmentActivity.this)
-                // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-                // используем эту библиотеку для
-                // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     String dateInEditTextDate = editTextDateOfDisease.getText().toString().trim();
 
@@ -461,14 +411,12 @@ public class TabletTreatmentFragment extends Fragment
                     spinnerDatePickerDialog.show();
 
                 } else {
-                    // в остальных случаях пользуемся классом DatePickerFragment
                     DatePickerFragment newFragment = new DatePickerFragment();
                     newFragment.show(tabletMainActivity.getSupportFragmentManager(), "datePicker");
                 }
             }
         });
 
-        // при OnTouch editTextPhotoDescription убираем ошибку
         editTextDiseaseName.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -512,12 +460,9 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    // при нажатии на табы формируем внешний вид табов
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_orange_24dp),
                             getResources().getString(R.string.treatment_description)));
 
-                    // и делаем анимацию fabEditTreatmentDescriptonShowAnimation
-                    // если заболевание не в состоянии добавления или редактирования
                     if (!tabletMainActivity.newDiseaseAndTreatment) {
                         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabEditTreatmentDescriptonShowAnimation);
                     }
@@ -526,11 +471,9 @@ public class TabletTreatmentFragment extends Fragment
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_camera_alt_orange_24dp),
                             getResources().getString(R.string.treatment_images)));
 
-                    // и делаем анимацию fab если txtAddPhotos не видим
                     if (treatmentPhotosFragment.txtAddPhotos.getVisibility() != View.VISIBLE) {
                         treatmentPhotosFragment.fabAddTreatmentPhotos.startAnimation(treatmentPhotosFragment.fabAddTreatmentPhotosShowAnimation);
 
-                        // показываем fabToFullScreen, если находимся в расширенном варианте окна
                         if (TabletMainActivity.inWideView) {
                             treatmentPhotosFragment.fabToFullScreen.startAnimation(treatmentPhotosFragment.fabToFullScreenShowAnimation);
                         }
@@ -543,7 +486,6 @@ public class TabletTreatmentFragment extends Fragment
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // при отжатии табов формируем внешний вид табов
                 if (tab.getPosition() == 0) {
                     tab.setText(menuIconWithText(getResources().getDrawable(R.drawable.ic_edit_black_24dp),
                             getResources().getString(R.string.treatment_description)));
@@ -559,7 +501,6 @@ public class TabletTreatmentFragment extends Fragment
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    // при повторном нажатии на таб "ОПИСАНИЕ" прокручиваем вверх описание лечения
                     treatmentDescriptionFragment.editTextTreatment.setFocusable(true);
                     treatmentDescriptionFragment.editTextTreatment.setFocusableInTouchMode(true);
                     treatmentDescriptionFragment.editTextTreatment.requestFocus();
@@ -570,7 +511,6 @@ public class TabletTreatmentFragment extends Fragment
                     focusHolder.requestFocus();
 
                 } else {
-                    // при повторном нажатии на таб "СНИМКИ" прокручиваем вверх список снимков
                     treatmentPhotosFragment.recyclerTreatmentPhotos.smoothScrollToPosition(0);
                 }
             }
@@ -615,7 +555,6 @@ public class TabletTreatmentFragment extends Fragment
             }
         });
 
-        // анимация для показа fabEditTreatmentDescripton
         fabEditTreatmentDescriptonShowAnimation = AnimationUtils.loadAnimation(tabletMainActivity, R.anim.fab_show);
         fabEditTreatmentDescriptonShowAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -661,7 +600,6 @@ public class TabletTreatmentFragment extends Fragment
                 if (TabletMainActivity.adIsShown) {
                     adViewInTabletTreatmentFragment.resume();
                 } else {
-                    // если заболевание выделено, загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                     if (TabletDiseasesFragment.diseaseSelected) {
                         if (!tabletSmallAdOpened){
                             new Handler().postDelayed(new Runnable() {
@@ -700,8 +638,6 @@ public class TabletTreatmentFragment extends Fragment
         }
     }
 
-    // инициализация Фрагментов если они null
-    // вызов этого метода и проверка происходит в самих фрагментах
     public void initTreatmentDescriptionFragment() {
         treatmentDescriptionFragment = (TreatmentDescriptionFragment) this.getChildFragmentManager().getFragments().get(0);
     }
@@ -720,7 +656,6 @@ public class TabletTreatmentFragment extends Fragment
         }
     }
 
-    // SpannableString с картикной для элеменов меню
     private CharSequence menuIconWithText(Drawable r, String title) {
         r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
         SpannableString sb = new SpannableString("    " + title);
@@ -759,7 +694,6 @@ public class TabletTreatmentFragment extends Fragment
     }
 
     public void saveDiseaseAndTreatment() {
-        // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(200);
 
@@ -767,7 +701,6 @@ public class TabletTreatmentFragment extends Fragment
         String dateOfDiseaseToCheck = editTextDateOfDisease.getText().toString();
         boolean wrongField = false;
 
-        // првоерка названия заболевания
         if (TextUtils.isEmpty(nameToCheck)) {
             textInputLayoutDiseaseName.setHintTextAppearance(R.style.Lable_Error);
             textInputLayoutDiseaseName.setError(getString(R.string.disease_error_name));
@@ -777,7 +710,6 @@ public class TabletTreatmentFragment extends Fragment
             wrongField = true;
         }
 
-        // проверка Даты заболевания
         if (TextUtils.equals(dateOfDiseaseToCheck, getString(R.string.disease_date))) {
             if (wrongField) {
                 textInputLayoutDiseaseName.setError(
@@ -795,7 +727,6 @@ public class TabletTreatmentFragment extends Fragment
             wrongField = true;
         }
 
-        // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
             tabletMainActivity.treatmentOnSavingOrUpdatingOrDeleting = false;
             return;
@@ -803,12 +734,8 @@ public class TabletTreatmentFragment extends Fragment
             textInputLayoutDiseaseName.setError(null);
         }
 
-        // проверка окончена, начинаем сохранение
         tabletMainActivity.hideElementsOnTabletTreatmentFragment();
 
-        // присваиваем стрингам textDateOfDisease, textDiseaseName и textTreatment
-        // значения полей editTextDateOfDisease, editTextDiseaseName и editTextTreatment
-        // для дальнейшей проверки на их изменения
         textDiseaseName = nameToCheck;
         textDateOfDisease = editTextDateOfDisease.getText().toString();
         textTreatment = Objects.requireNonNull(treatmentDescriptionFragment.editTextTreatment.getText()).toString();
@@ -817,18 +744,13 @@ public class TabletTreatmentFragment extends Fragment
 
             zoomOutTabletTreatment.setVisibility(View.VISIBLE);
 
-            // сохранять в базу в отдельном треде
             saveDiseaseAndTreatmentToDataBase();
         } else {
 
             zoomInTabletTreatment.setVisibility(View.VISIBLE);
 
-            // tabletBigAdOpened ставим false, чтоб возвобновить возможность загрузки рекламы,
-            // если ранее, при нажатии на рекламу, tabletBigAdOpened был выставлен в true
             tabletMainActivity.tabletBigAdOpened = false;
 
-            // т.к. после обновления заболевания в планшетном виде остаемся в inWideView, открываем БОЛЬШОЙ рекламный блок
-            // рекламу грузим с задержкой, чтоб успела отрисоваться
             tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -836,7 +758,6 @@ public class TabletTreatmentFragment extends Fragment
                 }
             }, 600);
 
-            // обновлять в базу в отдельном треде
             updateDiseaseAndTreatmentToDataBase();
         }
     }
@@ -848,11 +769,9 @@ public class TabletTreatmentFragment extends Fragment
         values.put(MedContract.DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(MedContract.DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
 
-        // при сохранении пользователя в Базу делаем insert и получаем Uri вставленной строки
         Uri newUri = tabletMainActivity.getContentResolver().insert(MedContract.DiseasesEntry.CONTENT_DISEASES_URI, values);
 
         if (newUri != null) {
-            // получаем _idDisease из возвращенного newUri
             _idDisease = ContentUris.parseId(newUri);
 
         } else {
@@ -863,17 +782,14 @@ public class TabletTreatmentFragment extends Fragment
 
         tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
-        // здесь обновляются _idUser и _idDisease в treatmentPhotosFragment
         treatmentPhotosFragment.initTreatmentPhotosLoader();
 
         treatmentDescriptionFragment.fabEditTreatmentDescripton.startAnimation(fabEditTreatmentDescriptonShowAnimation);
 
-        // т.к. после сохранения нового заболевания в планшетном виде переходим в НЕ inWideView, открываем МАЛЫЙ рекламный блок
         tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (adViewInTabletTreatmentFragment != null) {
-                    // загружаем МАЛЫЙ рекламный блок с задержкой, чтоб успел отрисоваться
                     adViewInTabletTreatmentFragment.loadAd(tabletMainActivity.adRequest);
                 }
             }
@@ -886,10 +802,8 @@ public class TabletTreatmentFragment extends Fragment
         values.put(MedContract.DiseasesEntry.COLUMN_DISEASE_DATE, textDateOfDisease);
         values.put(MedContract.DiseasesEntry.COLUMN_DISEASE_TREATMENT, textTreatment);
 
-        // Uri к заболеванию, которое будет обновляться
         Uri mCurrentUserUri = Uri.withAppendedPath(MedContract.DiseasesEntry.CONTENT_DISEASES_URI, String.valueOf(_idDisease));
 
-        // делаем update в Базе
         int rowsAffected = tabletMainActivity.getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
@@ -910,20 +824,15 @@ public class TabletTreatmentFragment extends Fragment
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // для Loader в projection обязательно нужно указывать поле с _ID
-        // здесь мы указываем поля таблицы treatmentPhotos , которые будем брать из Cursor для дальнейшей обработки
         String[] projection = {
                 MedContract.TreatmentPhotosEntry.TR_PHOTO_ID,
                 MedContract.TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH};
 
-        // выборку фото делаем по _idDisease, который будет удаляться
         String selection = MedContract.TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(_idDisease)};
 
-        // This loader will execute the ContentProvider's query method on a background thread
-        // Loader грузит ВСЕ данные из таблицы users через Provider
-        return new CursorLoader(tabletMainActivity,   // Parent activity context
-                MedContract.TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/treatmentPhotos/
+        return new CursorLoader(tabletMainActivity,
+                MedContract.TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI,
                 projection,
                 selection,
                 selectionArgs,
@@ -932,15 +841,11 @@ public class TabletTreatmentFragment extends Fragment
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-        // ArrayList для путей к файлам фото, которые нужно будет удалить
         ArrayList<String> photoFilePathsToBeDeletedList = new ArrayList<>();
 
         if (cursor != null) {
-            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
-            // проходим в цикле курсор
-            // и добаляем пути к удаляемым файлам в ArrayList<String> photoFilePathsToBeDeletedList
             while (cursor.moveToNext()) {
                 int trPhoto_pathColumnIndex = cursor.getColumnIndex(MedContract.TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH);
                 String trPhotoUri = cursor.getString(trPhoto_pathColumnIndex);
@@ -949,22 +854,16 @@ public class TabletTreatmentFragment extends Fragment
             }
         }
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался
         getLoaderManager().destroyLoader(TR_PHOTOS_LOADER);
 
-        // Запускаем AsyncTask для удаления строк из таблиц treatmentPhotos и diseases
-        // а далее, и для удаления файлов
         new TabletTreatmentFragment.DiseaseAndTreatmentPhotosDeletingAsyncTask(
                 tabletMainActivity, photoFilePathsToBeDeletedList).execute(tabletMainActivity.getApplicationContext());
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        //
     }
 
-    // класс DiseaseAndTreatmentPhotosDeletingAsyncTask делаем статическим,
-    // чтоб не было утечки памяти при его работе
     private static class DiseaseAndTreatmentPhotosDeletingAsyncTask extends AsyncTask<Context, Void, Integer> {
 
         private static final String PREFS_NAME = "PREFS";
@@ -973,21 +872,11 @@ public class TabletTreatmentFragment extends Fragment
         private final ArrayList<String> mPhotoFilePathsListToBeDeleted;
         private int mRowsFromTreatmentPhotosDeleted = -1;
 
-        // в конструкторе получаем WeakReference<TreatmentActivity>
-        // и образовываем список ArrayList<String> mPhotoFilePathsListToBeDeleted на основании полученного photoFilePathesListToBeDeleted
-        // это список путей к файлам, которые необходимо будет удалить
-        // тоесть наш mPhotoFilePathsListToBeDeleted НЕ зависим от полученного photoFilePathesListToBeDeleted
         DiseaseAndTreatmentPhotosDeletingAsyncTask(TabletMainActivity context, ArrayList<String> photoFilePathesListToBeDeleted) {
             asinkTabletMainActivity = new WeakReference<>(context);
             mPhotoFilePathsListToBeDeleted = new ArrayList<>(photoFilePathesListToBeDeleted);
         }
 
-        // в onPreExecute получаем  TreatmentActivity treatmentActivity
-        // и если он null, то никакое удаление не происходит
-        // если же treatmentActivity не null,
-        // то в основном треде удаляем строки из таблиц treatmentPhotos и diseases в одной транзакции
-        // при этом, получаем (как резульат удаления строк из таблицы treatmentPhotos) количество удаленных строк
-        // по сути, это количество должно совпадать с количеством элементов в mPhotoFilePathsListToBeDeleted
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -999,14 +888,9 @@ public class TabletTreatmentFragment extends Fragment
             mRowsFromTreatmentPhotosDeleted = deleteDiseaseAndTreatmentPhotosFromDataBase(mTabletMainActivity);
         }
 
-        // метод удаления строк из таблиц treatmentPhotos и diseases в одной транзакции
-        // возвращает количество удаленных строк из таблицы treatmentPhotos или -1
         private int deleteDiseaseAndTreatmentPhotosFromDataBase(TabletMainActivity mTabletMainActivity) {
-            // ArrayList для операций по удалению строк из таблиц treatmentPhotos и diseases
-            // в одной транзакции
             ArrayList<ContentProviderOperation> deletingFromDbOperations = new ArrayList<>();
 
-            // пишем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos
             String selectionTrPhotos = MedContract.TreatmentPhotosEntry.COLUMN_DIS_ID + "=?";
             String[] selectionArgsTrPhotos = new String[]{String.valueOf(mTabletMainActivity.tabletTreatmentFragment._idDisease)};
 
@@ -1015,10 +899,8 @@ public class TabletTreatmentFragment extends Fragment
                     .withSelection(selectionTrPhotos, selectionArgsTrPhotos)
                     .build();
 
-            // добавляем операцию удаления строк ИЗ ТАБЛИЦЫ treatmentPhotos в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteTreatmentPhotosFromDbOperation);
 
-            // пишем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases
             String selectionDisease = MedContract.DiseasesEntry.DIS_ID + "=?";
             String[] selectionArgsDisease = new String[]{String.valueOf(mTabletMainActivity.tabletTreatmentFragment._idDisease)};
 
@@ -1027,61 +909,39 @@ public class TabletTreatmentFragment extends Fragment
                     .withSelection(selectionDisease, selectionArgsDisease)
                     .build();
 
-            // добавляем операцию удаления строки заболевания ИЗ ТАБЛИЦЫ diseases в список операций deletingFromDbOperations
             deletingFromDbOperations.add(deleteDiseaseFromDbOperation);
 
-            // переменная количества удаленных строк из таблицы treatmentPhotos
             int rowsFromTreatmentPhotosDeleted = -1;
 
             try {
-                // запускаем транзакцию удаления строк из таблиц treatmentPhotos и diseases
-                // и получаем результат
                 ContentProviderResult[] results = mTabletMainActivity.getContentResolver().applyBatch(MedContract.CONTENT_AUTHORITY, deletingFromDbOperations);
 
-                // если транзакция прошла успешно
                 if (results.length == 2 && results[0] != null) {
-                    // записываем в rowsFromTreatmentPhotosDeleted количество удаленных строк из аблицы treatmentPhotos
                     rowsFromTreatmentPhotosDeleted = results[0].count;
                 } else {
                     return rowsFromTreatmentPhotosDeleted;
                 }
             } catch (RemoteException | OperationApplicationException e) {
                 e.printStackTrace();
-                // если транзакция НЕ прошла успешно, то возвращаем -1
                 return rowsFromTreatmentPhotosDeleted;
             }
 
-            // возвращаем количество удаленных строк из аблицы treatmentPhotos
             return rowsFromTreatmentPhotosDeleted;
         }
 
-        // в doInBackground осуществляем удаление файлов фотографий
-        // по списку путей к фотографиям из mPhotoFilePathsListToBeDeleted
         @Override
         protected Integer doInBackground(Context... contexts) {
             if (mRowsFromTreatmentPhotosDeleted == -1) {
-                // если были ошибки во время удаления строк из таблиц treatmentPhotos и diseases
-                // возвращаем -1
-                // и выводим сообщение, что заболевания не удалилось и оставляем все как есть (не удаляем файлы)
                 return -1;
             } else if (mRowsFromTreatmentPhotosDeleted == 0) {
-                // если у заболевания не было фотографий,
-                // то ограничиваемся удалением заболевания из таблицы diseases
-                // без дальнейшего удаления каких либо файлов фото
                 return 1;
             } else {
-                // если у заболевания были снимки по лечению,
-                // mRowsFromTreatmentPhotosDeleted > 0,
-                // то удаляем соответствующие файлы фотографий
-
-                // в этом блоке ошибки возвращают 0
                 Context mContext = contexts[0];
 
                 if (mContext == null) {
                     return 0;
                 }
 
-                // получаем SharedPreferences, чтоб писать в файл "PREFS"
                 SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                 final SharedPreferences.Editor prefsEditor = prefs.edit();
 
@@ -1092,33 +952,19 @@ public class TabletTreatmentFragment extends Fragment
 
                     if (toBeDeletedFile.exists()) {
                         if (!toBeDeletedFile.delete()) {
-                            // если файл не удалился,
-                            // то дописываем в sb его путь и ставим запятую,
-                            // чтоб потом по запятой делать split
                             sb.append(fPath).append(",");
                         }
                     }
                 }
 
-                // если есть висячие файлы
                 if (sb.length() > 0) {
-                    // ытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                     String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
 
-                    // если из prefs вытянулись пути к ранее не удаленным файлам,
-                    // то цепляем их в конец sb за запятой
                     if (notDeletedFilesPaths != null && notDeletedFilesPaths.length() != 0) {
                         sb.append(notDeletedFilesPaths);
                     } else {
-                        // если в prefs не было путей к ранее не удаленным файлам,
-                        // то убираем с конца sb запятую
                         sb.deleteCharAt(sb.length() - 1);
                     }
-
-                    // пишем в поле notDeletedFilesPaths новую строку путей к неудаленным файлам, разделенных запятой
-                    // при этом старая строка в prefs заменится новой строкой
-                    // и выходим с return 0,
-                    // что означает, что были файлы, которые не удалились
 
                     prefsEditor.putString("notDeletedFilesPaths", sb.toString());
                     prefsEditor.apply();
@@ -1141,13 +987,8 @@ public class TabletTreatmentFragment extends Fragment
             }
 
             if (result == -1) {
-                // если заболевание не удалилось из базы и фото не были удалены
                 Toast.makeText(mTabletMainActivity, R.string.disease_not_deleted, Toast.LENGTH_LONG).show();
             } else {
-                // result == 0 или result == 1
-                // если не было снимков для удаления или заболевание удалилось и снимки удалены (или отсутствуют)
-
-
                 mTabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
                 mTabletMainActivity.tabletUsersFragment.fabAddUser.startAnimation(mTabletMainActivity.tabletUsersFragment.fabShowAnimation);
             }

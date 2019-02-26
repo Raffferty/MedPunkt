@@ -57,7 +57,6 @@ public class TabletUsersFragment extends Fragment
     private static final int TABLET_USERS_LOADER = 1000;
 
     public TabletUsersFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -80,8 +79,6 @@ public class TabletUsersFragment extends Fragment
         imgCancelTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // сначала сробатывает Ripple эфект на imgCancelTabletUsers
-                // потом с задержкой в пол-секунды запускается код ниже
                 tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -119,10 +116,8 @@ public class TabletUsersFragment extends Fragment
             }
         });
 
-        // инициализируем recyclerUsers
         recyclerUsers = view.findViewById(R.id.recycler_users);
 
-        // при нажатии на txtTabletUsers показываем выделенного пользователя
         txtTabletUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,10 +183,6 @@ public class TabletUsersFragment extends Fragment
             }
         });
 
-        // создаем пустую анимацию, чтоб отделить движение tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
-        // от движения:
-        // tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.1f);
-        // tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.9f);
         onlyUsersAnimation = new TranslateAnimation(tabletMainActivity, null);
         onlyUsersAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -212,26 +203,20 @@ public class TabletUsersFragment extends Fragment
             }
         });
 
-        // инициализируем linearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(tabletMainActivity,
                 LinearLayoutManager.VERTICAL, false);
 
-        // устанавливаем LayoutManager для RecyclerView
         recyclerUsers.setLayoutManager(linearLayoutManager);
 
-        // инициализируем usersRecyclerViewAdapter
         usersRecyclerViewAdapter = new UsersRecyclerViewAdapter(tabletMainActivity);
 
-        // устанавливаем адаптер для RecyclerView
         recyclerUsers.setAdapter(usersRecyclerViewAdapter);
     }
 
     public void initUsersLoader() {
-        // сразу INVISIBLE делаем чтоб не было скачков при смене вида
         fabAddUser.setVisibility(View.INVISIBLE);
         txtAddUsers.setVisibility(View.INVISIBLE);
 
-        // Инициализируем Loader
         getLoaderManager().initLoader(TABLET_USERS_LOADER, null, this);
     }
 
@@ -244,12 +229,12 @@ public class TabletUsersFragment extends Fragment
                 UsersEntry.COLUMN_USER_DATE,
                 UsersEntry.COLUMN_USER_PHOTO_PATH};
 
-        return new CursorLoader(tabletMainActivity,   // Parent activity context
-                UsersEntry.CONTENT_USERS_URI,   // Provider content URI to query = content://com.gmail.krbashianrafael.medpunkt/users/
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
+        return new CursorLoader(tabletMainActivity,
+                UsersEntry.CONTENT_USERS_URI,
+                projection,
+                null,
+                null,
+                null);
     }
 
     @Override
@@ -259,10 +244,8 @@ public class TabletUsersFragment extends Fragment
 
         if (cursor != null) {
 
-            // устанавливаем курсор на исходную (на случай, если курсор используем повторно после прохождения цикла
             cursor.moveToPosition(-1);
 
-            // проходим в цикле курсор и заполняем объектами UserItem наш ArrayList<UserItem> myData
             while (cursor.moveToNext()) {
 
                 int user_idColumnIndex = cursor.getColumnIndex(UsersEntry._ID);
@@ -276,27 +259,20 @@ public class TabletUsersFragment extends Fragment
                 String userBirthDate = cursor.getString(user_dateColumnIndex);
                 String userPhotoUri = cursor.getString(user_photoColumnIndex);
 
-                // добавляем новый user в ArrayList<UserItem> myData
                 myData.add(new UserItem(_userId, userBirthDate, userName, userPhotoUri));
             }
         }
 
-        // делаем сортировку пользователей по именеи
         Collections.sort(myData);
 
         recyclerUsers.setVisibility(View.VISIBLE);
 
-        // оповещаем LayoutManager, что произошли изменения
-        // LayoutManager обновляет RecyclerView
         usersRecyclerViewAdapter.notifyDataSetChanged();
 
-        // делаем destroyLoader, чтоб он сам повторно не вызывался,
-        // а вызывался при каждом входе в активити
         getLoaderManager().destroyLoader(TABLET_USERS_LOADER);
 
         int myDataSize = myData.size();
 
-        // код для показа выделенного пользователя
         if (myData.size() != 0) {
             tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
                 @Override
@@ -328,8 +304,6 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(0.9f);
             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(0.9f);
 
-            // если нет пользователей, то делаем txtAddUsers.setVisibility(View.VISIBLE);
-            // и fabAddUser.setVisibility(View.INVISIBLE);
             new Handler(Looper.getMainLooper()).
                     postDelayed(new Runnable() {
                         @Override
@@ -346,8 +320,6 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
 
         } else {
-            // если больше одного пользователя
-
             fabAddUser.startAnimation(fabShowAnimation);
 
             if (TabletMainActivity.userInserted) {
@@ -372,7 +344,6 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(tabletMainActivity.user_IdInEdit);
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(TabletMainActivity.userNameAfterUpdate);
 
-                // иниициализируем Loader заболеваний
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
             } else if (TabletMainActivity.userDeleted) {
@@ -385,15 +356,9 @@ public class TabletUsersFragment extends Fragment
 
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
-                // в методе tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
-                // происходит tabletMainActivity.tabletDiseasesFragment.set_idUser(0);
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
 
             } else if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
-
-                //если первый заход и в DiseasesFragment еще не отображаются данные,
-                // или нажат крестик на DiseasesFragment
-
                 float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;
 
                 if (percentVerGuideline_2 == 0.30f) {
@@ -401,14 +366,12 @@ public class TabletUsersFragment extends Fragment
                     tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
                     tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.0f);
 
-                    // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
                     tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
 
                 } else if (percentVerGuideline_2 == 0.50f) {
 
                     tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(1.0f);
 
-                    // т.к. анимацию пустая, то присваиваем ее любому объекту, в данном случае ver_2_Right_Guideline
                     tabletMainActivity.ver_2_Right_Guideline.startAnimation(onlyUsersAnimation);
                 }
 
@@ -416,8 +379,6 @@ public class TabletUsersFragment extends Fragment
 
             } else {
 
-                // если вернулись в окно без измениний (после просмотра информации о пользователе)
-                // код для показа выделенного заболевания
                 if (TabletMainActivity.selectedDisease_id != 0) {
 
                     final ArrayList<DiseaseItem> myDiseaseData = tabletMainActivity.tabletDiseasesFragment.diseaseRecyclerViewAdapter.getDiseaseList();
@@ -442,7 +403,6 @@ public class TabletUsersFragment extends Fragment
             }
         }
 
-        // после прохождения всех if выставляем флаги в false
         TabletMainActivity.userInserted = false;
         TabletMainActivity.userUpdated = false;
         TabletMainActivity.userDeleted = false;

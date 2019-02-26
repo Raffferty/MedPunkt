@@ -13,7 +13,6 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
 
     private final Calendar dateToCompare;
 
-    // путь к фото
     private final String trPhotoUri;
 
     TreatmentPhotoItem(long _trPhotoId, long _userId, long _diseaseId, String trPhotoName, String trPhotoDate, String trPhotoUri) {
@@ -74,7 +73,6 @@ public class TreatmentPhotoItem implements Comparable<TreatmentPhotoItem> {
         return trPhotoUri;
     }
 
-    // сортировка по дате - новые сверху
     @Override
     public int compareTo(@NonNull TreatmentPhotoItem o) {
         if (dateToCompare != null && o.dateToCompare != null) {

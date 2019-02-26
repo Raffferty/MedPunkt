@@ -84,17 +84,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler myHandler = new Handler(Looper.getMainLooper());
 
-    // Мой zoom класс
     private MyImageMatrixTouchHandler myImageMatrixTouchHandler;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             imagePhoto.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -107,7 +102,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
-            // показывает Title и остальные UI
             LL_title.startAnimation(LL_title_showAnimation);
 
             if (editTreatmentPhoto) {
@@ -129,7 +123,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private final Runnable mtapedRunnable = new Runnable() {
         @Override
         public void run() {
-            // выставляет tapped = false (вызывается с задержкой 100 мс)
             tapped = false;
         }
     };
@@ -137,10 +130,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     private final Runnable mToToggleRunnable = new Runnable() {
         @Override
         public void run() {
-            // вызывает toggle() при исполнении условий (вызывается с задержкой 400 мс)
             if (!tapped && !inZoom[0] && !onLoading) {
 
-                // если это телеон, то в режиме landscape не вызываем toggle();
                 if (!HomeActivity.isTablet && landscape) {
                     return;
                 }
@@ -150,9 +141,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     };
 
-    // проверка в состоянии зума или нет
     private final boolean[] inZoom = {false};
-    // onLoading - в процессе загрузки или нет
     private boolean mVisible, landscape, goBack, editTreatmentPhoto, newTreatmentPhoto, treatmentPhotoHasChanged, tapped;
     private boolean onLoading, onSavingOrUpdatingOrDeleting;
 
@@ -166,38 +155,26 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     private Animation LL_title_hideAnimation, LL_title_showAnimation, fabHideAnimation, fabShowAnimation;
 
-    // контентный путь к загруженному фото из Галерии
     private Uri imageUriInView;
 
-    // файловый путь к загружаемому фото
     private String loadedImageFilePath;
 
-    // путь к сохраненному фото
     private String treatmentPhotoFilePath;
 
-    // id фото лечения
     private long _idTrPhoto = 0;
-    // id пользователя
     private long _idUser = 0;
-    // id заболевания
     private long _idDisease = 0;
 
-    // ImageView
     private ImageView imagePhoto;
 
-    // TextView для ошибок при загрузке снимка
     private TextView txtViewErr;
 
-    // код загрузки фото из галерии
     private static final int RESULT_LOAD_IMAGE = 9002;
 
-    // код разрешения на запись и чтение из экстернал
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
-    // OrientationEventListener реагирует на угол наклона телефона
     private OrientationEventListener mOrientationListener;
 
-    // размеры экрана для вставки снимка
     private int displayWidth = 0;
     private int displayheight = 0;
 
@@ -221,67 +198,47 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         newTreatmentPhoto = intent.getBooleanExtra("newTreatmentPhoto", false);
 
-        // получаем размеры экрана
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
 
-        // если это телефон с шириной экрана меньше 1000
-        // то снимки будут загружаться в размере на базу увеличенную вдвое, чтоб не терялось качество при зумме
         if (!HomeActivity.isTablet && size.x < 1000) {
             displayWidth = size.x * 2;
             displayheight = size.y * 2;
         } else {
-            // в остальных случаях (телефон и планшет)
-            // size.x - 1 и size.y - 1, чтоб снимок не залипал по краям imagePhoto при зумме
             displayWidth = size.x - 1;
             displayheight = size.y - 1;
         }
 
-        // инициализируем все View
         findViewsById();
 
         txtViewPhotoTitle.setText(textPhotoDescription);
 
-        // Мой zoomer
         myImageMatrixTouchHandler = new MyImageMatrixTouchHandler(this);
 
-        // устанавливаем слушателей
         setMyListeners();
 
-        // если это планшет, то ориентация все время LANDSCAPE
         if (HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
-        // получаем ориентацию экрана
         int myScreenOrientation = getResources().getConfiguration().orientation;
 
         if (!newTreatmentPhoto) {
-            // если не новое фото
             if (!HomeActivity.isTablet) {
-                // если телефон и ориентация ORIENTATION_PORTRAIT
-                // то скрываем все и показываем фото на весь экран
                 if (myScreenOrientation == Configuration.ORIENTATION_PORTRAIT) {
                     hide();
                 } else {
-                    // если телефон и ориентация ORIENTATION_LANDSCAPE
-                    // показываем UI
-                    // без показа полей ввода названия забалевания и даты
                     show();
                 }
             } else {
-                // если планшет - то скрываем все и показываем фото на весь экран
                 hide();
             }
         } else if (HomeActivity.isTablet) {
-            // если новое фото и планшет
-            // показываем UI
             show();
         }
 
 
-        // если пришел путь к сохраненному ранее фото, то грузим картинку в imagePhoto
         if (!newTreatmentPhoto
                 && treatmentPhotoFilePath != null
                 && new File(treatmentPhotoFilePath).exists()) {
@@ -291,7 +248,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            //on load failed
                             txtViewErr.setVisibility(View.VISIBLE);
 
                             if (!HomeActivity.isTablet) {
@@ -304,8 +260,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            //on load success
-
                             if (txtViewErr.getVisibility() == View.VISIBLE) {
                                 txtViewErr.setVisibility(View.GONE);
                             }
@@ -328,12 +282,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            // если не новое фото и не может загрузить
         } else if (!newTreatmentPhoto) {
             Toast.makeText(this, R.string.treatment_cant_load_image, Toast.LENGTH_LONG).show();
         }
 
-        // записываем в поля описание и дату пришедшего снимка
         if (textPhotoDescription != null) {
             editTextPhotoDescription.setText(textPhotoDescription);
         } else {
@@ -346,8 +298,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             textDateOfTreatmentPhoto = getString(R.string.fullscreen_date_of_image);
         }
 
-        // если было нажато добваить новое фото
-        // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
         if (newTreatmentPhoto) {
 
             editTreatmentPhoto = true;
@@ -356,21 +306,17 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
 
-                // убираем UI, кроме SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 mDescriptionView.setVisibility(View.INVISIBLE);
                 editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
                 mVisible = false;
                 LL_title.startAnimation(LL_title_hideAnimation);
                 fab.startAnimation(fabHideAnimation);
 
-                // делаем imagePhoto.setEnabled(false) чтоб не реагировал на клик
                 imagePhoto.setEnabled(false);
 
-                // Запрашиваем разрешение на чтение и запись фото
                 MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
 
             } else {
-                // устанавливаем вид в зависимости от ориентации экрана при первом вхождении
                 if (myScreenOrientation == Configuration.ORIENTATION_PORTRAIT) {
                     editTextPhotoDescription.requestFocus();
                     editTextPhotoDescription.setSelection(Objects.requireNonNull(editTextPhotoDescription.getText()).toString().length());
@@ -382,7 +328,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     landscape = true;
                 }
 
-                // запрашиваем картинку
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
@@ -419,9 +364,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     @SuppressLint("ClickableViewAccessibility")
     private void setMyListeners() {
-
-        // если угол наколона телефона между 315 и 45, то востанавливаем возможность реагировать на сенсор
-        // и отключаем mOrientationListener
         mOrientationListener = new OrientationEventListener(this,
                 SensorManager.SENSOR_DELAY_NORMAL) {
 
@@ -434,7 +376,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
         };
 
-        // чтоб LL_title не реагировал на Click
         LL_title.setOnClickListener(null);
 
         fabShowAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -475,8 +416,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 if (photoAndDescriptionHasNotChanged() || txtViewErr.getVisibility() == View.VISIBLE) {
                     goToTreatmentActivity();
                 } else {
-                    // Если были изменения
-                    // если выходим без сохранения изменений
                     DialogInterface.OnClickListener discardButtonClickListener =
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -485,7 +424,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                                 }
                             };
 
-                    // если выходим с сохранением изменений
                     showUnsavedChangesDialog(discardButtonClickListener);
                 }
             }
@@ -547,19 +485,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 hideSoftInput();
 
-                // убираем показ ошибок в textInputLayoutPhotoDescription
                 textInputLayoutPhotoDescription.setError(null);
                 textInputLayoutPhotoDescription.setErrorEnabled(false);
                 editTextDateOfTreatmentPhoto.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable);
 
-                // выбираем дату фото
-                // в версии Build.VERSION_CODES.N нет календаря с прокруткой
-                // поэтому для вывода календаря с прокруткой пользуемся стронней библиетекой
-                // слушатель прописываем в нашем же классе .callback(FullscreenPhotoActivity.this)
-                // com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-                // используем эту библиотеку для
-                // Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     String dateInEditTextDate = editTextDateOfTreatmentPhoto.getText().toString().trim();
 
@@ -567,23 +497,18 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     int mMonth;
                     int mDay;
 
-                    // если в поле dateInEditTextDate уже была установленна дата, то
-                    // получаем ее и открываем диалог с этой датой
                     if (dateInEditTextDate.contains("-")) {
                         String[] mDayMonthYear = dateInEditTextDate.split("-");
                         mYear = Integer.valueOf(mDayMonthYear[2]);
                         mMonth = Integer.valueOf(mDayMonthYear[1]) - 1;
                         mDay = Integer.valueOf(mDayMonthYear[0]);
                     } else {
-                        // если в поле dateInEditTextDate не была установлена дата
-                        // то открываем диалог с текущей датой
                         final Calendar c = Calendar.getInstance();
                         mYear = c.get(Calendar.YEAR);
                         mMonth = c.get(Calendar.MONTH);
                         mDay = c.get(Calendar.DAY_OF_MONTH);
                     }
 
-                    // используем стороннюю библиотеку для диалога SpinnerDatePickerDialog
                     DatePickerDialog spinnerDatePickerDialog = new SpinnerDatePickerDialogBuilder()
                             .context(FullscreenPhotoActivity.this)
                             .callback(FullscreenPhotoActivity.this)
@@ -594,17 +519,14 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
                     spinnerDatePickerDialog.show();
                 } else {
-                    // в остальных случаях пользуемся классом DatePickerFragment
                     DatePickerFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 }
             }
         });
 
-        // чтоб textInputLayoutPhotoDescription не реагировал на Click
         textInputLayoutPhotoDescription.setOnClickListener(null);
 
-        // при OnTouch editTextPhotoDescription убираем ошибку
         editTextPhotoDescription.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -618,8 +540,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
         });
 
-        // на OnTouch imagePhoto устанавливаем myImageMatrixTouchHandler
-        // здесь обрабытываются zoom and pinch
         imagePhoto.setOnTouchListener(myImageMatrixTouchHandler);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -639,7 +559,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         });
     }
 
-    // слушатель по установке даты для Build.VERSION_CODES.LOLIPOP
     @SuppressLint("SetTextI18n")
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -652,12 +571,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // изменение оринтации только для телефона
         if (HomeActivity.isTablet || txtViewErr.getVisibility() == View.VISIBLE) {
             return;
         }
 
-        // при поворотах скрываем клавиатуру
         hideSoftInput();
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -678,7 +595,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         mOrientationListener.disable();
     }
 
-    // Диалог "Удалить фото заболевания или отменить удаление"
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DeleteAlertDialogCustom);
         builder.setMessage(getString(R.string.fullscreen_dialog_msg_delete_image) + " " + editTextPhotoDescription.getText() + "?");
@@ -709,7 +625,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     }
 
     private void hide() {
-        // Hide UI first
         LL_title.startAnimation(LL_title_hideAnimation);
 
         if (fab.getVisibility() == View.VISIBLE) {
@@ -720,25 +635,21 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         editTextDateOfTreatmentPhoto.setVisibility(View.INVISIBLE);
         mVisible = false;
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
         myHandler.removeCallbacks(mHidePart2Runnable);
         myHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
     @SuppressLint("InlinedApi")
     private void show() {
-        // Show the system bar
         imagePhoto.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
         mVisible = true;
 
-        // Schedule a runnable to display UI elements after a delay
         myHandler.removeCallbacks(mShowPart2Runnable);
         myHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    // результат запроса на загрузку фото
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -752,8 +663,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 Snackbar.make(imagePhoto, R.string.permission_was_denied,
                         Snackbar.LENGTH_LONG).show();
 
-                // это, перед выходом, показывает сверху статус бар,
-                // чтоб при открывании предыдущего окна не было белой полосы сверху
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
@@ -768,43 +677,31 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    // здесь грузим фотку в imagePhoto
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
 
-            // делаем imagePhoto.setEnabled(true) чтоб реагировал на клик
             imagePhoto.setEnabled(true);
 
             Uri newSelectedImageUri = data.getData();
 
             if (newSelectedImageUri != null) {
-                // если выбрали то же фото, которое уже было загружено ИЗ ГАЛЕРИИ,
-                // то повторно не грузим
                 if (imageUriInView != null && imageUriInView.equals(newSelectedImageUri)) {
                     onLoading = false;
                     treatmentPhotoHasChanged = false;
 
                 } else {
-                    // чистим imagePhoto
                     Glide.with(FullscreenPhotoActivity.this).clear(imagePhoto);
 
-                    // получаем путь на девайсе к загруженному фото
                     loadedImageFilePath = getLoadedImageFilePath(this, newSelectedImageUri);
 
-                    // грузим картинку в imagePhoto
-                    // если во время загрузки возникла ошибка,
-                    // то оставляем возможность либо выйти без сохранения,
-                    // либо заново загрузить снимок (этот или любой другой)
                     GlideApp.with(this)
                             .load(newSelectedImageUri)
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    //on load failed
-
                                     txtViewErr.setVisibility(View.VISIBLE);
 
                                     frm_save.setVisibility(View.INVISIBLE);
@@ -823,8 +720,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                                 @Override
                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    //on load success
-
                                     if (txtViewErr.getVisibility() == View.VISIBLE) {
 
                                         txtViewErr.setVisibility(View.GONE);
@@ -857,10 +752,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 }
             }
         } else {
-            // если отказались выбирать фото (нашажали "обратно")
-            // если хотели создать новое фото - идем обратно
-            // если приходили из уже существующего фото - остаемся с onLoading = false;
-
             onLoading = false;
 
             if (newTreatmentPhoto) {
@@ -868,13 +759,11 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             }
         }
 
-        // если это не планшет, то после загрузки нового фото ставим экран на SCREEN_ORIENTATION_SENSOR
         if (!HomeActivity.isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
     }
 
-    // метод для получения пути к загружаемому фото (loadedImageFilePath) для дальнейшего сохранения этого фото
     private String getLoadedImageFilePath(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.Media.DATA}, null, null, null);
@@ -900,37 +789,31 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     private void toggle() {
 
-        // если это не планшет, а телефон, то в ORIENTATION_LANDSCAPE) только просмотр
         if (!HomeActivity.isTablet &&
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return;
         }
 
-        // либо скрываем-показываем элементы UI
         if (!editTreatmentPhoto) {
             if (mVisible) {
                 hide();
             } else {
                 show();
             }
-            // либо обращаемся к галерее фото
         } else {
 
             if (onLoading || onSavingOrUpdatingOrDeleting) {
                 return;
             }
 
-            // если это телефон (а не планшет), то перед загрузкой нового фото ставим экран в PORTRAIT
             if (!HomeActivity.isTablet) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
             onLoading = true;
 
-            // перед загрузкой фото получаем разреншение на чтение (и запись) из экстернал
             if (ActivityCompat.checkSelfPermission(FullscreenPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                // Запрашиваем разрешение на чтение и запись фото
                 MyReadWritePermissionHandler.getReadWritePermission(FullscreenPhotoActivity.this, imagePhoto, PERMISSION_WRITE_EXTERNAL_STORAGE);
             } else {
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -940,9 +823,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    // метод для скрытия клавиатуры
     private void hideSoftInput() {
-
         View viewToHide = FullscreenPhotoActivity.this.getCurrentFocus();
         if (viewToHide != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -974,7 +855,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
-    // Диалог "сохранить или выйти без сохранения"
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener
                                                   discardButtonClickListener) {
 
@@ -1004,7 +884,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    // проверка на изменения описания, даты и фото
     private boolean photoAndDescriptionHasNotChanged() {
         return !treatmentPhotoHasChanged &&
                 TextUtils.equals(Objects.requireNonNull(editTextPhotoDescription.getText()).toString(), textPhotoDescription) &&
@@ -1012,13 +891,7 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
     }
 
     private void goToTreatmentActivity() {
-        // это, перед выходом, показывают сверху статус бар,
-        // чтоб при открывании предыдущего окна не было белой полосы сверху
-        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
         if (imagePhoto.getSystemUiVisibility() == 0) {
-            // если не видны системные флаги, то сначала показываем status bar, потом выходим
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -1027,7 +900,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         hideSoftInput();
 
-        // а это закрывает текущее окно после задержки в 300мс
         myHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1038,7 +910,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     private void saveOrUpdateTreatmentPhoto() {
 
-        // устанавливаем анимацию на случай Error
         ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 1f, 0f, 0f);
         scaleAnimation.setDuration(500);
 
@@ -1046,7 +917,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         String dateOfTreatmentPhotoToCheck = editTextDateOfTreatmentPhoto.getText().toString();
         boolean wrongField = false;
 
-        // првоерка описания фото
         if (TextUtils.isEmpty(photoDescriptionToCheck)) {
             textInputLayoutPhotoDescription.setHintTextAppearance(R.style.Lable_Error);
             textInputLayoutPhotoDescription.setError(getString(R.string.fullscreen_error_image_description));
@@ -1055,7 +925,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             wrongField = true;
         }
 
-        // првоерка Даты фото
         if (TextUtils.equals(dateOfTreatmentPhotoToCheck, getString(R.string.fullscreen_date_of_image))) {
             if (wrongField) {
                 textInputLayoutPhotoDescription.setError(
@@ -1071,15 +940,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             wrongField = true;
         }
 
-        // если поля описания и Дата фото не верные - выходим
         if (wrongField) {
 
-            // если это телефон и не все поля заполнены и сохранение происходит в LANDSCAPE
-            // (а это возможно только после свайпа сверху при фулскриин и нажатии "идти обратно",
-            // после чего предлагается сохранить изменения)
-            // то выставляем экран в PORTRAIT, чтоб можно было увидеть незаполненные поля
-            // и включаем mOrientationListener, который будет мониторить повор экрана и
-            // при углах между 315 и 45 вернет возможность реагирования на сенсор при повороте на LANDSCAPE
             if (!HomeActivity.isTablet && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
@@ -1093,18 +955,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             textInputLayoutPhotoDescription.setError(null);
         }
 
-        // проверка окончена, начинаем сохранение
         textPhotoDescription = photoDescriptionToCheck;
         textDateOfTreatmentPhoto = dateOfTreatmentPhotoToCheck;
 
         txtViewPhotoTitle.setText(textPhotoDescription);
 
-        // в отдельном потоке пишем файл фотки в интернал
         if (imageUriInView != null) {
 
             copyTreatmentPhotoAndSaveOrUpdateToDataBase();
 
-            // imageUriInView = null, чтоб повторно не сохранять то же фото
             imageUriInView = null;
 
         } else {
@@ -1117,23 +976,19 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 afterSaveOrUpdate();
             }
 
-            // выставляем флаг treatmentPhotoHasChanged = false
             treatmentPhotoHasChanged = false;
         }
     }
 
     private void copyTreatmentPhotoAndSaveOrUpdateToDataBase() {
-        // сохранение загруженного фото
         if (loadedImageFilePath != null) {
 
             File fileOfPhoto = new File(loadedImageFilePath);
 
-            // Получаем путь к файлам для интернал
             String root = getFilesDir().toString();
 
             String pathToTreatmentPhotos = root + getString(R.string.path_to_treatment_photos);
 
-            //  /data/data/com.gmail.krbashianrafael.medpunkt/files/treatment_photos
             File myDir = new File(pathToTreatmentPhotos);
 
             if (!myDir.exists()) {
@@ -1143,7 +998,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 }
             }
 
-            // для нумерации сохраняемых файлов берем время SystemClock.elapsedRealtime();
             String destinationFileName = getString(R.string.treatment_photo_nameStart) +
                     _idUser + "-" +
                     _idDisease + "-" + SystemClock.elapsedRealtime() +
@@ -1152,15 +1006,9 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
             File destinationFile = new File(myDir, destinationFileName);
 
             if (newTreatmentPhoto) {
-                // если новая (не обновляемая) фотография
                 treatmentPhotoFilePath = destinationFile.toString();
 
-                // если в Базу сохранилось удачно,
-                // то копируем файл снимка в TreatmentPhotoCopyAsyncTask в отдельном потоке
-                // и даем новому файлу имя
-                // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
                 if (saveTreatmentPhotoToDataBase()) {
-                    // копируем fileOfPhoto в destinationFile
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
 
                 } else {
@@ -1169,21 +1017,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 }
 
             } else {
-                // если фотография обновляется,
-                // то сначала удаляем старую фотографию
                 File oldFile = new File(treatmentPhotoFilePath);
                 if (oldFile.exists()) {
                     if (!oldFile.delete()) {
                         Toast.makeText(this, R.string.treatment_old_image_not_deleted, Toast.LENGTH_LONG).show();
 
-                        // если файл не удалился, то
-                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
                         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
-                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
 
                         String updatedNotDeletedFilesPaths;
                         if (notDeletedFilesPaths == null) {
@@ -1192,36 +1034,25 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                             updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + oldFile.getPath();
                         }
 
-                        // пишем заново в в "PREFS" обновленную строку
                         prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                         prefsEditor.apply();
                     }
                 }
 
-                // после удаления старого файла
-                // присваиваем новый путь обновляемому снимку
                 treatmentPhotoFilePath = destinationFile.toString();
 
-                // обновляем путь к файлу в базе
                 if (updateTreatmentPhotoToDataBase()) {
-                    // если в Базу сохранилось удачно,
-                    // то копируем файл снимка в TreatmentPhotoCopyAsyncTask в отдельном потоке
-                    // и даем новому файлу имя
-                    // "Image-" + _idUser + "-" + _idDisease + "-" + SystemClock.elapsedRealtime() + ".jpg"
                     new TreatmentPhotoCopyAsyncTask(this).execute(fileOfPhoto, destinationFile);
 
                 } else {
-                    // если путь к обновленному файлу в базу не сохранился
                     Toast.makeText(this, R.string.treatment_cant_save_image, Toast.LENGTH_LONG).show();
 
-                    // выставляем флаги false
                     treatmentPhotoHasChanged = false;
                     onSavingOrUpdatingOrDeleting = false;
                     afterSaveOrUpdate();
                 }
             }
         } else {
-            // если снимок не загрузился
             onSavingOrUpdatingOrDeleting = false;
             Toast.makeText(this, R.string.treatment_cant_save_image, Toast.LENGTH_LONG).show();
         }
@@ -1249,17 +1080,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         values.put(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE, textDateOfTreatmentPhoto);
         values.put(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH, treatmentPhotoFilePath);
 
-        // при сохранении снимка в Базу делаем insert и получаем Uri вставленной строки
         Uri newUri = getContentResolver().insert(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, values);
 
         if (newUri != null) {
-            // получаем _idTrPhoto из возвращенного newUri
             _idTrPhoto = ContentUris.parseId(newUri);
-
-            // здесь устанавливаем флаг scrollToInsertedUserPosition в классе DiseasesActivity в true
-            // чтоб после вставки новой строки в Базу и посел оповещения об изменениях
-            // заново загрузился курсор и RecyclerView прокрутился вниз до последней позиции
-
             TreatmentPhotosFragment.mScrollToStart = true;
             return true;
 
@@ -1276,18 +1100,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         values.put(TreatmentPhotosEntry.COLUMN_TR_PHOTO_DATE, textDateOfTreatmentPhoto);
         values.put(TreatmentPhotosEntry.COLUMN_TR_PHOTO_PATH, treatmentPhotoFilePath);
 
-        // Uri к снимку, который будет обновляться
         Uri mCurrentUserUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_idTrPhoto));
 
-        // делаем update в Базе
         int rowsAffected = getContentResolver().update(mCurrentUserUri, values, null, null);
 
         if (rowsAffected == 0) {
             Toast.makeText(this, R.string.treatment_cant_update_image, Toast.LENGTH_LONG).show();
+
             return false;
-
         } else {
-
             return true;
         }
     }
@@ -1297,16 +1118,12 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
         if (toBeDeletedFile.exists()) {
             if (!toBeDeletedFile.delete()) {
-                // если файл не удалился
                 Toast.makeText(this, R.string.treatment_image_not_deleted, Toast.LENGTH_LONG).show();
 
-                // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
                 SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                 final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                 String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
-                // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
 
                 String updatedNotDeletedFilesPaths;
                 if (notDeletedFilesPaths == null) {
@@ -1315,7 +1132,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                     updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + toBeDeletedFile.getPath();
                 }
 
-                // пишем заново в в "PREFS" обновленную строку
                 prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                 prefsEditor.apply();
             }
@@ -1326,12 +1142,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
     private void deleteTreatmentPhotoFromDataBase() {
 
-        // Uri к снимку, который будет удаляться
         Uri mCurrentTrPhotoUri = Uri.withAppendedPath(TreatmentPhotosEntry.CONTENT_TREATMENT_PHOTOS_URI, String.valueOf(_idTrPhoto));
 
         int rowsDeleted = 0;
 
-        // удаляем снимок из Базы
         if (_idTrPhoto != 0) {
             rowsDeleted = getContentResolver().delete(mCurrentTrPhotoUri, null, null);
         }
@@ -1344,20 +1158,15 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    // мой Zoom класс
     private class MyImageMatrixTouchHandler extends ImageMatrixTouchHandler {
 
         MyImageMatrixTouchHandler(Context context) {
             super(context);
-            // здесь устанавливаем кратность увеличение при DoubleTap, по умолчанию = 2,5
-            //setDoubleTapZoomFactor(2f);
 
-            // здесь устанавливаем максимальную кратность увеличения, по умолчанию = 4
             ImageViewerCorrector crr = (ImageViewerCorrector) this.getImageMatrixCorrector();
             crr.setMaxScale(20f);
         }
 
-        // для DoubleTap
         boolean firstTouch = false;
         long touchTime = 0;
 
@@ -1387,12 +1196,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 myHandler.removeCallbacks(mtapedRunnable);
 
-                // через 100 мс выставляем tapped = false
-                // чтоб при ACTION_DOWN с реакцией экрана на скольжение пальца (ACTION_MOVE) inZoom[0] был false
                 myHandler.postDelayed(mtapedRunnable, 100);
 
-                // првоерка DoubleTap (в промежутке 300 мс)
-                // если DoubleTap, то не вызывается toggle()
                 if (firstTouch && (System.currentTimeMillis() - touchTime) <= 300) {
                     tapped = false;
                     inZoom[0] = true;
@@ -1411,14 +1216,8 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
         }
     }
 
-    // класс TreatmentPhotoCopyAsyncTask (для копирования файла фото) делаем статическим,
-    // чтоб не было утечки памяти при его работе
     private static class TreatmentPhotoCopyAsyncTask extends AsyncTask<File, Void, Void> {
 
-        //private static final String PREFS_NAME = "PREFS";
-
-        // получаем WeakReference на FullscreenPhotoActivity,
-        // чтобы GC мог его собрать
         private final WeakReference<FullscreenPhotoActivity> fullscreenPhotoActivityReference;
 
         TreatmentPhotoCopyAsyncTask(FullscreenPhotoActivity context) {
@@ -1436,7 +1235,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                 FileUtils.copyFile(fileOfPhoto, destination);
 
             } catch (NullPointerException | IOException e) {
-                // если при копировании возникли ошибки, но файл образовался, то удаляем его
                 if (fullscreenPhotoActivity != null) {
                     fullscreenPhotoActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -1448,13 +1246,10 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
                 if (destination.exists()) {
                     if (!destination.delete() && fullscreenPhotoActivity != null) {
-                        // получаем SharedPreferences, чтоб писать путь к неудаленному файлу в "PREFS"
                         SharedPreferences prefs = fullscreenPhotoActivity.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
                         final SharedPreferences.Editor prefsEditor = prefs.edit();
 
-                        // вытягиваем в String notDeletedFilesPaths из prefs пути к ранее не удаленным файлам
                         String notDeletedFilesPaths = prefs.getString("notDeletedFilesPaths", null);
-                        // дописываем путь (за запятой) к неудаленному файлу фото польлзователя
 
                         String updatedNotDeletedFilesPaths;
                         if (notDeletedFilesPaths == null) {
@@ -1463,7 +1258,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
                             updatedNotDeletedFilesPaths = notDeletedFilesPaths + "," + destination.getPath();
                         }
 
-                        // пишем заново в в "PREFS" обновленную строку
                         prefsEditor.putString("notDeletedFilesPaths", updatedNotDeletedFilesPaths);
                         prefsEditor.apply();
                     }
@@ -1480,7 +1274,6 @@ public class FullscreenPhotoActivity extends AppCompatActivity implements
 
             final FullscreenPhotoActivity fullscreenPhotoActivity = fullscreenPhotoActivityReference.get();
 
-            // после сохранения в TreatmentPhotoCopyAsyncTask выставляем флаги = false
             fullscreenPhotoActivity.newTreatmentPhoto = false;
             fullscreenPhotoActivity.treatmentPhotoHasChanged = false;
             fullscreenPhotoActivity.onSavingOrUpdatingOrDeleting = false;

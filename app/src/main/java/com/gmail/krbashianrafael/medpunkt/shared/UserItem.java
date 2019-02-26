@@ -7,7 +7,6 @@ public class UserItem implements Comparable<UserItem> {
     private final String userBirthDate;
     private final String userName;
 
-    // путь к фото
     private final String userPhotoUri;
 
     public UserItem(long _userId, String userBirthDate, String userName, String userPhotoUri) {
