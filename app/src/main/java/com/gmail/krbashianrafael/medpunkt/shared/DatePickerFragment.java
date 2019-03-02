@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -64,5 +65,14 @@ public class DatePickerFragment extends DialogFragment
         GregorianCalendar date = new GregorianCalendar(year, month, day);
         String formatedDate = simpleDateFormat.format(date.getTime()) + " ";
         editTextDate.setText(formatedDate);
+    }
+
+
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        editTextDate.clearFocus();
     }
 }

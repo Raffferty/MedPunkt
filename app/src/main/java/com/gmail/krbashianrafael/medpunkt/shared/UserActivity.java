@@ -383,6 +383,7 @@ public class UserActivity extends AppCompatActivity
                     focusHolder.requestFocus();
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
                         String dateInEditTextDate = Objects.requireNonNull(editTextDate.getText()).toString().trim();
 
                         int mYear;
@@ -409,6 +410,12 @@ public class UserActivity extends AppCompatActivity
                                 .build();
 
                         spinnerDatePickerDialog.setCanceledOnTouchOutside(false);
+                        spinnerDatePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                editTextDate.clearFocus();
+                            }
+                        });
                         spinnerDatePickerDialog.show();
                     } else {
                         DatePickerFragment newFragment = new DatePickerFragment();

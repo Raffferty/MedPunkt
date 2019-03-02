@@ -49,26 +49,26 @@ public class DiseaseItem implements Comparable<DiseaseItem> {
         return _diseaseId;
     }
 
-    public long get_diseaseUserId() {
+    long get_diseaseUserId() {
         return _diseaseUserId;
     }
 
-    public String getDiseaseDate() {
+    String getDiseaseDate() {
         return diseaseDate;
     }
 
-    public String getDiseaseName() {
+    String getDiseaseName() {
         return diseaseName;
     }
 
-    public String getTreatmentText() {
+    String getTreatmentText() {
         return diseaseTreatment;
     }
 
     @Override
     public int compareTo(@NonNull DiseaseItem o) {
-        if (diseaseName != null && o.diseaseName != null) {
-            return this.dateToCompare.compareTo(o.dateToCompare);
+        if (dateToCompare != null && o.dateToCompare != null) {
+            return o.dateToCompare.compareTo(this.dateToCompare);
         }
         return 0;
     }
