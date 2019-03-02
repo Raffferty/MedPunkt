@@ -406,18 +406,23 @@ public class TabletDiseasesFragment extends Fragment
 
             if (percentVerGuideline_2 == 0.90f) {
 
-                tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
-                        tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
-                        tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
-                        tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
-                        tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
-                        tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
-                    }
-                }, 100);
+                if (!TabletMainActivity.userDeletting) {
+                    tabletMainActivity.myTabletHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            TransitionManager.beginDelayedTransition(tabletMainActivity.mSceneRoot, autoTransition);
+                            tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
+                            tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
+                            tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
+                            tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
+                            tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
+                        }
+                    }, 100);
+                } else {
+                    TabletMainActivity.userDeletting = false;
+                }
 
             } else if (percentVerGuideline_2 == 0.30f) {
                 tabletMainActivity.tabletTreatmentFragment.treatmentDescriptionFragment.
@@ -486,7 +491,6 @@ public class TabletDiseasesFragment extends Fragment
                             tabletMainActivity.ver_1_Guideline.setGuidelinePercent(0.00f);
                             tabletMainActivity.ver_2_Left_Guideline.setGuidelinePercent(0.50f);
                             tabletMainActivity.ver_2_Right_Guideline.setGuidelinePercent(0.50f);
-
                             tabletMainActivity.ver_3_Guideline.setGuidelinePercent(1.00f);
                             tabletMainActivity.ver_4_Guideline.setGuidelinePercent(1.0f);
                         }

@@ -318,7 +318,6 @@ public class TabletUsersFragment extends Fragment
             tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
             tabletMainActivity.tabletDiseasesFragment.textViewAddDisease.setVisibility(View.INVISIBLE);
             tabletMainActivity.tabletDiseasesFragment.fabAddDisease.setVisibility(View.INVISIBLE);
-
         } else {
             fabAddUser.startAnimation(fabShowAnimation);
 
@@ -357,6 +356,8 @@ public class TabletUsersFragment extends Fragment
                 tabletMainActivity.tabletTreatmentFragment.set_idUser(0);
 
                 tabletMainActivity.tabletDiseasesFragment.clearDataFromDiseasesFragment();
+
+                TabletMainActivity.userDeletting = false;
 
             } else if (tabletMainActivity.tabletDiseasesFragment.get_idUser() == 0) {
                 float percentVerGuideline_2 = ((ConstraintLayout.LayoutParams) tabletMainActivity.ver_2_Left_Guideline.getLayoutParams()).guidePercent;

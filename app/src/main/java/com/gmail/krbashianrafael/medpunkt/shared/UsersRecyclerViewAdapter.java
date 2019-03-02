@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,7 +179,6 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }, 500);
 
-
                 } else {
                     Intent userEditIntent = new Intent(myContext, UserActivity.class);
                     userEditIntent.putExtra("_idUser", user_id_inEdit);
@@ -268,6 +268,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 tabletMainActivity.tabletDiseasesFragment.set_idUser(user_id_inEdit);
                 tabletMainActivity.tabletDiseasesFragment.setTextUserName(userName.getText().toString());
                 TabletMainActivity.selectedDisease_id = 0;
+
                 tabletMainActivity.tabletDiseasesFragment.initDiseasesLoader();
 
                 if (tabletMainActivity.diseaseAndTreatmentInEdit) {

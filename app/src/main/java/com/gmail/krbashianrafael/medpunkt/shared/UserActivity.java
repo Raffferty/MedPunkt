@@ -72,6 +72,7 @@ import com.gmail.krbashianrafael.medpunkt.data.MedContract.DiseasesEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.TreatmentPhotosEntry;
 import com.gmail.krbashianrafael.medpunkt.data.MedContract.UsersEntry;
 import com.gmail.krbashianrafael.medpunkt.phone.DiseasesActivity;
+import com.gmail.krbashianrafael.medpunkt.tablet.TabletMainActivity;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
@@ -811,6 +812,11 @@ public class UserActivity extends AppCompatActivity
                     }
                 } else {
                     onSavingOrUpdatingOrDeleting = true;
+
+                    if (HomeActivity.isTablet){
+                        TabletMainActivity.userDeletting = true;
+                    }
+
                     deleteUserAndPhotos();
                 }
             }

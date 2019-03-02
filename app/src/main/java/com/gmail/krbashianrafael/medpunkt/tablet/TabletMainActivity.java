@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,7 @@ public class TabletMainActivity extends AppCompatActivity
     public static boolean userUpdated = false;
     public static String userNameAfterUpdate = "";
 
-    public static boolean userDeleted = false;
+    public static boolean userDeleted, userDeletting = false;
 
     public static boolean diseaseInserted = false;
     public static long insertedDisease_id = 0;
@@ -167,6 +168,7 @@ public class TabletMainActivity extends AppCompatActivity
         userUpdated = false;
         userNameAfterUpdate = "";
         userDeleted = false;
+        userDeletting = false;
         diseaseInserted = false;
         insertedDisease_id = 0;
         selectedDisease_id = 0;
