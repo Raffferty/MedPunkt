@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,10 +112,7 @@ public class TabletMainActivity extends AppCompatActivity
 
         adViewInTabletWideView = findViewById(R.id.adViewInTablet);
 
-        adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("560D5379A4448A4EFE4645AE623EDC72") // планшет Наташи Samsung SM-T813, 7.0 API 24
-                .build();
+        adRequest = new AdRequest.Builder().build();
 
         adViewInTabletWideView.setAdListener(new AdListener() {
             @Override
